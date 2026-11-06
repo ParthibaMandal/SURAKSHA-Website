@@ -1,0 +1,14 @@
+{
+  "name": "suraksha-flood-website",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SURAKSHA flood intelligence public website and application interface",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node --watch server.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
