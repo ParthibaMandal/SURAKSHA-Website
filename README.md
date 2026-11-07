@@ -2,36 +2,37 @@
 
 SURAKSHA is a flood intelligence and early-warning minor project. This repository contains the public website and application interface. The scientific pipeline and FastAPI service live in the separate [`shouri123/SURAKSHA`](https://github.com/shouri123/SURAKSHA) repository.
 
-## Current implementation
+## Architecture & Technology Stack
 
-- Responsive public information site and page navigation in `index.html`.
-- Citizen and operations interface previews, with demo-only actions clearly labelled.
-- Synthetic Flood Lab scenarios. They demonstrate interface states and do not claim to run the scientific backend.
-- A Node.js server that securely serves assets with MIME headers, path traversal guards, and proxies only read-only health and station-catalog requests to the SURAKSHA backend.
-- Standard web assets including PWA `manifest.json`, vector `favicon.svg`, and search crawler `robots.txt`.
+- **Framework**: Next.js 14 (App Router) with TypeScript & React 18
+- **Styling & UI**: Tailwind CSS with custom dark-tech hydrological palette & shadcn/ui component architecture
+- **3D WebGL Digital Twin**: Dedicated modular Three.js engine (`lib/three/digital-twin-engine.ts`) & React component (`components/three/DigitalTwinScene.tsx`) with topographic canyon mesh, flowing waves, station telemetry beacons, particles, orbit controls, and real-time surge simulation
+- **Motion & Interactions**: Framer Motion (3D perspective tilt cards, smooth view reveals) & GSAP (telemetry counter sweeps, radar wave pulses)
+- **Portals**:
+  - Public Information & Research Portal (Home, Platform, How It Works, Research, Alerts & Safety, Demo Lab, Study Area, Contact)
+  - Citizen Portal (`/citizen`): Basin dashboard, saved locations, alerts, safety checklists, SOS preview
+  - Operations Control Room (`/admin`): Real-time telemetry, 3-stage Supervisory Gates (Pre-run, Mid-run, Post-run), ensemble hydrographs, alert verification, and audit logs
+- **Backend Bridge**: Next.js Route Handlers proxying `/api/flood/health` and `/api/flood/stations` to the FastAPI backend (`SURAKSHA_BACKEND_URL`).
 
 ## Run locally
 
-Requires Node.js 20 or newer. No npm packages are required.
+Requires Node.js 20 or newer.
 
 ```powershell
-node server.mjs
+# Install dependencies
+npm install
+
+# Start Next.js development server
+npm run dev
+
+# Production build & start
+npm run build
+npm start
 ```
 
-To run asset and template validation tests:
+Open [http://localhost:3000](http://localhost:3000). To connect read-only data from a running backend, set `SURAKSHA_BACKEND_URL` (default: `http://127.0.0.1:8000`).
 
-```powershell
-npm test
-```
-
-Open `http://localhost:3000`. To connect read-only data from a running backend, set `SURAKSHA_BACKEND_URL` to its origin, for example `http://127.0.0.1:8000`, before starting the site server:
-
-```powershell
-$env:SURAKSHA_BACKEND_URL = "http://127.0.0.1:8000"
-node server.mjs
-```
-
-Or copy `.env.example` to `.env` and edit the values. The server reads `.env` locally; do not commit `.env`.
+The original single-file static version is preserved as [`index.legacy.html`](index.legacy.html) and can still be run via `npm run legacy:server`.
 
 The site checks `GET /api/v1/flood/health` and `GET /api/v1/flood/stations` through its same-origin server. The Flood Lab can also list and run the backend's synthetic scenario suite in an explicitly enabled local-only mode. That run path uses the backend operator key on the server; it is disabled on non-loopback hosts and in production. It calls the backend's synthetic demo route, which reports the deterministic offline Jev simulator, not live Jev. An unconfigured or unavailable backend is shown as such; the website will not substitute sample data and call it live.
 

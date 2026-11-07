@@ -1,0 +1,37 @@
+{
+  "contract_id": "suraksha-nextjs-migration",
+  "status": "COMPLETED",
+  "verdict": "PASS",
+  "evidence": [
+    {
+      "criterion": "Next.js App Router project initialized with TypeScript and Tailwind CSS",
+      "status": "PASS",
+      "detail": "Configured tsconfig.json, tailwind.config.ts, postcss.config.mjs, and next.config.mjs"
+    },
+    {
+      "criterion": "Three.js 3D Digital Twin extracted into dedicated files",
+      "status": "PASS",
+      "detail": "lib/three/digital-twin-engine.ts and components/three/DigitalTwinScene.tsx with full WebGL canyon geometry, harmonic water waves, station beacons, particles, tilt orbit, and surge simulation"
+    },
+    {
+      "criterion": "Framer Motion and GSAP integrated",
+      "status": "PASS",
+      "detail": "components/motion/TiltCard.tsx, components/motion/FadeIn.tsx, lib/gsap-animations.ts"
+    },
+    {
+      "criterion": "Full brand fidelity & tactical graphics extracted from index.html",
+      "status": "PASS",
+      "detail": "BrandLogo (exact 3-wave gradient mark), TacticalMapSvg (neon river corridor, pulsing beacons, dot-matrix radar), HydrologicalChart (48h forecast curve, threshold lines, sonar points)"
+    },
+    {
+      "criterion": "Interactive workflows matching index.html",
+      "status": "PASS",
+      "detail": "Demo Lab 5-scenario pipeline runner, OASIS CAP v1.2 approval desk, Citizen SOS assistance form with privacy controls, location tracking tables, and admin analytical gate inspection"
+    },
+    {
+      "criterion": "Next.js production build passes",
+      "status": "PASS",
+      "detail": "npm run build exited with code 0 (all 33 routes prerendered and optimized successfully)"
+    }
+  ]
+}

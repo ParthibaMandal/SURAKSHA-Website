@@ -1,0 +1,38 @@
+{
+  "mode": "implement",
+  "objective": "Convert SURAKSHA flood intelligence website to Next.js, Tailwind CSS, shadcn/ui with separate Three.js module, GSAP, and Framer Motion",
+  "acceptance_criteria": [
+    "Next.js App Router project initialized with TypeScript and Tailwind CSS",
+    "shadcn/ui-inspired component architecture with modern dark-tech palette, refined typography, and glassmorphic surfaces",
+    "Three.js 3D Digital Twin extracted into a dedicated, modular file (components/three/DigitalTwinScene.tsx) preserving all features (terrain, procedural waves, station beacons, particles, tilt controls, surge simulation)",
+    "Framer Motion integrated for fluid transitions, page routing, interactive tilt cards, and modal feedback",
+    "GSAP integrated for timeline-driven telemetry animations and radar pulses",
+    "All public and authenticated routes implemented (Home, Platform, How it Works, Research, Alerts & Safety, Demo Lab, Citizen Portal, Operations / Admin Portal)",
+    "Backend proxy API routes (/api/flood/health, /api/flood/stations, /api/flood/scenarios/run) preserved for FastAPI backend interoperability",
+    "Next.js build (npm run build) passes with zero errors"
+  ],
+  "non_goals": [
+    "Do not drop or simplify the 3D Digital Twin or surge simulation",
+    "Do not break compatibility with SURAKSHA FastAPI backend endpoints",
+    "Do not remove legacy index.html without archiving as index.legacy.html"
+  ],
+  "risk": "medium",
+  "budget": "balanced",
+  "allowed_write_scope": [
+    "package.json",
+    "tsconfig.json",
+    "next.config.mjs",
+    "tailwind.config.ts",
+    "postcss.config.mjs",
+    "src/",
+    "public/",
+    "components/",
+    "lib/",
+    "app/",
+    ".gravitas/",
+    "README.md",
+    "index.legacy.html"
+  ],
+  "verification": "compiler-and-build"
+}
+
