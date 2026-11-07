@@ -1,29 +1,37 @@
-/* SURAKSHA flood-interface tokens. Reference layer for future components. */
+/* SURAKSHA flood-interface tokens. Reference layer for atmospheric hydrological design. */
 :root {
   color-scheme: dark;
-  --suraksha-bg: #101213;
-  --suraksha-bg-subtle: #141718;
-  --suraksha-surface: #191e1f;
-  --suraksha-surface-raised: #232a2b;
-  --suraksha-border: #2c3536;
-  --suraksha-border-strong: #394344;
-  --suraksha-text: #f1f2ee;
-  --suraksha-text-secondary: #a3adab;
-  --suraksha-text-muted: #74807d;
-  --suraksha-river: #a9c9c2;
-  --suraksha-river-deep: #729d95;
-  --suraksha-warning: #d8b575;
-  --suraksha-critical: #d78379;
-  --suraksha-confirmed: #9bbda2;
-  --suraksha-radius-sm: 8px;
-  --suraksha-radius-md: 12px;
-  --suraksha-radius-lg: 18px;
-  --suraksha-shadow: 0 18px 50px rgb(0 0 0 / 24%);
-  --suraksha-focus: 0 0 0 3px rgb(169 201 194 / 24%);
+  --suraksha-bg: #070b0d;
+  --suraksha-bg-subtle: #0c1215;
+  --suraksha-surface: #11191d;
+  --suraksha-surface-raised: #172329;
+  --suraksha-surface-glass: rgb(17 25 29 / 72%);
+  --suraksha-border: #1f3138;
+  --suraksha-border-strong: #2d4752;
+  --suraksha-border-glow: rgb(94 234 212 / 32%);
+  --suraksha-text: #f0f7f6;
+  --suraksha-text-secondary: #9cb3b0;
+  --suraksha-text-muted: #657d7a;
+  --suraksha-river: #5eead4;
+  --suraksha-river-deep: #14b8a6;
+  --suraksha-river-cyan: #38bdf8;
+  --suraksha-warning: #f5b95f;
+  --suraksha-critical: #f2746b;
+  --suraksha-confirmed: #6ee7b7;
+  --suraksha-radius-sm: 10px;
+  --suraksha-radius-md: 14px;
+  --suraksha-radius-lg: 22px;
+  --suraksha-shadow: 0 24px 64px -12px rgb(0 0 0 / 55%), 0 0 1px 1px rgb(94 234 212 / 8%);
+  --suraksha-glow: 0 0 35px rgb(94 234 212 / 18%);
+  --suraksha-focus: 0 0 0 3px rgb(94 234 212 / 28%);
+  --suraksha-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --suraksha-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     scroll-behavior: auto !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;

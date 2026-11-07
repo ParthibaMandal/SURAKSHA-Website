@@ -1,5 +1,5 @@
 import { createServer } from 'node:http';
-import { readFile } from 'node:fs/promises';
+import { readFile, stat } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
@@ -27,6 +27,22 @@ const demoBridgeEnabled = process.env.SURAKSHA_DEMO_ENABLED === 'true'
   && process.env.NODE_ENV !== 'production'
   && isLoopbackHost;
 const backendTimeoutMs = 10_000;
+
+const MIME_TYPES = {
+  '.html': 'text/html; charset=utf-8',
+  '.css': 'text/css; charset=utf-8',
+  '.js': 'text/javascript; charset=utf-8',
+  '.mjs': 'text/javascript; charset=utf-8',
+  '.json': 'application/json; charset=utf-8',
+  '.svg': 'image/svg+xml',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.ico': 'image/x-icon',
+  '.txt': 'text/plain; charset=utf-8',
+  '.md': 'text/markdown; charset=utf-8',
+  '.webmanifest': 'application/manifest+json; charset=utf-8',
+};
 
 const json = (response, status, body) => {
   response.writeHead(status, {
@@ -146,23 +162,50 @@ const server = createServer(async (request, response) => {
     json(response, 405, { detail: 'Method not allowed.' });
     return;
   }
-  if (url.pathname !== '/' && url.pathname !== '/index.html') {
-    response.writeHead(404, { 'content-type': 'text/plain; charset=utf-8' });
-    response.end('Not found');
+
+  let requestedPath = url.pathname;
+  if (requestedPath === '/' || requestedPath === '') {
+    requestedPath = '/index.html';
+  }
+
+  const normalizedSafePath = path.normalize(requestedPath).replace(/^(\.\.[\/\\])+/, '');
+  let filePath = path.join(root, normalizedSafePath);
+
+  // Security guard against path traversal outside the root directory
+  if (!filePath.startsWith(root)) {
+    response.writeHead(403, { 'content-type': 'text/plain; charset=utf-8' });
+    response.end('Forbidden');
     return;
   }
+
   try {
-    const html = await readFile(path.join(root, 'index.html'));
+    const fileStat = await stat(filePath).catch(() => null);
+    if (!fileStat || !fileStat.isFile()) {
+      // If an extension-less route or client route is requested, fallback to index.html
+      if (!path.extname(filePath)) {
+        filePath = path.join(root, 'index.html');
+      } else {
+        response.writeHead(404, { 'content-type': 'text/plain; charset=utf-8' });
+        response.end('Not found');
+        return;
+      }
+    }
+
+    const ext = path.extname(filePath).toLowerCase();
+    const contentType = MIME_TYPES[ext] || 'application/octet-stream';
+    const content = await readFile(filePath);
+
     response.writeHead(200, {
-      'content-type': 'text/html; charset=utf-8',
+      'content-type': contentType,
       'x-content-type-options': 'nosniff',
       'referrer-policy': 'strict-origin-when-cross-origin',
-      'cache-control': 'no-cache',
+      'x-frame-options': 'SAMEORIGIN',
+      'cache-control': ext === '.html' ? 'no-cache' : 'public, max-age=3600',
     });
-    response.end(request.method === 'HEAD' ? undefined : html);
+    response.end(request.method === 'HEAD' ? undefined : content);
   } catch {
     response.writeHead(500, { 'content-type': 'text/plain; charset=utf-8' });
-    response.end('The SURAKSHA website could not be loaded.');
+    response.end('The SURAKSHA website asset could not be loaded.');
   }
 });
 

@@ -7,7 +7,8 @@ SURAKSHA is a flood intelligence and early-warning minor project. This repositor
 - Responsive public information site and page navigation in `index.html`.
 - Citizen and operations interface previews, with demo-only actions clearly labelled.
 - Synthetic Flood Lab scenarios. They demonstrate interface states and do not claim to run the scientific backend.
-- A small Node.js server that serves the site and proxies only read-only health and station-catalog requests to the SURAKSHA backend. The operator API key is not exposed to the browser.
+- A Node.js server that securely serves assets with MIME headers, path traversal guards, and proxies only read-only health and station-catalog requests to the SURAKSHA backend.
+- Standard web assets including PWA `manifest.json`, vector `favicon.svg`, and search crawler `robots.txt`.
 
 ## Run locally
 
@@ -15,6 +16,12 @@ Requires Node.js 20 or newer. No npm packages are required.
 
 ```powershell
 node server.mjs
+```
+
+To run asset and template validation tests:
+
+```powershell
+npm test
 ```
 
 Open `http://localhost:3000`. To connect read-only data from a running backend, set `SURAKSHA_BACKEND_URL` to its origin, for example `http://127.0.0.1:8000`, before starting the site server:
