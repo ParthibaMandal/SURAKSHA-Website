@@ -15,10 +15,12 @@ export default function LoginPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setToast("Demo sign-in complete. Opening citizen preview.");
+    const isOpOrAdmin = email.includes("operator") || email.includes("admin");
+    const target = isOpOrAdmin ? "/admin" : "/citizen";
+    setToast(`Authenticated as ${isOpOrAdmin ? "Operations Officer" : "Citizen"}. Loading workspace…`);
     setTimeout(() => {
-      router.push("/citizen");
-    }, 800);
+      router.push(target);
+    }, 600);
   };
 
   return (

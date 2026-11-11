@@ -1,57 +1,112 @@
-# SURAKSHA Flood Intelligence Website
+# SURAKSHA AI-Assisted Hydrological Intelligence & Flood Decision Support Platform
 
-SURAKSHA is a flood intelligence and early-warning minor project. This repository contains the public website and application interface. The scientific pipeline and FastAPI service live in the separate [`shouri123/SURAKSHA`](https://github.com/shouri123/SURAKSHA) repository.
+SURAKSHA is a full-stack, enterprise-grade flood intelligence and emergency response decision support platform. It bridges real-time river telemetry observations, hydrodynamic 1D-2D wave progression models, automated barrage sluice gate controls, citizen emergency rescue workflows, and supervisory human-verified CAP alert distribution.
+
+---
 
 ## Architecture & Technology Stack
 
-- **Framework**: Next.js 14 (App Router) with TypeScript & React 18
-- **Styling & UI**: Tailwind CSS with custom dark-tech hydrological palette & shadcn/ui component architecture
-- **3D WebGL Digital Twin**: Dedicated modular Three.js engine (`lib/three/digital-twin-engine.ts`) & React component (`components/three/DigitalTwinScene.tsx`) with topographic canyon mesh, flowing waves, station telemetry beacons, particles, orbit controls, and real-time surge simulation
-- **Motion & Interactions**: Framer Motion (3D perspective tilt cards, smooth view reveals) & GSAP (telemetry counter sweeps, radar wave pulses)
-- **Portals**:
-  - Public Information & Research Portal (Home, Platform, How It Works, Research, Alerts & Safety, Demo Lab, Study Area, Contact)
-  - Citizen Portal (`/citizen`): Basin dashboard, saved locations, alerts, safety checklists, SOS preview
-  - Operations Control Room (`/admin`): Real-time telemetry, 3-stage Supervisory Gates (Pre-run, Mid-run, Post-run), ensemble hydrographs, alert verification, and audit logs
-- **Backend Bridge**: Next.js Route Handlers proxying `/api/flood/health` and `/api/flood/stations` to the FastAPI backend (`SURAKSHA_BACKEND_URL`).
+### Frontend Application (`app/` & `components/`)
+* **Framework**: Next.js 14 (App Router) with TypeScript & React 18
+* **Styling & UI**: Tailwind CSS with custom dark-tech hydrological palette (`#070B0D` canvas, `#14B8A6` river teal, `#38BDF8` cyan, `#FBBF24` caution amber)
+* **3D WebGL Digital Twin**: Three.js WebGL simulation engine with procedural river canyon mesh, dynamic wave elevation shaders, and station telemetry beacons
+* **Motion & Interactions**: Framer Motion (perspective tilt cards, smooth view transitions) & GSAP (telemetry counter sweeps, radar wave pulses)
+* **Portals**:
+  * **Public Information Portal**: Home (`/`), About (`/about`), Platform Architecture (`/platform`), How It Works (`/how-it-works`), Basin Geography (`/study-area`), Scientific Methodology (`/methodology`), Publications (`/research`), Public Alerts (`/alerts-safety`), Interactive Flood Lab (`/demo-lab`), Contact (`/contact`).
+  * **Citizen Workspace** (`/citizen`): Personal safety dashboard, localized geofenced alerts, saved area management, evacuation checklists, and emergency SOS rescue dispatch.
+  * **Operations & Admin Console** (`/admin`): Real-time SITREP tactical map, multi-gate CAP approval inbox, hydrodynamic model forecasting, incident command lifecycle, telemetry sensor monitoring, barrage gate automation, and live SOS rescue triage board.
+  * **Authentication Surface** (`/auth`): Multi-role sign-in and registration (`/auth/login`, `/auth/register`).
 
-## Run locally
+### Backend Service (`backend/`)
+* **Framework**: Python 3.10+ / FastAPI with asynchronous ASGI execution
+* **Database & ORM**: SQLAlchemy 2.0 with MySQL 8.0+ dialect and automatic local SQLite fallback (`suraksha.db`)
+* **Security & Auth**: Bcrypt password hashing (12 rounds) and stateless JWT Bearer token authentication with Role-Based Access Control (`admin`, `operator`, `citizen`)
+* **Simulation Engine**: Hydrodynamic 1D-2D Saint-Venant wave progression solver with Courant condition validation and Jev boundary supervision
+* **Interactive OpenAPI Docs**: Swagger UI accessible at `http://127.0.0.1:8000/docs`
 
-Requires Node.js 20 or newer.
+### Database Engine (`database/`)
+* **Schema**: 12 normalized 3NF relational tables in `database/schema.sql` (Users, Saved Locations, Telemetry Stations, Observations, Gate Controls, Incidents, Analysis Runs, Alert Drafts, Alerts, SOS Requests, and Audit Events)
+* **Seed Data**: Production-grade initial fixtures in `database/seeds.sql`
 
-```powershell
+---
+
+## Documentation Deliverables
+
+* [`docs/DESIGN_ANALYSIS.md`](docs/DESIGN_ANALYSIS.md): Comprehensive screen inventory, feature catalog, user journeys, navigation architecture, and design tokens.
+* [`docs/SYSTEM_ARCHITECTURE.md`](docs/SYSTEM_ARCHITECTURE.md): Component topology, communication protocols, security guardrails, and error handling.
+* [`docs/DATABASE_SCHEMA.md`](docs/DATABASE_SCHEMA.md): Complete entity-relationship diagrams, constraints, data types, and index strategies.
+* [`docs/API_DOCUMENTATION.md`](docs/API_DOCUMENTATION.md): Complete REST endpoint specifications, request/response models, and status codes.
+* [`docs/DEVELOPMENT_ROADMAP.md`](docs/DEVELOPMENT_ROADMAP.md): Phased delivery checklist and milestone progress matrix.
+
+---
+
+## Quickstart Guide
+
+### 1. Start the FastAPI Backend
+
+```bash
+# Navigate to backend directory
+cd backend
+
+# Create and activate virtual environment
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
 # Install dependencies
+pip install -r requirements.txt
+
+# Run backend service (defaults to http://127.0.0.1:8000)
+python run.py
+```
+*API documentation will be live at `http://127.0.0.1:8000/docs`.*
+
+### 2. Connect MySQL (Optional Production Database)
+
+To run against a live MySQL 8.0+ server instead of the auto-provisioned SQLite database:
+
+```bash
+# 1. Create database in MySQL
+mysql -u root -p -e "CREATE DATABASE suraksha_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+
+# 2. Import schema & seed data
+mysql -u root -p suraksha_db < database/schema.sql
+mysql -u root -p suraksha_db < database/seeds.sql
+
+# 3. Configure backend environment
+export DATABASE_URL="mysql+pymysql://root:password@localhost:3306/suraksha_db"
+```
+
+### 3. Start the Next.js Frontend
+
+```bash
+# In the project root:
 npm install
-
-# Start Next.js development server
 npm run dev
-
-# Production build & start
-npm run build
-npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000). To connect read-only data from a running backend, set `SURAKSHA_BACKEND_URL` (default: `http://127.0.0.1:8000`).
+*Open [http://localhost:3000](http://localhost:3000) in your browser.*
 
-The original single-file static version is preserved as [`index.legacy.html`](index.legacy.html) and can still be run via `npm run legacy:server`.
+---
 
-The site checks `GET /api/v1/flood/health` and `GET /api/v1/flood/stations` through its same-origin server. The Flood Lab can also list and run the backend's synthetic scenario suite in an explicitly enabled local-only mode. That run path uses the backend operator key on the server; it is disabled on non-loopback hosts and in production. It calls the backend's synthetic demo route, which reports the deterministic offline Jev simulator, not live Jev. An unconfigured or unavailable backend is shown as such; the website will not substitute sample data and call it live.
+## System Test Runner
 
-### Run the backend-backed Flood Lab locally
+Verify that all database tables, initial fixtures, and REST endpoints are healthy:
 
-In a separate checkout of [`shouri123/SURAKSHA`](https://github.com/shouri123/SURAKSHA), use its supported Python version (currently specified in that repository's `pyproject.toml`) and install the API/model extras:
-
-```powershell
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -e ".[api,dl]"
-.\.venv\Scripts\python.exe -m uvicorn suraksha.disasters.flood.api.app:app --host 127.0.0.1 --port 8000
+```bash
+python3 scripts/test_system.py
 ```
 
-Copy `.env.example` to `.env` in this website folder. For the local demo run bridge only, generate a random 32+ character secret (for example, `python -c "import secrets; print(secrets.token_urlsafe(32))"`) and set the same `SURAKSHA_OPERATOR_API_KEY` in both the backend and website local environments. Then set `SURAKSHA_DEMO_ENABLED=true` in the website `.env` and start `node server.mjs`. The demo bridge is loopback-only, checks the browser origin, and is disabled under production settings. Never reuse a real provider API key as the operator secret, and do not use this demo bridge as production authentication.
+---
 
-## Project plan
+## Default Evaluation Accounts
 
-See [the end-to-end implementation roadmap](docs/SURAKSHA_IMPLEMENTATION_ROADMAP.md) for the complete scope, phases, data model, API integration sequence, security boundaries, and completion checklist.
+| Role | Email | Password | Intended Portal |
+|---|---|---|---|
+| **Incident Commander / Admin** | `admin@suraksha.gov.in` | `Password123!` | `/admin` |
+| **Operations Officer** | `operator@suraksha.gov.in` | `Password123!` | `/admin` |
+| **Citizen User** | `citizen@example.com` | `Password123!` | `/citizen` |
 
-## Important status
+---
 
-This is a research and coursework project, not an official government warning channel or emergency dispatch service. The current account, incident, alert-approval, and SOS screens are interface previews. They do not create accounts, store records, publish warnings, or contact responders. Do not enter real personal or emergency information.
+## Disclaimer
+SURAKSHA is a research and coursework decision support system. Automated recommendations and synthetic demonstrations require human supervisory verification before dispatching live public warnings.
