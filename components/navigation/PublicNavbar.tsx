@@ -11,6 +11,10 @@ export const PublicNavbar: React.FC = () => {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  if (pathname?.startsWith("/horizon")) {
+    return null;
+  }
+
   const links = [
     { href: "/", label: "Home" },
     { href: "/platform", label: "Platform" },

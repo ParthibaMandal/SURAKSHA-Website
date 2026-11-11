@@ -1,9 +1,17 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { BrandLogo } from "@/components/shared/BrandLogo";
 import { ExternalLink } from "lucide-react";
 
 export const PublicFooter: React.FC = () => {
+  const pathname = usePathname();
+
+  if (pathname?.startsWith("/horizon")) {
+    return null;
+  }
   return (
     <footer className="border-t border-[#2e4952]/40 bg-[#070b0e] text-[#9bb2af] text-sm mt-24">
       <div className="max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
