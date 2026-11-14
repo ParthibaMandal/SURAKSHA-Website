@@ -18,10 +18,6 @@ export default function HomePage() {
           {/* Left Hero Column */}
           <div className="lg:col-span-6 flex flex-col gap-6">
             <FadeIn delay={0.05}>
-              <div className="eyebrow">Flood Intelligence and Decision Support</div>
-            </FadeIn>
-
-            <FadeIn delay={0.1}>
               <h1 className="text-4xl sm:text-5xl lg:text-[54px] font-bold tracking-tight text-[#f0f7f6] leading-[1.14]">
                 Know the rise.
                 <br />
@@ -31,7 +27,7 @@ export default function HomePage() {
               </h1>
             </FadeIn>
 
-            <FadeIn delay={0.15}>
+            <FadeIn delay={0.1}>
               <p className="text-base text-[#9bb2af] leading-relaxed max-w-xl">
                 SURAKSHA integrates hydrological signals, geospatial evidence and response intelligence into one connected view for flood risk along the Ganga corridor.
               </p>
@@ -89,7 +85,7 @@ export default function HomePage() {
               </h2>
             </div>
             <p className="text-sm text-[#9bb2af] max-w-md leading-relaxed">
-              Riverine flooding requires structured telemetry, physical hydrodynamic modeling and supervisory verification across each stage of analysis.
+              Continuous telemetry streams, hydrodynamic modeling and human-in-the-loop checkpoints unified in a single operational view.
             </p>
           </div>
 
@@ -226,7 +222,7 @@ export default function HomePage() {
               </h2>
             </div>
             <p className="text-sm text-[#9bb2af] max-w-md leading-relaxed">
-              Incidents transition from preparedness through active surge to post-event evaluation. Operational views configure to each stage.
+              Workspaces adapt dynamically as river stage approaches and recedes from danger levels.
             </p>
           </div>
 
@@ -265,7 +261,7 @@ export default function HomePage() {
               </h2>
             </div>
             <p className="text-sm text-[#9bb2af] max-w-md leading-relaxed">
-              Three analytical gates verify sensor inputs, model consistency and alert claims before any output is recommended to emergency coordinators.
+              No alert or scenario output publishes without passing sensor integrity, mass conservation and human authorization.
             </p>
           </div>
 
@@ -311,7 +307,6 @@ export default function HomePage() {
         <FadeIn>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-5 space-y-6">
-              <div className="eyebrow">Study Context</div>
               <h2 className="text-3xl sm:text-4xl font-bold text-[#f0f7f6] tracking-tight">
                 Patna Study Section, Ganga Basin.
               </h2>

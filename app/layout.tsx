@@ -19,6 +19,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
+        />
+      </head>
       <body className="bg-[#03090c] text-[#f0f7f6] font-sans flex flex-col min-h-screen selection:bg-[#08a2be]/30 selection:text-[#f0f7f6]">
         <PublicNavbar />
         <main className="flex-1">{children}</main>
@@ -27,4 +35,3 @@ export default function RootLayout({
     </html>
   );
 }
-
