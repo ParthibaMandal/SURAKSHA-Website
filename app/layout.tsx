@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className="bg-[#03090c] text-[#f0f7f6] font-sans flex flex-col min-h-screen selection:bg-[#08a2be]/30 selection:text-[#f0f7f6]">
+      <body className="bg-suraksha-950 text-slate-100 flex flex-col min-h-screen selection:bg-cyan-500/30 selection:text-cyan-glow">
         <PublicNavbar />
         <main className="flex-1">{children}</main>
         <PublicFooter />

@@ -8,14 +8,14 @@ interface HydrologicalChartProps {
 
 export const HydrologicalChart: React.FC<HydrologicalChartProps> = ({ isSurge = false }) => {
   return (
-    <div className="w-full relative overflow-hidden rounded-lg border border-[#1c2c34] bg-[#071115] p-4">
-      <div className="flex items-center justify-between text-xs text-[#9bb2af] mb-2">
-        <span className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#08a2be]" />
-          Hydrological stage trend, 24h forecast envelope
+    <div className="w-full relative overflow-hidden rounded-xl border border-cyan-500/20 bg-suraksha-950/70 p-4">
+      <div className="flex items-center justify-between text-xs text-slate-400 mb-2 font-mono">
+        <span className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-cyan animate-pulse" />
+          HYDROLOGICAL STAGE TREND (24H FORECAST ENVELOPE)
         </span>
-        <span className={isSurge ? "text-[#f59e0b] font-semibold" : "text-[#08a2be] font-semibold"}>
-          {isSurge ? "Danger threshold watch" : "Nominal discharge"}
+        <span className={isSurge ? "text-amber-400 font-bold" : "text-teal-400"}>
+          {isSurge ? "DANGER CEILING APPROACHING" : "NOMINAL DISCHARGE"}
         </span>
       </div>
 

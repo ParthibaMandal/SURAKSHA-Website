@@ -9,20 +9,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      fontFamily: {
-        sans: ["'IBM Plex Sans'", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
-        mono: ["'IBM Plex Mono'", "ui-monospace", "monospace"],
-      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        brand: {
-          DEFAULT: "#08a2be",
-          hover: "#0bb6d5",
-          muted: "#0c262f",
-          border: "#174350",
-          text: "#03090c",
-        },
         suraksha: {
           950: "#03090c",
           900: "#061014",
