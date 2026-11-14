@@ -16,6 +16,14 @@ from datetime import datetime, timezone
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, PROJECT_ROOT)
 
+# Automatically re-execute using the project's virtual environment if available
+venv_python = os.path.join(PROJECT_ROOT, ".venv", "bin", "python3")
+if os.path.exists(venv_python) and not sys.prefix.startswith(os.path.join(PROJECT_ROOT, ".venv")):
+    try:
+        os.execv(venv_python, [venv_python] + sys.argv)
+    except OSError:
+        pass
+
 def print_header(title: str):
     print("\n" + "=" * 70)
     print(f" {title}")

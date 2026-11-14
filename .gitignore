@@ -50,5 +50,15 @@ Thumbs.db
 # TypeScript cache
 *.tsbuildinfo
 
+# MCP configuration
+mcp_config.json
+
+# Python & Databases
+__pycache__/
+*.py[cod]
+*$py.class
+*.db
+*.sqlite3
+
 # Gravitas session temporary files
 .gravitas/sessions/*/.tmp*
