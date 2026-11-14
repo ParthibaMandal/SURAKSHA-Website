@@ -12,42 +12,42 @@ export default function MethodologyPage() {
       family: "River gauge / CWC",
       use: "Stage, discharge and observed trend",
       meta: "Station ID, datum, units, timestamp, quality flag",
-      state: "Verify access",
+      state: "SAMPLE / VERIFY",
       stateType: "warning",
     },
     {
       family: "IMD / rainfall sources",
       use: "Observed and forecast precipitation context",
       meta: "Product, resolution, issue time, valid time",
-      state: "Verify access",
+      state: "SAMPLE / VERIFY",
       stateType: "warning",
     },
     {
       family: "Copernicus ERA5-Land",
       use: "Historical meteorological context",
       meta: "Variable, grid, time range, licence",
-      state: "Research dataset",
+      state: "RESEARCH DATASET",
       stateType: "neutral",
     },
     {
       family: "GloFAS",
       use: "Large-scale river discharge forecast context",
       meta: "Version, forecast cycle, lead time",
-      state: "Research dataset",
+      state: "RESEARCH DATASET",
       stateType: "neutral",
     },
     {
       family: "Sentinel-1 SAR",
       use: "Flood extent mapping under cloud cover",
       meta: "Acquisition time, orbit, processing chain",
-      state: "Verify pipeline",
+      state: "SAMPLE / VERIFY",
       stateType: "warning",
     },
     {
       family: "Terrain / DEM",
       use: "Topography and terrain-derived analysis",
       meta: "Product, resolution, vertical datum",
-      state: "Verify dataset",
+      state: "SAMPLE / VERIFY",
       stateType: "warning",
     },
   ];
@@ -56,40 +56,40 @@ export default function MethodologyPage() {
     <div className="max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 py-16 flex flex-col gap-12">
       <FadeIn>
         <div className="max-w-3xl">
-          <div className="eyebrow">Data & Methodology</div>
-          <h1 className="text-4xl sm:text-5xl font-black text-[#f0f7f6] tracking-tight">
+          <div className="eyebrow">DATA & METHODOLOGY</div>
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-[#D8CBB3] tracking-tight">
             Every signal needs a source and a timestamp.
           </h1>
-          <p className="text-base text-[#9bb2af] mt-4 leading-relaxed">
+          <p className="text-base text-[#A69B88] mt-4 leading-relaxed">
             The platform preserves data lineage from ingestion through model output. The table below outlines source families and their integration readiness.
           </p>
         </div>
       </FadeIn>
 
       <FadeIn delay={0.1}>
-        <div className="rounded-2xl border border-[#2e4952]/40 bg-[#0f171b]/80 p-6 space-y-4 overflow-hidden">
+        <div className="rounded-xl border border-[#D8CBB3]/15 bg-[#292925] p-6 space-y-4 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs font-mono">
               <thead>
-                <tr className="border-b border-[#2e4952]/50 text-[#9bb2af]">
+                <tr className="border-b border-[#D8CBB3]/15 text-[#A69B88] uppercase text-[10px]">
                   <th className="py-3 px-4">Source Family</th>
                   <th className="py-3 px-4">Potential Use</th>
                   <th className="py-3 px-4">Required Metadata</th>
                   <th className="py-3 px-4">Integration State</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1c2e35]">
+              <tbody className="divide-y divide-[#D8CBB3]/10">
                 {sources.map((s, idx) => (
-                  <tr key={idx} className="hover:bg-[#142329]/50">
-                    <td className="py-3 px-4 font-bold text-white font-sans">{s.family}</td>
-                    <td className="py-3 px-4 text-[#9bb2af]">{s.use}</td>
-                    <td className="py-3 px-4 text-[#627b77]">{s.meta}</td>
+                  <tr key={idx} className="hover:bg-[#33332E]/50">
+                    <td className="py-3 px-4 font-bold text-[#EDE4D3] font-sans">{s.family}</td>
+                    <td className="py-3 px-4 text-[#D8CBB3]">{s.use}</td>
+                    <td className="py-3 px-4 text-[#A69B88]">{s.meta}</td>
                     <td className="py-3 px-4">
                       <span
                         className={`px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${
                           s.stateType === "warning"
-                            ? "bg-amber-500/15 text-amber-300 border-amber-500/30"
-                            : "bg-[#142329] text-[#c7dbd7] border-[#2e4952]"
+                            ? "bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30"
+                            : "bg-[#33332E] text-[#D8CBB3] border-[#D8CBB3]/20"
                         }`}
                       >
                         {s.state}
@@ -105,19 +105,19 @@ export default function MethodologyPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <FadeIn delay={0.2}>
-          <div className="p-6 sm:p-8 rounded-2xl border border-[rgba(46,73,82,0.45)] bg-[rgba(15,23,27,0.78)] space-y-2">
-            <h3 className="text-lg font-bold text-white">Data states</h3>
-            <p className="text-xs text-[#9bb2af] leading-relaxed">
-              Observed, modelled, derived, manually entered and simulated records are visually distinct. A stale or unavailable source is never silently shown as current.
+          <div className="p-6 sm:p-8 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-2">
+            <h3 className="text-lg font-bold text-[#EDE4D3]">Explicit Data Provenance States</h3>
+            <p className="text-xs text-[#A69B88] leading-relaxed">
+              Observed (<span className="font-mono text-[#D8CBB3]">LIVE</span>), sample (<span className="font-mono text-[#D8CBB3]">SAMPLE</span>), synthetic (<span className="font-mono text-[#D8CBB3]">SYNTHETIC</span>), stale (<span className="font-mono text-[#D8CBB3]">STALE</span>), and unavailable (<span className="font-mono text-[#D8CBB3]">UNAVAILABLE</span>) records are visually distinct across all views.
             </p>
           </div>
         </FadeIn>
 
         <FadeIn delay={0.3}>
-          <div className="p-6 sm:p-8 rounded-2xl border border-[rgba(46,73,82,0.45)] bg-[rgba(15,23,27,0.78)] space-y-2">
-            <h3 className="text-lg font-bold text-white">Data lineage</h3>
-            <p className="text-xs text-[#9bb2af] leading-relaxed">
-              Retain source identifiers, retrieval timestamps, processing versions, units, spatial reference systems and transformation history throughout the lifecycle.
+          <div className="p-6 sm:p-8 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-2">
+            <h3 className="text-lg font-bold text-[#EDE4D3]">Data Lineage</h3>
+            <p className="text-xs text-[#A69B88] leading-relaxed">
+              Retains source identifiers, retrieval timestamps, processing versions, physical units, spatial reference systems, and transformation history throughout the lifecycle.
             </p>
           </div>
         </FadeIn>
@@ -125,4 +125,3 @@ export default function MethodologyPage() {
     </div>
   );
 }
-

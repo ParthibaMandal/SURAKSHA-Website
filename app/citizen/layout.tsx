@@ -1,9 +1,10 @@
 import React from "react";
 import { AppSidebar } from "@/components/navigation/AppSidebar";
+import { CommandTopBar } from "@/components/navigation/CommandTopBar";
 
 export const metadata = {
-  title: "Citizen Portal | SURAKSHA",
-  description: "Personalized river basin monitoring, local flood advisories, and emergency preparedness.",
+  title: "Citizen Flood-Safety Dashboard | SURAKSHA",
+  description: "Personalized river basin monitoring, human-approved flood advisories, and emergency preparedness.",
 };
 
 export default function CitizenLayout({
@@ -12,10 +13,12 @@ export default function CitizenLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] bg-suraksha-950">
+    <div className="flex min-h-[calc(100vh-4rem)] bg-[#1E1E1C] text-[#D8CBB3]">
       <AppSidebar role="citizen" />
-      <div className="flex-1 p-6 sm:p-8 overflow-y-auto">{children}</div>
+      <div className="flex-1 flex flex-col min-w-0">
+        <CommandTopBar workspace="CITIZEN" />
+        <div className="flex-1 p-5 sm:p-8 overflow-y-auto">{children}</div>
+      </div>
     </div>
   );
 }
-

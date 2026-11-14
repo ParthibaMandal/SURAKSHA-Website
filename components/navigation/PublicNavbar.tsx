@@ -16,16 +16,15 @@ export const PublicNavbar: React.FC = () => {
   }
 
   const links = [
-    { href: "/", label: "Home" },
     { href: "/platform", label: "Platform" },
-    { href: "/how-it-works", label: "How It Works" },
+    { href: "/how-it-works", label: "Capabilities" },
+    { href: "/study-area", label: "Study Area" },
     { href: "/research", label: "Research" },
-    { href: "/alerts-safety", label: "Alerts & Safety" },
     { href: "/demo-lab", label: "Demo Lab" },
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-[#1c2c34] bg-[#03090c]/90 backdrop-blur-md transition-colors">
+    <header className="sticky top-0 z-50 w-full border-b border-[#D8CBB3]/15 bg-[#1E1E1C]/95 backdrop-blur-md transition-colors">
       <div className="max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-6">
         {/* Brand Logo */}
         <BrandLogo />
@@ -38,13 +37,15 @@ export const PublicNavbar: React.FC = () => {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`relative py-1 text-xs font-medium transition-colors ${
-                  isActive ? "text-[#f0f7f6]" : "text-[#9bb2af] hover:text-[#f0f7f6]"
+                className={`relative py-1 text-xs font-semibold transition-colors ${
+                  isActive
+                    ? "text-[#EDE4D3]"
+                    : "text-[#A69B88] hover:text-[#D8CBB3]"
                 }`}
               >
                 {link.label}
                 {isActive && (
-                  <span className="absolute bottom-[-16px] left-0 right-0 h-[2px] bg-[#08a2be]" />
+                  <span className="absolute bottom-[-18px] left-0 right-0 h-[2px] bg-[#2F6BFF]" />
                 )}
               </Link>
             );
@@ -52,26 +53,19 @@ export const PublicNavbar: React.FC = () => {
         </nav>
 
         {/* Action Controls */}
-        <div className="hidden lg:flex items-center gap-3">
+        <div className="hidden lg:flex items-center gap-2.5">
           <Link href="/citizen">
             <Button variant="ghost" size="sm" className="text-xs">
-              Citizen View
+              Citizen Portal
             </Button>
           </Link>
           <Link href="/admin">
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-xs border-[#1c2c34] text-[#9bb2af] hover:text-[#f0f7f6]"
-            >
-              Operations Portal
+            <Button variant="outline" size="sm" className="text-xs">
+              Command Centre
             </Button>
           </Link>
           <Link href="/auth/login">
-            <Button
-              size="sm"
-              className="text-xs font-semibold"
-            >
+            <Button size="sm" className="text-xs font-semibold bg-[#2F6BFF] text-white hover:bg-[#4B80FF]">
               Sign In
             </Button>
           </Link>
@@ -81,7 +75,7 @@ export const PublicNavbar: React.FC = () => {
         <div className="md:hidden flex items-center gap-2">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 rounded border border-[#1c2c34] bg-[#071115] text-[#9bb2af] hover:text-white"
+            className="p-2 rounded-lg border border-[#D8CBB3]/20 bg-[#292925] text-[#D8CBB3] hover:text-[#EDE4D3]"
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -91,24 +85,24 @@ export const PublicNavbar: React.FC = () => {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-b border-[#1c2c34] bg-[#071115] px-4 pt-3 pb-6 space-y-3">
+        <div className="md:hidden border-b border-[#D8CBB3]/15 bg-[#292925] px-4 pt-3 pb-6 space-y-3">
           <div className="flex flex-col space-y-1">
             {links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`px-3 py-2 rounded text-xs font-medium ${
+                className={`px-3 py-2 rounded-lg text-xs font-semibold ${
                   pathname === link.href
-                    ? "bg-[#08a2be]/15 text-[#f0f7f6] border border-[#08a2be]/30"
-                    : "text-[#9bb2af] hover:text-white hover:bg-[#0f1d24]"
+                    ? "bg-[#2F6BFF]/15 text-[#EDE4D3] border border-[#2F6BFF]/40"
+                    : "text-[#A69B88] hover:text-[#D8CBB3] hover:bg-[#33332E]"
                 }`}
               >
                 {link.label}
               </Link>
             ))}
           </div>
-          <div className="pt-4 border-t border-[#1c2c34] flex flex-col gap-2">
+          <div className="pt-4 border-t border-[#D8CBB3]/15 flex flex-col gap-2">
             <Link href="/citizen" onClick={() => setMobileMenuOpen(false)}>
               <Button variant="outline" className="w-full text-xs justify-center">
                 Citizen Portal
@@ -116,7 +110,7 @@ export const PublicNavbar: React.FC = () => {
             </Link>
             <Link href="/admin" onClick={() => setMobileMenuOpen(false)}>
               <Button variant="outline" className="w-full text-xs justify-center">
-                Operations Portal
+                Operations Command Centre
               </Button>
             </Link>
             <Link href="/auth/login" onClick={() => setMobileMenuOpen(false)}>

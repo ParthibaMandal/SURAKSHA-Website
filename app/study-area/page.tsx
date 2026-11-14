@@ -14,51 +14,54 @@ export default function StudyAreaPage() {
     <div className="max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 py-16 flex flex-col gap-12">
       <FadeIn>
         <div className="max-w-3xl">
-          <div className="eyebrow">Study Area</div>
-          <h1 className="text-4xl sm:text-5xl font-black text-[#f0f7f6] tracking-tight">
+          <div className="eyebrow">STUDY AREA CONTEXT</div>
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-[#D8CBB3] tracking-tight">
             A focused starting point in the Ganga corridor.
           </h1>
-          <p className="text-base text-[#9bb2af] mt-4 leading-relaxed">
-            The initial study context centres on riverine flood risk in Bihar, particularly around Patna. Map boundaries and station coverage shown here are illustrative until verified against configured geospatial data.
+          <p className="text-base text-[#A69B88] mt-4 leading-relaxed">
+            The initial study context centres on riverine flood risk in Bihar, particularly around Patna (base datum 49.82 m). Map boundaries and station coverage shown here are illustrative schematic representations.
           </p>
         </div>
       </FadeIn>
 
-      <FadeIn delay={0.2}>
-        <div className="rounded-2xl border border-[#2e4952] overflow-hidden shadow-2xl relative h-[440px]">
+      <FadeIn delay={0.15}>
+        <div className="rounded-xl border border-[#D8CBB3]/15 bg-[#292925] overflow-hidden shadow-2xl relative h-[440px]">
           <TacticalMapSvg />
-          <div className="absolute bottom-3 left-4 right-4 z-10 px-3.5 py-2 rounded-xl bg-[#091418]/85 border border-[#5eead4]/25 backdrop-blur-md text-xs font-mono text-center text-[#9bb2af]">
-            Schematic overview · Ganga corridor / Patna focus sector
+          <div className="absolute bottom-3 left-4 right-4 z-10 px-3.5 py-2 rounded-lg bg-[#1E1E1C]/95 border border-[#D8CBB3]/25 text-xs font-mono text-center text-[#D8CBB3]">
+            SCHEMATIC OVERVIEW · GANGA CORRIDOR / PATNA FOCUS SECTOR (ILLUSTRATIVE MAP, NOT LIVE)
           </div>
         </div>
       </FadeIn>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="p-6 rounded-2xl border border-[rgba(46,73,82,0.45)] bg-[rgba(15,23,27,0.78)] space-y-2">
-          <h3 className="text-lg font-bold text-white">Primary context</h3>
-          <p className="text-xs text-[#9bb2af] leading-relaxed">
+        <div className="p-6 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-2">
+          <h3 className="text-lg font-bold text-[#EDE4D3]">Primary Context</h3>
+          <p className="text-xs text-[#A69B88] leading-relaxed">
             Ganga river corridor · Patna / Bihar. The operational study extent is declared from configured geospatial boundaries and monitored river stations.
           </p>
         </div>
 
-        <div className="p-6 rounded-2xl border border-[rgba(46,73,82,0.45)] bg-[rgba(15,23,27,0.78)] space-y-2">
-          <h3 className="text-lg font-bold text-white">Upstream context</h3>
-          <p className="text-xs text-[#9bb2af] leading-relaxed">
-            Catchment, precipitation and cryosphere indicators may inform research questions. They appear in an operational workflow when data provenance, temporal coverage and physical relevance are documented.
+        <div className="p-6 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-2">
+          <h3 className="text-lg font-bold text-[#EDE4D3]">Upstream Tributary Context</h3>
+          <p className="text-xs text-[#A69B88] leading-relaxed">
+            Sone, Gandak, and Punpun catchment inflows and precipitation indicators inform ensemble stage projections when data provenance and temporal coverage are verified.
           </p>
         </div>
       </div>
 
       {/* River Stations Array */}
-      <FadeIn delay={0.3}>
-        <div className="rounded-2xl border border-[#2e4952]/40 bg-[#0f171b]/80 p-6 space-y-4">
-          <h3 className="text-base font-bold text-white flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-[#5eead4]" /> Monitored Gauging Stations
-          </h3>
+      <FadeIn delay={0.25}>
+        <div className="rounded-xl border border-[#D8CBB3]/15 bg-[#292925] p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-base font-bold text-[#EDE4D3] flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-[#2F6BFF]" /> Monitored Gauging Stations
+            </h3>
+            <span className="text-xs font-mono text-[#A69B88]">DATA: SAMPLE</span>
+          </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs font-mono">
               <thead>
-                <tr className="border-b border-[#2e4952]/50 text-[#9bb2af]">
+                <tr className="border-b border-[#D8CBB3]/15 text-[#A69B88] uppercase text-[10px]">
                   <th className="py-2.5 px-3">Station ID</th>
                   <th className="py-2.5 px-3">Name</th>
                   <th className="py-2.5 px-3">Basin</th>
@@ -68,19 +71,19 @@ export default function StudyAreaPage() {
                   <th className="py-2.5 px-3">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1c2e35]">
+              <tbody className="divide-y divide-[#D8CBB3]/10">
                 {STATIONS.map((st) => (
-                  <tr key={st.id} className="hover:bg-[#142329]/50">
-                    <td className="py-2.5 px-3 text-[#5eead4] font-bold">{st.id}</td>
-                    <td className="py-2.5 px-3 font-semibold text-white">{st.name}</td>
-                    <td className="py-2.5 px-3 text-[#9bb2af]">{st.basin}</td>
-                    <td className="py-2.5 px-3 font-bold text-white">{st.currentStage.toFixed(2)} m</td>
-                    <td className="py-2.5 px-3 text-[#627b77]">
-                      {st.warningLevel.toFixed(1)} / {st.dangerLevel.toFixed(1)} m
+                  <tr key={st.id} className="hover:bg-[#33332E]/50">
+                    <td className="py-2.5 px-3 text-[#2F6BFF] font-bold">{st.id}</td>
+                    <td className="py-2.5 px-3 font-semibold text-[#EDE4D3] font-sans">{st.name}</td>
+                    <td className="py-2.5 px-3 text-[#D8CBB3]">{st.basin}</td>
+                    <td className="py-2.5 px-3 font-bold text-[#EDE4D3]">{st.currentStage.toFixed(2)} m</td>
+                    <td className="py-2.5 px-3 text-[#A69B88]">
+                      {st.warningLevel.toFixed(1)} / <span className="text-[#EF4444]">{st.dangerLevel.toFixed(1)} m</span>
                     </td>
-                    <td className="py-2.5 px-3 text-[#9bb2af]">{st.trend}</td>
+                    <td className="py-2.5 px-3 text-[#D8CBB3]">{st.trend}</td>
                     <td className="py-2.5 px-3">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-teal-500/20 text-teal-300 border border-teal-500/30">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#2F6BFF]/15 text-[#2F6BFF] border border-[#2F6BFF]/30">
                         {st.status}
                       </span>
                     </td>

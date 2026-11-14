@@ -2,7 +2,7 @@ import React from "react";
 import { Home, AlertTriangle, CheckCircle2 } from "lucide-react";
 
 export const metadata = {
-  title: "Safety Centre | SURAKSHA",
+  title: "Flood Preparedness & Safety Centre | SURAKSHA",
   description: "Practical preparedness guidelines for riverine and urban flood events.",
 };
 
@@ -10,44 +10,55 @@ export default function CitizenSafetyPage() {
   return (
     <div className="space-y-6">
       {/* Heading */}
-      <div className="pb-4 border-b border-[#2e4952]/30">
+      <div className="pb-4 border-b border-[#D8CBB3]/15">
         <div className="eyebrow">CITIZEN WORKSPACE</div>
-        <h1 className="text-3xl font-black text-white">Safety Centre</h1>
-        <p className="text-xs text-[#9bb2af] mt-1">
-          Practical preparedness guidelines for riverine and urban flood events.
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#D8CBB3] tracking-tight">
+          Flood Preparedness Checklist & Safety Guide
+        </h1>
+        <p className="text-xs text-[#A69B88] mt-1">
+          Practical pre-event, during-event, and post-event safety steps for riverine and urban flood conditions.
         </p>
       </div>
 
       {/* 3 Safety Phase Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <article className="p-6 rounded-2xl border border-[rgba(46,73,82,0.45)] bg-[rgba(15,23,27,0.78)] space-y-3">
-          <div className="w-10 h-10 rounded-xl bg-[#162e34] border border-[#5eead4]/30 grid place-items-center text-[#5eead4]">
+        <article className="p-6 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-3">
+          <div className="w-10 h-10 rounded-xl bg-[#2F6BFF]/15 border border-[#2F6BFF]/30 grid place-items-center text-[#2F6BFF]">
             <Home className="w-5 h-5" />
           </div>
-          <h3 className="text-lg font-bold text-white">Before a flood</h3>
-          <p className="text-xs text-[#9bb2af] leading-relaxed">
-            Keep essential documents in waterproof bags, store emergency drinking water and medicines, and identify elevated routes.
-          </p>
+          <div className="text-[10px] font-mono text-[#2F6BFF] uppercase font-bold">PHASE 01 · PRE-EVENT</div>
+          <h3 className="text-lg font-bold text-[#EDE4D3]">Before a Flood</h3>
+          <ul className="text-xs text-[#A69B88] leading-relaxed space-y-2 list-disc pl-4">
+            <li>Seal identity documents, land records, and prescriptions in waterproof pouches.</li>
+            <li>Store 72 hours of clean drinking water, dry rations, and a charged flashlight.</li>
+            <li>Verify the elevated evacuation route for your ward in Patna or Danapur.</li>
+          </ul>
         </article>
 
-        <article className="p-6 rounded-2xl border border-[rgba(46,73,82,0.45)] bg-[rgba(15,23,27,0.78)] space-y-3">
-          <div className="w-10 h-10 rounded-xl bg-[#2e2614] border border-[#fbbf24]/30 grid place-items-center text-[#fbbf24]">
+        <article className="p-6 rounded-xl border border-[#F59E0B]/30 bg-[#292925] space-y-3">
+          <div className="w-10 h-10 rounded-xl bg-[#F59E0B]/15 border border-[#F59E0B]/30 grid place-items-center text-[#F59E0B]">
             <AlertTriangle className="w-5 h-5" />
           </div>
-          <h3 className="text-lg font-bold text-white">During a flood</h3>
-          <p className="text-xs text-[#9bb2af] leading-relaxed">
-            Never walk, swim or drive through moving water. Move to upper levels or designated shelters when advised.
-          </p>
+          <div className="text-[10px] font-mono text-[#F59E0B] uppercase font-bold">PHASE 02 · DURING EVENT</div>
+          <h3 className="text-lg font-bold text-[#EDE4D3]">During a Flood</h3>
+          <ul className="text-xs text-[#A69B88] leading-relaxed space-y-2 list-disc pl-4">
+            <li>Never walk, swim, or drive through moving floodwater over embankments or underpasses.</li>
+            <li>Disconnect main electrical switchgear if water approaches ground-floor sockets.</li>
+            <li>Move immediately to upper floors or designated municipal flood shelters when advised.</li>
+          </ul>
         </article>
 
-        <article className="p-6 rounded-2xl border border-[rgba(46,73,82,0.45)] bg-[rgba(15,23,27,0.78)] space-y-3">
-          <div className="w-10 h-10 rounded-xl bg-[#133328] border border-[#34d399]/30 grid place-items-center text-[#34d399]">
+        <article className="p-6 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-3">
+          <div className="w-10 h-10 rounded-xl bg-[#33332E] border border-[#D8CBB3]/30 grid place-items-center text-[#D8CBB3]">
             <CheckCircle2 className="w-5 h-5" />
           </div>
-          <h3 className="text-lg font-bold text-white">After a flood</h3>
-          <p className="text-xs text-[#9bb2af] leading-relaxed">
-            Return only when local authorities give the all-clear. Beware of submerged electrical lines and contaminated water sources.
-          </p>
+          <div className="text-[10px] font-mono text-[#D8CBB3] uppercase font-bold">PHASE 03 · POST-EVENT</div>
+          <h3 className="text-lg font-bold text-[#EDE4D3]">After a Flood</h3>
+          <ul className="text-xs text-[#A69B88] leading-relaxed space-y-2 list-disc pl-4">
+            <li>Return home only after civil defence authorities issue an official all-clear bulletin.</li>
+            <li>Inspect walls and foundations for waterlogging settlement and avoid downed power lines.</li>
+            <li>Boil or chlorinate drinking water until municipal supply pipelines are certified safe.</li>
+          </ul>
         </article>
       </div>
 

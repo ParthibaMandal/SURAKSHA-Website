@@ -65,8 +65,8 @@ export const FallbackCanvas2D: React.FC<FallbackCanvas2DProps> = ({ isSurge = fa
         return { x: cx + rx * scale, y: cy - pz * scale };
       };
 
-      // Canyon terrain wireframe
-      ctx.strokeStyle = "rgba(46, 115, 126, 0.45)";
+      // Sand terrain wireframe
+      ctx.strokeStyle = "rgba(216, 203, 179, 0.28)";
       ctx.lineWidth = 1;
 
       for (let y = -14; y <= 14; y += 2) {
@@ -81,8 +81,8 @@ export const FallbackCanvas2D: React.FC<FallbackCanvas2DProps> = ({ isSurge = fa
         ctx.stroke();
       }
 
-      // Procedural river wave stream
-      ctx.strokeStyle = isSurge ? "rgba(251, 191, 36, 0.95)" : "rgba(94, 234, 212, 0.95)";
+      // Procedural river wave stream (Electric Blue nominal, Amber surge)
+      ctx.strokeStyle = isSurge ? "rgba(245, 158, 11, 0.95)" : "rgba(47, 107, 255, 0.95)";
       ctx.lineWidth = isSurge ? 4 : 3;
       ctx.beginPath();
       for (let x = -26; x <= 26; x += 1.5) {
@@ -96,14 +96,14 @@ export const FallbackCanvas2D: React.FC<FallbackCanvas2DProps> = ({ isSurge = fa
 
       // Station beacons
       const beacons = [
-        { x: -14, y: 0, label: "Gauge 01", color: "#5eead4" },
-        { x: 2, y: 1, label: "Patna Sector", color: "#38bdf8" },
-        { x: 16, y: -1, label: "Gauge 04", color: "#fbbf24" },
+        { x: -14, y: 0, label: "STN-SON-01", color: "#F59E0B" },
+        { x: 2, y: 1, label: "STN-PAT-01", color: "#2F6BFF" },
+        { x: 16, y: -1, label: "STN-GAN-01", color: "#D8CBB3" },
       ];
 
       beacons.forEach((b) => {
         const p = project(b.x, b.y, 0);
-        const pulse = 10 + Math.sin(t * 3) * 6;
+        const pulse = 10 + Math.sin(t * 3) * 5;
 
         ctx.strokeStyle = b.color;
         ctx.lineWidth = 1.5;
@@ -111,13 +111,13 @@ export const FallbackCanvas2D: React.FC<FallbackCanvas2DProps> = ({ isSurge = fa
         ctx.arc(p.x, p.y, pulse, 0, Math.PI * 2);
         ctx.stroke();
 
-        ctx.fillStyle = "#ffffff";
+        ctx.fillStyle = "#EDE4D3";
         ctx.beginPath();
         ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.fillStyle = "#94a3b8";
-        ctx.font = "10px monospace";
+        ctx.fillStyle = "#D8CBB3";
+        ctx.font = "10px 'JetBrains Mono', monospace";
         ctx.fillText(b.label, p.x + 8, p.y - 8);
       });
     };
@@ -134,4 +134,3 @@ export const FallbackCanvas2D: React.FC<FallbackCanvas2DProps> = ({ isSurge = fa
 
   return <canvas ref={canvasRef} className="w-full h-full block cursor-grab active:cursor-grabbing" />;
 };
-

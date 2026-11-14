@@ -40,7 +40,7 @@ export class DigitalTwinEngine {
 
     // Scene & Fog
     this.scene = new THREE.Scene();
-    this.scene.fog = new THREE.FogExp2(0x061014, 0.022);
+    this.scene.fog = new THREE.FogExp2(0x1e1e1c, 0.02);
 
     // Camera
     this.camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
@@ -56,14 +56,14 @@ export class DigitalTwinEngine {
     this.container.appendChild(this.renderer.domElement);
 
     // Lighting
-    const ambientLight = new THREE.AmbientLight(0x0f2b30, 1.5);
+    const ambientLight = new THREE.AmbientLight(0x33332e, 1.8);
     this.scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0x5eead4, 2.2);
+    const dirLight = new THREE.DirectionalLight(0xd8cbb3, 2.0);
     dirLight.position.set(20, -20, 30);
     this.scene.add(dirLight);
 
-    const pointLight = new THREE.PointLight(0x38bdf8, 2.8, 60);
+    const pointLight = new THREE.PointLight(0x2f6bff, 2.8, 60);
     pointLight.position.set(0, 0, 12);
     this.scene.add(pointLight);
 
@@ -82,10 +82,10 @@ export class DigitalTwinEngine {
     terrainGeo.computeVertexNormals();
 
     const terrainMat = new THREE.MeshStandardMaterial({
-      color: 0x0f2930,
+      color: 0x6b6355,
       wireframe: true,
-      emissive: 0x071b20,
-      roughness: 0.8,
+      emissive: 0x292925,
+      roughness: 0.85,
     });
     this.terrain = new THREE.Mesh(terrainGeo, terrainMat);
     this.terrain.rotation.z = this.rotZ;
@@ -94,13 +94,13 @@ export class DigitalTwinEngine {
     // Flowing Water Mesh
     this.waterGeo = new THREE.PlaneGeometry(54, 13, 44, 16);
     const waterMat = new THREE.MeshStandardMaterial({
-      color: 0x2dd4bf,
-      emissive: 0x14b8a6,
-      emissiveIntensity: 0.6,
+      color: 0x2f6bff,
+      emissive: 0x1d4ed8,
+      emissiveIntensity: 0.55,
       transparent: true,
-      opacity: 0.85,
-      roughness: 0.15,
-      metalness: 0.35,
+      opacity: 0.88,
+      roughness: 0.2,
+      metalness: 0.3,
     });
     this.water = new THREE.Mesh(this.waterGeo, waterMat);
     this.water.position.set(0, 0, -2.6);
@@ -125,9 +125,9 @@ export class DigitalTwinEngine {
 
   private createMarkers() {
     const stations = [
-      { x: -15, y: -0.4, color: 0x5eead4, label: "Upstream Gauge (Son)" },
-      { x: 2, y: 0.6, color: 0x38bdf8, label: "Patna Sector Confluence" },
-      { x: 17, y: -0.8, color: 0xfbbf24, label: "Downstream Station (Gandak)" },
+      { x: -15, y: -0.4, color: 0xd8cbb3, label: "Upstream Gauge (Son)" },
+      { x: 2, y: 0.6, color: 0x2f6bff, label: "Patna Sector Confluence" },
+      { x: 17, y: -0.8, color: 0xf59e0b, label: "Downstream Station (Gandak)" },
     ];
 
     stations.forEach((st) => {
@@ -176,10 +176,10 @@ export class DigitalTwinEngine {
     }
     pGeo.setAttribute("position", new THREE.BufferAttribute(pPos, 3));
     const pMat = new THREE.PointsMaterial({
-      color: 0x5eead4,
-      size: 0.35,
+      color: 0xd8cbb3,
+      size: 0.32,
       transparent: true,
-      opacity: 0.65,
+      opacity: 0.5,
     });
     this.particles = new THREE.Points(pGeo, pMat);
     this.scene.add(this.particles);
@@ -317,11 +317,11 @@ export class DigitalTwinEngine {
       this.water.position.z += (targetZ - this.water.position.z) * 0.08;
       const wMat = this.water.material as THREE.MeshStandardMaterial;
       if (this.isSurge) {
-        wMat.color.setHex(0xfbbf24);
+        wMat.color.setHex(0xf59e0b);
         wMat.emissive.setHex(0xd97706);
       } else {
-        wMat.color.setHex(0x2dd4bf);
-        wMat.emissive.setHex(0x14b8a6);
+        wMat.color.setHex(0x2f6bff);
+        wMat.emissive.setHex(0x1d4ed8);
       }
     }
 

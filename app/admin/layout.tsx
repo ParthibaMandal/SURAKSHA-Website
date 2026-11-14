@@ -1,9 +1,10 @@
 import React from "react";
 import { AppSidebar } from "@/components/navigation/AppSidebar";
+import { CommandTopBar } from "@/components/navigation/CommandTopBar";
 
 export const metadata = {
-  title: "Operations Portal | SURAKSHA",
-  description: "Hydrological early warning control room, supervisory gate verification, and telemetry oversight.",
+  title: "Operations Command Centre | SURAKSHA",
+  description: "Hydrological early warning command centre, supervisory gate verification, and telemetry oversight.",
 };
 
 export default function AdminLayout({
@@ -12,10 +13,12 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] bg-suraksha-950">
+    <div className="flex flex-col lg:flex-row min-h-[calc(100vh-4rem)] bg-[#1E1E1C] text-[#D8CBB3]">
       <AppSidebar role="admin" />
-      <div className="flex-1 p-6 sm:p-8 overflow-y-auto">{children}</div>
+      <div className="flex-1 flex flex-col min-w-0">
+        <CommandTopBar />
+        <div className="flex-1 p-5 sm:p-8 overflow-y-auto">{children}</div>
+      </div>
     </div>
   );
 }
-

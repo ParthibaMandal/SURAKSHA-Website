@@ -3,19 +3,19 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded border px-2.5 py-0.5 text-xs font-medium transition-colors select-none",
+  "inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-mono font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-[#2F6BFF] select-none",
   {
     variants: {
       variant: {
         default:
-          "border-[#08a2be]/30 bg-[#08a2be]/10 text-[#08a2be]",
+          "bg-[#2F6BFF]/15 text-[#2F6BFF] border-[#2F6BFF]/35",
         secondary:
-          "border-[#1c2c34] bg-[#0f1d24] text-[#9bb2af]",
+          "bg-[#33332E] text-[#D8CBB3] border-[#D8CBB3]/18",
         destructive:
-          "border-[#ef4444]/30 bg-[#ef4444]/10 text-[#fca5a5]",
+          "bg-[#EF4444]/18 text-[#F87171] border-[#EF4444]/40",
         warning:
-          "border-[#f59e0b]/30 bg-[#f59e0b]/10 text-[#fef08a]",
-        outline: "border-[#1c2c34] text-[#9bb2af]",
+          "bg-[#F59E0B]/18 text-[#FBBF24] border-[#F59E0B]/40",
+        outline: "text-[#A69B88] border-[#D8CBB3]/20",
       },
     },
     defaultVariants: {
@@ -33,4 +33,3 @@ function Badge({ className, variant, ...props }: BadgeProps) {
 }
 
 export { Badge, badgeVariants };
-

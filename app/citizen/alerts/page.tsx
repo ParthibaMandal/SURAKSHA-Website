@@ -1,79 +1,112 @@
 import React from "react";
-import Link from "next/link";
+import { ShieldCheck } from "lucide-react";
 
 export const metadata = {
-  title: "My Alerts | SURAKSHA",
-  description: "Published alert records relevant to your saved locations.",
+  title: "Published Advisories & Alert History | SURAKSHA",
+  description: "Human-approved alert records relevant to your saved locations.",
 };
 
 export default function CitizenAlertsPage() {
   return (
     <div className="space-y-6">
       {/* Heading */}
-      <div className="pb-4 border-b border-[#2e4952]/30">
+      <div className="pb-4 border-b border-[#D8CBB3]/15">
         <div className="eyebrow">CITIZEN WORKSPACE</div>
-        <h1 className="text-3xl font-black text-white">My Alerts</h1>
-        <p className="text-xs text-[#9bb2af] mt-1">
-          Published alert records relevant to your saved locations. Internal recommendations require verification before public release.
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#D8CBB3] tracking-tight">
+          Published Advisories & Alert History
+        </h1>
+        <p className="text-xs text-[#A69B88] mt-1">
+          Only human-approved public advisories appear below. Internal automated recommendations require commander verification before release.
         </p>
       </div>
 
       {/* Alert History Panel */}
-      <div className="p-6 rounded-2xl border border-[rgba(46,73,82,0.45)] bg-[rgba(15,23,27,0.78)] space-y-4">
-        <div className="flex items-center justify-between pb-3 border-b border-[#2e4952]/30">
-          <h3 className="text-sm font-bold text-white">Alert history</h3>
-          <span className="text-xs font-mono text-[#627b77]">2 Records</span>
+      <div className="p-6 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-[#D8CBB3]/12">
+          <h3 className="text-sm font-bold text-[#D8CBB3]">Published Advisory Feed</h3>
+          <span className="text-xs font-mono text-[#2F6BFF]">3 Records · SAMPLE</span>
         </div>
 
-        <div className="divide-y divide-[#2e4952]/30">
-          <div className="py-3 flex items-center justify-between gap-4">
-            <div>
-              <strong className="text-xs text-white block">Advisory: Elevated stage downstream</strong>
-              <small className="text-[11px] text-[#859e9a]">Ganga basin sample record</small>
+        <div className="divide-y divide-[#D8CBB3]/10">
+          <div className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 text-[10px] font-mono text-[#2F6BFF] uppercase">
+                <ShieldCheck className="w-3.5 h-3.5" /> Authorized by Commander-01 · CAP-2026-PAT-09
+              </div>
+              <strong className="text-sm text-[#EDE4D3] block">
+                Advisory: Elevated River Stage Downstream (Patna Lowland Corridor)
+              </strong>
+              <small className="text-xs text-[#A69B88] block">
+                06 Nov 2026 · 14:20 UTC · Forecast stage 50.65 m (Warning threshold 50.50 m)
+              </small>
             </div>
-            <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-amber-500/15 text-amber-300 border border-amber-500/30">
+            <span className="px-2.5 py-1 rounded text-[10px] font-mono font-bold uppercase bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/30 self-start sm:self-center">
               Advisory
             </span>
           </div>
 
-          <div className="py-3 flex items-center justify-between gap-4">
-            <div>
-              <strong className="text-xs text-white block">Clearance: Patna Sector Normal</strong>
-              <small className="text-[11px] text-[#859e9a]">All river telemetry within baseline limits</small>
+          <div className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 text-[10px] font-mono text-[#A69B88] uppercase">
+                CAP-2026-PAT-08 · Status Update
+              </div>
+              <strong className="text-sm text-[#EDE4D3] block">
+                Clearance: Gandhighat Reach Within Normal Stage Bounds
+              </strong>
+              <small className="text-xs text-[#A69B88] block">
+                05 Nov 2026 · 09:00 UTC · Observed stage 49.40 m
+              </small>
             </div>
-            <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-teal-500/15 text-teal-300 border border-teal-500/30">
+            <span className="px-2.5 py-1 rounded text-[10px] font-mono font-bold uppercase bg-[#2F6BFF]/15 text-[#2F6BFF] border border-[#2F6BFF]/30 self-start sm:self-center">
               Normal
+            </span>
+          </div>
+
+          <div className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 text-[10px] font-mono text-[#A69B88] uppercase">
+                CAP-2026-SON-04 · Archived Bulletin
+              </div>
+              <strong className="text-sm text-[#EDE4D3] block">
+                Watch: Upper Sone Catchment Heavy Precipitation Notice
+              </strong>
+              <small className="text-xs text-[#A69B88] block">
+                02 Nov 2026 · 18:30 UTC · Resolved without embankment breach
+              </small>
+            </div>
+            <span className="px-2.5 py-1 rounded text-[10px] font-mono font-bold uppercase bg-[#33332E] text-[#D8CBB3] border border-[#D8CBB3]/20 self-start sm:self-center">
+              Archived
             </span>
           </div>
         </div>
       </div>
 
-      {/* Understanding Alert Levels Panel */}
-      <div className="p-6 rounded-2xl border border-[rgba(46,73,82,0.45)] bg-[rgba(15,23,27,0.78)] space-y-5">
-        <div className="flex items-center justify-between pb-3 border-b border-[#2e4952]/30">
-          <h3 className="text-sm font-bold text-white">Understanding Alert Levels</h3>
-          <span className="pill text-[10px]">LIFECYCLE</span>
+      {/* Understanding Alert Governance Panel */}
+      <div className="p-6 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-5">
+        <div className="flex items-center justify-between pb-3 border-b border-[#D8CBB3]/12">
+          <h3 className="text-sm font-bold text-[#D8CBB3]">Understanding Alert Governance</h3>
+          <span className="pill text-[10px]">CAP v1.2 WORKFLOW</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="p-4 rounded-xl border border-[#2e4952]/40 bg-[#091418]/60 space-y-1.5">
-            <strong className="text-xs font-bold text-[#5eead4] block">01 · Draft</strong>
-            <p className="text-xs text-[#859e9a] leading-relaxed">
-              Internal recommendation under supervisory gate review.
+          <div className="p-4 rounded-xl border border-[#D8CBB3]/15 bg-[#1E1E1C] space-y-1.5">
+            <strong className="text-xs font-mono font-bold text-[#D8CBB3] block">STAGE 01 · DRAFT</strong>
+            <p className="text-xs text-[#A69B88] leading-relaxed">
+              Internal model recommendation undergoing Pre-Run, Mid-Run, and Post-Run gate verification.
             </p>
           </div>
 
-          <div className="p-4 rounded-xl border border-[#2e4952]/40 bg-[#091418]/60 space-y-1.5">
-            <strong className="text-xs font-bold text-[#fbbf24] block">02 · Approved</strong>
-            <p className="text-xs text-[#859e9a] leading-relaxed">
-              Reviewed and validated by an authorized incident commander.
+          <div className="p-4 rounded-xl border border-[#F59E0B]/30 bg-[#1E1E1C] space-y-1.5">
+            <strong className="text-xs font-mono font-bold text-[#F59E0B] block">STAGE 02 · APPROVED</strong>
+            <p className="text-xs text-[#A69B88] leading-relaxed">
+              Reviewed and cryptographically signed by an authorized human incident commander.
             </p>
           </div>
 
-          <div className="p-4 rounded-xl border border-[#2e4952]/40 bg-[#091418]/60 space-y-1.5">
-            <strong className="text-xs font-bold text-[#38bdf8] block">03 · Published</strong>
-            <p className="text-xs text-[#859e9a] leading-relaxed">
-              Broadcast across public and emergency channels.
+          <div className="p-4 rounded-xl border border-[#2F6BFF]/30 bg-[#1E1E1C] space-y-1.5">
+            <strong className="text-xs font-mono font-bold text-[#2F6BFF] block">STAGE 03 · PUBLISHED</strong>
+            <p className="text-xs text-[#A69B88] leading-relaxed">
+              Dispatched to citizen dashboards and ward-level emergency notification channels.
             </p>
           </div>
         </div>

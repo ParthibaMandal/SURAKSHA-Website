@@ -10,52 +10,69 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["'IBM Plex Sans'", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
-        mono: ["'IBM Plex Mono'", "ui-monospace", "monospace"],
+        sans: ["'Manrope'", "'Inter'", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
+        mono: ["'JetBrains Mono'", "ui-monospace", "SFMono-Regular", "monospace"],
       },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        brand: {
-          DEFAULT: "#08a2be",
-          hover: "#0bb6d5",
-          muted: "#0c262f",
-          border: "#174350",
-          text: "#03090c",
+        charcoal: {
+          DEFAULT: "#1E1E1C",
+          950: "#171715",
+          900: "#1E1E1C",
+          card: "#292925",
+          elevated: "#33332E",
+          border: "#3A3832",
+        },
+        sand: {
+          DEFAULT: "#D8CBB3",
+          bright: "#EDE4D3",
+          muted: "#A69B88",
+          dim: "#7D7465",
+          faint: "rgba(216, 203, 179, 0.14)",
+        },
+        electric: {
+          DEFAULT: "#2F6BFF",
+          hover: "#4B80FF",
+          active: "#1D55E5",
+          tinted: "#212B3E",
+          dim: "rgba(47, 107, 255, 0.14)",
         },
         suraksha: {
-          950: "#03090c",
-          900: "#061014",
-          850: "#0a171d",
-          800: "#0f222b",
-          750: "#142d38",
-          700: "#1d3d4b",
-          600: "#274f60",
-          500: "#34667a",
-          400: "#50879e",
-          300: "#7daec3",
-          200: "#b4d5e3",
-          100: "#e0eef5",
+          950: "#1E1E1C",
+          900: "#242421",
+          850: "#292925",
+          800: "#33332E",
+          750: "#3A3832",
+          700: "#47443D",
+          600: "#5C584F",
+          500: "#7D7465",
+          400: "#A69B88",
+          300: "#C4B79E",
+          200: "#D8CBB3",
+          100: "#EDE4D3",
         },
         cyan: {
-          DEFAULT: "#2dd4bf",
-          glow: "#5eead4",
-          dim: "rgba(45, 212, 191, 0.12)",
+          DEFAULT: "#2F6BFF",
+          500: "#2F6BFF",
+          400: "#4B80FF",
+          glow: "#2F6BFF",
+          dim: "rgba(47, 107, 255, 0.14)",
         },
         sky: {
-          DEFAULT: "#38bdf8",
-          glow: "#7dd3fc",
-          dim: "rgba(56, 189, 248, 0.12)",
+          DEFAULT: "#2F6BFF",
+          glow: "#608DFF",
+          dim: "rgba(47, 107, 255, 0.14)",
         },
         amber: {
-          DEFAULT: "#fbbf24",
-          glow: "#f59e0b",
-          dim: "rgba(251, 191, 36, 0.12)",
+          DEFAULT: "#F59E0B",
+          glow: "#FBBF24",
+          dim: "rgba(245, 158, 11, 0.14)",
         },
         danger: {
-          DEFAULT: "#ef4444",
-          glow: "#f87171",
-          dim: "rgba(239, 68, 68, 0.12)",
+          DEFAULT: "#EF4444",
+          glow: "#F87171",
+          dim: "rgba(239, 68, 68, 0.14)",
         },
       },
       borderRadius: {
@@ -65,11 +82,11 @@ const config: Config = {
       },
       keyframes: {
         "sonar-ping": {
-          "0%": { transform: "scale(1)", opacity: "0.8" },
-          "100%": { transform: "scale(2.5)", opacity: "0" },
+          "0%": { transform: "scale(1)", opacity: "0.7" },
+          "100%": { transform: "scale(2.3)", opacity: "0" },
         },
         "water-pulse": {
-          "0%, 100%": { opacity: "0.6" },
+          "0%, 100%": { opacity: "0.65" },
           "50%": { opacity: "0.95" },
         },
       },
@@ -83,4 +100,3 @@ const config: Config = {
 };
 
 export default config;
-
