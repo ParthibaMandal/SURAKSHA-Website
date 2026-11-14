@@ -5,11 +5,6 @@ import React from "react";
 export const TacticalMapSvg: React.FC = () => {
   return (
     <div className="relative w-full h-full min-h-[300px] overflow-hidden select-none bg-[#091418]">
-      {/* Radar sweep line */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="w-[200%] h-[2px] bg-gradient-to-r from-transparent via-[#5eead4]/40 to-transparent absolute top-0 -left-1/2 animate-[spin_8s_linear_infinite] origin-center" />
-      </div>
-
       <svg viewBox="0 0 640 360" className="w-full h-full object-cover">
         <defs>
           <pattern id="gridDots" width="24" height="24" patternUnits="userSpaceOnUse">
@@ -99,7 +94,7 @@ export const TacticalMapSvg: React.FC = () => {
           GANGA RIVER CHANNEL
         </text>
         <text x="215" y="130" fill="#fef08a" fontSize="9" fontWeight="600">
-          Gauge 04 · Live
+          Gauge 04 Live
         </text>
         <text x="474" y="218" fill="#99f6e4" fontSize="9" fontWeight="600">
           Downstream Node

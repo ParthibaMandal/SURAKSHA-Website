@@ -1,9 +1,14 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
+
+try:
+    from pydantic import EmailStr
+except Exception:
+    EmailStr = str
 
 class UserBase(BaseModel):
-    email: EmailStr
+    email: str
     full_name: str
     phone_number: Optional[str] = None
     district: Optional[str] = None
@@ -12,7 +17,7 @@ class UserCreate(UserBase):
     password: str
 
 class UserLogin(BaseModel):
-    email: EmailStr
+    email: str
     password: str
 
 class UserOut(UserBase):

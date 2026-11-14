@@ -1,156 +1,109 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: #070b0e;
+    --background: #03090c;
     --foreground: #f0f7f6;
-    --card: #0f171b;
+    --card: #071115;
     --card-foreground: #f0f7f6;
-    --popover: #0e1a1f;
+    --popover: #071115;
     --popover-foreground: #f0f7f6;
-    --primary: #5eead4;
-    --primary-foreground: #061110;
-    --secondary: #142329;
+    --brand: #08a2be;
+    --brand-hover: #0bb6d5;
+    --brand-muted: #0c262f;
+    --primary: #08a2be;
+    --primary-foreground: #03090c;
+    --secondary: #0f1d24;
     --secondary-foreground: #c7dbd7;
-    --muted: #1a2c33;
+    --muted: #0d171c;
     --muted-foreground: #9bb2af;
-    --accent: #2e4952;
+    --accent: #172a33;
     --accent-foreground: #f0f7f6;
-    --destructive: #f87171;
+    --destructive: #ef4444;
     --destructive-foreground: #ffffff;
-    --border: rgba(46, 73, 82, 0.45);
-    --input: rgba(46, 73, 82, 0.45);
-    --ring: #5eead4;
-    --radius: 0.85rem;
+    --border: #1c2c34;
+    --input: #1c2c34;
+    --ring: #08a2be;
+    --radius: 0.5rem;
+    --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
   }
 }
 
 body {
   margin: 0;
-  background: #070b0e;
-  background-image: 
-    radial-gradient(ellipse 90% 60% at 50% -10%, rgba(20, 184, 166, 0.14), transparent),
-    radial-gradient(circle at 10% 30%, rgba(56, 189, 248, 0.05), transparent 40%),
-    radial-gradient(circle at 90% 70%, rgba(94, 234, 212, 0.05), transparent 45%),
-    linear-gradient(180deg, #070b0e 0%, #06090c 100%);
-  background-attachment: fixed;
+  background-color: #03090c;
   color: #f0f7f6;
-  font-family: "Plus Jakarta Sans", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-sans);
   overflow-x: hidden;
   min-height: 100vh;
 }
 
 /* Custom scrollbars */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #070b0e;
-}
-::-webkit-scrollbar-thumb {
-  background: #1d3d4b;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #5eead4;
-}
-
-/* Atmospheric Glow Background Accents */
-.hero-glow-orb {
-  position: absolute;
-  width: 580px;
-  height: 580px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(94, 234, 212, 0.13), rgba(20, 184, 166, 0.04) 50%, transparent 70%);
-  filter: blur(40px);
-  pointer-events: none;
-  z-index: 0;
-  animation: orbDrift 14s ease-in-out infinite alternate;
-}
-
-@keyframes orbDrift {
-  0% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(40px, -30px) scale(1.1); }
-  100% { transform: translate(-30px, 20px) scale(0.95); }
-}
-
-/* Eyebrows matching index.html */
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 10.5px;
-  letter-spacing: .22em;
-  text-transform: uppercase;
-  color: #5eead4;
-  font-weight: 750;
-  margin-bottom: 6px;
-}
-.eyebrow::before {
-  content: "";
-  display: inline-block;
   width: 6px;
   height: 6px;
-  border-radius: 50%;
-  background: #5eead4;
-  box-shadow: 0 0 8px #5eead4;
+}
+::-webkit-scrollbar-track {
+  background: #03090c;
+}
+::-webkit-scrollbar-thumb {
+  background: #172a33;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #08a2be;
 }
 
-/* Pills & Badges matching index.html */
+/* Informative Section Lead-in */
+.eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #08a2be;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* Clean, flat status and metadata chips */
 .pill {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  border: 1px solid rgba(94, 234, 212, 0.22);
-  border-radius: 100px;
-  background: rgba(14, 26, 31, 0.7);
-  backdrop-filter: blur(12px);
-  color: #c7dbd7;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid #1c2c34;
+  border-radius: 9999px;
+  background-color: #071115;
+  color: #9bb2af;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 500;
   white-space: nowrap;
-  letter-spacing: .02em;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  transition: all .25s ease;
-}
-.pill:hover {
-  border-color: #5eead4;
-  box-shadow: 0 0 15px rgba(94, 234, 212, 0.2);
 }
 
 .dot {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: #34d399;
+  background-color: #10b981;
   display: inline-block;
-  box-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
 }
 .dot.blue {
-  background: #38bdf8;
-  box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+  background-color: #08a2be;
 }
 .dot.amber {
-  background: #fbbf24;
-  box-shadow: 0 0 8px rgba(251, 191, 36, 0.6);
+  background-color: #f59e0b;
 }
 .dot.red {
-  background: #f87171;
-  box-shadow: 0 0 8px rgba(248, 113, 113, 0.6);
+  background-color: #ef4444;
 }
 
 /* River current animation */
 @keyframes flowStream {
   from { stroke-dashoffset: 120; }
   to { stroke-dashoffset: 0; }
-}
-
-.gradient-text {
-  background: linear-gradient(135deg, #5eead4 0%, #38bdf8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
