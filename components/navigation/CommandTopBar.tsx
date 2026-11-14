@@ -5,26 +5,32 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Bell, Globe, ShieldCheck, ChevronRight } from "lucide-react";
 
-export const CommandTopBar: React.FC = () => {
+interface CommandTopBarProps {
+  workspace?: string;
+}
+
+export const CommandTopBar: React.FC<CommandTopBarProps> = ({ workspace = "COMMAND" }) => {
   const pathname = usePathname();
   const [studyArea, setStudyArea] = useState("patna");
   const [notifOpen, setNotifOpen] = useState(false);
 
   const segmentLabel = (() => {
-    if (!pathname || pathname === "/admin") return "OVERVIEW";
+    if (!pathname || pathname === "/admin" || pathname === "/citizen") return "OVERVIEW";
     const parts = pathname.split("/").filter(Boolean);
     return parts[parts.length - 1]?.toUpperCase().replace("-", " ") || "OPERATIONS";
   })();
+
+  const baseHref = workspace === "CITIZEN" ? "/citizen" : "/admin";
 
   return (
     <div className="border-b border-[#D8CBB3]/14 bg-[#1E1E1C] px-4 sm:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
       {/* Breadcrumb Navigation */}
       <div className="flex items-center gap-2 text-xs font-mono">
-        <Link href="/admin" className="text-[#A69B88] hover:text-[#D8CBB3] transition-colors">
+        <Link href={baseHref} className="text-[#A69B88] hover:text-[#D8CBB3] transition-colors">
           SURAKSHA
         </Link>
         <ChevronRight className="w-3.5 h-3.5 text-[#7D7465]" />
-        <span className="text-[#A69B88]">COMMAND</span>
+        <span className="text-[#A69B88]">{workspace}</span>
         <ChevronRight className="w-3.5 h-3.5 text-[#7D7465]" />
         <span className="text-[#2F6BFF] font-semibold">{segmentLabel}</span>
       </div>
