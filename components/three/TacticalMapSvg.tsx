@@ -4,103 +4,162 @@ import React from "react";
 
 export const TacticalMapSvg: React.FC = () => {
   return (
-    <div className="relative w-full h-full min-h-[300px] overflow-hidden select-none bg-[#091418]">
-      <svg viewBox="0 0 640 360" className="w-full h-full object-cover">
+    <div className="relative w-full h-full min-h-[280px] overflow-hidden select-none bg-[#1E1E1C]">
+      <svg
+        viewBox="0 0 640 360"
+        className="w-full h-full object-cover"
+        role="img"
+        aria-label="Ganga Basin Geospatial Schematic Map — Patna Study Area"
+      >
         <defs>
-          <pattern id="gridDots" width="24" height="24" patternUnits="userSpaceOnUse">
-            <circle cx="2" cy="2" r="1.2" fill="#2d4850" opacity=".6" />
+          <pattern id="sandGridDots" width="28" height="28" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="1" fill="#D8CBB3" opacity="0.18" />
           </pattern>
-          <linearGradient id="riverGlow" x1="0" y1="0" x2="1" y2="1">
-            <stop stopColor="#38bdf8" stopOpacity=".95" />
-            <stop offset="0.5" stopColor="#5eead4" stopOpacity=".9" />
-            <stop offset="1" stopColor="#14b8a6" stopOpacity=".6" />
+          <linearGradient id="electricRiverChannel" x1="0" y1="0" x2="1" y2="0.4">
+            <stop offset="0%" stopColor="#2F6BFF" stopOpacity="0.92" />
+            <stop offset="60%" stopColor="#4B80FF" stopOpacity="0.88" />
+            <stop offset="100%" stopColor="#2F6BFF" stopOpacity="0.75" />
           </linearGradient>
-          <filter id="neonBlur" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="5" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
         </defs>
 
-        <rect width="640" height="360" fill="#091418" />
-        <rect width="640" height="360" fill="url(#gridDots)" />
+        {/* Charcoal Base & Topographic Grid */}
+        <rect width="640" height="360" fill="#1E1E1C" />
+        <rect width="640" height="360" fill="url(#sandGridDots)" />
 
-        {/* Ambient terrain contour lines */}
-        <path d="M0 290 Q140 210 240 245 T480 210 T640 140" stroke="#162e34" strokeWidth="1.5" fill="none" />
-        <path d="M20 30 Q170 100 310 55 T580 40" stroke="#162e34" strokeWidth="1.5" fill="none" />
-        <path d="M80 360 Q200 300 340 330 T600 290" stroke="#162e34" strokeWidth="1.5" fill="none" />
+        {/* Coordinate Graticule Lines */}
+        <line x1="160" y1="0" x2="160" y2="360" stroke="#D8CBB3" strokeOpacity="0.06" strokeDasharray="3 5" />
+        <line x1="360" y1="0" x2="360" y2="360" stroke="#D8CBB3" strokeOpacity="0.06" strokeDasharray="3 5" />
+        <line x1="520" y1="0" x2="520" y2="360" stroke="#D8CBB3" strokeOpacity="0.06" strokeDasharray="3 5" />
+        <line x1="0" y1="120" x2="640" y2="120" stroke="#D8CBB3" strokeOpacity="0.06" strokeDasharray="3 5" />
+        <line x1="0" y1="240" x2="640" y2="240" stroke="#D8CBB3" strokeOpacity="0.06" strokeDasharray="3 5" />
 
-        {/* River channel deep background corridor */}
+        {/* Topographic Elevation Contours (Sand Muted) */}
+        <path
+          d="M0 295 Q140 215 245 248 T485 212 T640 145"
+          stroke="#D8CBB3"
+          strokeOpacity="0.16"
+          strokeWidth="1.2"
+          fill="none"
+        />
+        <path
+          d="M15 35 Q170 98 310 56 T585 42"
+          stroke="#D8CBB3"
+          strokeOpacity="0.16"
+          strokeWidth="1.2"
+          fill="none"
+        />
+        <path
+          d="M75 355 Q205 298 345 328 T605 288"
+          stroke="#D8CBB3"
+          strokeOpacity="0.13"
+          strokeWidth="1.2"
+          fill="none"
+        />
+
+        {/* 100-Year Floodplain Inundation Envelope (Blue-Tinted Charcoal) */}
         <path
           d="M-20 70 C90 110 90 185 210 162 S360 75 450 140 570 240 680 210"
-          stroke="#13383a"
-          strokeWidth="46"
+          stroke="#2F6BFF"
+          strokeOpacity="0.12"
+          strokeWidth="56"
           fill="none"
-          opacity=".5"
         />
         <path
           d="M-20 70 C90 110 90 185 210 162 S360 75 450 140 570 240 680 210"
-          stroke="#1c4d50"
-          strokeWidth="26"
+          stroke="#2F6BFF"
+          strokeOpacity="0.22"
+          strokeWidth="28"
           fill="none"
-          opacity=".8"
         />
 
-        {/* Main dynamic glowing river path with animated stroke */}
+        {/* Primary Ganga River Channel (Electric Blue) */}
         <path
           d="M-20 70 C90 110 90 185 210 162 S360 75 450 140 570 240 680 210"
-          stroke="url(#riverGlow)"
-          strokeWidth="14"
+          stroke="url(#electricRiverChannel)"
+          strokeWidth="11"
           fill="none"
-          filter="url(#neonBlur)"
         />
 
-        {/* Flowing water current dashes */}
+        {/* Subtle Animated Hydrodynamic Flow Vector */}
         <path
           d="M-20 70 C90 110 90 185 210 162 S360 75 450 140 570 240 680 210"
-          stroke="#f0fdfa"
-          strokeWidth="2.5"
+          stroke="#EDE4D3"
+          strokeOpacity="0.7"
+          strokeWidth="1.8"
           fill="none"
-          strokeDasharray="12 18"
-          className="animate-[flowStream_12s_linear_infinite]"
+          strokeDasharray="10 16"
+          className="animate-[flowStream_14s_linear_infinite]"
         />
 
-        {/* Secondary feeder tributary stream */}
-        <path d="M180 -10 C210 50 190 100 245 145" stroke="#2dd4bf" strokeWidth="4" fill="none" opacity=".7" />
+        {/* Gandak Tributary Feeder (North) */}
         <path
-          d="M180 -10 C210 50 190 100 245 145"
-          stroke="#ecfeff"
-          strokeWidth="1.5"
+          d="M205 -10 C225 52 212 104 252 146"
+          stroke="#2F6BFF"
+          strokeOpacity="0.75"
+          strokeWidth="4.5"
           fill="none"
-          strokeDasharray="6 12"
-          className="animate-[flowStream_8s_linear_infinite]"
+        />
+        {/* Son Sub-Basin Feeder (South-West) */}
+        <path
+          d="M95 365 C135 280 155 215 190 165"
+          stroke="#D8CBB3"
+          strokeOpacity="0.45"
+          strokeWidth="3.5"
+          fill="none"
         />
 
-        {/* Sonar pulses on Patna & monitoring stations */}
-        <circle cx="360" cy="170" r="10" fill="none" stroke="#5eead4" strokeWidth="1.5" className="animate-ping" />
-        <circle cx="360" cy="170" r="6" fill="#5eead4" />
-        <circle cx="360" cy="170" r="2.5" fill="#042f2e" />
-
-        <circle cx="245" cy="145" r="5" fill="#fbbf24" />
-        <circle cx="245" cy="145" r="9" fill="none" stroke="#fbbf24" strokeWidth="1" opacity=".7" />
-
-        <circle cx="460" cy="202" r="5" fill="#38bdf8" />
-        <circle cx="460" cy="202" r="10" fill="none" stroke="#38bdf8" strokeWidth="1" opacity=".6" />
-
-        {/* Tactical labels */}
-        <text x="376" y="166" fill="#f0fdfa" fontSize="11" fontWeight="700" letterSpacing="0.5">
+        {/* Station 1: STN-PAT-01 (Patna Study Sector - Primary Node) */}
+        <circle cx="360" cy="128" r="12" fill="#2F6BFF" fillOpacity="0.18" />
+        <circle cx="360" cy="128" r="5.5" fill="#2F6BFF" stroke="#1E1E1C" strokeWidth="1.5" />
+        <rect x="372" y="111" width="144" height="32" rx="4" fill="#292925" stroke="#D8CBB3" strokeOpacity="0.25" />
+        <text x="380" y="124" fill="#EDE4D3" fontSize="9.5" fontWeight="700" fontFamily="Manrope, sans-serif">
           Patna Study Sector
         </text>
-        <text x="65" y="88" fill="#5eead4" fontSize="11" fontWeight="700" letterSpacing="2">
-          GANGA RIVER CHANNEL
+        <text x="380" y="136" fill="#2F6BFF" fontSize="8.5" fontWeight="600" fontFamily="JetBrains Mono, monospace">
+          STN-PAT-01 · 49.82m
         </text>
-        <text x="215" y="130" fill="#fef08a" fontSize="9" fontWeight="600">
-          Gauge 04 Live
+
+        {/* Station 2: STN-GAN-01 (Lalganj Warning Node - Amber Semantic State) */}
+        <circle cx="242" cy="108" r="9" fill="#F59E0B" fillOpacity="0.2" />
+        <circle cx="242" cy="108" r="4.5" fill="#F59E0B" stroke="#1E1E1C" strokeWidth="1.5" />
+        <text x="128" y="102" fill="#FBBF24" fontSize="8.5" fontWeight="600" fontFamily="JetBrains Mono, monospace">
+          STN-GAN-01 · 52.40m (WARN)
         </text>
-        <text x="474" y="218" fill="#99f6e4" fontSize="9" fontWeight="600">
-          Downstream Node
+
+        {/* Station 3: STN-SON-01 (Koelwar Node) */}
+        <circle cx="172" cy="196" r="4.5" fill="#D8CBB3" stroke="#1E1E1C" strokeWidth="1.5" />
+        <text x="64" y="210" fill="#D8CBB3" fontSize="8.5" fontWeight="500" fontFamily="JetBrains Mono, monospace">
+          STN-SON-01 · 53.12m
+        </text>
+
+        {/* Station 4: Downstream Reach */}
+        <circle cx="485" cy="176" r="4.5" fill="#2F6BFF" stroke="#1E1E1C" strokeWidth="1.5" />
+        <text x="496" y="180" fill="#A69B88" fontSize="8.5" fontWeight="500" fontFamily="JetBrains Mono, monospace">
+          STN-MOK-04 · 47.90m
+        </text>
+
+        {/* Basin Header Legend inside Map */}
+        <text
+          x="20"
+          y="26"
+          fill="#D8CBB3"
+          fontSize="10"
+          fontWeight="700"
+          letterSpacing="1.8"
+          fontFamily="JetBrains Mono, monospace"
+        >
+          GANGA BASIN · PATNA REACH (25.61°N, 85.14°E)
+        </text>
+        <text
+          x="20"
+          y="40"
+          fill="#A69B88"
+          fontSize="8.5"
+          fontFamily="JetBrains Mono, monospace"
+        >
+          SCHEMATIC GEOSPATIAL LAYER · ILLUSTRATIVE RESEARCH EXTENT
         </text>
       </svg>
     </div>
   );
 };
-

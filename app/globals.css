@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -6,41 +6,45 @@
 
 @layer base {
   :root {
-    --background: #03090c;
-    --foreground: #f0f7f6;
-    --card: #071115;
-    --card-foreground: #f0f7f6;
-    --popover: #071115;
-    --popover-foreground: #f0f7f6;
-    --brand: #08a2be;
-    --brand-hover: #0bb6d5;
-    --brand-muted: #0c262f;
-    --primary: #08a2be;
-    --primary-foreground: #03090c;
-    --secondary: #0f1d24;
-    --secondary-foreground: #c7dbd7;
-    --muted: #0d171c;
-    --muted-foreground: #9bb2af;
-    --accent: #172a33;
-    --accent-foreground: #f0f7f6;
-    --destructive: #ef4444;
-    --destructive-foreground: #ffffff;
-    --border: #1c2c34;
-    --input: #1c2c34;
-    --ring: #08a2be;
-    --radius: 0.5rem;
-    --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+    --background: #1E1E1C;
+    --foreground: #D8CBB3;
+    --card: #292925;
+    --card-foreground: #D8CBB3;
+    --elevated: #33332E;
+    --popover: #292925;
+    --popover-foreground: #D8CBB3;
+    --primary: #2F6BFF;
+    --primary-foreground: #FFFFFF;
+    --secondary: #33332E;
+    --secondary-foreground: #D8CBB3;
+    --muted: #292925;
+    --muted-foreground: #A69B88;
+    --accent: #2F6BFF;
+    --accent-foreground: #FFFFFF;
+    --destructive: #EF4444;
+    --destructive-foreground: #FFFFFF;
+    --warning: #F59E0B;
+    --border: rgba(216, 203, 179, 0.14);
+    --input: rgba(216, 203, 179, 0.18);
+    --ring: #2F6BFF;
+    --radius: 0.625rem;
   }
 }
 
 body {
   margin: 0;
-  background-color: #03090c;
-  color: #f0f7f6;
-  font-family: var(--font-sans);
+  background-color: #1E1E1C;
+  color: #D8CBB3;
+  font-family: "Manrope", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   overflow-x: hidden;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+code,
+pre,
+.font-mono {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 /* Custom scrollbars */
@@ -49,61 +53,134 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #03090c;
+  background: #1E1E1C;
 }
 ::-webkit-scrollbar-thumb {
-  background: #172a33;
+  background: #33332E;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #08a2be;
+  background: #2F6BFF;
 }
 
-/* Informative Section Lead-in */
+/* Editorial Eyebrow Labels */
 .eyebrow {
-  display: inline-block;
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: #08a2be;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-
-/* Clean, flat status and metadata chips */
-.pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border: 1px solid #1c2c34;
-  border-radius: 9999px;
-  background-color: #071115;
-  color: #9bb2af;
+  gap: 8px;
+  font-family: "JetBrains Mono", monospace;
   font-size: 11px;
-  font-weight: 500;
-  white-space: nowrap;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #A69B88;
+  font-weight: 600;
+  margin-bottom: 6px;
 }
-
-.dot {
+.eyebrow::before {
+  content: "";
+  display: inline-block;
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: #10b981;
+  background: #2F6BFF;
+}
+
+/* Status & Telemetry Pills */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 11px;
+  border: 1px solid rgba(216, 203, 179, 0.16);
+  border-radius: 9999px;
+  background: #292925;
+  color: #D8CBB3;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  letter-spacing: 0.03em;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+.pill:hover {
+  border-color: rgba(47, 107, 255, 0.45);
+}
+
+/* Semantic Status Dots */
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #2F6BFF;
   display: inline-block;
 }
 .dot.blue {
-  background-color: #08a2be;
+  background: #2F6BFF;
+}
+.dot.green {
+  background: #10B981;
 }
 .dot.amber {
-  background-color: #f59e0b;
+  background: #F59E0B;
 }
 .dot.red {
-  background-color: #ef4444;
+  background: #EF4444;
 }
 
-/* River current animation */
+/* Reusable Button Classes for Legacy / Inline Links */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(216, 203, 179, 0.18);
+  background: #292925;
+  color: #D8CBB3;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.18s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn:hover {
+  background: #33332E;
+  border-color: rgba(216, 203, 179, 0.32);
+  color: #EDE4D3;
+}
+.btn.primary {
+  background: #2F6BFF;
+  border-color: #2F6BFF;
+  color: #FFFFFF;
+}
+.btn.primary:hover {
+  background: #4B80FF;
+  border-color: #4B80FF;
+  color: #FFFFFF;
+}
+.btn.small {
+  padding: 6px 12px;
+  font-size: 11px;
+}
+
+/* Notice Banner */
+.notice {
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(216, 203, 179, 0.18);
+  background: #292925;
+  color: #A69B88;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* River flow subtle animation */
 @keyframes flowStream {
   from { stroke-dashoffset: 120; }
   to { stroke-dashoffset: 0; }
+}
+
+.gradient-text {
+  color: #EDE4D3;
 }

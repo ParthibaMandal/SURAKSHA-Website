@@ -12,7 +12,7 @@ interface TiltCardProps {
 export const TiltCard: React.FC<TiltCardProps> = ({
   children,
   className = "",
-  intensity = 8,
+  intensity = 6,
 }) => {
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -56,9 +56,9 @@ export const TiltCard: React.FC<TiltCardProps> = ({
         rotateY,
         transformStyle: "preserve-3d",
       }}
-      className={`relative rounded-lg border border-[#1c2c34] bg-[#071115] p-6 transition-colors hover:border-[#2d434f] ${className}`}
+      className={`relative rounded-xl border border-[#D8CBB3]/15 bg-[#292925] p-6 transition-colors hover:bg-[#33332E]/70 hover:border-[#2F6BFF]/40 ${className}`}
     >
-      <div style={{ transform: "translateZ(10px)" }}>{children}</div>
+      <div style={{ transform: "translateZ(8px)" }}>{children}</div>
     </motion.div>
   );
 };
