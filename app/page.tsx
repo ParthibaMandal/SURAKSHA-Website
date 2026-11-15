@@ -118,6 +118,7 @@ export default function HomePage() {
                 src="/images/suraksha-interface.png"
                 alt="SURAKSHA Flood Intelligence Platform Interface"
                 className="w-full h-auto object-cover max-h-[520px]"
+                loading="eager"
               />
             </div>
           </div>
@@ -303,7 +304,7 @@ export default function HomePage() {
               </h2>
             </div>
             <p className="text-sm text-[#A69B88] max-w-md leading-relaxed">
-              Automated invariant audits reject corrupted sensor packets, verify hydrodynamic mass conservation, and require human commander sign-off.
+              Three sequential verification stages enforced before any advisory dispatch.
             </p>
           </div>
 

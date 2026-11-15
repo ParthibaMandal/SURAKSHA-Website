@@ -37,8 +37,8 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({ className = "", size = "md
         <span className={`font-extrabold tracking-[0.14em] text-[#D8CBB3] ${titleSize} leading-tight`}>
           SURAKSHA
         </span>
-        <small className="text-[8px] font-mono font-semibold text-[#A69B88] tracking-[0.2em] uppercase -mt-0.5 block">
-          FLOOD INTELLIGENCE
+        <small className="text-[8px] font-medium text-[#A69B88] tracking-[0.18em] uppercase -mt-0.5 block">
+          Flood Intelligence
         </small>
       </div>
     </Link>

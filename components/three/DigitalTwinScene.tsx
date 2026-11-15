@@ -80,10 +80,10 @@ export const DigitalTwinScene: React.FC<DigitalTwinSceneProps> = ({ onSurgeState
             3D Digital Twin (drag to orbit basin topography)
           </div>
         </div>
-        <span className="pill text-[10px] font-mono border-[#D8CBB3]/20 bg-[#292925] text-[#D8CBB3]">
+        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded text-xs text-[#D8CBB3] bg-[#292925] border border-[#D8CBB3]/16">
           <span className="w-2 h-2 rounded-full bg-[#2F6BFF]" />
-          {viewMode === "3d" ? "3D TOPOGRAPHIC MESH" : "2D GEOSPATIAL VECTOR"}
-        </span>
+          <span>{viewMode === "3d" ? "3D Basin View" : "2D Map View"}</span>
+        </div>
       </div>
 
       {/* Viewport Box */}
@@ -138,19 +138,19 @@ export const DigitalTwinScene: React.FC<DigitalTwinSceneProps> = ({ onSurgeState
         )}
 
         {/* Floating HUD */}
-        <div className="absolute bottom-3 left-4 right-4 z-20 flex flex-wrap items-center justify-between gap-3 px-3.5 py-2 rounded-xl bg-[#292925]/95 border border-[#D8CBB3]/20 text-[11px] font-mono">
+        <div className="absolute bottom-3 left-4 right-4 z-20 flex flex-wrap items-center justify-between gap-3 px-3.5 py-2 rounded-xl bg-[#292925] border border-[#D8CBB3]/20 text-xs">
           <div className="flex flex-wrap items-center gap-2.5">
-            <span className="text-[#A69B88]">DATUM: 52.4m</span>
+            <span className="text-[#A69B88]">Datum: 52.4 m</span>
             <span className="text-[#7D7465]">|</span>
             <span
               className={`font-semibold tracking-wide ${
                 isSurge ? "text-[#FBBF24]" : "text-[#2F6BFF]"
               }`}
             >
-              STAGE: {stageReading.toFixed(2)}m {isSurge ? "(SYNTHETIC SURGE)" : "(SAMPLE NOMINAL)"}
+              River stage: <span className="font-mono">{stageReading.toFixed(2)} m</span> {isSurge ? "(Synthetic surge)" : "(Sample nominal)"}
             </span>
             <span className="text-[#7D7465]">|</span>
-            <span className="text-[#D8CBB3]">STATIONS: 03 MAPPED</span>
+            <span className="text-[#D8CBB3]">3 stations mapped</span>
           </div>
           <span className="text-[10px] text-[#A69B88] hidden sm:inline">
             Illustrative model (not an active flood warning map)
@@ -167,7 +167,7 @@ export const DigitalTwinScene: React.FC<DigitalTwinSceneProps> = ({ onSurgeState
           <strong className="text-xl font-bold font-mono text-[#D8CBB3] mt-0.5">
             {stageReading.toFixed(2)} m
           </strong>
-          <small className="text-[10px] font-mono text-[#7D7465]">SAMPLE TELEMETRY</small>
+          <small className="text-[10px] text-[#7D7465]">Sample Telemetry</small>
         </div>
 
         <div className="flex flex-col">
@@ -181,7 +181,7 @@ export const DigitalTwinScene: React.FC<DigitalTwinSceneProps> = ({ onSurgeState
           >
             {isSurge ? "+2.50 m / 3h" : "+0.42 m / 6h"}
           </strong>
-          <small className="text-[10px] font-mono text-[#7D7465]">SYNTHETIC ENSEMBLE</small>
+          <small className="text-[10px] text-[#7D7465]">Synthetic Ensemble</small>
         </div>
 
         <div className="flex flex-col">

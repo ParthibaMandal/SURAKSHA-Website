@@ -20,9 +20,9 @@ export const FadeIn: React.FC<FadeInProps> = ({
 }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: yOffset }}
+      initial={{ opacity: 0.9, y: yOffset ? 8 : 0 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-40px" }}
+      viewport={{ once: true }}
       transition={{ duration, delay, ease: [0.25, 0.1, 0.25, 1.0] }}
       className={className}
     >
