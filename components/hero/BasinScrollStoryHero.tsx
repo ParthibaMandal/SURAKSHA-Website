@@ -652,10 +652,10 @@ export function BasinScrollStoryHero() {
           {/* Layer L0: Hero Headline */}
           <div ref={layerL0Ref} className="absolute inset-0 pointer-events-none z-[4]">
             <div ref={heroCopyRef} className="absolute left-0 right-0 text-center pointer-events-none">
-              <div className="inline-flex items-center justify-center h-[22px] px-[9px] bg-[#2F6BFF] text-white rounded-[3px] font-mono text-[10.5px] tracking-[0.16em] uppercase font-semibold shadow-[0_2px_8px_rgba(47,107,255,0.3)]">
+              <div className="inline-flex items-center justify-center h-[22px] px-[9px] bg-[#2F6BFF] text-white rounded-[3px] font-sans text-[11px] tracking-wider uppercase font-semibold shadow-[0_2px_8px_rgba(47,107,255,0.3)]">
                 BASIN TELEMETRY
               </div>
-              <h1 className="mt-[18px] text-[clamp(44px,5.8vw,98px)] font-medium leading-[0.92] tracking-[-0.045em] text-[#0d141b]">
+              <h1 className="mt-[18px] font-heading text-[clamp(44px,5.8vw,98px)] font-bold leading-[0.92] tracking-[-0.045em] text-[#0d141b]">
                 <span className="line-wrap block overflow-hidden pb-[0.08em] whitespace-nowrap">
                   <span className="inline-block transform-none">Forecast the Living Basin</span>
                 </span>
@@ -726,7 +726,7 @@ export function BasinScrollStoryHero() {
                 <div className="absolute left-0 top-[10px] w-[22px] h-[1px] bg-white/90" />
                 <div className="absolute top-0 left-[10px] w-[1px] h-[22px] bg-white/90" />
               </div>
-              <div className="inline-flex items-center justify-center h-[20px] px-[8px] bg-[#2F6BFF] text-white rounded-[3px] font-mono text-[10px] tracking-[0.14em] uppercase font-semibold">
+              <div className="inline-flex items-center justify-center h-[20px] px-[8px] bg-[#2F6BFF] text-white rounded-[3px] font-sans text-[10px] tracking-wider uppercase font-semibold">
                 STN-PAT-01
               </div>
               <pre className="font-mono text-[11px] tracking-[0.12em] leading-[1.65] text-white [text-shadow:0_1px_6px_rgba(0,0,0,0.5)] mt-[10px]">
@@ -750,7 +750,7 @@ ELEV 49.82 M`}
             {/* Bottom-left Caption */}
             <div
               ref={captionRef}
-              className="absolute left-[34px] bottom-[34px] pl-[16px] border-l-2 border-[#2F6BFF] font-mono text-[11.5px] leading-[1.75] tracking-[0.13em] uppercase text-[#223040]"
+              className="absolute left-[34px] bottom-[34px] pl-[16px] border-l-2 border-[#2F6BFF] font-sans text-xs leading-relaxed uppercase tracking-wider text-[#223040]"
             >
               Real-time Ganga basin telemetry.
               <br />
@@ -762,7 +762,7 @@ ELEV 49.82 M`}
             {/* Bottom-right Scroll Hint */}
             <div
               ref={scrollHintRef}
-              className="absolute right-[34px] bottom-[36px] flex items-center gap-[12px] font-mono text-[11px] tracking-[0.16em] text-[#223040]"
+              className="absolute right-[34px] bottom-[36px] flex items-center gap-[12px] font-sans text-xs tracking-wider text-[#223040]"
             >
               <div className="w-[20px] h-[20px] rounded-full border-[1.3px] border-current flex items-center justify-center">
                 <span className="block w-[4px] h-[4px] border-r-[1.2px] border-b-[1.2px] border-current rotate-45 translate-y-[1px]" />
@@ -777,10 +777,10 @@ ELEV 49.82 M`}
               ref={visionRef}
               className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(820px,90vw)] text-center text-white pointer-events-auto"
             >
-              <div className="chip inline-flex items-center justify-center h-[22px] px-[9px] bg-[#2F6BFF] text-white rounded-[3px] font-mono text-[10.5px] tracking-[0.16em] uppercase font-semibold">
+              <div className="chip inline-flex items-center justify-center h-[22px] px-[9px] bg-[#2F6BFF] text-white rounded-[3px] font-sans text-[11px] tracking-wider uppercase font-semibold">
                 OPERATIONAL MANDATE
               </div>
-              <h2 className="text-[clamp(34px,4.6vw,70px)] font-medium leading-none tracking-[-0.04em] my-[18px] text-white [text-shadow:0_2px_40px_rgba(10,30,15,0.65),0_1px_3px_rgba(10,30,15,0.4)]">
+              <h2 className="font-heading text-[clamp(34px,4.6vw,70px)] font-bold leading-none tracking-[-0.04em] my-[18px] text-white [text-shadow:0_2px_40px_rgba(10,30,15,0.65),0_1px_3px_rgba(10,30,15,0.4)]">
                 <span className="word inline-block mr-2" data-idx="0">From</span>
                 <span className="word inline-block mr-2" data-idx="1">River</span>
                 <span className="word inline-block mr-2" data-idx="2">Surge</span>
@@ -824,11 +824,11 @@ ELEV 49.82 M`}
               }`}
               onClick={() => setActiveHotspot(activeHotspot === 1 ? null : 1)}
             >
-              <div className="hs-dot w-[22px] h-[22px] rounded-full bg-[#2F6BFF] relative flex items-center justify-center animate-[ping_2.4s_infinite]">
+              <div className="hs-dot w-[22px] h-[22px] rounded-full bg-[#2F6BFF] relative flex items-center justify-center shadow-md">
                 <div className="w-[10px] h-[1.4px] bg-white" />
                 <div className="absolute w-[1.4px] h-[10px] bg-white" />
               </div>
-              <div className="hs-pill font-mono text-[10.5px] tracking-[0.14em] uppercase text-[#0d141b] px-[9px] py-[6px] rounded-[4px] bg-[#f6f8f5]/85 backdrop-blur-[8px] border border-white/40 flex flex-col gap-[2px]">
+              <div className="hs-pill font-sans text-[11px] font-semibold tracking-wider uppercase text-[#0d141b] px-[9px] py-[6px] rounded-[4px] bg-[#ffffff] border border-[#d8cbb3]/40 flex flex-col gap-[2px] shadow-sm">
                 <span>River Stage</span>
                 <em
                   className={`not-italic text-[#2F6BFF] font-semibold overflow-hidden transition-all duration-300 ${
@@ -847,11 +847,11 @@ ELEV 49.82 M`}
               }`}
               onClick={() => setActiveHotspot(activeHotspot === 2 ? null : 2)}
             >
-              <div className="hs-dot w-[22px] h-[22px] rounded-full bg-[#2F6BFF] relative flex items-center justify-center animate-[ping_2.4s_infinite]">
+              <div className="hs-dot w-[22px] h-[22px] rounded-full bg-[#2F6BFF] relative flex items-center justify-center shadow-md">
                 <div className="w-[10px] h-[1.4px] bg-white" />
                 <div className="absolute w-[1.4px] h-[10px] bg-white" />
               </div>
-              <div className="hs-pill font-mono text-[10.5px] tracking-[0.14em] uppercase text-[#0d141b] px-[9px] py-[6px] rounded-[4px] bg-[#f6f8f5]/85 backdrop-blur-[8px] border border-white/40 flex flex-col gap-[2px]">
+              <div className="hs-pill font-sans text-[11px] font-semibold tracking-wider uppercase text-[#0d141b] px-[9px] py-[6px] rounded-[4px] bg-[#ffffff] border border-[#d8cbb3]/40 flex flex-col gap-[2px] shadow-sm">
                 <span>Upstream Inflow</span>
                 <em
                   className={`not-italic text-[#2F6BFF] font-semibold overflow-hidden transition-all duration-300 ${
@@ -870,11 +870,11 @@ ELEV 49.82 M`}
               }`}
               onClick={() => setActiveHotspot(activeHotspot === 3 ? null : 3)}
             >
-              <div className="hs-dot w-[22px] h-[22px] rounded-full bg-[#2F6BFF] relative flex items-center justify-center animate-[ping_2.4s_infinite]">
+              <div className="hs-dot w-[22px] h-[22px] rounded-full bg-[#2F6BFF] relative flex items-center justify-center shadow-md">
                 <div className="w-[10px] h-[1.4px] bg-white" />
                 <div className="absolute w-[1.4px] h-[10px] bg-white" />
               </div>
-              <div className="hs-pill font-mono text-[10.5px] tracking-[0.14em] uppercase text-[#0d141b] px-[9px] py-[6px] rounded-[4px] bg-[#f6f8f5]/85 backdrop-blur-[8px] border border-white/40 flex flex-col gap-[2px]">
+              <div className="hs-pill font-sans text-[11px] font-semibold tracking-wider uppercase text-[#0d141b] px-[9px] py-[6px] rounded-[4px] bg-[#ffffff] border border-[#d8cbb3]/40 flex flex-col gap-[2px] shadow-sm">
                 <span>Soil Saturation</span>
                 <em
                   className={`not-italic text-[#2F6BFF] font-semibold overflow-hidden transition-all duration-300 ${
@@ -893,11 +893,11 @@ ELEV 49.82 M`}
               }`}
               onClick={() => setActiveHotspot(activeHotspot === 4 ? null : 4)}
             >
-              <div className="hs-dot w-[22px] h-[22px] rounded-full bg-[#2F6BFF] relative flex items-center justify-center animate-[ping_2.4s_infinite]">
+              <div className="hs-dot w-[22px] h-[22px] rounded-full bg-[#2F6BFF] relative flex items-center justify-center shadow-md">
                 <div className="w-[10px] h-[1.4px] bg-white" />
                 <div className="absolute w-[1.4px] h-[10px] bg-white" />
               </div>
-              <div className="hs-pill font-mono text-[10.5px] tracking-[0.14em] uppercase text-[#0d141b] px-[9px] py-[6px] rounded-[4px] bg-[#f6f8f5]/85 backdrop-blur-[8px] border border-white/40 flex flex-col gap-[2px]">
+              <div className="hs-pill font-sans text-[11px] font-semibold tracking-wider uppercase text-[#0d141b] px-[9px] py-[6px] rounded-[4px] bg-[#ffffff] border border-[#d8cbb3]/40 flex flex-col gap-[2px] shadow-sm">
                 <span>Ensemble Spread</span>
                 <em
                   className={`not-italic text-[#2F6BFF] font-semibold overflow-hidden transition-all duration-300 ${
@@ -914,36 +914,36 @@ ELEV 49.82 M`}
           <div ref={layerL4Ref} className="absolute inset-0 pointer-events-none z-[8] invisible">
             {/* Station Heading */}
             <div ref={credRef} className="absolute left-[34px] top-[13vh] max-w-[400px] pointer-events-auto">
-              <div className="inline-flex items-center font-mono text-[10.5px] tracking-[0.14em] uppercase px-[8px] py-[4px] rounded-[3px] bg-[#2F6BFF] text-white mb-[12px]">
+              <div className="inline-flex items-center font-sans text-[11px] tracking-wider uppercase font-semibold px-[8px] py-[4px] rounded-[3px] bg-[#2F6BFF] text-white mb-[12px]">
                 ✕ GAUGE STATION 01 · PATNA GANDHI GHAT
               </div>
-              <h3 className="text-[clamp(22px,2vw,30px)] font-medium leading-[1.08] tracking-[-0.025em] text-[#0d141b] [text-shadow:0_0_24px_rgba(255,255,255,0.9)]">
+              <h3 className="font-heading text-[clamp(22px,2vw,30px)] font-bold leading-[1.08] tracking-[-0.025em] text-[#0d141b] [text-shadow:0_0_24px_rgba(255,255,255,0.9)]">
                 Scientific credibility for basin-wide flood defence
               </h3>
             </div>
 
-            {/* Gauge Telemetry Glass Card */}
+            {/* Gauge Telemetry Solid Card */}
             <div
               ref={gaugeCardRef}
-              className="absolute left-[38%] top-[38vh] w-[260px] p-[18px] rounded-[10px] bg-[#0e1924]/75 border border-white/25 backdrop-blur-[16px] text-white z-[8] pointer-events-auto shadow-2xl"
+              className="absolute left-[38%] top-[38vh] w-[260px] p-[18px] rounded-[10px] bg-[#14202c] border border-white/20 text-white z-[8] pointer-events-auto shadow-2xl"
             >
-              <h4 className="text-[15px] font-medium leading-[1.2]">
+              <h4 className="text-[15px] font-semibold leading-[1.2]">
                 River stage elevation
                 <br />
                 Patna Gandhi Ghat
               </h4>
-              <div className="font-mono text-[9.5px] opacity-70 mt-[4px] uppercase tracking-[0.1em]">
+              <div className="font-sans text-[10px] text-[#A69B88] font-medium mt-[4px] uppercase tracking-wider">
                 Station STN-PAT-01 · 15-min Telemetry
               </div>
 
               <div className="flex items-baseline gap-[6px] my-[12px]">
-                <span ref={stageCounterRef} className="text-[46px] font-medium tracking-[-0.04em] leading-none">
+                <span ref={stageCounterRef} className="font-mono text-[46px] font-semibold tracking-[-0.04em] leading-none">
                   49.82
                 </span>
-                <span className="font-mono text-[10px] tracking-[0.1em] opacity-80">METERS</span>
+                <span className="font-mono text-[10px] tracking-wider text-[#A69B88]">METERS</span>
               </div>
 
-              <div className="absolute right-[16px] top-[96px] bg-[#2F6BFF] text-white font-mono text-[9px] tracking-[0.1em] px-[6px] py-[3px] rounded-[3px] font-semibold">
+              <div className="absolute right-[16px] top-[96px] bg-[#2F6BFF] text-white font-sans text-[10px] tracking-wider px-[7px] py-[3px] rounded-[3px] font-semibold">
                 +1.68 m SURGE
               </div>
 
@@ -958,7 +958,7 @@ ELEV 49.82 M`}
                 <circle cx="214" cy="10" r="3.4" fill="#2f6bff" />
               </svg>
 
-              <div className="font-mono text-[9.5px] tracking-[0.12em] opacity-65 mt-[6px] uppercase">
+              <div className="font-mono text-[9.5px] tracking-wider text-[#A69B88] mt-[6px] uppercase">
                 T-6H · T-0 · T+12H · T+24H
               </div>
             </div>
@@ -966,7 +966,7 @@ ELEV 49.82 M`}
             {/* Feature Checklist List */}
             <div
               ref={featsRef}
-              className="absolute right-[34px] top-[30vh] w-[min(400px,36vw)] px-[16px] py-[6px] rounded-[10px] bg-[#f6f8f5]/80 backdrop-blur-[14px] border border-white/50 text-[#0d141b] z-[8] pointer-events-auto"
+              className="absolute right-[34px] top-[30vh] w-[min(400px,36vw)] px-[16px] py-[6px] rounded-[10px] bg-[#ffffff] border border-[#d8cbb3]/40 text-[#0d141b] z-[8] pointer-events-auto shadow-md"
             >
               {[
                 { idx: "01", lbl: "Automated CWC telemetry ingestion" },
@@ -1007,10 +1007,10 @@ ELEV 49.82 M`}
       >
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-12">
           <div className="max-w-[640px]">
-            <div className="inline-flex items-center justify-center h-[22px] px-[9px] bg-[#2F6BFF] text-white rounded-[3px] font-mono text-[10.5px] tracking-[0.16em] uppercase font-semibold mb-4">
+            <div className="inline-flex items-center justify-center h-[22px] px-[9px] bg-[#2F6BFF] text-white rounded-[3px] font-sans text-[11px] tracking-wider uppercase font-semibold mb-4">
               OPERATIONAL CAPABILITIES
             </div>
-            <h2 className="text-[clamp(32px,3.9vw,54px)] font-bold leading-tight tracking-[-0.03em] text-[#ede4d3]">
+            <h2 className="font-heading text-[clamp(32px,3.9vw,54px)] font-bold leading-tight tracking-[-0.03em] text-[#ede4d3]">
               Validating what the river system does under surge.
             </h2>
           </div>
@@ -1045,7 +1045,7 @@ ELEV 49.82 M`}
             />
             <div className="absolute inset-0 bg-gradient-to-b from-[#0e141a]/60 via-transparent to-[#0e141a]/90" />
             <div className="absolute top-[18px] left-[18px] right-[18px] flex justify-between items-center z-10">
-              <span className="font-mono text-[11px] tracking-[0.12em] uppercase text-[#ede4d3]/90">
+              <span className="font-sans text-[11px] tracking-wider uppercase font-semibold text-[#ede4d3]/90">
                 [Hydrological Forecasting]
               </span>
               <div className="w-[28px] h-[28px] rounded-full bg-[#2F6BFF] text-white flex items-center justify-center text-xs transition-transform duration-300 group-hover:-rotate-45">
@@ -1053,7 +1053,7 @@ ELEV 49.82 M`}
               </div>
             </div>
             <div className="absolute bottom-[22px] left-[20px] right-[20px] z-10">
-              <h3 className="text-[23px] font-bold tracking-tight text-white leading-tight">
+              <h3 className="font-heading text-[23px] font-bold tracking-tight text-white leading-tight">
                 Hydrodynamic river routing & ensemble spread
               </h3>
               <p className="text-[13.5px] leading-relaxed text-[#d8cbb3] max-h-0 overflow-hidden opacity-0 transition-all duration-500 group-hover:max-h-[90px] group-hover:opacity-100 group-hover:mt-2.5">
@@ -1086,7 +1086,7 @@ ELEV 49.82 M`}
             />
             <div className="absolute inset-0 bg-gradient-to-b from-[#0e141a]/60 via-transparent to-[#0e141a]/90" />
             <div className="absolute top-[18px] left-[18px] right-[18px] flex justify-between items-center z-10">
-              <span className="font-mono text-[11px] tracking-[0.12em] uppercase text-[#ede4d3]/90">
+              <span className="font-sans text-[11px] tracking-wider uppercase font-semibold text-[#ede4d3]/90">
                 [Satellite Mapping]
               </span>
               <div className="w-[28px] h-[28px] rounded-full bg-[#2F6BFF] text-white flex items-center justify-center text-xs transition-transform duration-300 group-hover:-rotate-45">
@@ -1094,7 +1094,7 @@ ELEV 49.82 M`}
               </div>
             </div>
             <div className="absolute bottom-[22px] left-[20px] right-[20px] z-10">
-              <h3 className="text-[23px] font-bold tracking-tight text-white leading-tight">
+              <h3 className="font-heading text-[23px] font-bold tracking-tight text-white leading-tight">
                 Sentinel-1 SAR inundation radar
               </h3>
               <p className="text-[13.5px] leading-relaxed text-[#d8cbb3] max-h-0 overflow-hidden opacity-0 transition-all duration-500 group-hover:max-h-[90px] group-hover:opacity-100 group-hover:mt-2.5">
@@ -1127,7 +1127,7 @@ ELEV 49.82 M`}
             />
             <div className="absolute inset-0 bg-gradient-to-b from-[#0e141a]/60 via-transparent to-[#0e141a]/90" />
             <div className="absolute top-[18px] left-[18px] right-[18px] flex justify-between items-center z-10">
-              <span className="font-mono text-[11px] tracking-[0.12em] uppercase text-[#ede4d3]/90">
+              <span className="font-sans text-[11px] tracking-wider uppercase font-semibold text-[#ede4d3]/90">
                 [Emergency Governance]
               </span>
               <div className="w-[28px] h-[28px] rounded-full bg-[#2F6BFF] text-white flex items-center justify-center text-xs transition-transform duration-300 group-hover:-rotate-45">
@@ -1135,7 +1135,7 @@ ELEV 49.82 M`}
               </div>
             </div>
             <div className="absolute bottom-[22px] left-[20px] right-[20px] z-10">
-              <h3 className="text-[23px] font-bold tracking-tight text-white leading-tight">
+              <h3 className="font-heading text-[23px] font-bold tracking-tight text-white leading-tight">
                 CAP v1.2 alerts & human-in-the-loop
               </h3>
               <p className="text-[13.5px] leading-relaxed text-[#d8cbb3] max-h-0 overflow-hidden opacity-0 transition-all duration-500 group-hover:max-h-[90px] group-hover:opacity-100 group-hover:mt-2.5">
@@ -1151,37 +1151,37 @@ ELEV 49.82 M`}
           className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8 mt-12 border-t border-[#d8cbb3]/15"
         >
           <div className="space-y-1">
-            <div className="stat-val text-4xl sm:text-5xl font-bold tracking-tight text-[#ede4d3]" data-val="14" data-type="int">
+            <div className="stat-val font-heading text-4xl sm:text-5xl font-bold tracking-tight text-[#ede4d3]" data-val="14" data-type="int">
               14
             </div>
-            <div className="font-mono text-[11px] tracking-[0.14em] uppercase text-[#a69b88]">
+            <div className="font-sans text-[11px] tracking-wider uppercase font-medium text-[#a69b88]">
               Basin Gauges Active
             </div>
           </div>
 
           <div className="space-y-1">
-            <div className="stat-val text-4xl sm:text-5xl font-bold tracking-tight text-[#ede4d3]" data-val="48" data-suffix="h" data-type="int">
+            <div className="stat-val font-heading text-4xl sm:text-5xl font-bold tracking-tight text-[#ede4d3]" data-val="48" data-suffix="h" data-type="int">
               48h
             </div>
-            <div className="font-mono text-[11px] tracking-[0.14em] uppercase text-[#a69b88]">
+            <div className="font-sans text-[11px] tracking-wider uppercase font-medium text-[#a69b88]">
               Forecast Lead Time
             </div>
           </div>
 
           <div className="space-y-1">
-            <div className="stat-val text-4xl sm:text-5xl font-bold tracking-tight text-[#ede4d3]" data-val="90" data-suffix="%" data-type="int">
+            <div className="stat-val font-heading text-4xl sm:text-5xl font-bold tracking-tight text-[#ede4d3]" data-val="90" data-suffix="%" data-type="int">
               90%
             </div>
-            <div className="font-mono text-[11px] tracking-[0.14em] uppercase text-[#a69b88]">
+            <div className="font-sans text-[11px] tracking-wider uppercase font-medium text-[#a69b88]">
               Confidence Interval
             </div>
           </div>
 
           <div className="space-y-1">
-            <div className="stat-val text-4xl sm:text-5xl font-bold tracking-tight text-[#ede4d3]" data-val="99.8" data-suffix="%" data-type="float">
+            <div className="stat-val font-heading text-4xl sm:text-5xl font-bold tracking-tight text-[#ede4d3]" data-val="99.8" data-suffix="%" data-type="float">
               99.8%
             </div>
-            <div className="font-mono text-[11px] tracking-[0.14em] uppercase text-[#a69b88]">
+            <div className="font-sans text-[11px] tracking-wider uppercase font-medium text-[#a69b88]">
               Telemetry Stream Uptime
             </div>
           </div>
