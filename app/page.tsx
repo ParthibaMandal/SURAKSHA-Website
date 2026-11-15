@@ -2,94 +2,22 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { BasinScrollStoryHero } from "@/components/hero/BasinScrollStoryHero";
 import { DigitalTwinScene } from "@/components/three/DigitalTwinScene";
 import { TacticalMapSvg } from "@/components/three/TacticalMapSvg";
 import { HydrologicalChart } from "@/components/shared/HydrologicalChart";
 import { FadeIn } from "@/components/motion/FadeIn";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
 
 export default function HomePage() {
   const [isSurgeActive, setIsSurgeActive] = useState(false);
 
   return (
     <div className="relative bg-[#1E1E1C] text-[#D8CBB3]">
-      {/* 1. Hero Section */}
-      <section className="relative z-10 pt-12 pb-20 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          {/* Left Hero Column */}
-          <div className="lg:col-span-6 flex flex-col gap-6">
-            <FadeIn delay={0.05}>
-              <h1 className="text-4xl sm:text-5xl lg:text-[46px] font-bold tracking-tight text-[#EDE4D3] leading-[1.15]">
-                Hydrological flood intelligence and emergency decision support for the Ganga basin.
-              </h1>
-            </FadeIn>
+      {/* 1. Cinematic 5-Beat Pinned Scroll Fly-In Hero Section */}
+      <BasinScrollStoryHero />
 
-            <FadeIn delay={0.1}>
-              <p className="text-base text-[#A69B88] leading-relaxed max-w-xl">
-                SURAKSHA integrates hydrological station telemetry, 1D and 2D hydrodynamic predictions, Sentinel-1 satellite inundation evidence, and human-verified CAP advisories across the Middle Ganga corridor in Bihar.
-              </p>
-            </FadeIn>
-
-            <FadeIn delay={0.15}>
-              <div className="flex flex-wrap items-center gap-3.5 pt-2">
-                <Link href="/platform">
-                  <Button
-                    size="lg"
-                    className="font-semibold text-xs uppercase tracking-wider bg-[#2F6BFF] text-white hover:bg-[#4B80FF]"
-                  >
-                    Explore Platform
-                  </Button>
-                </Link>
-
-                <Link href="/demo-lab">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="font-semibold text-xs uppercase tracking-wider border-[#D8CBB3]/20 text-[#EDE4D3] hover:bg-[#292925]"
-                  >
-                    Launch Simulation
-                  </Button>
-                </Link>
-
-                <Link
-                  href="/admin"
-                  className="text-xs font-semibold text-[#2F6BFF] hover:underline px-2 py-2 flex items-center gap-1"
-                >
-                  Open Command Centre <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-            </FadeIn>
-
-            {/* Provenance Metadata Strip */}
-            <FadeIn delay={0.2}>
-              <div className="grid grid-cols-3 gap-4 pt-5 border-t border-[#D8CBB3]/15 text-xs">
-                <div>
-                  <span className="text-[11px] text-[#A69B88] block">Base gauge datum</span>
-                  <span className="text-[#EDE4D3] font-semibold font-mono">49.82 m (Patna)</span>
-                </div>
-                <div>
-                  <span className="text-[11px] text-[#A69B88] block">Analytical gates</span>
-                  <span className="text-[#2F6BFF] font-semibold">Pre, Mid, Post</span>
-                </div>
-                <div>
-                  <span className="text-[11px] text-[#A69B88] block">Alert governance</span>
-                  <span className="text-[#EDE4D3] font-semibold">Human-approved</span>
-                </div>
-              </div>
-            </FadeIn>
-          </div>
-
-          {/* Right Hero Column: River-Basin 3D Digital Twin */}
-          <div className="lg:col-span-6">
-            <FadeIn delay={0.15} yOffset={20}>
-              <DigitalTwinScene onSurgeStateChange={(surge) => setIsSurgeActive(surge)} />
-            </FadeIn>
-          </div>
-        </div>
-      </section>
-
-      {/* 2. Operations Console & Architecture (Screen 2: Real Product Picture + Operational Telemetry Breakdown) */}
+      {/* 2. Operations Console & Architecture (Real Product Picture + Operational Telemetry Breakdown) */}
       <section className="relative z-10 py-16 border-t border-[#D8CBB3]/15 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
@@ -212,7 +140,7 @@ export default function HomePage() {
         </FadeIn>
       </section>
 
-      {/* 3. Scientific Hydrograph Preview Section */}
+      {/* 3. Scientific Hydrograph & Interactive 3D Basin Twin Preview */}
       <section className="relative z-10 py-16 border-t border-[#D8CBB3]/15 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn>
           <div className="p-6 sm:p-8 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-6">
@@ -222,7 +150,7 @@ export default function HomePage() {
                   River-stage hydrograph, forecast uncertainty, and thresholds.
                 </h2>
                 <p className="text-xs text-[#A69B88] mt-1">
-                  Patna Study Section (STN-PAT-01). Toggle between 6h, 24h, and 72h horizons or trigger a surge in the 3D basin above.
+                  Patna Study Section (STN-PAT-01). Toggle between 6h, 24h, and 72h horizons or trigger a surge in the 3D twin to test telemetry responses.
                 </p>
               </div>
               <Link href="/admin/forecasts">
@@ -232,7 +160,14 @@ export default function HomePage() {
               </Link>
             </div>
 
-            <HydrologicalChart isSurge={isSurgeActive} />
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              <div className="lg:col-span-7">
+                <HydrologicalChart isSurge={isSurgeActive} />
+              </div>
+              <div className="lg:col-span-5">
+                <DigitalTwinScene onSurgeStateChange={(surge) => setIsSurgeActive(surge)} />
+              </div>
+            </div>
           </div>
         </FadeIn>
       </section>
