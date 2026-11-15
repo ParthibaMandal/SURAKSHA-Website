@@ -23,8 +23,8 @@ export const PublicFooter: React.FC = () => {
             <p className="text-xs text-[#A69B88] leading-relaxed">
               Connecting hydrological signals, geospatial evidence, and human-governed response intelligence for flood-risk decision support.
             </p>
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded text-[11px] font-mono text-[#D8CBB3] border border-[#D8CBB3]/20 bg-[#292925]">
-              RESEARCH PROTOTYPE · ACADEMIC EVALUATION
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded text-[11px] text-[#D8CBB3] border border-[#D8CBB3]/20 bg-[#292925]">
+              Research Prototype, Academic Evaluation
             </div>
           </div>
 
@@ -128,7 +128,7 @@ export const PublicFooter: React.FC = () => {
 
         {/* Bottom Disclaimer */}
         <div className="mt-12 pt-6 border-t border-[#D8CBB3]/15 flex flex-col sm:flex-row items-center justify-between text-xs text-[#A69B88] gap-4">
-          <span>© 2026 SURAKSHA · Scientific Flood-Intelligence & Disaster-Response Research Prototype.</span>
+          <span>© 2026 SURAKSHA, Scientific Flood-Intelligence and Disaster-Response Research Prototype.</span>
           <span className="text-center sm:text-right font-mono text-[11px] text-[#D8CBB3]">
             Not an official government warning authority.
           </span>

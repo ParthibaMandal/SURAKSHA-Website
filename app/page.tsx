@@ -7,54 +7,7 @@ import { TacticalMapSvg } from "@/components/three/TacticalMapSvg";
 import { HydrologicalChart } from "@/components/shared/HydrologicalChart";
 import { FadeIn } from "@/components/motion/FadeIn";
 import { Button } from "@/components/ui/button";
-import {
-  Activity,
-  Cpu,
-  Globe,
-  Layers,
-  ShieldCheck,
-  Radio,
-  ArrowRight,
-} from "lucide-react";
-
-const CAPABILITY_CARDS = [
-  {
-    title: "Hydrological Ingestion",
-    tag: "TELEMETRY",
-    icon: Radio,
-    desc: "Ingests 15-minute river-stage observations across CWC basin gauges alongside IMD catchment rainfall grids and telemetry freshness checks.",
-  },
-  {
-    title: "Forecasting Committee",
-    tag: "ENSEMBLE",
-    icon: Cpu,
-    desc: "Executes multi-horizon (6h, 24h, 72h) hydrodynamic ensemble predictions with 90% confidence intervals and mass-conservation checks.",
-  },
-  {
-    title: "Geospatial Intelligence",
-    tag: "SAR + DEM",
-    icon: Globe,
-    desc: "Combines Sentinel-1 SAR backscatter water masks with digital elevation contours to map corridor inundation envelopes.",
-  },
-  {
-    title: "Consequence Assessment",
-    tag: "EXPOSURE",
-    icon: Layers,
-    desc: "Evaluates ward-level floodplain exposure, critical embankment freeboard, and shelter readiness along the Patna urban reach.",
-  },
-  {
-    title: "Supervisory Gates",
-    tag: "VERIFICATION",
-    icon: ShieldCheck,
-    desc: "Enforces Pre-Run, Mid-Run, and Post-Run analytical verification gates so corrupted telemetry or divergent runs never trigger false alarms.",
-  },
-  {
-    title: "Response Intelligence",
-    tag: "CAP v1.2",
-    icon: Activity,
-    desc: "Produces OASIS CAP v1.2 advisories, SITREP dossiers, and citizen SOS triage queues governed strictly by human commander approval.",
-  },
-];
+import { ArrowRight } from "lucide-react";
 
 export default function HomePage() {
   const [isSurgeActive, setIsSurgeActive] = useState(false);
@@ -67,29 +20,18 @@ export default function HomePage() {
           {/* Left Hero Column */}
           <div className="lg:col-span-6 flex flex-col gap-6">
             <FadeIn delay={0.05}>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#292925] border border-[#D8CBB3]/20 text-[11px] font-mono text-[#D8CBB3]">
-                <span className="w-2 h-2 rounded-full bg-[#2F6BFF]" />
-                GANGA BASIN · FLOOD INTELLIGENCE & DISASTER RESPONSE
-              </div>
-            </FadeIn>
-
-            <FadeIn delay={0.1}>
-              <h1 className="text-4xl sm:text-5xl lg:text-[52px] font-extrabold tracking-tight text-[#D8CBB3] leading-[1.12]">
-                Understand the rise.
-                <br />
-                Anticipate the risk.
-                <br />
-                <span className="text-[#EDE4D3]">Coordinate the response.</span>
+              <h1 className="text-4xl sm:text-5xl lg:text-[46px] font-bold tracking-tight text-[#EDE4D3] leading-[1.15]">
+                Hydrological flood intelligence and emergency decision support for the Ganga basin.
               </h1>
             </FadeIn>
 
-            <FadeIn delay={0.15}>
+            <FadeIn delay={0.1}>
               <p className="text-base text-[#A69B88] leading-relaxed max-w-xl">
-                SURAKSHA is a scientific flood-intelligence and emergency-response decision-support platform. It unifies hydrological station telemetry, ensemble flood forecasting, Sentinel-1 geospatial evidence, and human-governed CAP advisories for the Ganga corridor in Bihar.
+                SURAKSHA integrates hydrological station telemetry, 1D and 2D hydrodynamic predictions, Sentinel-1 satellite inundation evidence, and human-verified CAP advisories across the Middle Ganga corridor in Bihar.
               </p>
             </FadeIn>
 
-            <FadeIn delay={0.2}>
+            <FadeIn delay={0.15}>
               <div className="flex flex-wrap items-center gap-3.5 pt-2">
                 <Link href="/platform">
                   <Button
@@ -104,7 +46,7 @@ export default function HomePage() {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="font-semibold text-xs uppercase tracking-wider"
+                    className="font-semibold text-xs uppercase tracking-wider border-[#D8CBB3]/20 text-[#EDE4D3] hover:bg-[#292925]"
                   >
                     Launch Simulation
                   </Button>
@@ -112,33 +54,33 @@ export default function HomePage() {
 
                 <Link
                   href="/admin"
-                  className="text-xs font-mono text-[#2F6BFF] hover:underline px-2 py-2 flex items-center gap-1"
+                  className="text-xs font-semibold text-[#2F6BFF] hover:underline px-2 py-2 flex items-center gap-1"
                 >
                   Open Command Centre <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
             </FadeIn>
 
-            {/* Meta Provenance Strip */}
-            <FadeIn delay={0.25}>
-              <div className="grid grid-cols-3 gap-3 pt-5 border-t border-[#D8CBB3]/15 font-mono text-xs">
+            {/* Provenance Metadata Strip */}
+            <FadeIn delay={0.2}>
+              <div className="grid grid-cols-3 gap-4 pt-5 border-t border-[#D8CBB3]/15 text-xs">
                 <div>
-                  <span className="text-[10px] text-[#A69B88] block">BASE DATUM</span>
-                  <span className="text-[#EDE4D3] font-bold">49.82 m (Patna)</span>
+                  <span className="text-[11px] text-[#A69B88] block">Base gauge datum</span>
+                  <span className="text-[#EDE4D3] font-semibold font-mono">49.82 m (Patna)</span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-[#A69B88] block">ANALYTICAL GATES</span>
-                  <span className="text-[#2F6BFF] font-bold">Pre · Mid · Post</span>
+                  <span className="text-[11px] text-[#A69B88] block">Analytical gates</span>
+                  <span className="text-[#2F6BFF] font-semibold">Pre, Mid, Post</span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-[#A69B88] block">ALERT GOVERNANCE</span>
-                  <span className="text-[#EDE4D3] font-bold">Human-Approved</span>
+                  <span className="text-[11px] text-[#A69B88] block">Alert governance</span>
+                  <span className="text-[#EDE4D3] font-semibold">Human-approved</span>
                 </div>
               </div>
             </FadeIn>
           </div>
 
-          {/* Right Hero Column: River-Basin Monitoring Interface / Geospatial Preview */}
+          {/* Right Hero Column: River-Basin 3D Digital Twin */}
           <div className="lg:col-span-6">
             <FadeIn delay={0.15} yOffset={20}>
               <DigitalTwinScene onSurgeStateChange={(surge) => setIsSurgeActive(surge)} />
@@ -147,70 +89,143 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 2. Platform Capabilities (6 Required Cards) */}
+      {/* 2. Operations Console & Architecture (Screen 2: Real Product Picture + Operational Telemetry Breakdown) */}
       <section className="relative z-10 py-16 border-t border-[#D8CBB3]/15 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
             <div>
-              <div className="eyebrow">PLATFORM CAPABILITIES</div>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-[#D8CBB3] tracking-tight">
-                Six integrated layers of flood intelligence.
+              <h2 className="text-3xl sm:text-4xl font-bold text-[#EDE4D3] tracking-tight">
+                Operations console and pipeline architecture.
               </h2>
             </div>
             <p className="text-sm text-[#A69B88] max-w-md leading-relaxed">
-              Every stage of the pipeline—from gauge ingestion to CAP v1.2 advisory dispatch—preserves data provenance and uncertainty bounds.
+              Real-time gauge telemetry streams, 1D/2D hydrodynamic forecast models, and CAP v1.2 incident dispatch unified in one supervisory interface.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {CAPABILITY_CARDS.map((card) => {
-              const Icon = card.icon;
-              return (
-                <div
-                  key={card.title}
-                  className="p-6 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] hover:border-[#2F6BFF]/40 transition-colors flex flex-col justify-between gap-4"
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="w-9 h-9 rounded-lg bg-[#1E1E1C] border border-[#D8CBB3]/15 grid place-items-center text-[#2F6BFF]">
-                        <Icon className="w-4 h-4" />
-                      </div>
-                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#1E1E1C] text-[#D8CBB3] border border-[#D8CBB3]/20">
-                        {card.tag}
-                      </span>
-                    </div>
-                    <h3 className="text-base font-bold text-[#EDE4D3]">{card.title}</h3>
-                    <p className="text-xs text-[#A69B88] leading-relaxed">{card.desc}</p>
+          {/* Real Platform Interface Screenshot */}
+          <div className="mb-8 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] overflow-hidden shadow-lg">
+            <div className="px-5 py-3 border-b border-[#D8CBB3]/12 bg-[#1E1E1C] flex flex-wrap items-center justify-between gap-3 text-xs">
+              <span className="font-semibold text-[#EDE4D3]">
+                SURAKSHA Command Workspace: Patna Middle Ganga Reach
+              </span>
+              <span className="text-[#A69B88]">
+                Gauge datum: <span className="font-mono text-[#EDE4D3]">49.82 m</span> normal, <span className="font-mono text-[#F59E0B]">50.50 m</span> warning, <span className="font-mono text-[#EF4444]">51.80 m</span> danger
+              </span>
+            </div>
+            <div className="relative">
+              <img
+                src="/images/suraksha-interface.png"
+                alt="SURAKSHA Flood Intelligence Platform Interface"
+                className="w-full h-auto object-cover max-h-[520px]"
+              />
+            </div>
+          </div>
+
+          {/* Operational Metrics and Verification Standards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="p-6 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] flex flex-col justify-between">
+              <div>
+                <h3 className="text-base font-bold text-[#EDE4D3] mb-2">Telemetry Ingestion</h3>
+                <p className="text-xs text-[#A69B88] leading-relaxed mb-4">
+                  Streams river-stage observations from CWC basin gauges and IMD precipitation grids across the Middle Ganga catchment.
+                </p>
+                <div className="space-y-2 text-xs border-t border-[#D8CBB3]/12 pt-3 text-[#A69B88]">
+                  <div className="flex justify-between">
+                    <span>Sampling cadence:</span>
+                    <span className="text-[#EDE4D3] font-mono">15-minute intervals</span>
                   </div>
-                  <div className="pt-3 border-t border-[#D8CBB3]/10 flex items-center justify-between text-[11px] font-mono text-[#2F6BFF]">
-                    <span>Verified module</span>
-                    <Link href="/platform" className="hover:underline">
-                      Inspect →
-                    </Link>
+                  <div className="flex justify-between">
+                    <span>Active gauge feeds:</span>
+                    <span className="text-[#EDE4D3] font-mono">3 reference stations</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Packet timeout:</span>
+                    <span className="text-[#EDE4D3] font-mono">&lt; 30 minutes</span>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+              <div className="pt-4 mt-4 border-t border-[#D8CBB3]/12">
+                <Link href="/admin/stations" className="text-xs font-semibold text-[#2F6BFF] hover:underline">
+                  View station telemetry →
+                </Link>
+              </div>
+            </div>
+
+            <div className="p-6 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] flex flex-col justify-between">
+              <div>
+                <h3 className="text-base font-bold text-[#EDE4D3] mb-2">Hydrodynamic Modeling</h3>
+                <p className="text-xs text-[#A69B88] leading-relaxed mb-4">
+                  Pairs 1D river-channel calculations with 2D floodplain depression filling for corridor inundation mapping.
+                </p>
+                <div className="space-y-2 text-xs border-t border-[#D8CBB3]/12 pt-3 text-[#A69B88]">
+                  <div className="flex justify-between">
+                    <span>Forecast horizons:</span>
+                    <span className="text-[#EDE4D3] font-mono">6h, 24h, 72h</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Ensemble members:</span>
+                    <span className="text-[#EDE4D3] font-mono">10 hydrological runs</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Confidence bounds:</span>
+                    <span className="text-[#EDE4D3] font-mono">90% prediction interval</span>
+                  </div>
+                </div>
+              </div>
+              <div className="pt-4 mt-4 border-t border-[#D8CBB3]/12">
+                <Link href="/platform" className="text-xs font-semibold text-[#2F6BFF] hover:underline">
+                  Review model pipeline →
+                </Link>
+              </div>
+            </div>
+
+            <div className="p-6 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] flex flex-col justify-between">
+              <div>
+                <h3 className="text-base font-bold text-[#EDE4D3] mb-2">Human-in-the-Loop Sign-off</h3>
+                <p className="text-xs text-[#A69B88] leading-relaxed mb-4">
+                  Enforces automated physics and plausibility checks before any public CAP v1.2 advisory is released.
+                </p>
+                <div className="space-y-2 text-xs border-t border-[#D8CBB3]/12 pt-3 text-[#A69B88]">
+                  <div className="flex justify-between">
+                    <span>Advisory protocol:</span>
+                    <span className="text-[#EDE4D3] font-mono">OASIS CAP v1.2</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Analytical checkpoints:</span>
+                    <span className="text-[#EDE4D3] font-mono">3 sequential gates</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Dispatch policy:</span>
+                    <span className="text-[#EDE4D3] font-mono">Commander authorization</span>
+                  </div>
+                </div>
+              </div>
+              <div className="pt-4 mt-4 border-t border-[#D8CBB3]/12">
+                <Link href="/alerts-safety" className="text-xs font-semibold text-[#2F6BFF] hover:underline">
+                  Inspect alert safeguards →
+                </Link>
+              </div>
+            </div>
           </div>
         </FadeIn>
       </section>
 
-      {/* Scientific Hydrograph Preview Section */}
+      {/* 3. Scientific Hydrograph Preview Section */}
       <section className="relative z-10 py-16 border-t border-[#D8CBB3]/15 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn>
           <div className="p-6 sm:p-8 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#D8CBB3]/12">
               <div>
-                <div className="eyebrow">SCIENTIFIC DATA VISUALIZATION</div>
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-[#D8CBB3]">
-                  River-Stage Hydrograph, Forecast Uncertainty & Thresholds
+                <h2 className="text-2xl sm:text-3xl font-bold text-[#EDE4D3]">
+                  River-stage hydrograph, forecast uncertainty, and thresholds.
                 </h2>
                 <p className="text-xs text-[#A69B88] mt-1">
-                  Patna Study Section (STN-PAT-01) · Toggle between 6h, 24h, and 72h horizons or trigger a surge in the 3D basin above.
+                  Patna Study Section (STN-PAT-01). Toggle between 6h, 24h, and 72h horizons or trigger a surge in the 3D basin above.
                 </p>
               </div>
               <Link href="/admin/forecasts">
-                <Button variant="outline" size="sm" className="text-xs font-mono">
+                <Button variant="outline" size="sm" className="text-xs font-semibold">
                   Open Forecasting Workspace →
                 </Button>
               </Link>
@@ -221,30 +236,29 @@ export default function HomePage() {
         </FadeIn>
       </section>
 
-      {/* 3. Event Lifecycle (Prepare, Respond, Recover) */}
+      {/* 4. Event Lifecycle (Prepare, Respond, Recover) */}
       <section className="relative z-10 py-16 border-t border-[#D8CBB3]/15 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
             <div>
-              <div className="eyebrow">EVENT LIFECYCLE</div>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-[#D8CBB3] tracking-tight">
-                Structured across Prepare, Respond, and Recover.
+              <h2 className="text-3xl sm:text-4xl font-bold text-[#EDE4D3] tracking-tight">
+                Three phases of operational flood response.
               </h2>
             </div>
             <p className="text-sm text-[#A69B88] max-w-md leading-relaxed">
-              Operational and citizen views adapt as river stage approaches warning (50.50 m) and danger (51.80 m) thresholds.
+              Telemetry thresholds and alert workflows calibrate to three operational stages:
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="rounded-xl border border-[#D8CBB3]/15 bg-[#292925] p-6 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-mono font-bold text-[#2F6BFF]">PHASE 01 · PREPARE</span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#1E1E1C] text-[#D8CBB3] border border-[#D8CBB3]/20">
+                <span className="text-xs font-semibold text-[#2F6BFF]">Phase 1: Prepare</span>
+                <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-[#1E1E1C] text-[#D8CBB3] border border-[#D8CBB3]/20">
                   Pre-Event
                 </span>
               </div>
-              <h3 className="text-lg font-bold text-[#EDE4D3]">Prepare</h3>
+              <h3 className="text-lg font-bold text-[#EDE4D3]">Preparedness</h3>
               <p className="text-xs text-[#A69B88] leading-relaxed">
                 Continuous baseline gauge telemetry, upstream catchment rainfall projections, and ward preparedness checklists before river stages reach warning marks.
               </p>
@@ -252,12 +266,12 @@ export default function HomePage() {
 
             <div className="rounded-xl border border-[#F59E0B]/30 bg-[#292925] p-6 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-mono font-bold text-[#F59E0B]">PHASE 02 · RESPOND</span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/30">
+                <span className="text-xs font-semibold text-[#F59E0B]">Phase 2: Respond</span>
+                <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/30">
                   Active Event
                 </span>
               </div>
-              <h3 className="text-lg font-bold text-[#EDE4D3]">Respond</h3>
+              <h3 className="text-lg font-bold text-[#EDE4D3]">Response</h3>
               <p className="text-xs text-[#A69B88] leading-relaxed">
                 Active incident command, Sentinel-1 SAR inundation updates, commander-authorized CAP v1.2 advisories, and citizen SOS rescue dispatch.
               </p>
@@ -265,12 +279,12 @@ export default function HomePage() {
 
             <div className="rounded-xl border border-[#D8CBB3]/15 bg-[#292925] p-6 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-mono font-bold text-[#D8CBB3]">PHASE 03 · RECOVER</span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#1E1E1C] text-[#D8CBB3] border border-[#D8CBB3]/20">
+                <span className="text-xs font-semibold text-[#D8CBB3]">Phase 3: Recover</span>
+                <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-[#1E1E1C] text-[#D8CBB3] border border-[#D8CBB3]/20">
                   Post-Event
                 </span>
               </div>
-              <h3 className="text-lg font-bold text-[#EDE4D3]">Recover</h3>
+              <h3 className="text-lg font-bold text-[#EDE4D3]">Recovery</h3>
               <p className="text-xs text-[#A69B88] leading-relaxed">
                 Post-event SITREP archival, observed peak vs. forecast NSE evaluation, and safe return clearance for affected floodplain wards.
               </p>
@@ -279,18 +293,17 @@ export default function HomePage() {
         </FadeIn>
       </section>
 
-      {/* 4. Scientific Oversight (Pre-Run, Mid-Run, Post-Run Analytical Gates) */}
+      {/* 5. Scientific Oversight (Pre-Run, Mid-Run, Post-Run Analytical Gates) */}
       <section className="relative z-10 py-16 border-t border-[#D8CBB3]/15 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
             <div>
-              <div className="eyebrow">SCIENTIFIC OVERSIGHT</div>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-[#D8CBB3] tracking-tight">
-                Pre-Run, Mid-Run, and Post-Run analytical gates.
+              <h2 className="text-3xl sm:text-4xl font-bold text-[#EDE4D3] tracking-tight">
+                Supervisory analytical gates.
               </h2>
             </div>
             <p className="text-sm text-[#A69B88] max-w-md leading-relaxed">
-              Every pipeline cycle passes three automated verification checkpoints before presenting recommendations to a human commander.
+              Automated invariant audits reject corrupted sensor packets, verify hydrodynamic mass conservation, and require human commander sign-off.
             </p>
           </div>
 
@@ -299,19 +312,19 @@ export default function HomePage() {
               <div className="rounded-xl border border-[#D8CBB3]/15 bg-[#292925] p-6 hover:border-[#2F6BFF] transition-colors h-full flex flex-col justify-between gap-4">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-mono font-bold text-[#2F6BFF]">GATE 01 · PRE-RUN</span>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#2F6BFF]/15 text-[#2F6BFF] border border-[#2F6BFF]/30">
+                    <span className="text-xs font-semibold text-[#2F6BFF]">Pre-Run Check</span>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-[#2F6BFF]/15 text-[#2F6BFF] border border-[#2F6BFF]/30">
                       PASS
                     </span>
                   </div>
                   <h3 className="text-base font-bold text-[#EDE4D3] group-hover:text-[#2F6BFF] transition-colors">
-                    Pre-Run Gate: Sensor & Input Integrity
+                    Sensor and Input Integrity
                   </h3>
                   <p className="text-xs text-[#A69B88] leading-relaxed">
                     Audits gauge quorum, packet freshness (&lt;15 min), and physical river-stage bounds before initiating forecast runs.
                   </p>
                 </div>
-                <span className="text-xs font-mono text-[#2F6BFF]">Inspect Pre-Run invariants →</span>
+                <span className="text-xs font-semibold text-[#2F6BFF]">Inspect Pre-Run invariants →</span>
               </div>
             </Link>
 
@@ -319,19 +332,19 @@ export default function HomePage() {
               <div className="rounded-xl border border-[#D8CBB3]/15 bg-[#292925] p-6 hover:border-[#2F6BFF] transition-colors h-full flex flex-col justify-between gap-4">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-mono font-bold text-[#2F6BFF]">GATE 02 · MID-RUN</span>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#2F6BFF]/15 text-[#2F6BFF] border border-[#2F6BFF]/30">
+                    <span className="text-xs font-semibold text-[#2F6BFF]">Mid-Run Check</span>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-[#2F6BFF]/15 text-[#2F6BFF] border border-[#2F6BFF]/30">
                       PASS
                     </span>
                   </div>
                   <h3 className="text-base font-bold text-[#EDE4D3] group-hover:text-[#2F6BFF] transition-colors">
-                    Mid-Run Gate: Ensemble & Physics Verification
+                    Ensemble and Physics Verification
                   </h3>
                   <p className="text-xs text-[#A69B88] leading-relaxed">
                     Verifies hydrodynamic mass conservation, Courant step convergence, and 90% ensemble spread stability.
                   </p>
                 </div>
-                <span className="text-xs font-mono text-[#2F6BFF]">Inspect Mid-Run invariants →</span>
+                <span className="text-xs font-semibold text-[#2F6BFF]">Inspect Mid-Run invariants →</span>
               </div>
             </Link>
 
@@ -339,33 +352,32 @@ export default function HomePage() {
               <div className="rounded-xl border border-[#D8CBB3]/15 bg-[#292925] p-6 hover:border-[#2F6BFF] transition-colors h-full flex flex-col justify-between gap-4">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-mono font-bold text-[#2F6BFF]">GATE 03 · POST-RUN</span>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#2F6BFF]/15 text-[#2F6BFF] border border-[#2F6BFF]/30">
+                    <span className="text-xs font-semibold text-[#2F6BFF]">Post-Run Check</span>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-[#2F6BFF]/15 text-[#2F6BFF] border border-[#2F6BFF]/30">
                       PASS
                     </span>
                   </div>
                   <h3 className="text-base font-bold text-[#EDE4D3] group-hover:text-[#2F6BFF] transition-colors">
-                    Post-Run Gate: Consequence & CAP Readiness
+                    Consequence and CAP Readiness
                   </h3>
                   <p className="text-xs text-[#A69B88] leading-relaxed">
                     Cross-checks inundation polygons against local elevation and stages OASIS CAP v1.2 drafts for human sign-off.
                   </p>
                 </div>
-                <span className="text-xs font-mono text-[#2F6BFF]">Inspect Post-Run invariants →</span>
+                <span className="text-xs font-semibold text-[#2F6BFF]">Inspect Post-Run invariants →</span>
               </div>
             </Link>
           </div>
         </FadeIn>
       </section>
 
-      {/* 5. Study Area (Ganga Corridor & Patna/Bihar Research Context) */}
+      {/* 6. Study Area (Ganga Corridor & Patna/Bihar Research Context) */}
       <section className="relative z-10 py-16 border-t border-[#D8CBB3]/15 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-5 space-y-5">
-              <div className="eyebrow">STUDY AREA CONTEXT</div>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-[#D8CBB3] tracking-tight">
-                Patna Study Section, Ganga River Basin.
+              <h2 className="text-3xl sm:text-4xl font-bold text-[#EDE4D3] tracking-tight">
+                Patna study section, Middle Ganga basin.
               </h2>
               <p className="text-sm text-[#A69B88] leading-relaxed">
                 Research and calibration focus on riverine flood dynamics along the middle Ganga corridor in Bihar, centered on the Patna urban reach (49.82 m nominal stage, 50.50 m warning, 51.80 m danger) and its confluences with the Sone, Gandak, and Punpun rivers.
@@ -375,12 +387,12 @@ export default function HomePage() {
                 {[
                   "Ganga river system",
                   "Patna, Bihar",
-                  "Sone & Gandak confluences",
+                  "Sone and Gandak confluences",
                   "River stage 49.82 m datum",
                 ].map((tag) => (
                   <span
                     key={tag}
-                    className="px-3 py-1 rounded-lg text-xs font-mono bg-[#292925] text-[#D8CBB3] border border-[#D8CBB3]/20"
+                    className="px-3 py-1 rounded-lg text-xs bg-[#292925] text-[#D8CBB3] border border-[#D8CBB3]/20"
                   >
                     {tag}
                   </span>
@@ -389,7 +401,7 @@ export default function HomePage() {
 
               <div className="pt-2">
                 <Link href="/study-area">
-                  <Button variant="outline" className="text-xs">
+                  <Button variant="outline" className="text-xs font-semibold">
                     Explore Study Area Details
                   </Button>
                 </Link>
@@ -399,9 +411,9 @@ export default function HomePage() {
             <div className="lg:col-span-7">
               <div className="rounded-xl border border-[#D8CBB3]/15 bg-[#292925] overflow-hidden shadow-lg">
                 <TacticalMapSvg />
-                <div className="p-3 bg-[#1E1E1C] border-t border-[#D8CBB3]/15 flex items-center justify-between text-xs text-[#A69B88] font-mono">
-                  <span>STUDY AREA SCHEMATIC · PATNA REACH (25.61°N, 85.14°E)</span>
-                  <span className="text-[#D8CBB3]">ILLUSTRATIVE MAP (NOT LIVE)</span>
+                <div className="p-3 bg-[#1E1E1C] border-t border-[#D8CBB3]/15 flex items-center justify-between text-xs text-[#A69B88]">
+                  <span>Study area schematic, Patna reach (25.61°N, 85.14°E)</span>
+                  <span className="text-[#D8CBB3]">Illustrative research map (not official civil defence)</span>
                 </div>
               </div>
             </div>
@@ -409,7 +421,7 @@ export default function HomePage() {
         </FadeIn>
       </section>
 
-      {/* 6. Interactive Demonstration & Research Prototype Disclaimer */}
+      {/* 7. Interactive Demonstration & Research Prototype Disclaimer */}
       <section className="relative z-10 py-16 border-t border-[#D8CBB3]/15 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn>
           <div className="p-4 rounded-xl border border-[#F59E0B]/35 bg-[#292925] text-xs text-[#D8CBB3] leading-relaxed mb-8">
@@ -418,8 +430,7 @@ export default function HomePage() {
 
           <div className="rounded-xl border border-[#D8CBB3]/20 bg-[#292925] p-8 sm:p-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
             <div className="space-y-2 max-w-2xl">
-              <div className="eyebrow">INTERACTIVE DEMONSTRATION</div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#EDE4D3]">
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#EDE4D3]">
                 Test controlled flood scenarios in the Simulation Lab.
               </h2>
               <p className="text-xs sm:text-sm text-[#A69B88] leading-relaxed">

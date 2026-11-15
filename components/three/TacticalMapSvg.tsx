@@ -112,30 +112,30 @@ export const TacticalMapSvg: React.FC = () => {
         <circle cx="360" cy="128" r="12" fill="#2F6BFF" fillOpacity="0.18" />
         <circle cx="360" cy="128" r="5.5" fill="#2F6BFF" stroke="#1E1E1C" strokeWidth="1.5" />
         <rect x="372" y="111" width="144" height="32" rx="4" fill="#292925" stroke="#D8CBB3" strokeOpacity="0.25" />
-        <text x="380" y="124" fill="#EDE4D3" fontSize="9.5" fontWeight="700" fontFamily="Manrope, sans-serif">
+        <text x="380" y="124" fill="#EDE4D3" fontSize="9.5" fontWeight="700" fontFamily="Inter, sans-serif">
           Patna Study Sector
         </text>
         <text x="380" y="136" fill="#2F6BFF" fontSize="8.5" fontWeight="600" fontFamily="JetBrains Mono, monospace">
-          STN-PAT-01 · 49.82m
+          STN-PAT-01 (49.82m)
         </text>
 
         {/* Station 2: STN-GAN-01 (Lalganj Warning Node - Amber Semantic State) */}
         <circle cx="242" cy="108" r="9" fill="#F59E0B" fillOpacity="0.2" />
         <circle cx="242" cy="108" r="4.5" fill="#F59E0B" stroke="#1E1E1C" strokeWidth="1.5" />
         <text x="128" y="102" fill="#FBBF24" fontSize="8.5" fontWeight="600" fontFamily="JetBrains Mono, monospace">
-          STN-GAN-01 · 52.40m (WARN)
+          STN-GAN-01 (52.40m WARN)
         </text>
 
         {/* Station 3: STN-SON-01 (Koelwar Node) */}
         <circle cx="172" cy="196" r="4.5" fill="#D8CBB3" stroke="#1E1E1C" strokeWidth="1.5" />
         <text x="64" y="210" fill="#D8CBB3" fontSize="8.5" fontWeight="500" fontFamily="JetBrains Mono, monospace">
-          STN-SON-01 · 53.12m
+          STN-SON-01 (53.12m)
         </text>
 
         {/* Station 4: Downstream Reach */}
         <circle cx="485" cy="176" r="4.5" fill="#2F6BFF" stroke="#1E1E1C" strokeWidth="1.5" />
         <text x="496" y="180" fill="#A69B88" fontSize="8.5" fontWeight="500" fontFamily="JetBrains Mono, monospace">
-          STN-MOK-04 · 47.90m
+          STN-MOK-04 (47.90m)
         </text>
 
         {/* Basin Header Legend inside Map */}
@@ -145,19 +145,19 @@ export const TacticalMapSvg: React.FC = () => {
           fill="#D8CBB3"
           fontSize="10"
           fontWeight="700"
-          letterSpacing="1.8"
-          fontFamily="JetBrains Mono, monospace"
+          letterSpacing="1.2"
+          fontFamily="Inter, sans-serif"
         >
-          GANGA BASIN · PATNA REACH (25.61°N, 85.14°E)
+          Ganga Basin, Patna Reach (25.61°N, 85.14°E)
         </text>
         <text
           x="20"
           y="40"
           fill="#A69B88"
           fontSize="8.5"
-          fontFamily="JetBrains Mono, monospace"
+          fontFamily="Inter, sans-serif"
         >
-          SCHEMATIC GEOSPATIAL LAYER · ILLUSTRATIVE RESEARCH EXTENT
+          Schematic geospatial layer, illustrative research extent
         </text>
       </svg>
     </div>

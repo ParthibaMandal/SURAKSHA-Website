@@ -50,16 +50,16 @@ export const CommandTopBar: React.FC<CommandTopBarProps> = ({ workspace = "COMMA
             className="bg-transparent text-[#D8CBB3] font-medium focus:outline-none text-xs cursor-pointer"
           >
             <option value="patna" className="bg-[#292925] text-[#D8CBB3]">
-              Ganga Basin · Patna Study Area
+              Ganga Basin, Patna Study Area
             </option>
             <option value="gandak" className="bg-[#292925] text-[#D8CBB3]">
-              Gandak Tributary · Lalganj Sector
+              Gandak Tributary, Lalganj Sector
             </option>
             <option value="son" className="bg-[#292925] text-[#D8CBB3]">
-              Son Sub-basin · Koelwar Reach
+              Son Sub-basin, Koelwar Reach
             </option>
             <option value="kosi" className="bg-[#292925] text-[#D8CBB3]">
-              Kosi Basin · Birpur Barrage
+              Kosi Basin, Birpur Barrage
             </option>
           </select>
         </div>

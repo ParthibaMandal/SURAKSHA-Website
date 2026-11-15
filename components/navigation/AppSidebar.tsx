@@ -182,7 +182,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ role }) => {
               {isAdmin ? "Duty Hydrologist" : "Citizen Account"}
             </strong>
             <small className="text-[10px] font-mono text-[#A69B88] block truncate">
-              {isAdmin ? "Ganga Basin Command" : "Patna Reach · Preview"}
+              {isAdmin ? "Ganga Basin Command" : "Patna Reach (Preview)"}
             </small>
           </div>
         </div>

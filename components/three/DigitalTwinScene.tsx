@@ -77,7 +77,7 @@ export const DigitalTwinScene: React.FC<DigitalTwinSceneProps> = ({ onSurgeState
             Ganga Basin Hydrological Intelligence Workspace
           </div>
           <div className="text-[11px] text-[#A69B88]">
-            3D Digital Twin · Drag to orbit basin topography
+            3D Digital Twin (drag to orbit basin topography)
           </div>
         </div>
         <span className="pill text-[10px] font-mono border-[#D8CBB3]/20 bg-[#292925] text-[#D8CBB3]">
@@ -153,7 +153,7 @@ export const DigitalTwinScene: React.FC<DigitalTwinSceneProps> = ({ onSurgeState
             <span className="text-[#D8CBB3]">STATIONS: 03 MAPPED</span>
           </div>
           <span className="text-[10px] text-[#A69B88] hidden sm:inline">
-            ILLUSTRATIVE MODEL · NOT A LIVE FLOOD MAP
+            Illustrative model (not an active flood warning map)
           </span>
         </div>
       </div>

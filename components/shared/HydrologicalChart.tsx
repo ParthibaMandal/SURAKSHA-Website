@@ -95,7 +95,7 @@ export const HydrologicalChart: React.FC<HydrologicalChartProps> = ({
             </span>
           </div>
           <p className="text-[11px] text-[#A69B88] mt-0.5">
-            Patna · Gandhi Ghat Gauge (STN-PAT-01) · Units: metres (m MSL) & rainfall (mm/hr)
+            Patna, Gandhi Ghat Gauge (STN-PAT-01), Units: metres (m MSL) and rainfall (mm/hr)
           </p>
         </div>
 

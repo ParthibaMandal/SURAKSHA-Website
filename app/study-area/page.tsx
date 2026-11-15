@@ -37,7 +37,7 @@ export default function StudyAreaPage() {
         <div className="p-6 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-2">
           <h3 className="text-lg font-bold text-[#EDE4D3]">Primary Context</h3>
           <p className="text-xs text-[#A69B88] leading-relaxed">
-            Ganga river corridor · Patna / Bihar. The operational study extent is declared from configured geospatial boundaries and monitored river stations.
+            Ganga river corridor, Patna, Bihar. The operational study extent is declared from configured geospatial boundaries and monitored river stations.
           </p>
         </div>
 
