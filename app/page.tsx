@@ -247,7 +247,7 @@ export default function HomePage() {
               </h2>
             </div>
             <p className="text-sm text-[#A69B88] max-w-md leading-relaxed">
-              Telemetry thresholds and alert workflows calibrate to three operational stages:
+              Early warning protocols and command views for rising, cresting, and receding river levels.
             </p>
           </div>
 

@@ -189,13 +189,13 @@ export const DigitalTwinScene: React.FC<DigitalTwinSceneProps> = ({ onSurgeState
             Risk State
           </span>
           <strong
-            className={`text-xl font-bold font-mono mt-0.5 ${
+            className={`text-xl font-bold mt-0.5 ${
               isSurge ? "text-[#EF4444]" : "text-[#F59E0B]"
             }`}
           >
             {isSurge ? "Warning Level 3" : "Advisory Watch"}
           </strong>
-          <small className="text-[10px] font-mono text-[#7D7465]">THRESHOLD MONITOR</small>
+          <small className="text-[10px] text-[#7D7465]">Threshold state</small>
         </div>
       </div>
     </div>
