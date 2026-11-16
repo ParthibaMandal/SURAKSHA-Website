@@ -1035,12 +1035,11 @@ ELEV 49.82 M`}
             }}
           >
             <div
-              className="absolute inset-0 bg-cover bg-no-repeat transition-transform duration-1000 group-hover:scale-105"
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-1000 group-hover:scale-105"
               style={{
-                backgroundImage:
-                  "url('https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261106_025630_9a37a1e0-2547-4973-8160-c75205993914.png&w=1400&q=82')",
-                backgroundPosition: "22% 70%",
-                backgroundSize: "260%",
+                backgroundImage: "url('/images/hydrodynamic-river-routing.jpg')",
+                backgroundPosition: "center center",
+                backgroundSize: "cover",
               }}
             />
             <div className="absolute inset-0 bg-gradient-to-b from-[#0e141a]/60 via-transparent to-[#0e141a]/90" />
