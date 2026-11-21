@@ -2,16 +2,13 @@
 
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
-import { marked } from "marked";
-import DOMPurify from "isomorphic-dompurify";
 import {
   DocItem,
   getAllDocs,
   getDocCategories,
   getRelatedDocs,
-  DocHeading,
 } from "@/lib/docs";
-import { MermaidRenderer } from "@/components/docs/MermaidRenderer";
+import { StructuredDocRenderer } from "@/components/docs/renderers/StructuredDocRenderer";
 import {
   ArrowLeft,
   ArrowRight,
@@ -24,15 +21,11 @@ import {
   Check,
   ExternalLink,
   Github,
-  Hash,
   Share2,
-  Bookmark,
   Search,
   CheckCircle2,
-  AlertTriangle,
-  Layers,
-  Tag,
-  Menu,
+  Sparkles,
+  FileCode,
   X,
 } from "lucide-react";
 
@@ -62,8 +55,7 @@ export function DocsReader({
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
   const [activeHeadingId, setActiveHeadingId] = useState<string>("");
-
-  const articleContentRef = useRef<HTMLDivElement>(null);
+  const [viewMode, setViewMode] = useState<"interactive" | "raw">("interactive");
 
   // Keep current category expanded
   useEffect(() => {
@@ -137,113 +129,6 @@ export function DocsReader({
       navigator.clipboard.writeText(currentDoc.content);
       setCopiedCode(true);
       setTimeout(() => setCopiedCode(false), 2000);
-    }
-  };
-
-  // Split markdown into regular markdown sections and mermaid blocks
-  // to render mermaid dynamically with React components
-  const contentBlocks = useMemo(() => {
-    if (!currentDoc) return [];
-
-    const raw = currentDoc.content;
-    const blocks: { type: "markdown" | "mermaid"; content: string; id: string }[] = [];
-
-    // Split by ```mermaid ... ```
-    const mermaidRegex = /```mermaid\s*([\s\S]*?)```/g;
-    let lastIndex = 0;
-    let match: RegExpExecArray | null;
-    let diagramCounter = 0;
-
-    while ((match = mermaidRegex.exec(raw)) !== null) {
-      const markdownBefore = raw.substring(lastIndex, match.index);
-      if (markdownBefore.trim()) {
-        blocks.push({
-          type: "markdown",
-          content: markdownBefore,
-          id: `md-${blocks.length}`,
-        });
-      }
-
-      blocks.push({
-        type: "mermaid",
-        content: match[1].trim(),
-        id: `diagram-${diagramCounter++}`,
-      });
-
-      lastIndex = mermaidRegex.lastIndex;
-    }
-
-    const remainingMarkdown = raw.substring(lastIndex);
-    if (remainingMarkdown.trim()) {
-      blocks.push({
-        type: "markdown",
-        content: remainingMarkdown,
-        id: `md-${blocks.length}`,
-      });
-    }
-
-    return blocks;
-  }, [currentDoc]);
-
-  // Render a markdown string into sanitized HTML with custom marked extensions
-  const renderMarkdownChunk = (mdText: string) => {
-    try {
-      marked.setOptions({
-        gfm: true,
-        breaks: false,
-      });
-
-      let text = mdText;
-
-      // GitHub alert callout replacement: > [!NOTE], > [!WARNING], > [!TIP], > [!IMPORTANT], > [!CAUTION]
-      text = text.replace(
-        />\s*\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*([\s\S]*?)(?=(?:\n\n[^\s>]|\n?$))/gi,
-        (match, type, body) => {
-          const typeUpper = type.toUpperCase();
-          let borderColor = "border-[#2F6BFF]";
-          let bgColor = "bg-[#2F6BFF]/10";
-          let label = "NOTE";
-
-          if (typeUpper === "WARNING" || typeUpper === "CAUTION") {
-            borderColor = "border-[#F59E0B]";
-            bgColor = "bg-[#F59E0B]/10";
-            label = "WARNING";
-          } else if (typeUpper === "IMPORTANT") {
-            borderColor = "border-[#EF4444]";
-            bgColor = "bg-[#EF4444]/10";
-            label = "IMPORTANT";
-          } else if (typeUpper === "TIP") {
-            borderColor = "border-[#10B981]";
-            bgColor = "bg-[#10B981]/10";
-            label = "TIP";
-          }
-
-          return `<div class="my-6 p-4 rounded-xl border-l-4 ${borderColor} ${bgColor} text-xs leading-relaxed"><div class="font-bold text-[#EDE4D3] uppercase tracking-wider mb-1.5 flex items-center gap-1.5">${label}</div><div class="text-[#D8CBB3]">${body.trim()}</div></div>`;
-        }
-      );
-
-      // Render marked HTML
-      const rawHtml = marked.parse(text) as string;
-
-      // Inject deterministic heading IDs and anchor links into <h2>, <h3>, <h4>
-      const htmlWithAnchors = rawHtml.replace(
-        /<h([2-4])>([\s\S]*?)<\/h\1>/gi,
-        (m, level, content) => {
-          const cleanText = content.replace(/<[^>]+>/g, "").trim();
-          const id = cleanText
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, "-")
-            .replace(/^-+|-+$/g, "");
-          return `<h${level} id="${id}" class="group scroll-mt-24 relative flex items-center justify-between">${content}<a href="#${id}" class="opacity-0 group-hover:opacity-100 text-[#2F6BFF] ml-2 text-xs" aria-label="Link to section">#</a></h${level}>`;
-        }
-      );
-
-      // Sanitize HTML
-      return DOMPurify.sanitize(htmlWithAnchors, {
-        ADD_ATTR: ["target", "id", "class"],
-      });
-    } catch (e) {
-      return `<p>Error rendering documentation chunk.</p>`;
     }
   };
 
@@ -388,50 +273,78 @@ export function DocsReader({
         </div>
 
         {/* Article Meta Bar */}
-        <div className="pb-6 border-b border-[#D8CBB3]/15 space-y-3">
-          <div className="flex flex-wrap items-center gap-2.5">
-            {/* Status Pill */}
-            <span
-              className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium border ${
-                currentDoc.status === "VERIFIED"
-                  ? "bg-[#10B981]/15 text-[#10B981] border-[#10B981]/30"
-                  : currentDoc.status === "IMPLEMENTED"
-                  ? "bg-[#3B82F6]/15 text-[#60A5FA] border-[#3B82F6]/30"
-                  : "bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30"
-              }`}
-            >
-              {currentDoc.status === "VERIFIED" ? (
-                <CheckCircle2 className="w-3.5 h-3.5" />
-              ) : currentDoc.status === "IMPLEMENTED" ? (
-                <Code2 className="w-3.5 h-3.5" />
-              ) : (
+        <div className="pb-6 border-b border-[#D8CBB3]/15 space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-2.5">
+              {/* Status Pill */}
+              <span
+                className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium border ${
+                  currentDoc.status === "VERIFIED"
+                    ? "bg-[#10B981]/15 text-[#10B981] border-[#10B981]/30"
+                    : currentDoc.status === "IMPLEMENTED"
+                    ? "bg-[#3B82F6]/15 text-[#60A5FA] border-[#3B82F6]/30"
+                    : "bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30"
+                }`}
+              >
+                {currentDoc.status === "VERIFIED" ? (
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                ) : currentDoc.status === "IMPLEMENTED" ? (
+                  <Code2 className="w-3.5 h-3.5" />
+                ) : (
+                  <Clock className="w-3.5 h-3.5" />
+                )}
+                <span>{currentDoc.status}</span>
+              </span>
+
+              <span className="text-xs text-[#A69B88] flex items-center gap-1">
                 <Clock className="w-3.5 h-3.5" />
-              )}
-              <span>{currentDoc.status}</span>
-            </span>
+                <span>{currentDoc.readingTime} min read</span>
+              </span>
 
-            <span className="text-xs text-[#A69B88] flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5" />
-              <span>{currentDoc.readingTime} min read</span>
-            </span>
+              <span className="text-xs text-[#A69B88]">·</span>
 
-            <span className="text-xs text-[#A69B88]">·</span>
+              <span className="text-xs text-[#A69B88]">
+                {currentDoc.wordCount.toLocaleString()} words
+              </span>
 
-            <span className="text-xs text-[#A69B88]">
-              {currentDoc.wordCount.toLocaleString()} words
-            </span>
+              <span className="text-xs text-[#A69B88]">·</span>
 
-            <span className="text-xs text-[#A69B88]">·</span>
+              <a
+                href={currentDoc.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-[#2F6BFF] hover:underline flex items-center gap-1 font-mono"
+              >
+                <Github className="w-3 h-3" />
+                <span>Source</span>
+              </a>
+            </div>
 
-            <a
-              href={currentDoc.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-[#2F6BFF] hover:underline flex items-center gap-1 font-mono"
-            >
-              <Github className="w-3 h-3" />
-              <span>View Source</span>
-            </a>
+            {/* View Mode Switcher: Interactive UI vs Raw Spec */}
+            <div className="flex items-center gap-1 p-1 rounded-xl bg-[#242421] border border-[#D8CBB3]/15 text-xs">
+              <button
+                onClick={() => setViewMode("interactive")}
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-medium transition-all ${
+                  viewMode === "interactive"
+                    ? "bg-[#2F6BFF] text-white shadow font-semibold"
+                    : "text-[#A69B88] hover:text-[#EDE4D3]"
+                }`}
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                <span>Interactive UI View</span>
+              </button>
+              <button
+                onClick={() => setViewMode("raw")}
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-medium transition-all ${
+                  viewMode === "raw"
+                    ? "bg-[#2F6BFF] text-white shadow font-semibold"
+                    : "text-[#A69B88] hover:text-[#EDE4D3]"
+                }`}
+              >
+                <FileCode className="w-3.5 h-3.5" />
+                <span>Raw Spec</span>
+              </button>
+            </div>
           </div>
 
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#EDE4D3]">
@@ -445,44 +358,26 @@ export function DocsReader({
           )}
         </div>
 
-        {/* Article Body with Markdown & Mermaid */}
-        <div
-          ref={articleContentRef}
-          className="py-8 prose prose-invert max-w-none 
-            prose-headings:text-[#EDE4D3] prose-headings:font-bold prose-headings:tracking-tight
-            prose-h2:text-xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:border-b prose-h2:border-[#D8CBB3]/10 prose-h2:pb-2
-            prose-h3:text-base prose-h3:mt-8 prose-h3:mb-3
-            prose-p:text-sm prose-p:text-[#D8CBB3] prose-p:leading-relaxed prose-p:my-4
-            prose-ul:text-sm prose-ul:text-[#D8CBB3] prose-ul:my-4 prose-ul:list-disc prose-ul:pl-6
-            prose-ol:text-sm prose-ol:text-[#D8CBB3] prose-ol:my-4 prose-ol:list-decimal prose-ol:pl-6
-            prose-li:my-1.5
-            prose-code:text-[#60A5FA] prose-code:font-mono prose-code:text-xs prose-code:bg-[#292925] prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
-            prose-pre:bg-[#141413] prose-pre:border prose-pre:border-[#D8CBB3]/15 prose-pre:p-4 prose-pre:rounded-xl
-            prose-table:w-full prose-table:text-xs prose-table:my-6 prose-table:border prose-table:border-[#D8CBB3]/20
-            prose-th:bg-[#292925] prose-th:text-[#EDE4D3] prose-th:p-2.5 prose-th:text-left prose-th:border-b prose-th:border-[#D8CBB3]/20
-            prose-td:p-2.5 prose-td:border-b prose-td:border-[#D8CBB3]/10
-            prose-a:text-[#2F6BFF] prose-a:underline hover:prose-a:text-[#60A5FA]"
-        >
-          {contentBlocks.map((block) => {
-            if (block.type === "mermaid") {
-              return (
-                <MermaidRenderer
-                  key={block.id}
-                  id={block.id}
-                  chart={block.content}
-                />
-              );
-            }
-            return (
-              <div
-                key={block.id}
-                dangerouslySetInnerHTML={{
-                  __html: renderMarkdownChunk(block.content),
-                }}
-              />
-            );
-          })}
-        </div>
+        {/* Article Body: Interactive UI Component View OR Raw Specification */}
+        {viewMode === "interactive" ? (
+          <StructuredDocRenderer doc={currentDoc} />
+        ) : (
+          <div className="my-8 rounded-2xl border border-[#D8CBB3]/15 bg-[#141413] p-5 font-mono text-xs text-[#D8CBB3] overflow-x-auto leading-relaxed shadow-lg">
+            <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#D8CBB3]/10 text-[11px] text-[#A69B88]">
+              <span>Raw Document Specification</span>
+              <button
+                onClick={handleCopyMarkdown}
+                className="flex items-center gap-1 text-[#2F6BFF] hover:underline"
+              >
+                {copiedCode ? <Check className="w-3 h-3 text-[#10B981]" /> : <Copy className="w-3 h-3" />}
+                <span>{copiedCode ? "Copied" : "Copy Raw"}</span>
+              </button>
+            </div>
+            <pre>
+              <code>{currentDoc.content}</code>
+            </pre>
+          </div>
+        )}
 
         {/* Previous and Next Navigation Footer */}
         <div className="pt-10 border-t border-[#D8CBB3]/15 grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -575,7 +470,7 @@ export function DocsReader({
             >
               <div className="flex items-center gap-2">
                 <Copy className="w-3.5 h-3.5 text-[#2F6BFF]" />
-                <span>Copy Raw Markdown</span>
+                <span>Copy Specification</span>
               </div>
               {copiedCode && <Check className="w-3.5 h-3.5 text-[#10B981]" />}
             </button>
@@ -623,4 +518,3 @@ export function DocsReader({
     </div>
   );
 }
-
