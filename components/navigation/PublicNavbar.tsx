@@ -17,6 +17,7 @@ export const PublicNavbar: React.FC = () => {
 
   const links = [
     { href: "/platform", label: "Platform" },
+    { href: "/docs", label: "Docs" },
     { href: "/how-it-works", label: "Capabilities" },
     { href: "/study-area", label: "Study Area" },
     { href: "/research", label: "Research" },

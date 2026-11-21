@@ -35,6 +35,16 @@ export const PublicFooter: React.FC = () => {
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
+                <Link href="/docs" className="hover:text-[#2F6BFF] transition-colors font-medium text-[#EDE4D3]">
+                  Technical Documentation (84 Docs)
+                </Link>
+              </li>
+              <li>
+                <Link href="/docs?doc=09-backend-and-api--api-reference" className="hover:text-[#2F6BFF] transition-colors">
+                  REST API Reference
+                </Link>
+              </li>
+              <li>
                 <Link href="/platform" className="hover:text-[#2F6BFF] transition-colors">
                   Platform Architecture
                 </Link>
