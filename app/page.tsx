@@ -18,7 +18,7 @@ export default function HomePage() {
       <HimalayasToPlainsHero />
 
       {/* 2. Operations Console & Architecture (Real Product Picture + Operational Telemetry Breakdown) */}
-      <section className="relative z-10 py-16 border-t border-[#D8CBB3]/15 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative z-10 py-10 sm:py-12 border-t border-[#D8CBB3]/15 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
             <div>

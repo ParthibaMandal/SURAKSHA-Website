@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BrandLogo } from "@/components/shared/BrandLogo";
-import { Menu, X, ChevronDown, ArrowRight, Shield, User } from "lucide-react";
+import { Menu, X, ChevronDown, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const PublicNavbar: React.FC = () => {
@@ -17,7 +17,7 @@ export const PublicNavbar: React.FC = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 25) {
+      if (window.scrollY > 20) {
         setScrolled(true);
       } else {
         setScrolled(false);
@@ -39,16 +39,16 @@ export const PublicNavbar: React.FC = () => {
     { href: "/about", label: "About" },
   ];
 
-  // Dynamic header styles: On homepage, seamlessly transparent at top, blurred on scroll
+  // Dynamic header styles: On homepage, seamlessly transparent with NO white border line at top
   const headerClass = isHome
     ? scrolled
-      ? "fixed top-0 inset-x-0 z-50 bg-[#1E1E1C]/90 backdrop-blur-md border-b border-white/10 shadow-lg transition-all duration-300"
-      : "fixed top-0 inset-x-0 z-50 bg-transparent border-b border-white/10 backdrop-blur-[2px] transition-all duration-300"
+      ? "fixed top-0 inset-x-0 z-50 bg-[#1E1E1C]/90 backdrop-blur-md shadow-lg transition-all duration-300"
+      : "fixed top-0 inset-x-0 z-50 bg-transparent border-none transition-all duration-300"
     : "sticky top-0 z-50 w-full border-b border-[#D8CBB3]/15 bg-[#1E1E1C]/95 backdrop-blur-md transition-colors";
 
   return (
     <header className={headerClass}>
-      <div className="max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-6">
+      <div className="max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-6">
         {/* Brand Logo - Shield Mark + SURAKSHA */}
         <BrandLogo />
 
