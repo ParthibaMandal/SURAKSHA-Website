@@ -8,7 +8,7 @@ SURAKSHA (सुरक्षा) is an enterprise-grade flood intelligence and c
 
 ## 🗺️ Master Documentation Navigation
 
-SURAKSHA organizes its engineering and scientific documentation across **16 structured knowledge domains**, anchored by the **[Central Knowledge Map](SURAKSHA-KNOWLEDGE-MAP.md)**:
+SURAKSHA organizes its engineering and scientific documentation across **16 structured knowledge domains**, anchored by the **[Central Knowledge Map](/docs?doc=01-getting-started--suraksha-knowledge-map)**:
 
 ```text
 docs/
@@ -108,9 +108,9 @@ docs/
 
 ## 🚀 Quick Start for Developers & Researchers
 
-1. **Understand the Mission**: Read the **[Project Charter](01_PROJECT_FOUNDATION/project-charter.md)** and **[Project Scope](01_PROJECT_FOUNDATION/project-scope.md)**.
-2. **Trace the Pipeline**: Explore the **[Central Knowledge Map](SURAKSHA-KNOWLEDGE-MAP.md)** to see how telemetry flows into neural models, Jev gates, and CAP alerts.
-3. **Inspect the Architecture**: Review **[System Architecture Overview](04_SYSTEM_ARCHITECTURE/architecture-overview.md)** and the **[Three-Gate Jev Supervisor ADR](04_SYSTEM_ARCHITECTURE/architecture-decisions/ADR-002-three-gate-supervisor.md)**.
+1. **Understand the Mission**: Read the **[Project Charter](/docs?doc=01-getting-started--project-charter)** and **[Project Scope](/docs?doc=01-getting-started--project-scope)**.
+2. **Trace the Pipeline**: Explore the **[Central Knowledge Map](/docs?doc=01-getting-started--suraksha-knowledge-map)** to see how telemetry flows into neural models, Jev gates, and CAP alerts.
+3. **Inspect the Architecture**: Review **[System Architecture Overview](/docs?doc=04-system-architecture--architecture-overview)** and the **[Three-Gate Jev Supervisor ADR](/docs?doc=04-system-architecture--adr-002-three-gate-supervisor)**.
 4. **Run the Full Test Suite**:
    ```powershell
    pytest tests/ -q

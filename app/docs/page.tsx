@@ -1,11 +1,11 @@
 import React, { Suspense } from "react";
 import { Metadata } from "next";
-import { DocsViewer } from "@/components/docs/DocsViewer";
+import { DocsPortal } from "@/components/docs/DocsPortal";
 
 export const metadata: Metadata = {
-  title: "Documentation | SURAKSHA Flood Intelligence Platform",
+  title: "Documentation Hub | SURAKSHA Flood Intelligence Platform",
   description:
-    "Comprehensive technical documentation, architecture specifications, hydrological models, REST API reference, and operational runbooks for the SURAKSHA Ganga Basin Flood Intelligence Platform.",
+    "Comprehensive technical documentation, system architecture specifications, hydrological models, REST API reference, and operational runbooks for the SURAKSHA Ganga Basin Flood Intelligence Platform.",
 };
 
 export default function DocsPage() {
@@ -13,11 +13,14 @@ export default function DocsPage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-[#1E1E1C] flex items-center justify-center text-xs text-[#A69B88]">
-          Loading SURAKSHA Documentation...
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded-full border-2 border-[#2F6BFF] border-t-transparent animate-spin" />
+            <span>Loading SURAKSHA Documentation Portal...</span>
+          </div>
         </div>
       }
     >
-      <DocsViewer />
+      <DocsPortal />
     </Suspense>
   );
 }

@@ -240,8 +240,8 @@ The SURAKSHA Disaster Intelligence Platform ingests data from eight authoritativ
 
 ## Related Documents
 
-- [`data-quality-framework.md`](./data-quality-framework.md) — 14-point audit checks for all ingested data
-- [`data-lineage.md`](./data-lineage.md) — End-to-end ingestion pipeline and data flow diagrams
-- [`data-dictionary.md`](./data-dictionary.md) — Variable schema for the processed timeseries
-- [`/data/DATA_PROVENANCE.md`](/data/DATA_PROVENANCE.md) — Authoritative provenance specification
-- [`/src/suraksha/disasters/flood/geospatial/s1_sar_processor.py`](/src/suraksha/disasters/flood/geospatial/s1_sar_processor.py) — SAR processor implementation
+- [`data-quality-framework.md`](/docs?doc=05-data-engineering--data-quality-framework) — 14-point audit checks for all ingested data
+- [`data-lineage.md`](/docs?doc=05-data-engineering--data-lineage) — End-to-end ingestion pipeline and data flow diagrams
+- [`data-dictionary.md`](/docs?doc=05-data-engineering--data-dictionary) — Variable schema for the processed timeseries
+- [`/data/DATA_PROVENANCE.md`](https://github.com/shouri123/SURAKSHA/tree/main/data/DATA_PROVENANCE.md) — Authoritative provenance specification
+- [`/src/suraksha/disasters/flood/geospatial/s1_sar_processor.py`](https://github.com/shouri123/SURAKSHA/tree/main/src/suraksha/disasters/flood/geospatial/s1_sar_processor.py) — SAR processor implementation

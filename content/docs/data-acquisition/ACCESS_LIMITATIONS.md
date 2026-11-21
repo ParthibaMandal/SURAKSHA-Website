@@ -1,6 +1,6 @@
 # Access Limitations and Safe Use
 
-These are the observed limits from SURAKSHA’s REA reconnaissance on 2026-11-09. See [REA_RECONNAISSANCE_REPORT.md](REA_RECONNAISSANCE_REPORT.md) and [DISCOVERED_ENDPOINTS.md](DISCOVERED_ENDPOINTS.md) for evidence IDs and endpoint details.
+These are the observed limits from SURAKSHA’s REA reconnaissance on 2026-11-09. See [REA_RECONNAISSANCE_REPORT.md](/docs?doc=05-data-engineering--rea-reconnaissance-report) and [DISCOVERED_ENDPOINTS.md](/docs?doc=05-data-engineering--discovered-endpoints) for evidence IDs and endpoint details.
 
 ## Authentication and access boundaries
 

@@ -9,7 +9,7 @@
 - **Last Updated**: `2026-11-21`
 - **Last Verified Against Commit**: `HEAD`
 - **Applicable Module**: `Platform Core & SURAKSHA-MOD-01-FLOOD`
-- **Related Documents**: `[Project Charter](project-charter.md)`, `[Project Scope](project-scope.md)`, `[Domain Knowledge](/docs/03_DOMAIN_AND_FLOOD_KNOWLEDGE/flood-science-overview.md)`
+- **Related Documents**: `[Project Charter](/docs?doc=01-getting-started--project-charter)`, `[Project Scope](/docs?doc=01-getting-started--project-scope)`, `[Domain Knowledge](/docs?doc=03-flood-science-and-domain-knowledge--flood-science-overview)`
 
 ---
 

@@ -9,7 +9,7 @@
 - **Last Updated**: `2026-11-21`
 - **Last Verified Against Commit**: `HEAD`
 - **Applicable Module**: `Platform Core & All Hazard Subsystems`
-- **Related Documents**: `[Master Knowledge Map](/docs/SURAKSHA-KNOWLEDGE-MAP.md)`, `[ADR-001](/docs/04_SYSTEM_ARCHITECTURE/architecture-decisions/ADR-001-modular-monolith.md)`, `[ADR-002](/docs/04_SYSTEM_ARCHITECTURE/architecture-decisions/ADR-002-three-gate-supervisor.md)`
+- **Related Documents**: `[Master Knowledge Map](/docs?doc=01-getting-started--suraksha-knowledge-map)`, `[ADR-001](/docs?doc=04-system-architecture--adr-001-modular-monolith)`, `[ADR-002](/docs?doc=04-system-architecture--adr-002-three-gate-supervisor)`
 
 ---
 

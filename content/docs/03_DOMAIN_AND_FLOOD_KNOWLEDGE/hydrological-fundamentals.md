@@ -540,4 +540,4 @@ Platt scaling or isotonic regression is applied post-hoc for calibration (reliab
 
 ---
 
-*Related documents: [flood-science-overview.md](./flood-science-overview.md) | [flood-thresholds.md](./flood-thresholds.md) | [glacial-melt-and-runoff.md](./glacial-melt-and-runoff.md)*
+*Related documents: [flood-science-overview.md](/docs?doc=03-flood-science-and-domain-knowledge--flood-science-overview) | [flood-thresholds.md](/docs?doc=03-flood-science-and-domain-knowledge--flood-thresholds) | [glacial-melt-and-runoff.md](/docs?doc=03-flood-science-and-domain-knowledge--glacial-melt-and-runoff)*

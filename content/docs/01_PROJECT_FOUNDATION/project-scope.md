@@ -9,7 +9,7 @@
 - **Last Updated**: `2026-11-21`
 - **Last Verified Against Commit**: `HEAD`
 - **Applicable Module**: `SURAKSHA-MOD-01-FLOOD`
-- **Related Documents**: `[Project Charter](project-charter.md)`, `[System Master Spec](/docs/04_SYSTEM_ARCHITECTURE/system-master-specification.md)`
+- **Related Documents**: `[Project Charter](/docs?doc=01-getting-started--project-charter)`, `[System Master Spec](/docs/04_SYSTEM_ARCHITECTURE/system-master-specification.md)`
 
 ---
 

@@ -1,6 +1,6 @@
 # Backend Architecture — SURAKSHA Flood FastAPI Gateway
 
-> **Status:** VERIFIED — matches [`/src/suraksha/disasters/flood/api/app.py`](/src/suraksha/disasters/flood/api/app.py) and [`/src/suraksha/disasters/flood/api/routes.py`](/src/suraksha/disasters/flood/api/routes.py)
+> **Status:** VERIFIED — matches [`/src/suraksha/disasters/flood/api/app.py`](https://github.com/shouri123/SURAKSHA/tree/main/src/suraksha/disasters/flood/api/app.py) and [`/src/suraksha/disasters/flood/api/routes.py`](https://github.com/shouri123/SURAKSHA/tree/main/src/suraksha/disasters/flood/api/routes.py)
 
 ---
 
@@ -35,7 +35,7 @@ The application is served by [**Uvicorn**](https://www.uvicorn.org/) (ASGI), ena
 
 ## Application Entry Point
 
-**File:** [`/src/suraksha/disasters/flood/api/app.py`](/src/suraksha/disasters/flood/api/app.py)
+**File:** [`/src/suraksha/disasters/flood/api/app.py`](https://github.com/shouri123/SURAKSHA/tree/main/src/suraksha/disasters/flood/api/app.py)
 
 ```python
 # Application entry point for Uvicorn
@@ -209,7 +209,7 @@ Key design decisions:
 
 ## Routing Structure
 
-**File:** [`/src/suraksha/disasters/flood/api/routes.py`](/src/suraksha/disasters/flood/api/routes.py)
+**File:** [`/src/suraksha/disasters/flood/api/routes.py`](https://github.com/shouri123/SURAKSHA/tree/main/src/suraksha/disasters/flood/api/routes.py)
 
 All flood endpoints are mounted under a single `APIRouter`:
 
@@ -482,7 +482,7 @@ graph TD
 
 ## Related Documentation
 
-- [`api-reference.md`](api-reference.md) — Full endpoint reference with curl examples
-- [`environment-configuration.md`](environment-configuration.md) — `.env` parameter reference
+- [`api-reference.md`](/docs?doc=09-backend-and-api--api-reference) — Full endpoint reference with curl examples
+- [`environment-configuration.md`](/docs?doc=09-backend-and-api--environment-configuration) — `.env` parameter reference
 - [`/docs/08_AGENTIC_INTELLIGENCE/`](/docs/08_AGENTIC_INTELLIGENCE/) — LangGraph DAG and agent architecture
-- [`/docs/12_TESTING_AND_VALIDATION/testing-strategy.md`](/docs/12_TESTING_AND_VALIDATION/testing-strategy.md) — Test suite structure
+- [`/docs/12_TESTING_AND_VALIDATION/testing-strategy.md`](/docs?doc=12-testing-and-validation--testing-strategy) — Test suite structure

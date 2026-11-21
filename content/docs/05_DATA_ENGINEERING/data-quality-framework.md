@@ -409,8 +409,8 @@ Row-level quality flags for each DATA-00x check with timestamps, allowing CI/CD 
 
 ## Related Documents
 
-- [`data-source-registry.md`](./data-source-registry.md) — Upstream source specifications
-- [`data-dictionary.md`](./data-dictionary.md) — Variable schema and valid ranges
+- [`data-source-registry.md`](/docs?doc=05-data-engineering--data-source-registry) — Upstream source specifications
+- [`data-dictionary.md`](/docs?doc=05-data-engineering--data-dictionary) — Variable schema and valid ranges
 - [`/data_audit/data_audit.md`](/data_audit/data_audit.md) — Full audit report
-- [`/src/suraksha/disasters/flood/agents/data_agent.py`](/src/suraksha/disasters/flood/agents/data_agent.py) — DataAgent runtime validation
-- [`/src/suraksha/disasters/flood/supervisor/pre_run_gate.py`](/src/suraksha/disasters/flood/supervisor/pre_run_gate.py) — Pre-run data regime classification
+- [`/src/suraksha/disasters/flood/agents/data_agent.py`](https://github.com/shouri123/SURAKSHA/tree/main/src/suraksha/disasters/flood/agents/data_agent.py) — DataAgent runtime validation
+- [`/src/suraksha/disasters/flood/supervisor/pre_run_gate.py`](https://github.com/shouri123/SURAKSHA/tree/main/src/suraksha/disasters/flood/supervisor/pre_run_gate.py) — Pre-run data regime classification

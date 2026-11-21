@@ -2,7 +2,7 @@
 
 This guide explains how to connect the components in this repository into a working service. Implement one narrow path at a time. Keep every input's source and quality attached to its output so a demo, fallback, or model estimate cannot be mistaken for an observation.
 
-Related roadmap: [GEE, API, and application integration plan](gee-api-application-integration-plan.md). Repository state used: commit `d34347f`.
+Related roadmap: [GEE, API, and application integration plan](/docs?doc=06-geospatial-intelligence--gee-api-application-integration-plan). Repository state used: commit `d34347f`.
 
 ## 1. Target architecture
 

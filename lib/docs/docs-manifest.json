@@ -1,0 +1,433 @@
+{
+  "metadata": {
+    "releaseVersion": "v0.2.0-beta",
+    "documentationCommit": "edc3a3bed30e8ed06f89b8cb6dccf244de03fdbd",
+    "backendBranch": "main",
+    "lastSynchronized": "2026-11-21T08:28:23.599414Z",
+    "totalDocuments": 84,
+    "totalWords": 70225,
+    "statusCounts": {
+      "VERIFIED": 44,
+      "IMPLEMENTED": 37,
+      "IN PROGRESS": 3,
+      "PROPOSED": 0
+    },
+    "operationalContext": {
+      "primaryRiverBasin": "Ganga Basin",
+      "primaryGeographicFocus": "Bihar · Patna Corridor",
+      "primaryGaugeStation": "Gandhi Ghat (STN-PAT-01)",
+      "warningThresholdMeters": 50.5,
+      "dangerThresholdMeters": 51.8,
+      "activeModule": "Module 01: Flood Intelligence",
+      "physicalGateActuation": "SIMULATED / ADVISORY ONLY (No direct SCADA motor control)"
+    }
+  },
+  "categories": [
+    {
+      "id": "01-getting-started",
+      "order": 1,
+      "name": "Getting Started",
+      "icon": "Compass",
+      "description": "Essential overview, problem statement, key capabilities, operational scope, and terminology.",
+      "badge": "Core Foundation",
+      "docCount": 8,
+      "docIds": [
+        "01-getting-started--project-scope",
+        "01-getting-started--problem-statement",
+        "01-getting-started--project-charter",
+        "01-getting-started--suraksha-knowledge-map",
+        "01-getting-started--overview",
+        "01-getting-started--scope",
+        "01-getting-started--readme",
+        "01-getting-started--terminology-and-glossary"
+      ]
+    },
+    {
+      "id": "02-product-and-scope",
+      "order": 2,
+      "name": "Product and Scope",
+      "icon": "Target",
+      "description": "Functional requirements, traceability matrix, user flows, personas, and roadmap.",
+      "badge": "Specifications",
+      "docCount": 5,
+      "docIds": [
+        "02-product-and-scope--dashboard-specification",
+        "02-product-and-scope--functional-requirements",
+        "02-product-and-scope--user-flows",
+        "02-product-and-scope--requirements-traceability",
+        "02-product-and-scope--operational-turnkey-finalization"
+      ]
+    },
+    {
+      "id": "03-flood-science-and-domain-knowledge",
+      "order": 3,
+      "name": "Flood Science and Domain Knowledge",
+      "icon": "Waves",
+      "description": "Hydrological fundamentals, flood thresholds, hydraulic geometry, and cryosphere melt.",
+      "badge": "Science",
+      "docCount": 5,
+      "docIds": [
+        "03-flood-science-and-domain-knowledge--flood-science-overview",
+        "03-flood-science-and-domain-knowledge--glacial-melt-and-runoff",
+        "03-flood-science-and-domain-knowledge--flood-thresholds",
+        "03-flood-science-and-domain-knowledge--hydrological-fundamentals",
+        "03-flood-science-and-domain-knowledge--flood-model-technical-specification"
+      ]
+    },
+    {
+      "id": "04-system-architecture",
+      "order": 4,
+      "name": "System Architecture",
+      "icon": "Cpu",
+      "description": "Modular monolith design, 7-agent topology, Three-Gate Jev supervisor, and ADRs.",
+      "badge": "Architecture",
+      "docCount": 9,
+      "docIds": [
+        "04-system-architecture--adr-001-modular-monolith",
+        "04-system-architecture--adr-002-three-gate-supervisor",
+        "04-system-architecture--adr-003-fastapi-backend",
+        "04-system-architecture--backend-flow",
+        "04-system-architecture--flood-architecture-simplification-plan",
+        "04-system-architecture--suraksha-flood-system-technical-report",
+        "04-system-architecture--flood-architecture",
+        "04-system-architecture--system-architecture",
+        "04-system-architecture--architecture-overview"
+      ]
+    },
+    {
+      "id": "05-data-engineering",
+      "order": 5,
+      "name": "Data Engineering",
+      "icon": "Database",
+      "description": "Data source registry, data quality framework, data lineage, CWC/IMD telemetry, and data dictionary.",
+      "badge": "Pipelines",
+      "docCount": 14,
+      "docIds": [
+        "05-data-engineering--access-limitations",
+        "05-data-engineering--cwc-imd-data-access",
+        "05-data-engineering--data-availability-matrix",
+        "05-data-engineering--discovered-endpoints",
+        "05-data-engineering--station-registry",
+        "05-data-engineering--open-meteo-flood-api",
+        "05-data-engineering--rea-reconnaissance-report",
+        "05-data-engineering--data-lineage",
+        "05-data-engineering--data-dictionary",
+        "05-data-engineering--data-lineage",
+        "05-data-engineering--data-quality-framework",
+        "05-data-engineering--data-source-registry",
+        "05-data-engineering--flood-hydrology-data-gap-plan",
+        "05-data-engineering--dataset-specification-report"
+      ]
+    },
+    {
+      "id": "06-geospatial-intelligence",
+      "order": 6,
+      "name": "Geospatial Intelligence",
+      "icon": "Globe",
+      "description": "Sentinel-1 SAR flood inundation processing, HAND methodology, water masks, and GEE pipelines.",
+      "badge": "GIS & Remote Sensing",
+      "docCount": 6,
+      "docIds": [
+        "06-geospatial-intelligence--cryosphere-processors",
+        "06-geospatial-intelligence--gee-api-application-integration-plan",
+        "06-geospatial-intelligence--hand-methodology",
+        "06-geospatial-intelligence--permanent-water-masking",
+        "06-geospatial-intelligence--gee-api-connection-guide",
+        "06-geospatial-intelligence--sentinel-1-processing"
+      ]
+    },
+    {
+      "id": "07-ai-and-machine-learning",
+      "order": 7,
+      "name": "AI and Machine Learning",
+      "icon": "Brain",
+      "description": "Forecasting methodology, champion-challenger model ladder (SARIMA, BiLSTM), and uncertainty bounds.",
+      "badge": "ML & Models",
+      "docCount": 7,
+      "docIds": [
+        "07-ai-and-machine-learning--forecasting",
+        "07-ai-and-machine-learning--forecasting-results",
+        "07-ai-and-machine-learning--forecasting-methodology",
+        "07-ai-and-machine-learning--bilstm",
+        "07-ai-and-machine-learning--sarima",
+        "07-ai-and-machine-learning--lstm-vs-bilstm-evaluation-report",
+        "07-ai-and-machine-learning--uncertainty-estimation"
+      ]
+    },
+    {
+      "id": "08-agentic-intelligence-and-jev",
+      "order": 8,
+      "name": "Agentic Intelligence and Jev",
+      "icon": "Network",
+      "description": "7-agent topology, specialist specifications, 5-tier claim verification, and Jev supervisory policy.",
+      "badge": "Agents & Guardrails",
+      "docCount": 6,
+      "docIds": [
+        "08-agentic-intelligence-and-jev--claim-verification",
+        "08-agentic-intelligence-and-jev--agentic-architecture",
+        "08-agentic-intelligence-and-jev--agent-specifications",
+        "08-agentic-intelligence-and-jev--agent-specifications",
+        "08-agentic-intelligence-and-jev--jev-integration",
+        "08-agentic-intelligence-and-jev--supervisor-decision-policy"
+      ]
+    },
+    {
+      "id": "09-backend-and-api",
+      "order": 9,
+      "name": "Backend and API",
+      "icon": "Server",
+      "description": "FastAPI REST API reference, request/response schemas, telemetry endpoints, and .env configuration.",
+      "badge": "Developer API",
+      "docCount": 3,
+      "docIds": [
+        "09-backend-and-api--backend-architecture",
+        "09-backend-and-api--environment-configuration",
+        "09-backend-and-api--api-reference"
+      ]
+    },
+    {
+      "id": "10-website-and-application",
+      "order": 10,
+      "name": "Website and Application",
+      "icon": "Layout",
+      "description": "Next.js frontend architecture, interactive digital twin, civil defense dashboard, and API integration.",
+      "badge": "Application",
+      "docCount": 2,
+      "docIds": [
+        "10-website-and-application--readme",
+        "10-website-and-application--document-template"
+      ]
+    },
+    {
+      "id": "11-security-and-safety",
+      "order": 11,
+      "name": "Security and Safety",
+      "icon": "ShieldAlert",
+      "description": "OASIS CAP alert governance, safety-critical civil defense envelope, and access/secrets management.",
+      "badge": "Governance",
+      "docCount": 3,
+      "docIds": [
+        "11-security-and-safety--alert-governance",
+        "11-security-and-safety--safety-overview",
+        "11-security-and-safety--secret-management"
+      ]
+    },
+    {
+      "id": "12-testing-and-validation",
+      "order": 12,
+      "name": "Testing and Validation",
+      "icon": "CheckCircle2",
+      "description": "Testing strategy, synthetic stress test scenarios, unit tests, and validation benchmarks.",
+      "badge": "Verification",
+      "docCount": 4,
+      "docIds": [
+        "12-testing-and-validation--testing-strategy",
+        "12-testing-and-validation--synthetic-lab-implementation-plan",
+        "12-testing-and-validation--india-flood-model-test-report",
+        "12-testing-and-validation--scenario-library"
+      ]
+    },
+    {
+      "id": "13-deployment-and-infrastructure",
+      "order": 13,
+      "name": "Deployment and Infrastructure",
+      "icon": "Cloud",
+      "description": "Production deployment, Docker containerization, cloud hosting, CI/CD, and developer setup.",
+      "badge": "Operations",
+      "docCount": 2,
+      "docIds": [
+        "13-deployment-and-infrastructure--deployment-guide",
+        "13-deployment-and-infrastructure--setup"
+      ]
+    },
+    {
+      "id": "14-monitoring-and-operations",
+      "order": 14,
+      "name": "Monitoring and Operations",
+      "icon": "Activity",
+      "description": "Operational runbooks, system health telemetry, SLOs, failure recovery, and incident response.",
+      "badge": "Runbooks",
+      "docCount": 4,
+      "docIds": [
+        "14-monitoring-and-operations--cwc-unavailable",
+        "14-monitoring-and-operations--model-failure",
+        "14-monitoring-and-operations--gee-unavailable",
+        "14-monitoring-and-operations--service-health"
+      ]
+    },
+    {
+      "id": "15-research-and-experiments",
+      "order": 15,
+      "name": "Research and Experiments",
+      "icon": "FlaskConical",
+      "description": "9-dimensional scientific benchmark methodology, comparative evaluations, and experiment protocols.",
+      "badge": "Research",
+      "docCount": 3,
+      "docIds": [
+        "15-research-and-experiments--benchmark-methodology",
+        "15-research-and-experiments--comparative-analysis",
+        "15-research-and-experiments--experiment-protocol"
+      ]
+    },
+    {
+      "id": "16-project-management",
+      "order": 16,
+      "name": "Project Management",
+      "icon": "GitBranch",
+      "description": "Engineering coding standards, architectural decision logs, and production readiness gap registers.",
+      "badge": "Governance",
+      "docCount": 3,
+      "docIds": [
+        "16-project-management--decision-log",
+        "16-project-management--coding-standards",
+        "16-project-management--production-readiness-gap-register"
+      ]
+    }
+  ],
+  "learningPaths": [
+    {
+      "id": "understand-the-project",
+      "title": "Understand the Project",
+      "tag": "For Evaluators & Visitors",
+      "description": "Comprehensive journey through SURAKSHA's mission, operational scope, and civil defense architecture.",
+      "steps": [
+        {
+          "title": "Executive Overview",
+          "id": "01-getting-started--readme"
+        },
+        {
+          "title": "Problem Statement",
+          "id": "01-getting-started--problem-statement"
+        },
+        {
+          "title": "Operational Scope",
+          "id": "01-getting-started--project-scope"
+        },
+        {
+          "title": "System Architecture",
+          "id": "04-system-architecture--architecture-overview"
+        },
+        {
+          "title": "Safety & Civil Defense",
+          "id": "11-security-and-safety--safety-overview"
+        }
+      ]
+    },
+    {
+      "id": "become-a-developer",
+      "title": "Become a Developer",
+      "tag": "For Engineers",
+      "description": "Hands-on guide to set up the local development environment, run the FastAPI gateway, and execute test suites.",
+      "steps": [
+        {
+          "title": "Developer Setup",
+          "id": "13-deployment-and-infrastructure--setup"
+        },
+        {
+          "title": "Backend Architecture",
+          "id": "09-backend-and-api--backend-architecture"
+        },
+        {
+          "title": "REST API Reference",
+          "id": "09-backend-and-api--api-reference"
+        },
+        {
+          "title": "Testing Strategy",
+          "id": "12-testing-and-validation--testing-strategy"
+        },
+        {
+          "title": "Coding Standards",
+          "id": "16-project-management--coding-standards"
+        }
+      ]
+    },
+    {
+      "id": "understand-the-ai-system",
+      "title": "Understand the AI System",
+      "tag": "For ML & AI Researchers",
+      "description": "Deep dive into the champion-challenger forecasting ladder, uncertainty bounds, and 7-agent supervisory topology.",
+      "steps": [
+        {
+          "title": "Forecasting Methodology",
+          "id": "07-ai-and-machine-learning--forecasting-methodology"
+        },
+        {
+          "title": "SARIMA Model Card",
+          "id": "07-ai-and-machine-learning--sarima"
+        },
+        {
+          "title": "BiLSTM Challenger Card",
+          "id": "07-ai-and-machine-learning--bilstm"
+        },
+        {
+          "title": "Uncertainty Estimation",
+          "id": "07-ai-and-machine-learning--uncertainty-estimation"
+        },
+        {
+          "title": "7-Agent Topology",
+          "id": "08-agentic-intelligence-and-jev--agentic-architecture"
+        },
+        {
+          "title": "Jev Supervisory Policy",
+          "id": "08-agentic-intelligence-and-jev--supervisor-decision-policy"
+        }
+      ]
+    },
+    {
+      "id": "explore-the-data",
+      "title": "Explore the Data Pipeline",
+      "tag": "For Data Engineers & Hydrologists",
+      "description": "Trace water telemetry from CWC gauges and Sentinel-1 SAR GEE passes to HAND inundation surfaces.",
+      "steps": [
+        {
+          "title": "Data Source Registry",
+          "id": "05-data-engineering--data-source-registry"
+        },
+        {
+          "title": "Data Lineage & Provenance",
+          "id": "05-data-engineering--data-lineage"
+        },
+        {
+          "title": "Data Quality Framework",
+          "id": "05-data-engineering--data-quality-framework"
+        },
+        {
+          "title": "Sentinel-1 SAR Processing",
+          "id": "06-geospatial-intelligence--sentinel-1-processing"
+        },
+        {
+          "title": "HAND Methodology",
+          "id": "06-geospatial-intelligence--hand-methodology"
+        }
+      ]
+    },
+    {
+      "id": "evaluate-the-research",
+      "title": "Evaluate Scientific Validation",
+      "tag": "For Scientists & Peer Reviewers",
+      "description": "Examine empirical benchmarks, error distributions, ablation comparisons, and physical hydrology validation.",
+      "steps": [
+        {
+          "title": "Flood Science Overview",
+          "id": "03-flood-science-and-domain-knowledge--flood-science-overview"
+        },
+        {
+          "title": "Hydrological Fundamentals",
+          "id": "03-flood-science-and-domain-knowledge--hydrological-fundamentals"
+        },
+        {
+          "title": "LSTM vs BiLSTM Report",
+          "id": "07-ai-and-machine-learning--lstm-vs-bilstm-evaluation-report"
+        },
+        {
+          "title": "Scientific Benchmark Test Report",
+          "id": "12-testing-and-validation--india-flood-model-test-report"
+        },
+        {
+          "title": "Comparative Analysis",
+          "id": "15-research-and-experiments--comparative-analysis"
+        }
+      ]
+    }
+  ]
+}

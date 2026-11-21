@@ -48,12 +48,12 @@ The ladder evaluates **6 candidates** in ascending order of model complexity:
 > The hidden dimension in the production checkpoints is **32** (not 64), as found in the actual model instantiation: `HydrologicalGRUModel(input_dim=4, hidden_dim=32, num_layers=2)`. The briefing description of "h64" is a documentation approximation; the verified code uses `hidden_dim=32`.
 
 ### Source files
-- Persistence: [`/src/suraksha/disasters/flood/models/forecasting/persistence.py`](/src/suraksha/disasters/flood/models/forecasting/persistence.py)
-- ARIMA & SARIMA: [`/src/suraksha/disasters/flood/models/forecasting/arima_sarima.py`](/src/suraksha/disasters/flood/models/forecasting/arima_sarima.py)
-- GRU: [`/src/suraksha/disasters/flood/models/forecasting/gru.py`](/src/suraksha/disasters/flood/models/forecasting/gru.py)
-- Causal LSTM: [`/src/suraksha/disasters/flood/models/forecasting/causal_lstm.py`](/src/suraksha/disasters/flood/models/forecasting/causal_lstm.py)
-- Hybrid BiLSTM: [`/src/suraksha/disasters/flood/models/forecasting/bilstm_hybrid.py`](/src/suraksha/disasters/flood/models/forecasting/bilstm_hybrid.py)
-- Benchmark runner: [`/src/suraksha/disasters/flood/models/forecasting/benchmark_ladder.py`](/src/suraksha/disasters/flood/models/forecasting/benchmark_ladder.py)
+- Persistence: [`/src/suraksha/disasters/flood/models/forecasting/persistence.py`](https://github.com/shouri123/SURAKSHA/tree/main/src/suraksha/disasters/flood/models/forecasting/persistence.py)
+- ARIMA & SARIMA: [`/src/suraksha/disasters/flood/models/forecasting/arima_sarima.py`](https://github.com/shouri123/SURAKSHA/tree/main/src/suraksha/disasters/flood/models/forecasting/arima_sarima.py)
+- GRU: [`/src/suraksha/disasters/flood/models/forecasting/gru.py`](https://github.com/shouri123/SURAKSHA/tree/main/src/suraksha/disasters/flood/models/forecasting/gru.py)
+- Causal LSTM: [`/src/suraksha/disasters/flood/models/forecasting/causal_lstm.py`](https://github.com/shouri123/SURAKSHA/tree/main/src/suraksha/disasters/flood/models/forecasting/causal_lstm.py)
+- Hybrid BiLSTM: [`/src/suraksha/disasters/flood/models/forecasting/bilstm_hybrid.py`](https://github.com/shouri123/SURAKSHA/tree/main/src/suraksha/disasters/flood/models/forecasting/bilstm_hybrid.py)
+- Benchmark runner: [`/src/suraksha/disasters/flood/models/forecasting/benchmark_ladder.py`](https://github.com/shouri123/SURAKSHA/tree/main/src/suraksha/disasters/flood/models/forecasting/benchmark_ladder.py)
 
 ---
 

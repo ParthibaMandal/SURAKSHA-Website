@@ -9,7 +9,7 @@
 - **Last Updated**: `2026-11-21`
 - **Last Verified Against Commit**: `HEAD`
 - **Applicable Module**: `Platform Core & SURAKSHA-MOD-01-FLOOD`
-- **Related Documents**: `[Project Scope](project-scope.md)`, `[Problem Statement](problem-statement.md)`, `[System Architecture](/docs/04_SYSTEM_ARCHITECTURE/architecture-overview.md)`
+- **Related Documents**: `[Project Scope](/docs?doc=01-getting-started--project-scope)`, `[Problem Statement](/docs?doc=01-getting-started--problem-statement)`, `[System Architecture](/docs?doc=04-system-architecture--architecture-overview)`
 
 ---
 

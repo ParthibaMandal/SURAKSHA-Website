@@ -417,4 +417,4 @@ flowchart TD
 
 ---
 
-*This document describes the scientific domain knowledge embedded in SURAKSHA. For mathematical foundations see [hydrological-fundamentals.md](./hydrological-fundamentals.md). For CWC threshold details see [flood-thresholds.md](./flood-thresholds.md). For cryosphere dynamics see [glacial-melt-and-runoff.md](./glacial-melt-and-runoff.md).*
+*This document describes the scientific domain knowledge embedded in SURAKSHA. For mathematical foundations see [hydrological-fundamentals.md](/docs?doc=03-flood-science-and-domain-knowledge--hydrological-fundamentals). For CWC threshold details see [flood-thresholds.md](/docs?doc=03-flood-science-and-domain-knowledge--flood-thresholds). For cryosphere dynamics see [glacial-melt-and-runoff.md](/docs?doc=03-flood-science-and-domain-knowledge--glacial-melt-and-runoff).*
