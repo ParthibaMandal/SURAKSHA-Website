@@ -137,3 +137,4 @@ export function MermaidRenderer({ chart, id }: MermaidRendererProps) {
     </div>
   );
 }
+
