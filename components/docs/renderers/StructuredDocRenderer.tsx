@@ -292,3 +292,4 @@ export function StructuredDocRenderer({ doc }: StructuredDocRendererProps) {
     </div>
   );
 }
+
