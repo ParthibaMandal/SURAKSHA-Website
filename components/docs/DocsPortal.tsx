@@ -74,7 +74,7 @@ export function DocsPortal() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#1E1E1C] text-[#D8CBB3] selection:bg-[#2F6BFF] selection:text-white">
+    <div className="flex flex-col min-h-screen bg-[#090C10] text-[#F8FAFC] selection:bg-[#06B6D4] selection:text-[#090C10]">
       {/* Sticky Docs Header */}
       <DocsHeader
         metadata={manifest.metadata}

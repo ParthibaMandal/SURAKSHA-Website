@@ -22,8 +22,8 @@ export default function CitizenProfilePage() {
   return (
     <div className="space-y-6">
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#292925] border border-[#2F6BFF]/40 text-xs font-mono text-[#D8CBB3] shadow-2xl flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-[#2F6BFF]" /> {toast}
+        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#292925] border border-[#06B6D4]/40 text-xs font-mono text-[#D8CBB3] shadow-2xl flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-[#06B6D4]" /> {toast}
         </div>
       )}
 
@@ -55,7 +55,7 @@ export default function CitizenProfilePage() {
               <input
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#1E1E1C] text-xs text-[#D8CBB3] focus:outline-none focus:border-[#2F6BFF]"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#1E1E1C] text-xs text-[#D8CBB3] focus:outline-none focus:border-[#06B6D4]"
               />
             </div>
 
@@ -78,7 +78,7 @@ export default function CitizenProfilePage() {
               <select
                 value={lang}
                 onChange={(e) => setLang(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#1E1E1C] text-xs text-[#D8CBB3] focus:outline-none focus:border-[#2F6BFF]"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#1E1E1C] text-xs text-[#D8CBB3] focus:outline-none focus:border-[#06B6D4]"
               >
                 <option>English</option>
                 <option>Hindi</option>
@@ -96,7 +96,7 @@ export default function CitizenProfilePage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-[#D8CBB3]/12">
               <h3 className="text-sm font-bold text-[#D8CBB3]">Security Settings</h3>
-              <span className="text-xs font-mono text-[#2F6BFF]">Protected</span>
+              <span className="text-xs font-mono text-[#06B6D4]">Protected</span>
             </div>
 
             <div className="divide-y divide-[#D8CBB3]/10">
@@ -105,7 +105,7 @@ export default function CitizenProfilePage() {
                   <strong className="text-xs text-[#EDE4D3] block">Password protection</strong>
                   <small className="text-[11px] text-[#A69B88]">Last changed 14 days ago</small>
                 </div>
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#2F6BFF]/15 text-[#2F6BFF] border border-[#2F6BFF]/30">
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#06B6D4]/15 text-[#06B6D4] border border-[#06B6D4]/30">
                   Secure
                 </span>
               </div>
@@ -115,7 +115,7 @@ export default function CitizenProfilePage() {
                   <strong className="text-xs text-[#EDE4D3] block">Active sessions</strong>
                   <small className="text-[11px] text-[#A69B88]">1 session in current browser</small>
                 </div>
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#2F6BFF]/15 text-[#2F6BFF] border border-[#2F6BFF]/30">
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#06B6D4]/15 text-[#06B6D4] border border-[#06B6D4]/30">
                   Active
                 </span>
               </div>

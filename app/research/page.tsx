@@ -54,23 +54,23 @@ export default function ResearchPage() {
             <h3 className="text-lg font-bold text-[#EDE4D3]">Evaluation Principles</h3>
             <ul className="space-y-2 text-xs text-[#A69B88]">
               <li className="flex items-start gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#2F6BFF] mt-1.5 shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#06B6D4] mt-1.5 shrink-0" />
                 Record dataset name, time range, and spatial coverage.
               </li>
               <li className="flex items-start gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#2F6BFF] mt-1.5 shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#06B6D4] mt-1.5 shrink-0" />
                 Separate training, validation, and test monsoon periods.
               </li>
               <li className="flex items-start gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#2F6BFF] mt-1.5 shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#06B6D4] mt-1.5 shrink-0" />
                 Report persistence baselines alongside ensemble candidate models.
               </li>
               <li className="flex items-start gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#2F6BFF] mt-1.5 shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#06B6D4] mt-1.5 shrink-0" />
                 Measure performance across both nominal and surge regimes.
               </li>
               <li className="flex items-start gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#2F6BFF] mt-1.5 shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#06B6D4] mt-1.5 shrink-0" />
                 Document missing data and model failure cases transparently.
               </li>
             </ul>

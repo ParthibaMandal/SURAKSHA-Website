@@ -62,8 +62,8 @@ export default function CitizenSosPage() {
   return (
     <div className="space-y-6">
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#292925] border border-[#2F6BFF]/40 text-xs font-mono text-[#D8CBB3] shadow-2xl flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-[#2F6BFF]" /> {toast}
+        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#292925] border border-[#06B6D4]/40 text-xs font-mono text-[#D8CBB3] shadow-2xl flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-[#06B6D4]" /> {toast}
         </div>
       )}
 
@@ -112,7 +112,7 @@ export default function CitizenSosPage() {
                   required
                   value={citizenName}
                   onChange={(e) => setCitizenName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#1E1E1C] text-xs text-[#D8CBB3] focus:outline-none focus:border-[#2F6BFF]"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#1E1E1C] text-xs text-[#D8CBB3] focus:outline-none focus:border-[#06B6D4]"
                 />
               </div>
               <div className="space-y-1.5">
@@ -123,7 +123,7 @@ export default function CitizenSosPage() {
                   required
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#1E1E1C] text-xs text-[#D8CBB3] focus:outline-none focus:border-[#2F6BFF]"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#1E1E1C] text-xs text-[#D8CBB3] focus:outline-none focus:border-[#06B6D4]"
                 />
               </div>
             </div>
@@ -135,7 +135,7 @@ export default function CitizenSosPage() {
               <select
                 value={assistanceType}
                 onChange={(e) => setAssistanceType(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#1E1E1C] text-xs text-[#D8CBB3] focus:outline-none focus:border-[#2F6BFF]"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#1E1E1C] text-xs text-[#D8CBB3] focus:outline-none focus:border-[#06B6D4]"
               >
                 <option>Rescue / evacuation support</option>
                 <option>Medical assistance</option>
@@ -153,7 +153,7 @@ export default function CitizenSosPage() {
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 placeholder="e.g., Near Gandhighat Ward 04, Patna"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#1E1E1C] text-xs text-[#D8CBB3] placeholder:text-[#A69B88]/50 focus:outline-none focus:border-[#2F6BFF]"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#1E1E1C] text-xs text-[#D8CBB3] placeholder:text-[#A69B88]/50 focus:outline-none focus:border-[#06B6D4]"
               />
             </div>
 
@@ -164,7 +164,7 @@ export default function CitizenSosPage() {
               <select
                 value={people}
                 onChange={(e) => setPeople(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#1E1E1C] text-xs text-[#D8CBB3] focus:outline-none focus:border-[#2F6BFF]"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#1E1E1C] text-xs text-[#D8CBB3] focus:outline-none focus:border-[#06B6D4]"
               >
                 <option>1 person</option>
                 <option>2–5 people</option>
@@ -182,7 +182,7 @@ export default function CitizenSosPage() {
                 onChange={(e) => setDetails(e.target.value)}
                 rows={3}
                 placeholder="Describe water depth, structural access, or medical needs."
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#1E1E1C] text-xs text-[#D8CBB3] placeholder:text-[#A69B88]/50 focus:outline-none focus:border-[#2F6BFF]"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#1E1E1C] text-xs text-[#D8CBB3] placeholder:text-[#A69B88]/50 focus:outline-none focus:border-[#06B6D4]"
               />
             </div>
 
@@ -207,12 +207,12 @@ export default function CitizenSosPage() {
             </div>
 
             {submitted ? (
-              <div className="p-4 rounded-xl border border-[#2F6BFF]/30 bg-[#1E1E1C] space-y-2.5 mt-4 font-mono text-xs">
-                <div className="text-[#2F6BFF] font-bold flex items-center justify-between">
+              <div className="p-4 rounded-xl border border-[#06B6D4]/30 bg-[#1E1E1C] space-y-2.5 mt-4 font-mono text-xs">
+                <div className="text-[#06B6D4] font-bold flex items-center justify-between">
                   <span className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4" /> Request Registered
                   </span>
-                  <span className="px-2 py-0.5 rounded bg-[#2F6BFF]/15 text-[11px] border border-[#2F6BFF]/40">
+                  <span className="px-2 py-0.5 rounded bg-[#06B6D4]/15 text-[11px] border border-[#06B6D4]/40">
                     {registeredTicket ? registeredTicket.id : "SOS-CONFIRMED"}
                   </span>
                 </div>

@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { DigitalTwinEngine } from "@/lib/three/digital-twin-engine";
 import { TacticalMapSvg } from "./TacticalMapSvg";
 import { FallbackCanvas2D } from "./FallbackCanvas2D";
-import { RotateCcw, AlertTriangle, Layers } from "lucide-react";
+import { RotateCcw, AlertTriangle, Layers, Hand } from "lucide-react";
 
 interface DigitalTwinSceneProps {
   onSurgeStateChange?: (isSurge: boolean) => void;
@@ -16,8 +16,10 @@ export const DigitalTwinScene: React.FC<DigitalTwinSceneProps> = ({ onSurgeState
 
   const [viewMode, setViewMode] = useState<"3d" | "2d">("3d");
   const [isSurge, setIsSurge] = useState(false);
-  const [stageReading, setStageReading] = useState(49.82);
+  // CWC Gandhi Ghat levels: baseline 46.85m, surge 48.85m (breaching danger 48.60m)
+  const [stageReading, setStageReading] = useState(46.85);
   const [webGlSupported, setWebGlSupported] = useState(true);
+  const [mobileInteracting, setMobileInteracting] = useState(false);
 
   useEffect(() => {
     if (viewMode !== "3d") return;
@@ -27,7 +29,7 @@ export const DigitalTwinScene: React.FC<DigitalTwinSceneProps> = ({ onSurgeState
       const engine = new DigitalTwinEngine(containerRef.current, {
         onSurgeToggle: (active) => {
           setIsSurge(active);
-          setStageReading(active ? 52.32 : 49.82);
+          setStageReading(active ? 48.85 : 46.85);
           if (onSurgeStateChange) onSurgeStateChange(active);
         },
       });
@@ -48,12 +50,12 @@ export const DigitalTwinScene: React.FC<DigitalTwinSceneProps> = ({ onSurgeState
     if (engineRef.current) {
       const active = engineRef.current.toggleSurge();
       setIsSurge(active);
-      setStageReading(active ? 52.32 : 49.82);
+      setStageReading(active ? 48.85 : 46.85);
       if (onSurgeStateChange) onSurgeStateChange(active);
     } else {
       const next = !isSurge;
       setIsSurge(next);
-      setStageReading(next ? 52.32 : 49.82);
+      setStageReading(next ? 48.85 : 46.85);
       if (onSurgeStateChange) onSurgeStateChange(next);
     }
   };
@@ -69,67 +71,85 @@ export const DigitalTwinScene: React.FC<DigitalTwinSceneProps> = ({ onSurgeState
   };
 
   return (
-    <div className="relative w-full rounded-2xl border border-[#D8CBB3]/18 bg-[#292925] overflow-hidden shadow-xl transition-colors">
+    <div className="relative w-full h-full rounded-2xl border border-white/10 bg-[#10161F]/80 backdrop-blur-xl overflow-hidden shadow-xl transition-colors flex flex-col justify-between text-white">
       {/* Visual Header */}
-      <div className="px-5 py-3.5 border-b border-[#D8CBB3]/14 flex items-center justify-between bg-[#1E1E1C]">
+      <div className="px-5 py-3.5 border-b border-white/10 flex items-center justify-between bg-[#090C10]/80">
         <div>
-          <div className="text-xs font-bold text-[#D8CBB3] tracking-wide">
+          <div className="text-xs font-bold text-white tracking-wide">
             Ganga Basin Hydrological Intelligence Workspace
           </div>
-          <div className="text-[11px] text-[#A69B88]">
+          <div className="text-[11px] text-slate-400">
             3D Digital Twin (drag to orbit basin topography)
           </div>
         </div>
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded text-xs text-[#D8CBB3] bg-[#292925] border border-[#D8CBB3]/16">
-          <span className="w-2 h-2 rounded-full bg-[#2F6BFF]" />
-          <span>{viewMode === "3d" ? "3D Basin View" : "2D Map View"}</span>
+        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs text-white bg-white/5 border border-white/15 whitespace-nowrap">
+          <span className="w-2 h-2 rounded-full bg-[#06B6D4] shadow-[0_0_8px_#06b6d4]" />
+          <span className="whitespace-nowrap">{viewMode === "3d" ? "3D Basin View" : "2D Map View"}</span>
         </div>
       </div>
 
       {/* Viewport Box */}
-      <div className="relative w-full h-[340px] md:h-[400px] bg-[#1E1E1C]">
+      <div className="relative w-full flex-1 min-h-[340px] md:min-h-[400px] bg-[#090C10] overflow-hidden">
         {/* Controls Bar inside Viewport */}
-        <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 pointer-events-auto">
+        <div className="absolute top-3 right-3 z-30 flex items-center gap-2 pointer-events-auto">
           <button
             onClick={toggleViewMode}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all flex items-center gap-1.5 shadow-sm cursor-pointer whitespace-nowrap ${
               viewMode === "3d"
-                ? "bg-[#2F6BFF] text-white border-[#2F6BFF]"
-                : "bg-[#292925] text-[#D8CBB3] border-[#D8CBB3]/20 hover:bg-[#33332E]"
+                ? "bg-[#06B6D4] text-[#090C10] border-[#06B6D4]"
+                : "bg-white/5 text-white border-white/20 hover:bg-white/10"
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
-            {viewMode === "3d" ? "3D Basin Twin" : "2D Map View"}
+            <span>{viewMode === "3d" ? "3D Basin Twin" : "2D Map View"}</span>
           </button>
 
           <button
             onClick={toggleSurge}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all flex items-center gap-1.5 shadow-sm cursor-pointer whitespace-nowrap ${
               isSurge
-                ? "bg-[#F59E0B] text-[#1E1E1C] border-[#F59E0B]"
-                : "bg-[#292925] text-[#D8CBB3] border-[#D8CBB3]/20 hover:border-[#F59E0B]/60 hover:text-[#FBBF24]"
+                ? "bg-rose-500 text-white border-rose-500 shadow-[0_0_12px_rgba(239,68,68,0.4)]"
+                : "bg-white/5 text-slate-200 border-white/15 hover:border-amber-400/60 hover:text-amber-300"
             }`}
           >
             <AlertTriangle className="w-3.5 h-3.5" />
-            {isSurge ? "Surge Active (Synthetic)" : "Simulate Surge"}
+            <span>{isSurge ? "Surge Active (Breach)" : "Simulate Surge"}</span>
           </button>
 
           {viewMode === "3d" && (
             <button
               onClick={resetCamera}
-              className="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-[#292925] text-[#D8CBB3] border border-[#D8CBB3]/20 hover:bg-[#33332E] transition-colors"
+              className="p-2 rounded-full text-xs font-medium bg-white/5 text-white border border-white/15 hover:bg-white/10 transition-colors cursor-pointer"
               title="Reset 3D camera orientation"
+              aria-label="Reset 3D camera orientation"
             >
               <RotateCcw className="w-3.5 h-3.5" />
             </button>
           )}
         </div>
 
+        {/* Mobile Tap-to-Activate Guard to Prevent Page Scroll Trapping */}
+        {viewMode === "3d" && webGlSupported && !mobileInteracting && (
+          <div
+            onClick={() => setMobileInteracting(true)}
+            className="md:hidden absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/40 backdrop-blur-[2px] cursor-pointer p-4 text-center"
+          >
+            <div className="px-4 py-2.5 rounded-full bg-[#10161F]/90 border border-white/20 text-xs font-medium text-white shadow-xl flex items-center gap-2">
+              <Hand className="w-4 h-4 text-[#06B6D4]" />
+              <span>Tap to rotate 3D digital twin</span>
+            </div>
+          </div>
+        )}
+
         {/* Viewport Canvas or Tactical Map */}
         {viewMode === "3d" && webGlSupported ? (
           <div
             ref={containerRef}
-            className="w-full h-full cursor-grab active:cursor-grabbing select-none"
+            className={`w-full h-full select-none ${
+              mobileInteracting
+                ? "cursor-grab active:cursor-grabbing pointer-events-auto"
+                : "pointer-events-none md:pointer-events-auto cursor-grab active:cursor-grabbing"
+            }`}
           />
         ) : viewMode === "2d" ? (
           <TacticalMapSvg />
@@ -138,64 +158,23 @@ export const DigitalTwinScene: React.FC<DigitalTwinSceneProps> = ({ onSurgeState
         )}
 
         {/* Floating HUD */}
-        <div className="absolute bottom-3 left-4 right-4 z-20 flex flex-wrap items-center justify-between gap-3 px-3.5 py-2 rounded-xl bg-[#292925] border border-[#D8CBB3]/20 text-xs">
+        <div className="absolute bottom-3 left-4 right-4 z-30 flex flex-wrap items-center justify-between gap-3 px-3.5 py-2 rounded-2xl bg-[#10161F]/90 backdrop-blur-md border border-white/15 text-xs">
           <div className="flex flex-wrap items-center gap-2.5">
-            <span className="text-[#A69B88]">Datum: 52.4 m</span>
-            <span className="text-[#7D7465]">|</span>
+            <span className="text-slate-400">Gandhi Ghat Datum: 46.20m</span>
+            <span className="text-slate-600">|</span>
             <span
               className={`font-semibold tracking-wide ${
-                isSurge ? "text-[#FBBF24]" : "text-[#2F6BFF]"
+                isSurge ? "text-rose-400" : "text-[#06B6D4]"
               }`}
             >
-              River stage: <span className="font-mono">{stageReading.toFixed(2)} m</span> {isSurge ? "(Synthetic surge)" : "(Sample nominal)"}
+              Stage: <span className="font-mono">{stageReading.toFixed(2)} m</span> {isSurge ? "(Danger breach 48.60m)" : "(Nominal)"}
             </span>
-            <span className="text-[#7D7465]">|</span>
-            <span className="text-[#D8CBB3]">3 stations mapped</span>
+            <span className="text-slate-600">|</span>
+            <span className="text-slate-300">3 stations active</span>
           </div>
-          <span className="text-[10px] text-[#A69B88] hidden sm:inline">
-            Illustrative model (not an active flood warning map)
+          <span className="text-[10px] text-slate-400 hidden sm:inline font-mono">
+            CWC Middle Ganga Reach Model
           </span>
-        </div>
-      </div>
-
-      {/* 3 Metric Columns Row */}
-      <div className="grid grid-cols-3 border-t border-[#D8CBB3]/14 divide-x divide-[#D8CBB3]/14 bg-[#1E1E1C] text-center py-3.5 px-2">
-        <div className="flex flex-col">
-          <span className="text-[10.5px] uppercase tracking-wider text-[#A69B88] font-medium">
-            River Stage
-          </span>
-          <strong className="text-xl font-bold font-mono text-[#D8CBB3] mt-0.5">
-            {stageReading.toFixed(2)} m
-          </strong>
-          <small className="text-[10px] text-[#7D7465]">Sample Telemetry</small>
-        </div>
-
-        <div className="flex flex-col">
-          <span className="text-[10.5px] uppercase tracking-wider text-[#A69B88] font-medium">
-            Forecast Trend
-          </span>
-          <strong
-            className={`text-xl font-bold font-mono mt-0.5 ${
-              isSurge ? "text-[#FBBF24]" : "text-[#2F6BFF]"
-            }`}
-          >
-            {isSurge ? "+2.50 m / 3h" : "+0.42 m / 6h"}
-          </strong>
-          <small className="text-[10px] text-[#7D7465]">Synthetic Ensemble</small>
-        </div>
-
-        <div className="flex flex-col">
-          <span className="text-[10.5px] uppercase tracking-wider text-[#A69B88] font-medium">
-            Risk State
-          </span>
-          <strong
-            className={`text-xl font-bold mt-0.5 ${
-              isSurge ? "text-[#EF4444]" : "text-[#F59E0B]"
-            }`}
-          >
-            {isSurge ? "Warning Level 3" : "Advisory Watch"}
-          </strong>
-          <small className="text-[10px] text-[#7D7465]">Threshold state</small>
         </div>
       </div>
     </div>

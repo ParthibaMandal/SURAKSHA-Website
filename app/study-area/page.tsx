@@ -54,7 +54,7 @@ export default function StudyAreaPage() {
         <div className="rounded-xl border border-[#D8CBB3]/15 bg-[#292925] p-6 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-base font-bold text-[#EDE4D3] flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-[#2F6BFF]" /> Monitored Gauging Stations
+              <MapPin className="w-4 h-4 text-[#06B6D4]" /> Monitored Gauging Stations
             </h3>
             <span className="text-xs font-mono text-[#A69B88]">DATA: SAMPLE</span>
           </div>
@@ -74,7 +74,7 @@ export default function StudyAreaPage() {
               <tbody className="divide-y divide-[#D8CBB3]/10">
                 {STATIONS.map((st) => (
                   <tr key={st.id} className="hover:bg-[#33332E]/50">
-                    <td className="py-2.5 px-3 text-[#2F6BFF] font-bold">{st.id}</td>
+                    <td className="py-2.5 px-3 text-[#06B6D4] font-bold">{st.id}</td>
                     <td className="py-2.5 px-3 font-semibold text-[#EDE4D3] font-sans">{st.name}</td>
                     <td className="py-2.5 px-3 text-[#D8CBB3]">{st.basin}</td>
                     <td className="py-2.5 px-3 font-bold text-[#EDE4D3]">{st.currentStage.toFixed(2)} m</td>
@@ -83,7 +83,7 @@ export default function StudyAreaPage() {
                     </td>
                     <td className="py-2.5 px-3 text-[#D8CBB3]">{st.trend}</td>
                     <td className="py-2.5 px-3">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#2F6BFF]/15 text-[#2F6BFF] border border-[#2F6BFF]/30">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#06B6D4]/15 text-[#06B6D4] border border-[#06B6D4]/30">
                         {st.status}
                       </span>
                     </td>

@@ -129,7 +129,7 @@ export function InteractiveArchitectureView() {
           onClick={() => setActiveTab("agents")}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
             activeTab === "agents"
-              ? "bg-[#2F6BFF] text-white shadow-lg shadow-[#2F6BFF]/20"
+              ? "bg-[#06B6D4] text-white shadow-lg shadow-[#06B6D4]/20"
               : "text-[#A69B88] hover:text-[#EDE4D3] hover:bg-[#292925]"
           }`}
         >
@@ -141,7 +141,7 @@ export function InteractiveArchitectureView() {
           onClick={() => setActiveTab("gates")}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
             activeTab === "gates"
-              ? "bg-[#2F6BFF] text-white shadow-lg shadow-[#2F6BFF]/20"
+              ? "bg-[#06B6D4] text-white shadow-lg shadow-[#06B6D4]/20"
               : "text-[#A69B88] hover:text-[#EDE4D3] hover:bg-[#292925]"
           }`}
         >
@@ -153,7 +153,7 @@ export function InteractiveArchitectureView() {
           onClick={() => setActiveTab("adrs")}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
             activeTab === "adrs"
-              ? "bg-[#2F6BFF] text-white shadow-lg shadow-[#2F6BFF]/20"
+              ? "bg-[#06B6D4] text-white shadow-lg shadow-[#06B6D4]/20"
               : "text-[#A69B88] hover:text-[#EDE4D3] hover:bg-[#292925]"
           }`}
         >
@@ -176,13 +176,13 @@ export function InteractiveArchitectureView() {
                     onClick={() => setSelectedAgentId(agent.id)}
                     className={`cursor-pointer p-4 rounded-xl border transition-all flex flex-col justify-between ${
                       isSelected
-                        ? "bg-[#292925] border-[#2F6BFF] shadow-lg shadow-[#2F6BFF]/10"
+                        ? "bg-[#292925] border-[#06B6D4] shadow-lg shadow-[#06B6D4]/10"
                         : "bg-[#242421] border-[#D8CBB3]/15 hover:border-[#D8CBB3]/30"
                     }`}
                   >
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="font-mono text-[10px] text-[#2F6BFF] uppercase font-bold tracking-wider">
+                        <span className="font-mono text-[10px] text-[#06B6D4] uppercase font-bold tracking-wider">
                           Specialist Agent
                         </span>
                         <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30">
@@ -210,7 +210,7 @@ export function InteractiveArchitectureView() {
             <div className="p-5 rounded-2xl border border-[#D8CBB3]/20 bg-[#292925] flex flex-col justify-between space-y-4">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono text-[#2F6BFF] uppercase font-semibold">
+                  <span className="text-xs font-mono text-[#06B6D4] uppercase font-semibold">
                     Agent Contract Specification
                   </span>
                   <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30">
@@ -238,7 +238,7 @@ export function InteractiveArchitectureView() {
                         key={idx}
                         className="p-2 rounded-lg bg-[#1E1E1C] border border-[#D8CBB3]/10 text-xs text-[#EDE4D3] font-mono flex items-center gap-2"
                       >
-                        <ArrowRight className="w-3 h-3 text-[#2F6BFF] shrink-0" />
+                        <ArrowRight className="w-3 h-3 text-[#06B6D4] shrink-0" />
                         <span>{inp}</span>
                       </div>
                     ))}
@@ -265,7 +265,7 @@ export function InteractiveArchitectureView() {
               </div>
 
               <div className="pt-4 border-t border-[#D8CBB3]/10 text-[11px] text-[#A69B88] font-mono">
-                Source: <code className="text-[#60A5FA]">src/suraksha/disasters/flood/agents/</code>
+                Source: <code className="text-[#38BDF8]">src/suraksha/disasters/flood/agents/</code>
               </div>
             </div>
           </div>
@@ -275,7 +275,7 @@ export function InteractiveArchitectureView() {
       {/* Tab 2: Three-Gate Jev Supervisor */}
       {activeTab === "gates" && (
         <div className="space-y-6">
-          <div className="p-4 rounded-xl border border-[#2F6BFF]/30 bg-[#2F6BFF]/10 text-xs text-[#EDE4D3] leading-relaxed">
+          <div className="p-4 rounded-xl border border-[#06B6D4]/30 bg-[#06B6D4]/10 text-xs text-[#EDE4D3] leading-relaxed">
             <strong className="text-white">Why Jev System One Supervision Matters:</strong> Language and neural models can hallucinate sudden catastrophic surges or miss critical physical warnings. SURAKSHA embeds a deterministic three-tier supervisory harness that enforces hard physical invariants before, during, and after inference.
           </div>
 
@@ -287,7 +287,7 @@ export function InteractiveArchitectureView() {
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="w-7 h-7 rounded-lg bg-[#2F6BFF]/20 text-[#2F6BFF] font-mono font-bold flex items-center justify-center text-xs">
+                    <span className="w-7 h-7 rounded-lg bg-[#06B6D4]/20 text-[#06B6D4] font-mono font-bold flex items-center justify-center text-xs">
                       {gate.num}
                     </span>
                     <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30">
@@ -299,7 +299,7 @@ export function InteractiveArchitectureView() {
                     <h4 className="font-bold text-sm text-[#EDE4D3]">
                       {gate.name}
                     </h4>
-                    <span className="text-[11px] text-[#2F6BFF] font-mono block">
+                    <span className="text-[11px] text-[#06B6D4] font-mono block">
                       {gate.stage}
                     </span>
                   </div>
@@ -320,7 +320,7 @@ export function InteractiveArchitectureView() {
                 </div>
 
                 <div className="pt-2 border-t border-[#D8CBB3]/10 text-[10px] font-mono text-[#A69B88]">
-                  Enforcement: <code className="text-[#60A5FA]">src/suraksha/disasters/flood/supervisor/</code>
+                  Enforcement: <code className="text-[#38BDF8]">src/suraksha/disasters/flood/supervisor/</code>
                 </div>
               </div>
             ))}

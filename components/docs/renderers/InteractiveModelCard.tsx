@@ -115,7 +115,7 @@ export function InteractiveModelCard() {
               onClick={() => setSelectedModelId(model.id)}
               className={`cursor-pointer p-5 rounded-2xl border transition-all flex flex-col justify-between ${
                 isSelected
-                  ? "bg-[#292925] border-[#2F6BFF] shadow-lg shadow-[#2F6BFF]/10 ring-1 ring-[#2F6BFF]"
+                  ? "bg-[#292925] border-[#06B6D4] shadow-lg shadow-[#06B6D4]/10 ring-1 ring-[#06B6D4]"
                   : "bg-[#242421] border-[#D8CBB3]/15 hover:border-[#D8CBB3]/30"
               }`}
             >
@@ -126,7 +126,7 @@ export function InteractiveModelCard() {
                       model.tier.includes("Champion")
                         ? "bg-[#10B981]/15 text-[#10B981] border-[#10B981]/30"
                         : model.tier.includes("Challenger")
-                        ? "bg-[#3B82F6]/15 text-[#60A5FA] border-[#3B82F6]/30"
+                        ? "bg-[#3B82F6]/15 text-[#38BDF8] border-[#3B82F6]/30"
                         : "bg-[#A69B88]/15 text-[#A69B88] border-[#A69B88]/30"
                     }`}
                   >
@@ -160,7 +160,7 @@ export function InteractiveModelCard() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#D8CBB3]/15">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="font-mono text-xs text-[#2F6BFF] uppercase font-bold">
+              <span className="font-mono text-xs text-[#06B6D4] uppercase font-bold">
                 Model Evaluation & Verification Specification
               </span>
               <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#10B981]/15 text-[#10B981]">
@@ -202,7 +202,7 @@ export function InteractiveModelCard() {
             <span className="text-[11px] font-mono text-[#A69B88] uppercase block">
               RMSE Accuracy
             </span>
-            <div className="text-2xl font-bold text-[#60A5FA] font-mono mt-1">
+            <div className="text-2xl font-bold text-[#38BDF8] font-mono mt-1">
               {selectedModel.rmseMeters} m
             </div>
             <span className="text-[10px] text-[#A69B88] mt-1 block">Root Mean Square Error</span>
@@ -240,7 +240,7 @@ export function InteractiveModelCard() {
                 key={idx}
                 className="p-3 rounded-xl bg-[#1E1E1C] border border-[#D8CBB3]/10 flex items-center gap-2.5 text-xs text-[#EDE4D3]"
               >
-                <div className="w-2 h-2 rounded-full bg-[#2F6BFF] shrink-0" />
+                <div className="w-2 h-2 rounded-full bg-[#06B6D4] shrink-0" />
                 <span className="font-mono">{feat}</span>
               </div>
             ))}

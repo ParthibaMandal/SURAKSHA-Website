@@ -32,7 +32,7 @@ export default function AlertsSafetyPage() {
       {/* 3 Tier Cards */}
       <FadeIn delay={0.1}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <article className="p-6 sm:p-7 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-3 hover:border-[#2F6BFF]/40 transition-colors">
+          <article className="p-6 sm:p-7 rounded-2xl border border-white/10 bg-[#10161F]/80 space-y-3 hover:border-[#06B6D4]/40 transition-colors">
             <div className="eyebrow">LEVEL 01 · INFORMATION</div>
             <h3 className="text-xl font-bold text-[#EDE4D3]">Advisory</h3>
             <p className="text-xs text-[#A69B88] leading-relaxed">

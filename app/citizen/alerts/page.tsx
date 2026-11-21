@@ -24,13 +24,13 @@ export default function CitizenAlertsPage() {
       <div className="p-6 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-[#D8CBB3]/12">
           <h3 className="text-sm font-bold text-[#D8CBB3]">Published Advisory Feed</h3>
-          <span className="text-xs font-mono text-[#2F6BFF]">3 Records · SAMPLE</span>
+          <span className="text-xs font-mono text-[#06B6D4]">3 Records · SAMPLE</span>
         </div>
 
         <div className="divide-y divide-[#D8CBB3]/10">
           <div className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-1">
-              <div className="flex items-center gap-2 text-[10px] font-mono text-[#2F6BFF] uppercase">
+              <div className="flex items-center gap-2 text-[10px] font-mono text-[#06B6D4] uppercase">
                 <ShieldCheck className="w-3.5 h-3.5" /> Authorized by Commander-01 · CAP-2026-PAT-09
               </div>
               <strong className="text-sm text-[#EDE4D3] block">
@@ -57,7 +57,7 @@ export default function CitizenAlertsPage() {
                 05 Nov 2026 · 09:00 UTC · Observed stage 49.40 m
               </small>
             </div>
-            <span className="px-2.5 py-1 rounded text-[10px] font-mono font-bold uppercase bg-[#2F6BFF]/15 text-[#2F6BFF] border border-[#2F6BFF]/30 self-start sm:self-center">
+            <span className="px-2.5 py-1 rounded text-[10px] font-mono font-bold uppercase bg-[#06B6D4]/15 text-[#06B6D4] border border-[#06B6D4]/30 self-start sm:self-center">
               Normal
             </span>
           </div>
@@ -103,8 +103,8 @@ export default function CitizenAlertsPage() {
             </p>
           </div>
 
-          <div className="p-4 rounded-xl border border-[#2F6BFF]/30 bg-[#1E1E1C] space-y-1.5">
-            <strong className="text-xs font-mono font-bold text-[#2F6BFF] block">STAGE 03 · PUBLISHED</strong>
+          <div className="p-4 rounded-xl border border-[#06B6D4]/30 bg-[#1E1E1C] space-y-1.5">
+            <strong className="text-xs font-mono font-bold text-[#06B6D4] block">STAGE 03 · PUBLISHED</strong>
             <p className="text-xs text-[#A69B88] leading-relaxed">
               Dispatched to citizen dashboards and ward-level emergency notification channels.
             </p>

@@ -24,18 +24,18 @@ export const HimalayasToPlainsHero: React.FC = () => {
 
   return (
     <>
-      <section className="relative h-screen min-h-[700px] w-full flex flex-col justify-between overflow-hidden bg-[#0A0D14] text-white">
+      <section className="relative h-screen min-h-[700px] w-full flex flex-col justify-between overflow-x-hidden overflow-y-hidden bg-[#090C10] text-white">
         {/* =========================================================================
             BACKGROUND HERO PANORAMA (User Provided Asset)
            ========================================================================= */}
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 z-0 w-full overflow-hidden">
           <Image
             src="/images/hero-himalayas-ganga.jpg"
             alt="From the Himalayas to the Plains — SURAKSHA Flood Early Warning System"
             fill
             priority
             quality={95}
-            className="object-cover object-[center_35%] scale-[1.01]"
+            className="w-full object-cover object-[center_35%] scale-[1.01]"
           />
 
           {/* Left Vignette & Gradient Overlays for High Legibility */}
@@ -44,8 +44,8 @@ export const HimalayasToPlainsHero: React.FC = () => {
           {/* Top Navbar Shadow */}
           <div className="absolute top-0 inset-x-0 h-28 bg-gradient-to-b from-black/75 via-black/20 to-transparent" />
           
-          {/* Bottom Blend to Page Background (#1E1E1C) */}
-          <div className="absolute bottom-0 inset-x-0 h-28 bg-gradient-to-t from-[#1E1E1C] via-[#1E1E1C]/60 to-transparent" />
+          {/* Bottom Blend to Page Background (#090C10) */}
+          <div className="absolute bottom-0 inset-x-0 h-28 bg-gradient-to-t from-[#090C10] via-[#090C10]/60 to-transparent" />
           
           {/* Subtle Sunset Warmth Overlay on Right */}
           <div className="absolute inset-0 bg-gradient-to-l from-amber-500/10 via-transparent to-transparent pointer-events-none" />
@@ -106,7 +106,7 @@ export const HimalayasToPlainsHero: React.FC = () => {
             </div>
 
             {/* Telemetry Card */}
-            <div className="p-3.5 rounded-2xl bg-black/50 backdrop-blur-xl border border-white/20 shadow-[0_12px_40px_rgba(0,0,0,0.6)] flex items-center gap-3.5 hover:border-cyan-400/50 transition-colors">
+            <div className="p-3.5 rounded-2xl bg-[#10161F]/80 backdrop-blur-xl border border-white/15 shadow-[0_12px_40px_rgba(0,0,0,0.6)] flex items-center gap-3.5 hover:border-[#06B6D4]/50 transition-colors">
               <div className="flex flex-col">
                 <div className="flex items-center gap-2 mb-1">
                   <div className="w-7 h-7 rounded-lg bg-sky-500/20 border border-sky-400/40 flex items-center justify-center">
@@ -114,19 +114,39 @@ export const HimalayasToPlainsHero: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="text-sm font-semibold text-white tracking-tight leading-none">Himalayas</h4>
-                    <p className="text-[11px] text-white/70 mt-0.5">Glaciers Melting</p>
+                    <p className="text-[11px] text-slate-300 mt-0.5">Glaciers Melting</p>
                   </div>
                 </div>
 
                 <div className="mt-1 flex items-center gap-1.5">
-                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-rose-500/20 border border-rose-500/30 text-[11px] font-mono font-semibold text-rose-300">
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-rose-500/20 border border-rose-500/30 text-[11px] font-mono font-semibold text-rose-300">
                     <span className="text-[9px]">▲</span> +0.8°C
                   </span>
+                  <span className="text-[10px] text-slate-400 font-mono">Gangotri AWS</span>
+                </div>
+
+                {/* 30-Day Temp Delta Sparkline */}
+                <div className="mt-2 pt-1.5 border-t border-white/10 w-full">
+                  <div className="flex items-center justify-between text-[9px] text-slate-400 mb-0.5">
+                    <span>Melt Rate Trend</span>
+                    <span className="font-mono text-rose-300">+0.8°C</span>
+                  </div>
+                  <svg className="w-28 h-4 overflow-visible" viewBox="0 0 100 20" fill="none">
+                    <defs>
+                      <linearGradient id="glacierTempGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#FB7185" stopOpacity="0.4" />
+                        <stop offset="100%" stopColor="#FB7185" stopOpacity="0" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M 0 16 Q 25 14 50 11 T 100 3 L 100 20 L 0 20 Z" fill="url(#glacierTempGrad)" />
+                    <path d="M 0 16 Q 25 14 50 11 T 100 3" stroke="#FB7185" strokeWidth="1.5" strokeLinecap="round" />
+                    <circle cx="100" cy="3" r="2" fill="#FDA4AF" className="animate-pulse" />
+                  </svg>
                 </div>
               </div>
 
               {/* Glacier Thumbnail */}
-              <div className="relative w-[96px] h-[64px] rounded-xl overflow-hidden border border-white/20 shadow-inner flex-shrink-0">
+              <div className="relative w-[96px] h-[72px] rounded-xl overflow-hidden border border-white/20 shadow-inner flex-shrink-0">
                 <Image
                   src="/images/glacier-thumb-hd.jpg"
                   alt="Himalayas Gangotri glacier telemetry"
@@ -157,7 +177,7 @@ export const HimalayasToPlainsHero: React.FC = () => {
             </div>
 
             {/* Telemetry Card */}
-            <div className="p-4 rounded-2xl bg-black/50 backdrop-blur-xl border border-white/20 shadow-[0_12px_40px_rgba(0,0,0,0.6)] min-w-[240px] flex flex-col gap-2.5 hover:border-cyan-400/50 transition-colors">
+            <div className="p-4 rounded-2xl bg-[#10161F]/80 backdrop-blur-xl border border-white/15 shadow-[0_12px_40px_rgba(0,0,0,0.6)] min-w-[240px] flex flex-col gap-2.5 hover:border-[#06B6D4]/50 transition-colors">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-lg bg-teal-500/20 border border-teal-400/40 flex items-center justify-center">
@@ -165,22 +185,26 @@ export const HimalayasToPlainsHero: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="text-sm font-semibold text-white tracking-tight leading-none">Ganga Basin</h4>
-                    <p className="text-[11px] text-white/70 mt-0.5">Water Levels Rising</p>
+                    <p className="text-[11px] text-slate-300 mt-0.5">Water Levels Rising</p>
                   </div>
                 </div>
 
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-rose-500/20 border border-rose-500/30 text-[11px] font-mono font-semibold text-rose-300">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-500/20 border border-rose-500/30 text-[11px] font-mono font-semibold text-rose-300">
                   <span className="text-[9px]">▲</span> +12 cm
                 </span>
               </div>
 
               {/* Hydrograph Sparkline */}
               <div className="pt-2 border-t border-white/10">
+                <div className="flex items-center justify-between text-[9px] text-slate-400 mb-0.5">
+                  <span>Reach Hydrograph</span>
+                  <span className="font-mono text-[#06B6D4]">47.12 m MSL</span>
+                </div>
                 <svg className="w-full h-8 overflow-visible" viewBox="0 0 160 30" fill="none">
                   <defs>
                     <linearGradient id="gangaSparkGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#2DD4BF" stopOpacity="0.45" />
-                      <stop offset="100%" stopColor="#2DD4BF" stopOpacity="0.0" />
+                      <stop offset="0%" stopColor="#06B6D4" stopOpacity="0.45" />
+                      <stop offset="100%" stopColor="#06B6D4" stopOpacity="0.0" />
                     </linearGradient>
                   </defs>
                   {/* Area */}
@@ -191,7 +215,7 @@ export const HimalayasToPlainsHero: React.FC = () => {
                   {/* Hydrograph line */}
                   <path
                     d="M 0 25 Q 40 22 80 18 T 160 6"
-                    stroke="#2DD4BF"
+                    stroke="#06B6D4"
                     strokeWidth="2"
                     strokeLinecap="round"
                   />
@@ -209,13 +233,13 @@ export const HimalayasToPlainsHero: React.FC = () => {
         <div className="w-full px-6 sm:px-10 lg:px-14 h-full relative z-10 pt-24 sm:pt-28 pb-6 flex flex-col justify-between">
           {/* Top Block: Aligned towards the left edge (<--- arrow) */}
           <div className="max-w-2xl lg:max-w-[620px] flex flex-col items-start">
-            {/* Real-Time Flood Intelligence Eyebrow */}
-            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-black/45 backdrop-blur-md border border-white/15 text-xs text-white/90 shadow-lg mb-5">
+            {/* Real-Time Flood Intelligence Eyebrow with Honest Simulated Preview */}
+            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/15 text-xs text-white/90 shadow-lg mb-5">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
               </span>
-              <span className="font-medium tracking-wide">Real-Time Flood Intelligence</span>
+              <span className="font-medium tracking-wide">Real-Time Flood Intelligence · Simulated Preview</span>
               <TrendingUp className="w-3.5 h-3.5 text-[#2DD4BF]" />
             </div>
 
@@ -229,7 +253,7 @@ export const HimalayasToPlainsHero: React.FC = () => {
             </h1>
 
             {/* Subtitle */}
-            <p className="text-base sm:text-lg text-white/80 max-w-xl font-normal leading-relaxed mb-6">
+            <p className="text-base sm:text-lg text-slate-300 max-w-xl font-normal leading-relaxed mb-6">
               Satellite. Sensors. AI. — A complete flood early warning system, from source to shore.
             </p>
 
@@ -238,7 +262,7 @@ export const HimalayasToPlainsHero: React.FC = () => {
               {/* Primary: Explore Platform */}
               <Link
                 href="/platform"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white text-slate-900 font-semibold text-sm hover:bg-neutral-100 transition-all duration-200 shadow-xl shadow-black/40 group"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white text-[#090C10] font-semibold text-sm hover:bg-neutral-100 transition-all duration-200 shadow-xl shadow-black/40 group"
               >
                 <span>Explore the Platform</span>
                 <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
@@ -260,33 +284,33 @@ export const HimalayasToPlainsHero: React.FC = () => {
             {/* Mobile-Only Telemetry Cards Stack (< 768px) */}
             <div className="md:hidden w-full grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
               {/* Himalayas Mobile Card */}
-              <div className="p-2.5 rounded-xl bg-black/60 backdrop-blur-md border border-white/20 flex items-center justify-between">
+              <div className="p-2.5 rounded-2xl bg-[#10161F]/80 backdrop-blur-md border border-white/15 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 rounded-lg bg-sky-500/20 border border-sky-400/40 flex items-center justify-center">
                     <Mountain className="w-3.5 h-3.5 text-sky-400" />
                   </div>
                   <div>
                     <h5 className="text-xs font-semibold text-white">Himalayas (Gangotri)</h5>
-                    <p className="text-[10px] text-white/70">Glaciers Melting</p>
+                    <p className="text-[10px] text-slate-300">Glaciers Melting</p>
                   </div>
                 </div>
-                <span className="px-1.5 py-0.5 rounded bg-rose-500/20 border border-rose-500/30 text-[10px] font-mono font-semibold text-rose-300">
+                <span className="px-2 py-0.5 rounded-full bg-rose-500/20 border border-rose-500/30 text-[10px] font-mono font-semibold text-rose-300">
                   ▲ +0.8°C
                 </span>
               </div>
 
               {/* Ganga Basin Mobile Card */}
-              <div className="p-2.5 rounded-xl bg-black/60 backdrop-blur-md border border-white/20 flex items-center justify-between">
+              <div className="p-2.5 rounded-2xl bg-[#10161F]/80 backdrop-blur-md border border-white/15 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 rounded-lg bg-teal-500/20 border border-teal-400/40 flex items-center justify-center">
                     <Waves className="w-3.5 h-3.5 text-teal-400" />
                   </div>
                   <div>
                     <h5 className="text-xs font-semibold text-white">Ganga Basin (Patna)</h5>
-                    <p className="text-[10px] text-white/70">Water Levels Rising</p>
+                    <p className="text-[10px] text-slate-300">Water Levels Rising</p>
                   </div>
                 </div>
-                <span className="px-1.5 py-0.5 rounded bg-rose-500/20 border border-rose-500/30 text-[10px] font-mono font-semibold text-rose-300">
+                <span className="px-2 py-0.5 rounded-full bg-rose-500/20 border border-rose-500/30 text-[10px] font-mono font-semibold text-rose-300">
                   ▲ +12 cm
                 </span>
               </div>
@@ -352,11 +376,11 @@ export const HimalayasToPlainsHero: React.FC = () => {
          ========================================================================= */}
       {isDemoOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="relative w-full max-w-3xl rounded-2xl border border-white/20 bg-[#1E1E1C] p-6 shadow-2xl text-[#D8CBB3]">
+          <div className="relative w-full max-w-3xl rounded-3xl border border-white/15 bg-[#10161F] p-6 shadow-2xl text-white">
             {/* Close button */}
             <button
               onClick={() => setIsDemoOpen(false)}
-              className="absolute top-4 right-4 p-2 rounded-lg border border-white/10 bg-white/5 text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+              className="absolute top-4 right-4 p-2 rounded-full border border-white/15 bg-white/5 text-white/80 hover:text-white hover:bg-white/10 transition-colors"
               aria-label="Close demo"
             >
               <X className="w-5 h-5" />
@@ -364,19 +388,19 @@ export const HimalayasToPlainsHero: React.FC = () => {
 
             {/* Modal Header */}
             <div className="mb-4 pr-10">
-              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#2F6BFF]/20 text-[#38BDF8] border border-[#2F6BFF]/30 text-xs font-mono font-semibold mb-2">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#06B6D4]/15 text-[#38BDF8] border border-[#06B6D4]/30 text-xs font-mono font-semibold mb-2">
                 <Activity className="w-3.5 h-3.5" /> SURAKSHA HYDROLOGICAL INTELLIGENCE
               </div>
               <h3 className="text-xl sm:text-2xl font-bold text-white">
                 Early Warning Operations Walkthrough
               </h3>
-              <p className="text-xs sm:text-sm text-[#A69B88] mt-1">
+              <p className="text-xs sm:text-sm text-slate-400 mt-1">
                 From Himalayan glacial melt to Gangetic floodplain inundation: experience the live digital twin and decision support system.
               </p>
             </div>
 
             {/* Video / Interactive Preview Frame */}
-            <div className="relative aspect-video rounded-xl overflow-hidden border border-white/15 bg-black/60 mb-6 group">
+            <div className="relative aspect-video rounded-2xl overflow-hidden border border-white/15 bg-black/60 mb-6 group">
               <Image
                 src="/images/hero-himalayas-ganga.jpg"
                 alt="SURAKSHA Platform Preview"
@@ -386,8 +410,8 @@ export const HimalayasToPlainsHero: React.FC = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
               
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
-                <div className="w-16 h-16 rounded-full bg-[#2F6BFF] flex items-center justify-center shadow-xl shadow-[#2F6BFF]/40 text-white mb-3">
-                  <Play className="w-6 h-6 fill-white ml-1" />
+                <div className="w-16 h-16 rounded-full bg-[#06B6D4] flex items-center justify-center shadow-xl shadow-[#06B6D4]/40 text-black mb-3">
+                  <Play className="w-6 h-6 fill-current ml-1" />
                 </div>
                 <h4 className="text-lg font-bold text-white mb-1">Interactive Demo Simulation</h4>
                 <p className="text-xs text-white/70 max-w-md">
@@ -400,22 +424,22 @@ export const HimalayasToPlainsHero: React.FC = () => {
             <div className="flex flex-wrap items-center justify-end gap-3 pt-2 border-t border-white/10">
               <button
                 onClick={() => setIsDemoOpen(false)}
-                className="px-4 py-2 rounded-lg border border-white/15 text-xs text-white/80 hover:bg-white/5 transition-colors"
+                className="px-5 py-2.5 rounded-full border border-white/15 text-xs text-white/80 hover:bg-white/5 transition-colors"
               >
                 Close Preview
               </button>
               <Link
                 href="/demo-lab"
                 onClick={() => setIsDemoOpen(false)}
-                className="px-4 py-2 rounded-lg bg-[#292925] border border-white/20 text-xs text-white hover:bg-[#33332E] transition-colors flex items-center gap-1.5"
+                className="px-5 py-2.5 rounded-full bg-white/5 border border-white/20 text-xs text-white hover:bg-white/10 transition-colors flex items-center gap-1.5"
               >
-                <span>Open Demo Lab</span>
+                <span>Open Simulation Lab</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </Link>
               <Link
                 href="/platform"
                 onClick={() => setIsDemoOpen(false)}
-                className="px-5 py-2 rounded-lg bg-[#2F6BFF] hover:bg-[#4B80FF] text-xs font-semibold text-white transition-colors flex items-center gap-1.5"
+                className="px-6 py-2.5 rounded-full bg-white text-[#090C10] hover:bg-neutral-100 text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-lg"
               >
                 <span>Launch Digital Twin</span>
                 <ChevronRight className="w-4 h-4" />

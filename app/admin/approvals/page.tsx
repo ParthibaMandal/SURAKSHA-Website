@@ -26,8 +26,8 @@ export default function AdminApprovalsPage() {
   return (
     <div className="space-y-6">
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#292925] border border-[#2F6BFF]/40 text-xs font-mono text-[#D8CBB3] shadow-2xl flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-[#2F6BFF]" /> {toast}
+        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#292925] border border-[#06B6D4]/40 text-xs font-mono text-[#D8CBB3] shadow-2xl flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-[#06B6D4]" /> {toast}
         </div>
       )}
 
@@ -64,7 +64,7 @@ export default function AdminApprovalsPage() {
             <span
               className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase border ${
                 status === "AUTHORIZED & PUBLISHED"
-                  ? "bg-[#2F6BFF]/20 text-[#2F6BFF] border-[#2F6BFF]/40"
+                  ? "bg-[#06B6D4]/20 text-[#06B6D4] border-[#06B6D4]/40"
                   : status === "REJECTED BY COMMANDER"
                   ? "bg-[#EF4444]/20 text-[#EF4444] border-[#EF4444]/40"
                   : "bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30"
@@ -106,7 +106,7 @@ export default function AdminApprovalsPage() {
                 <strong className="text-[#D8CBB3] block">Evidence Source</strong>
                 <small className="text-[#A69B88]">Ensemble Jev + STN-PAT-01 + Sentinel-1 SAR</small>
               </div>
-              <span className="text-xs font-mono text-[#2F6BFF]">Triangulated</span>
+              <span className="text-xs font-mono text-[#06B6D4]">Triangulated</span>
             </div>
           </div>
 
@@ -138,7 +138,7 @@ export default function AdminApprovalsPage() {
 
           <div className="space-y-4">
             <div className="flex items-start gap-3.5">
-              <div className="w-7 h-7 rounded-lg bg-[#2F6BFF]/15 border border-[#2F6BFF]/30 grid place-items-center text-xs font-mono font-bold text-[#2F6BFF] shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-[#06B6D4]/15 border border-[#06B6D4]/30 grid place-items-center text-xs font-mono font-bold text-[#06B6D4] shrink-0">
                 01
               </div>
               <div>
@@ -150,7 +150,7 @@ export default function AdminApprovalsPage() {
             </div>
 
             <div className="flex items-start gap-3.5">
-              <div className="w-7 h-7 rounded-lg bg-[#2F6BFF]/15 border border-[#2F6BFF]/30 grid place-items-center text-xs font-mono font-bold text-[#2F6BFF] shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-[#06B6D4]/15 border border-[#06B6D4]/30 grid place-items-center text-xs font-mono font-bold text-[#06B6D4] shrink-0">
                 02
               </div>
               <div>
@@ -162,7 +162,7 @@ export default function AdminApprovalsPage() {
             </div>
 
             <div className="flex items-start gap-3.5">
-              <div className="w-7 h-7 rounded-lg bg-[#2F6BFF]/15 border border-[#2F6BFF]/30 grid place-items-center text-xs font-mono font-bold text-[#2F6BFF] shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-[#06B6D4]/15 border border-[#06B6D4]/30 grid place-items-center text-xs font-mono font-bold text-[#06B6D4] shrink-0">
                 03
               </div>
               <div>

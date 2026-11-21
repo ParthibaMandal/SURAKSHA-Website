@@ -1,43 +1,60 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: #1E1E1C;
-    --foreground: #D8CBB3;
-    --card: #292925;
-    --card-foreground: #D8CBB3;
-    --elevated: #33332E;
-    --popover: #292925;
-    --popover-foreground: #D8CBB3;
-    --primary: #2F6BFF;
-    --primary-foreground: #FFFFFF;
-    --secondary: #33332E;
-    --secondary-foreground: #D8CBB3;
-    --muted: #292925;
-    --muted-foreground: #A69B88;
-    --accent: #2F6BFF;
-    --accent-foreground: #FFFFFF;
+  :root, .dark {
+    /* Hero Obsidian Canvas & Glass Surfaces */
+    --background: #090C10;
+    --surface-glass: rgba(16, 22, 31, 0.72);
+    --border: rgba(255, 255, 255, 0.10);
+    --foreground: #F8FAFC;
+    --muted: rgba(16, 22, 31, 0.85);
+    --muted-foreground: #94A3B8;
+
+    --card: #10161F;
+    --card-foreground: #F8FAFC;
+    --elevated: #16202C;
+    --popover: #10161F;
+    --popover-foreground: #F8FAFC;
+
+    /* Hero Pill CTA & Teal-to-Cyan Telemetry (Replaces flat #2F6BFF) */
+    --primary: #FFFFFF;
+    --primary-foreground: #090C10;
+    --secondary: rgba(255, 255, 255, 0.08);
+    --secondary-foreground: #F8FAFC;
+
+    --accent-teal: #14B8A6;
+    --accent-cyan: #06B6D4;
+    --accent-sky: #38BDF8;
+    --accent: #06B6D4;
+    --accent-foreground: #090C10;
+
+    /* Semantic Status Pills */
+    --status-live: #10B981;
+    --status-watch: #F59E0B;
+    --status-danger: #EF4444;
     --destructive: #EF4444;
     --destructive-foreground: #FFFFFF;
     --warning: #F59E0B;
-    --border: rgba(216, 203, 179, 0.14);
-    --input: rgba(216, 203, 179, 0.18);
-    --ring: #2F6BFF;
-    --radius: 0.625rem;
-    --font-heading: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+    --ring: #06B6D4;
+    --radius-pill: 9999px;
+    --radius-card: 1rem;
+    --radius: 0.75rem;
+
+    --font-heading: 'IBM Plex Sans', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-sans: 'Inter', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
   }
 }
 
 body {
   margin: 0;
-  background-color: #1E1E1C;
-  color: #D8CBB3;
+  background-color: #090C10;
+  color: #F8FAFC;
   font-family: var(--font-sans);
   overflow-x: hidden;
   min-height: 100vh;
@@ -66,14 +83,14 @@ pre,
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #1E1E1C;
+  background: #090C10;
 }
 ::-webkit-scrollbar-thumb {
-  background: #33332E;
-  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #2F6BFF;
+  background: #06B6D4;
 }
 
 /* Editorial Eyebrow Labels */
@@ -85,7 +102,7 @@ pre,
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #A69B88;
+  color: #94A3B8;
   font-weight: 600;
   margin-bottom: 6px;
 }
@@ -95,105 +112,52 @@ pre,
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #2F6BFF;
+  background: #06B6D4;
+  box-shadow: 0 0 8px #06B6D4;
 }
 
-/* Status & Telemetry Pills */
+/* Pill Utilities */
 .pill {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 5px 11px;
-  border: 1px solid rgba(216, 203, 179, 0.16);
+  gap: 6px;
+  padding: 4px 12px;
   border-radius: 9999px;
-  background: #292925;
-  color: #D8CBB3;
-  font-family: var(--font-sans);
   font-size: 11px;
-  font-weight: 500;
-  white-space: nowrap;
-  letter-spacing: 0.02em;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
-}
-.pill:hover {
-  border-color: rgba(47, 107, 255, 0.45);
-}
-
-/* Semantic Status Dots */
-.dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #2F6BFF;
-  display: inline-block;
-}
-.dot.blue {
-  background: #2F6BFF;
-}
-.dot.green {
-  background: #10B981;
-}
-.dot.amber {
-  background: #F59E0B;
-}
-.dot.red {
-  background: #EF4444;
-}
-
-/* Reusable Button Classes for Legacy / Inline Links */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 9px 16px;
-  border-radius: 8px;
-  border: 1px solid rgba(216, 203, 179, 0.18);
-  background: #292925;
-  color: #D8CBB3;
-  font-size: 12px;
   font-weight: 600;
-  transition: all 0.18s ease;
-  cursor: pointer;
-  text-decoration: none;
-}
-.btn:hover {
-  background: #33332E;
-  border-color: rgba(216, 203, 179, 0.32);
-  color: #EDE4D3;
-}
-.btn.primary {
-  background: #2F6BFF;
-  border-color: #2F6BFF;
-  color: #FFFFFF;
-}
-.btn.primary:hover {
-  background: #4B80FF;
-  border-color: #4B80FF;
-  color: #FFFFFF;
-}
-.btn.small {
-  padding: 6px 12px;
-  font-size: 11px;
+  letter-spacing: 0.04em;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(16, 22, 31, 0.85);
+  color: #F8FAFC;
+  backdrop-filter: blur(8px);
 }
 
-/* Notice Banner */
-.notice {
-  padding: 12px 16px;
-  border-radius: 10px;
-  border: 1px solid rgba(216, 203, 179, 0.18);
-  background: #292925;
-  color: #A69B88;
-  font-size: 12px;
-  line-height: 1.5;
+.pill .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.pill .dot.green {
+  background: #10B981;
+  box-shadow: 0 0 8px #10B981;
+}
+.pill .dot.amber {
+  background: #F59E0B;
+  box-shadow: 0 0 8px #F59E0B;
+}
+.pill .dot.red {
+  background: #EF4444;
+  box-shadow: 0 0 8px #EF4444;
+}
+.pill .dot.cyan {
+  background: #06B6D4;
+  box-shadow: 0 0 8px #06B6D4;
 }
 
-/* River flow subtle animation */
-@keyframes flowStream {
-  from { stroke-dashoffset: 120; }
-  to { stroke-dashoffset: 0; }
-}
-
-.gradient-text {
-  color: #EDE4D3;
+/* Glass Card */
+.glass-panel {
+  background: rgba(16, 22, 31, 0.72);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 1rem;
 }

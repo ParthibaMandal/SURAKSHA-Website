@@ -34,7 +34,7 @@ export default function AdminSettingsPage() {
                 <strong className="text-xs text-[#EDE4D3] block">FastAPI Hydrological Gateway</strong>
                 <small className="text-[11px] text-[#A69B88] font-mono">SURAKSHA_BACKEND_URL · REST v1</small>
               </div>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#2F6BFF]/15 text-[#2F6BFF] border border-[#2F6BFF]/30">
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#06B6D4]/15 text-[#06B6D4] border border-[#06B6D4]/30">
                 Active
               </span>
             </div>
@@ -54,7 +54,7 @@ export default function AdminSettingsPage() {
                 <strong className="text-xs text-[#EDE4D3] block">Geospatial Engine</strong>
                 <small className="text-[11px] text-[#A69B88] font-mono">Sentinel-1 SAR & Basin Contour Service</small>
               </div>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#2F6BFF]/15 text-[#2F6BFF] border border-[#2F6BFF]/30">
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#06B6D4]/15 text-[#06B6D4] border border-[#06B6D4]/30">
                 Active
               </span>
             </div>
@@ -65,7 +65,7 @@ export default function AdminSettingsPage() {
         <div className="p-6 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-[#D8CBB3]/12">
             <h3 className="text-sm font-bold text-[#D8CBB3]">Supervisory Safeguards</h3>
-            <span className="text-xs font-mono text-[#2F6BFF]">Guarded</span>
+            <span className="text-xs font-mono text-[#06B6D4]">Guarded</span>
           </div>
 
           <div className="divide-y divide-[#D8CBB3]/10">
@@ -74,7 +74,7 @@ export default function AdminSettingsPage() {
                 <strong className="text-xs text-[#EDE4D3] block">Human-in-the-loop Gate</strong>
                 <small className="text-[11px] text-[#A69B88]">Commander Authorization Required for CAP Broadcast</small>
               </div>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#2F6BFF]/15 text-[#2F6BFF] border border-[#2F6BFF]/30">
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#06B6D4]/15 text-[#06B6D4] border border-[#06B6D4]/30">
                 Enforced
               </span>
             </div>
@@ -84,7 +84,7 @@ export default function AdminSettingsPage() {
                 <strong className="text-xs text-[#EDE4D3] block">Data Provenance Tagging</strong>
                 <small className="text-[11px] text-[#A69B88]">Explicit LIVE / SAMPLE / SYNTHETIC / STALE Badges</small>
               </div>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#2F6BFF]/15 text-[#2F6BFF] border border-[#2F6BFF]/30">
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#06B6D4]/15 text-[#06B6D4] border border-[#06B6D4]/30">
                 Enabled
               </span>
             </div>
@@ -94,7 +94,7 @@ export default function AdminSettingsPage() {
                 <strong className="text-xs text-[#EDE4D3] block">Audit Logging</strong>
                 <small className="text-[11px] text-[#A69B88]">Immutable Write-only Decision Ledger</small>
               </div>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#2F6BFF]/15 text-[#2F6BFF] border border-[#2F6BFF]/30">
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#06B6D4]/15 text-[#06B6D4] border border-[#06B6D4]/30">
                 Active
               </span>
             </div>

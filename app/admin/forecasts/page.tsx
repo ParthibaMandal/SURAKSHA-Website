@@ -37,12 +37,12 @@ export default function AdminForecastsPage() {
         <div className="p-4 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-1.5">
           <div className="flex items-center justify-between text-xs text-[#A69B88]">
             <span>Ensemble Mean Crest</span>
-            <Activity className="w-4 h-4 text-[#2F6BFF]" />
+            <Activity className="w-4 h-4 text-[#06B6D4]" />
           </div>
           <div className="text-2xl font-extrabold font-mono text-[#D8CBB3]">
             {surgeMode ? "52.32 m" : "50.24 m"}
           </div>
-          <div className="text-[11px] font-mono text-[#2F6BFF]">T+8h projected peak</div>
+          <div className="text-[11px] font-mono text-[#06B6D4]">T+8h projected peak</div>
         </div>
 
         <div className="p-4 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-1.5">
@@ -59,7 +59,7 @@ export default function AdminForecastsPage() {
         <div className="p-4 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-1.5">
           <div className="flex items-center justify-between text-xs text-[#A69B88]">
             <span>Nash–Sutcliffe (NSE)</span>
-            <Shield className="w-4 h-4 text-[#2F6BFF]" />
+            <Shield className="w-4 h-4 text-[#06B6D4]" />
           </div>
           <div className="text-2xl font-extrabold font-mono text-[#D8CBB3]">0.89</div>
           <div className="text-[11px] font-mono text-[#A69B88]">Validation benchmark</div>
@@ -89,7 +89,7 @@ export default function AdminForecastsPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-[#D8CBB3]/14">
               <h2 className="text-sm font-bold text-[#D8CBB3]">Forecast Run Provenance</h2>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-[#2F6BFF]/18 text-[#2F6BFF] border border-[#2F6BFF]/35">
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-[#06B6D4]/18 text-[#06B6D4] border border-[#06B6D4]/35">
                 SYNTHETIC RUN
               </span>
             </div>
@@ -112,7 +112,7 @@ export default function AdminForecastsPage() {
                     Saint-Venant 1D/2D + LSTM Ensemble
                   </small>
                 </div>
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#2F6BFF]/18 text-[#2F6BFF] border border-[#2F6BFF]/35">
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#06B6D4]/18 text-[#06B6D4] border border-[#06B6D4]/35">
                   Verified
                 </span>
               </div>

@@ -64,8 +64,8 @@ export default function CitizenLocationsPage() {
   return (
     <div className="space-y-6">
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#292925] border border-[#2F6BFF]/40 text-xs font-mono text-[#D8CBB3] shadow-2xl flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-[#2F6BFF]" /> {toast}
+        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#292925] border border-[#06B6D4]/40 text-xs font-mono text-[#D8CBB3] shadow-2xl flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-[#06B6D4]" /> {toast}
         </div>
       )}
 
@@ -95,7 +95,7 @@ export default function CitizenLocationsPage() {
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             placeholder="e.g., Kankarbagh Workplace"
-            className="w-full px-3.5 py-2 rounded-lg bg-[#1E1E1C] border border-[#D8CBB3]/20 text-xs text-[#D8CBB3] placeholder:text-[#A69B88]/50 focus:outline-none focus:border-[#2F6BFF]"
+            className="w-full px-3.5 py-2 rounded-lg bg-[#1E1E1C] border border-[#D8CBB3]/20 text-xs text-[#D8CBB3] placeholder:text-[#A69B88]/50 focus:outline-none focus:border-[#06B6D4]"
           />
         </div>
         <div className="sm:w-56 space-y-1">
@@ -105,7 +105,7 @@ export default function CitizenLocationsPage() {
           <select
             value={newArea}
             onChange={(e) => setNewArea(e.target.value)}
-            className="w-full px-3.5 py-2 rounded-lg bg-[#1E1E1C] border border-[#D8CBB3]/20 text-xs text-[#D8CBB3] focus:outline-none focus:border-[#2F6BFF]"
+            className="w-full px-3.5 py-2 rounded-lg bg-[#1E1E1C] border border-[#D8CBB3]/20 text-xs text-[#D8CBB3] focus:outline-none focus:border-[#06B6D4]"
           >
             <option>Patna East Reach</option>
             <option>Gandhighat Urban Sector</option>
@@ -142,14 +142,14 @@ export default function CitizenLocationsPage() {
                 <tr key={loc.id} className="hover:bg-[#33332E]/50 transition-colors">
                   <td className="py-3 px-3 font-semibold text-[#EDE4D3] font-sans">{loc.name}</td>
                   <td className="py-3 px-3 text-[#D8CBB3]">{loc.area}</td>
-                  <td className="py-3 px-3 text-[#2F6BFF]">{loc.station}</td>
+                  <td className="py-3 px-3 text-[#06B6D4]">{loc.station}</td>
                   <td className="py-3 px-3 text-[#A69B88]">{loc.subscription}</td>
                   <td className="py-3 px-3">
                     <span
                       className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${
                         loc.state === "Watch"
                           ? "bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30"
-                          : "bg-[#2F6BFF]/15 text-[#2F6BFF] border-[#2F6BFF]/30"
+                          : "bg-[#06B6D4]/15 text-[#06B6D4] border-[#06B6D4]/30"
                       }`}
                     >
                       {loc.state}
@@ -158,7 +158,7 @@ export default function CitizenLocationsPage() {
                   <td className="py-3 px-3 flex items-center gap-2">
                     <button
                       onClick={() => showToast(`Updated alert radius for ${loc.name}.`)}
-                      className="px-2.5 py-1 rounded bg-[#33332E] border border-[#D8CBB3]/20 text-[11px] text-[#D8CBB3] hover:border-[#2F6BFF] flex items-center gap-1"
+                      className="px-2.5 py-1 rounded bg-[#33332E] border border-[#D8CBB3]/20 text-[11px] text-[#D8CBB3] hover:border-[#06B6D4] flex items-center gap-1"
                     >
                       <Edit3 className="w-3 h-3" /> Edit
                     </button>

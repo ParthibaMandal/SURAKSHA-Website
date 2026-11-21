@@ -55,8 +55,8 @@ export default function AdminIncidentsPage() {
   return (
     <div className="space-y-6">
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#292925] border border-[#2F6BFF]/40 text-xs font-mono text-[#D8CBB3] shadow-2xl flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-[#2F6BFF]" /> {toast}
+        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#292925] border border-[#06B6D4]/40 text-xs font-mono text-[#D8CBB3] shadow-2xl flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-[#06B6D4]" /> {toast}
         </div>
       )}
 
@@ -87,13 +87,13 @@ export default function AdminIncidentsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search incidents by ID, title, or study area..."
-            className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#292925] text-xs text-[#D8CBB3] placeholder:text-[#A69B88]/60 focus:outline-none focus:border-[#2F6BFF]"
+            className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#292925] text-xs text-[#D8CBB3] placeholder:text-[#A69B88]/60 focus:outline-none focus:border-[#06B6D4]"
           />
         </div>
         <select
           value={phaseFilter}
           onChange={(e) => setPhaseFilter(e.target.value)}
-          className="px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#292925] text-xs text-[#D8CBB3] focus:outline-none focus:border-[#2F6BFF]"
+          className="px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#292925] text-xs text-[#D8CBB3] focus:outline-none focus:border-[#06B6D4]"
         >
           <option value="ALL">All phases</option>
           <option value="Pre-event">Pre-event</option>
@@ -126,7 +126,7 @@ export default function AdminIncidentsPage() {
                 <tr key={inc.id} className="hover:bg-[#33332E]/50 transition-colors">
                   <td className="py-3 px-3">
                     <div className="font-semibold text-[#EDE4D3] font-sans">{inc.title}</div>
-                    <div className="text-[10px] text-[#2F6BFF]">{inc.id}</div>
+                    <div className="text-[10px] text-[#06B6D4]">{inc.id}</div>
                   </td>
                   <td className="py-3 px-3 text-[#D8CBB3]">{inc.area}</td>
                   <td className="py-3 px-3 text-[#D8CBB3]">{inc.phase}</td>
@@ -141,7 +141,7 @@ export default function AdminIncidentsPage() {
                       className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${
                         inc.status === "Active"
                           ? "bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30"
-                          : "bg-[#2F6BFF]/15 text-[#2F6BFF] border-[#2F6BFF]/30"
+                          : "bg-[#06B6D4]/15 text-[#06B6D4] border-[#06B6D4]/30"
                       }`}
                     >
                       {inc.status}
@@ -163,7 +163,7 @@ export default function AdminIncidentsPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="p-4 rounded-xl border border-[#D8CBB3]/15 bg-[#1E1E1C] space-y-1.5">
-            <div className="text-[10px] font-mono font-bold text-[#2F6BFF]">PHASE 01 · PREPARE</div>
+            <div className="text-[10px] font-mono font-bold text-[#06B6D4]">PHASE 01 · PREPARE</div>
             <h4 className="text-sm font-bold text-[#EDE4D3]">Pre-Event</h4>
             <p className="text-xs text-[#A69B88] leading-relaxed">
               Station readiness, ensemble forecast verification, and pre-event advisory staging.

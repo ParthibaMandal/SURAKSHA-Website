@@ -58,7 +58,7 @@ export default function HowItWorksPage() {
         {steps.map((st, idx) => (
           <FadeIn key={idx} delay={idx * 0.08}>
             <div className="p-6 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] flex items-start gap-4">
-              <span className="text-xl font-mono font-bold text-[#2F6BFF] shrink-0 bg-[#2F6BFF]/15 w-11 h-11 rounded-xl border border-[#2F6BFF]/30 grid place-items-center">
+              <span className="text-xl font-mono font-bold text-[#06B6D4] shrink-0 bg-[#06B6D4]/15 w-11 h-11 rounded-xl border border-[#06B6D4]/30 grid place-items-center">
                 {st.no}
               </span>
               <div>

@@ -56,7 +56,7 @@ export const TiltCard: React.FC<TiltCardProps> = ({
         rotateY,
         transformStyle: "preserve-3d",
       }}
-      className={`relative rounded-xl border border-[#D8CBB3]/15 bg-[#292925] p-6 transition-colors hover:bg-[#33332E]/70 hover:border-[#2F6BFF]/40 ${className}`}
+      className={`relative rounded-2xl border border-white/10 bg-[#10161F]/80 p-6 transition-colors hover:border-[#06B6D4]/40 ${className}`}
     >
       <div style={{ transform: "translateZ(8px)" }}>{children}</div>
     </motion.div>

@@ -14,8 +14,8 @@ export default function AdminSitrepPage() {
   return (
     <div className="space-y-6">
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#292925] border border-[#2F6BFF]/40 text-xs font-mono text-[#D8CBB3] shadow-2xl flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-[#2F6BFF]" /> {toast}
+        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#292925] border border-[#06B6D4]/40 text-xs font-mono text-[#D8CBB3] shadow-2xl flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-[#06B6D4]" /> {toast}
         </div>
       )}
 
@@ -53,7 +53,7 @@ export default function AdminSitrepPage() {
                 <strong className="text-xs text-[#EDE4D3] block">SITREP-2026-04 · Patna Flood Situation</strong>
                 <small className="text-[11px] text-[#A69B88] font-mono">Generated 06 Nov 2026 · 14:00 UTC</small>
               </div>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#2F6BFF]/15 text-[#2F6BFF] border border-[#2F6BFF]/30">
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#06B6D4]/15 text-[#06B6D4] border border-[#06B6D4]/30">
                 Finalized
               </span>
             </div>
@@ -74,7 +74,7 @@ export default function AdminSitrepPage() {
         <div className="p-6 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-[#D8CBB3]/12">
             <h3 className="text-sm font-bold text-[#D8CBB3]">Report Structure</h3>
-            <span className="text-xs font-mono text-[#2F6BFF]">Standard Spec</span>
+            <span className="text-xs font-mono text-[#06B6D4]">Standard Spec</span>
           </div>
 
           <div className="divide-y divide-[#D8CBB3]/10">
@@ -83,7 +83,7 @@ export default function AdminSitrepPage() {
                 <strong className="text-[#EDE4D3] block">Hydrological summary</strong>
                 <small className="text-[#A69B88]">Stage observations and ensemble forecast trends</small>
               </div>
-              <span className="text-xs font-mono text-[#2F6BFF]">Included</span>
+              <span className="text-xs font-mono text-[#06B6D4]">Included</span>
             </div>
 
             <div className="py-2.5 flex items-center justify-between text-xs">
@@ -91,7 +91,7 @@ export default function AdminSitrepPage() {
                 <strong className="text-[#EDE4D3] block">Geospatial extent</strong>
                 <small className="text-[#A69B88]">Sentinel-1 SAR inundation polygons</small>
               </div>
-              <span className="text-xs font-mono text-[#2F6BFF]">Included</span>
+              <span className="text-xs font-mono text-[#06B6D4]">Included</span>
             </div>
 
             <div className="py-2.5 flex items-center justify-between text-xs">
@@ -99,7 +99,7 @@ export default function AdminSitrepPage() {
                 <strong className="text-[#EDE4D3] block">Human impact analysis</strong>
                 <small className="text-[#A69B88]">Affected structures and ward population estimate</small>
               </div>
-              <span className="text-xs font-mono text-[#2F6BFF]">Included</span>
+              <span className="text-xs font-mono text-[#06B6D4]">Included</span>
             </div>
 
             <div className="py-2.5 flex items-center justify-between text-xs">
@@ -107,7 +107,7 @@ export default function AdminSitrepPage() {
                 <strong className="text-[#EDE4D3] block">Operational readiness</strong>
                 <small className="text-[#A69B88]">Gate verdicts and supervisor actions</small>
               </div>
-              <span className="text-xs font-mono text-[#2F6BFF]">Included</span>
+              <span className="text-xs font-mono text-[#06B6D4]">Included</span>
             </div>
           </div>
         </div>

@@ -241,7 +241,7 @@ export default function AdminOverviewPage() {
       {/* System Status Banner */}
       <div className="p-4 rounded-xl border border-[#D8CBB3]/16 bg-[#292925] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-start gap-3">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#2F6BFF] mt-1.5 shrink-0" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#06B6D4] mt-1.5 shrink-0" />
           <div>
             <strong className="text-xs sm:text-sm font-bold text-[#D8CBB3] block">
               {backendStatus.title}
@@ -258,16 +258,16 @@ export default function AdminOverviewPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Link
           href="/admin/incidents"
-          className="p-5 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] hover:bg-[#33332E] hover:border-[#2F6BFF]/40 transition-colors space-y-2 group"
+          className="p-5 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] hover:bg-[#33332E] hover:border-[#06B6D4]/40 transition-colors space-y-2 group"
         >
           <div className="flex items-center justify-between text-xs text-[#A69B88]">
             <span className="font-medium">Active Incidents</span>
-            <Layers className="w-4 h-4 text-[#2F6BFF]" />
+            <Layers className="w-4 h-4 text-[#06B6D4]" />
           </div>
           <div className="text-3xl font-extrabold font-mono text-[#D8CBB3]">02</div>
           <div className="flex items-center justify-between text-[11px] font-mono text-[#A69B88]">
             <span>Ganga & Gandak sectors</span>
-            <span className="text-[#2F6BFF] group-hover:translate-x-0.5 transition-transform">
+            <span className="text-[#06B6D4] group-hover:translate-x-0.5 transition-transform">
               Inspect →
             </span>
           </div>
@@ -275,16 +275,16 @@ export default function AdminOverviewPage() {
 
         <Link
           href="/admin/stations"
-          className="p-5 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] hover:bg-[#33332E] hover:border-[#2F6BFF]/40 transition-colors space-y-2 group"
+          className="p-5 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] hover:bg-[#33332E] hover:border-[#06B6D4]/40 transition-colors space-y-2 group"
         >
           <div className="flex items-center justify-between text-xs text-[#A69B88]">
             <span className="font-medium">Monitoring Stations</span>
-            <MapPin className="w-4 h-4 text-[#2F6BFF]" />
+            <MapPin className="w-4 h-4 text-[#06B6D4]" />
           </div>
           <div className="text-3xl font-extrabold font-mono text-[#D8CBB3]">08</div>
           <div className="flex items-center justify-between text-[11px] font-mono text-[#A69B88]">
             <span>Configured basin gauges</span>
-            <span className="text-[#2F6BFF] group-hover:translate-x-0.5 transition-transform">
+            <span className="text-[#06B6D4] group-hover:translate-x-0.5 transition-transform">
               Stations →
             </span>
           </div>
@@ -292,16 +292,16 @@ export default function AdminOverviewPage() {
 
         <Link
           href="/admin/forecasts"
-          className="p-5 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] hover:bg-[#33332E] hover:border-[#2F6BFF]/40 transition-colors space-y-2 group"
+          className="p-5 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] hover:bg-[#33332E] hover:border-[#06B6D4]/40 transition-colors space-y-2 group"
         >
           <div className="flex items-center justify-between text-xs text-[#A69B88]">
             <span className="font-medium">Pipeline Runs</span>
-            <Activity className="w-4 h-4 text-[#2F6BFF]" />
+            <Activity className="w-4 h-4 text-[#06B6D4]" />
           </div>
           <div className="text-3xl font-extrabold font-mono text-[#D8CBB3]">14</div>
           <div className="flex items-center justify-between text-[11px] font-mono text-[#A69B88]">
             <span>24h ensemble cycles</span>
-            <span className="text-[#2F6BFF] group-hover:translate-x-0.5 transition-transform">
+            <span className="text-[#06B6D4] group-hover:translate-x-0.5 transition-transform">
               Forecasts →
             </span>
           </div>
@@ -345,7 +345,7 @@ export default function AdminOverviewPage() {
 
           <div className="pt-2 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-[#A69B88]">
             <span>SECTOR: MIDDLE GANGA REACH</span>
-            <Link href="/study-area" className="text-[#2F6BFF] hover:underline">
+            <Link href="/study-area" className="text-[#06B6D4] hover:underline">
               Full Study Area →
             </Link>
           </div>
@@ -377,7 +377,7 @@ export default function AdminOverviewPage() {
                 value={stationSearch}
                 onChange={(e) => setStationSearch(e.target.value)}
                 placeholder="Filter station or river..."
-                className="pl-8 pr-3 py-1.5 rounded-lg border border-[#D8CBB3]/16 bg-[#1E1E1C] text-xs text-[#D8CBB3] placeholder:text-[#7D7465] focus:outline-none focus:border-[#2F6BFF]"
+                className="pl-8 pr-3 py-1.5 rounded-lg border border-[#D8CBB3]/16 bg-[#1E1E1C] text-xs text-[#D8CBB3] placeholder:text-[#7D7465] focus:outline-none focus:border-[#06B6D4]"
               />
             </div>
 
@@ -389,7 +389,7 @@ export default function AdminOverviewPage() {
                   onClick={() => setRiskFilter(status)}
                   className={`px-2.5 py-1 rounded-md text-[10px] font-mono font-semibold transition-colors ${
                     riskFilter === status
-                      ? "bg-[#2F6BFF] text-white"
+                      ? "bg-[#06B6D4] text-white"
                       : "text-[#A69B88] hover:text-[#D8CBB3]"
                   }`}
                 >
@@ -417,7 +417,7 @@ export default function AdminOverviewPage() {
             <tbody className="divide-y divide-[#D8CBB3]/10">
               {filteredStations.map((st) => (
                 <tr key={st.id} className="hover:bg-[#33332E]/60 transition-colors">
-                  <td className="py-3 px-3 font-mono font-semibold text-[#2F6BFF]">{st.id}</td>
+                  <td className="py-3 px-3 font-mono font-semibold text-[#06B6D4]">{st.id}</td>
                   <td className="py-3 px-3">
                     <div className="font-semibold text-[#D8CBB3]">{st.name}</div>
                     <div className="text-[11px] text-[#A69B88]">{st.river}</div>
@@ -447,7 +447,7 @@ export default function AdminOverviewPage() {
                         st.risk === "WARNING"
                           ? "bg-[#F59E0B]/18 text-[#FBBF24] border-[#F59E0B]/40"
                           : st.risk === "ADVISORY"
-                          ? "bg-[#2F6BFF]/18 text-[#2F6BFF] border-[#2F6BFF]/40"
+                          ? "bg-[#06B6D4]/18 text-[#06B6D4] border-[#06B6D4]/40"
                           : "bg-[#33332E] text-[#D8CBB3] border-[#D8CBB3]/18"
                       }`}
                     >
@@ -472,7 +472,7 @@ export default function AdminOverviewPage() {
                 INC-2026-04 · Middle Ganga & Gandak Sector
               </p>
             </div>
-            <Link href="/admin/incidents" className="text-xs text-[#2F6BFF] hover:underline">
+            <Link href="/admin/incidents" className="text-xs text-[#06B6D4] hover:underline">
               All incidents →
             </Link>
           </div>
@@ -495,9 +495,9 @@ export default function AdminOverviewPage() {
               </span>
             </div>
 
-            <div className="p-3.5 rounded-lg border border-[#2F6BFF]/45 bg-[#2F6BFF]/10 flex items-start justify-between gap-3">
+            <div className="p-3.5 rounded-lg border border-[#06B6D4]/45 bg-[#06B6D4]/10 flex items-start justify-between gap-3">
               <div className="space-y-1">
-                <div className="text-[10px] font-mono font-bold uppercase text-[#2F6BFF]">
+                <div className="text-[10px] font-mono font-bold uppercase text-[#06B6D4]">
                   PHASE 02 · ACTIVE RESPONSE
                 </div>
                 <div className="text-xs font-semibold text-[#EDE4D3]">
@@ -507,7 +507,7 @@ export default function AdminOverviewPage() {
                   Lalganj tributary surge flagged; CAP v1.2 advisory queued for duty commander.
                 </p>
               </div>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#2F6BFF] text-white">
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#06B6D4] text-white">
                 ACTIVE
               </span>
             </div>
@@ -542,7 +542,7 @@ export default function AdminOverviewPage() {
                 Automated quality, physics, and plausibility checks prior to human sign-off
               </p>
             </div>
-            <Link href="/admin/gates" className="text-xs text-[#2F6BFF] hover:underline">
+            <Link href="/admin/gates" className="text-xs text-[#06B6D4] hover:underline">
               Gate console →
             </Link>
           </div>
@@ -550,14 +550,14 @@ export default function AdminOverviewPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link
               href="/admin/gates/pre-run"
-              className="p-4 rounded-xl border border-[#D8CBB3]/16 bg-[#1E1E1C] hover:border-[#2F6BFF]/50 transition-colors flex flex-col justify-between space-y-3"
+              className="p-4 rounded-xl border border-[#D8CBB3]/16 bg-[#1E1E1C] hover:border-[#06B6D4]/50 transition-colors flex flex-col justify-between space-y-3"
             >
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-mono font-bold uppercase text-[#A69B88]">
                     GATE 01
                   </span>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#2F6BFF]/18 text-[#2F6BFF] border border-[#2F6BFF]/35">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#06B6D4]/18 text-[#06B6D4] border border-[#06B6D4]/35">
                     PASSED
                   </span>
                 </div>
@@ -566,7 +566,7 @@ export default function AdminOverviewPage() {
                   Sensor completeness, spike rejection, and boundary continuity verified across 8 gauges.
                 </p>
               </div>
-              <div className="pt-2 border-t border-[#D8CBB3]/10 text-[11px] font-mono text-[#2F6BFF] flex items-center justify-between">
+              <div className="pt-2 border-t border-[#D8CBB3]/10 text-[11px] font-mono text-[#06B6D4] flex items-center justify-between">
                 <span>Latency: 38s</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </div>
@@ -598,14 +598,14 @@ export default function AdminOverviewPage() {
 
             <Link
               href="/admin/gates/post-run"
-              className="p-4 rounded-xl border border-[#D8CBB3]/16 bg-[#1E1E1C] hover:border-[#2F6BFF]/50 transition-colors flex flex-col justify-between space-y-3"
+              className="p-4 rounded-xl border border-[#D8CBB3]/16 bg-[#1E1E1C] hover:border-[#06B6D4]/50 transition-colors flex flex-col justify-between space-y-3"
             >
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-mono font-bold uppercase text-[#A69B88]">
                     GATE 03
                   </span>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#2F6BFF]/18 text-[#2F6BFF] border border-[#2F6BFF]/35">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#06B6D4]/18 text-[#06B6D4] border border-[#06B6D4]/35">
                     VERIFIED
                   </span>
                 </div>
@@ -614,7 +614,7 @@ export default function AdminOverviewPage() {
                   Inundation claims cross-checked against DEM terrain constraints and SAR backscatter.
                 </p>
               </div>
-              <div className="pt-2 border-t border-[#D8CBB3]/10 text-[11px] font-mono text-[#2F6BFF] flex items-center justify-between">
+              <div className="pt-2 border-t border-[#D8CBB3]/10 text-[11px] font-mono text-[#06B6D4] flex items-center justify-between">
                 <span>NSE Score: 0.89</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </div>
@@ -634,7 +634,7 @@ export default function AdminOverviewPage() {
               Emergency advisories require explicit human authorization before dispatch.
             </p>
           </div>
-          <Link href="/admin/approvals" className="text-xs text-[#2F6BFF] hover:underline">
+          <Link href="/admin/approvals" className="text-xs text-[#06B6D4] hover:underline">
             Open full approval console →
           </Link>
         </div>
@@ -659,7 +659,7 @@ export default function AdminOverviewPage() {
                     item.state === "PENDING_REVIEW"
                       ? "bg-[#F59E0B]/18 text-[#FBBF24] border-[#F59E0B]/40"
                       : item.state === "APPROVED"
-                      ? "bg-[#2F6BFF]/18 text-[#2F6BFF] border-[#2F6BFF]/40"
+                      ? "bg-[#06B6D4]/18 text-[#06B6D4] border-[#06B6D4]/40"
                       : item.state === "DISPATCHED"
                       ? "bg-[#10B981]/18 text-[#34D399] border-[#10B981]/40"
                       : "bg-[#33332E] text-[#A69B88] border-[#D8CBB3]/20"
@@ -677,7 +677,7 @@ export default function AdminOverviewPage() {
                   <button
                     type="button"
                     onClick={() => handleAdvanceAlert(item.id)}
-                    className="px-3 py-1 rounded-md text-xs font-semibold bg-[#2F6BFF] text-white hover:bg-[#4B80FF] transition-colors"
+                    className="px-3 py-1 rounded-md text-xs font-semibold bg-[#06B6D4] text-white hover:bg-[#38BDF8] transition-colors"
                   >
                     {item.state === "DRAFT"
                       ? "Submit for Review"

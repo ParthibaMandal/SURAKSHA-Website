@@ -97,8 +97,8 @@ export default function AdminStationsPage() {
   return (
     <div className="space-y-6">
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#292925] border border-[#2F6BFF]/40 text-xs font-mono text-[#D8CBB3] shadow-2xl flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-[#2F6BFF]" /> {toast}
+        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#292925] border border-[#06B6D4]/40 text-xs font-mono text-[#D8CBB3] shadow-2xl flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-[#06B6D4]" /> {toast}
         </div>
       )}
 
@@ -126,16 +126,16 @@ export default function AdminStationsPage() {
         <div className="p-5 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-2">
           <div className="flex items-center justify-between text-xs text-[#A69B88]">
             <span>Stations online</span>
-            <Radio className="w-4 h-4 text-[#2F6BFF]" />
+            <Radio className="w-4 h-4 text-[#06B6D4]" />
           </div>
           <div className="text-2xl font-extrabold font-mono text-[#EDE4D3]">08</div>
-          <div className="text-[11px] font-mono text-[#2F6BFF]">100% reporting · SAMPLE</div>
+          <div className="text-[11px] font-mono text-[#06B6D4]">100% reporting · SAMPLE</div>
         </div>
 
         <div className="p-5 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-2">
           <div className="flex items-center justify-between text-xs text-[#A69B88]">
             <span>Active telemetry</span>
-            <Activity className="w-4 h-4 text-[#2F6BFF]" />
+            <Activity className="w-4 h-4 text-[#06B6D4]" />
           </div>
           <div className="text-2xl font-extrabold font-mono text-[#EDE4D3]">08</div>
           <div className="text-[11px] font-mono text-[#D8CBB3]">Continuous stream</div>
@@ -153,7 +153,7 @@ export default function AdminStationsPage() {
         <div className="p-5 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-2">
           <div className="flex items-center justify-between text-xs text-[#A69B88]">
             <span>Source families</span>
-            <Layers className="w-4 h-4 text-[#2F6BFF]" />
+            <Layers className="w-4 h-4 text-[#06B6D4]" />
           </div>
           <div className="text-2xl font-extrabold font-mono text-[#EDE4D3]">06</div>
           <div className="text-[11px] font-mono text-[#A69B88]">Gauges, Radar, SAR</div>
@@ -175,7 +175,7 @@ export default function AdminStationsPage() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search station ID or reach..."
-              className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-[#1E1E1C] border border-[#D8CBB3]/20 text-xs text-[#D8CBB3] placeholder:text-[#A69B88]/60 focus:outline-none focus:border-[#2F6BFF]"
+              className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-[#1E1E1C] border border-[#D8CBB3]/20 text-xs text-[#D8CBB3] placeholder:text-[#A69B88]/60 focus:outline-none focus:border-[#06B6D4]"
             />
           </div>
         </div>
@@ -218,7 +218,7 @@ export default function AdminStationsPage() {
                           ? "bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/30"
                           : s.status === "Warning"
                           ? "bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30"
-                          : "bg-[#2F6BFF]/15 text-[#2F6BFF] border-[#2F6BFF]/30"
+                          : "bg-[#06B6D4]/15 text-[#06B6D4] border-[#06B6D4]/30"
                       }`}
                     >
                       {s.status}

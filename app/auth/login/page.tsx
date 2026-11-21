@@ -28,8 +28,8 @@ export default function LoginPage() {
   return (
     <div className="min-h-[85vh] flex items-center justify-center px-4 py-16">
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#292925] border border-[#2F6BFF]/40 text-xs font-mono text-[#D8CBB3] shadow-2xl flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-[#2F6BFF]" /> {toast}
+        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#292925] border border-[#06B6D4]/40 text-xs font-mono text-[#D8CBB3] shadow-2xl flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-[#06B6D4]" /> {toast}
         </div>
       )}
 
@@ -58,7 +58,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="operator@suraksha.in or citizen@example.com"
-              className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#1E1E1C] text-xs text-[#D8CBB3] placeholder:text-[#A69B88]/50 focus:outline-none focus:border-[#2F6BFF]"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#1E1E1C] text-xs text-[#D8CBB3] placeholder:text-[#A69B88]/50 focus:outline-none focus:border-[#06B6D4]"
             />
           </div>
 
@@ -73,7 +73,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="At least 8 characters"
-              className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#1E1E1C] text-xs text-[#D8CBB3] placeholder:text-[#A69B88]/50 focus:outline-none focus:border-[#2F6BFF]"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#1E1E1C] text-xs text-[#D8CBB3] placeholder:text-[#A69B88]/50 focus:outline-none focus:border-[#06B6D4]"
             />
           </div>
 
@@ -89,7 +89,7 @@ export default function LoginPage() {
           >
             Forgot password?
           </span>
-          <Link href="/auth/register" className="text-[#2F6BFF] hover:underline font-semibold">
+          <Link href="/auth/register" className="text-[#06B6D4] hover:underline font-semibold">
             Create account
           </Link>
         </div>
@@ -100,7 +100,7 @@ export default function LoginPage() {
           </div>
           <Link
             href="/admin"
-            className="w-full h-10 rounded-xl bg-[#2F6BFF]/15 border border-[#2F6BFF]/40 hover:bg-[#2F6BFF]/25 text-xs font-bold text-[#EDE4D3] flex items-center justify-center transition-colors"
+            className="w-full h-10 rounded-xl bg-[#06B6D4]/15 border border-[#06B6D4]/40 hover:bg-[#06B6D4]/25 text-xs font-bold text-[#EDE4D3] flex items-center justify-center transition-colors"
           >
             Open Operations Command Centre
           </Link>

@@ -130,7 +130,6 @@ export function StructuredDocRenderer({ doc }: StructuredDocRendererProps) {
 
   // Render a block of text into rich HTML
   const renderSectionHtml = (lines: string[]) => {
-    // Remove the metadata table if it's in the first section to avoid duplication
     let text = lines.join("\n");
 
     // Replace Callouts > [!NOTE] etc.
@@ -138,7 +137,7 @@ export function StructuredDocRenderer({ doc }: StructuredDocRendererProps) {
       />\s*\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*([\s\S]*?)(?=(?:\n\n[^\s>]|\n?$))/gi,
       (match, type, body) => {
         const typeUpper = type.toUpperCase();
-        let borderClass = "border-[#2F6BFF] bg-[#2F6BFF]/10 text-[#60A5FA]";
+        let borderClass = "border-[#06B6D4] bg-[#06B6D4]/10 text-[#38BDF8]";
         let label = "NOTE";
 
         if (typeUpper === "WARNING" || typeUpper === "CAUTION") {
@@ -152,7 +151,7 @@ export function StructuredDocRenderer({ doc }: StructuredDocRendererProps) {
           label = "ENGINEERING TIP";
         }
 
-        return `<div class="my-5 p-4 rounded-2xl border-l-4 ${borderClass} text-xs leading-relaxed"><div class="font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">${label}</div><div class="text-[#D8CBB3]">${body.trim()}</div></div>`;
+        return `<div class="my-5 p-4 rounded-2xl border-l-4 ${borderClass} text-xs leading-relaxed"><div class="font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">${label}</div><div class="text-slate-300">${body.trim()}</div></div>`;
       }
     );
 
@@ -162,12 +161,12 @@ export function StructuredDocRenderer({ doc }: StructuredDocRendererProps) {
 
       // Add modern classes to tables
       const styledHtml = rawHtml
-        .replace(/<table>/gi, '<div class="my-5 rounded-2xl border border-[#D8CBB3]/15 overflow-hidden"><table class="w-full text-left text-xs">')
+        .replace(/<table>/gi, '<div class="my-5 rounded-2xl border border-white/10 overflow-hidden"><table class="w-full text-left text-xs">')
         .replace(/<\/table>/gi, '</table></div>')
-        .replace(/<thead>/gi, '<thead class="bg-[#1E1E1C] text-[#A69B88] font-mono text-[11px] border-b border-[#D8CBB3]/15">')
+        .replace(/<thead>/gi, '<thead class="bg-[#090C10] text-slate-400 font-mono text-[11px] border-b border-white/10">')
         .replace(/<th>/gi, '<th class="p-3">')
-        .replace(/<tbody>/gi, '<tbody class="divide-y divide-[#D8CBB3]/5 bg-[#242421]/60">')
-        .replace(/<td>/gi, '<td class="p-3 text-[#D8CBB3]">');
+        .replace(/<tbody>/gi, '<tbody class="divide-y divide-white/5 bg-[#10161F]/60">')
+        .replace(/<td>/gi, '<td class="p-3 text-slate-300">');
 
       return DOMPurify.sanitize(styledHtml, {
         ADD_ATTR: ["target", "id", "class"],
@@ -178,18 +177,18 @@ export function StructuredDocRenderer({ doc }: StructuredDocRendererProps) {
   };
 
   return (
-    <div className="space-y-8 my-6">
+    <div className="space-y-8 my-6 text-white">
       {/* 1. Sleek Document Metadata Card */}
       {Object.keys(docMetadata).length > 0 && (
-        <div className="p-5 rounded-2xl border border-[#D8CBB3]/20 bg-[#242421] shadow-sm">
-          <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#D8CBB3]/10">
+        <div className="p-5 rounded-2xl border border-white/10 bg-[#10161F]/80 backdrop-blur-xl shadow-lg">
+          <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#10B981]" />
-              <span className="font-mono text-xs uppercase tracking-wider text-[#EDE4D3] font-bold">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] shadow-[0_0_8px_#10b981]" />
+              <span className="font-mono text-xs uppercase tracking-wider text-white font-bold">
                 Technical Specification Metadata
               </span>
             </div>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30">
+            <span className="text-[10px] font-mono px-3 py-0.5 rounded-full bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30">
               {doc.status}
             </span>
           </div>
@@ -197,10 +196,10 @@ export function StructuredDocRenderer({ doc }: StructuredDocRendererProps) {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 text-xs">
             {Object.entries(docMetadata).map(([key, val]) => (
               <div key={key} className="space-y-0.5">
-                <span className="text-[10px] font-mono text-[#A69B88] uppercase block">
+                <span className="text-[10px] font-mono text-slate-400 uppercase block">
                   {key}
                 </span>
-                <span className="font-mono text-xs text-[#EDE4D3] truncate block font-medium">
+                <span className="font-mono text-xs text-white truncate block font-medium">
                   {val}
                 </span>
               </div>
@@ -243,22 +242,22 @@ export function StructuredDocRenderer({ doc }: StructuredDocRendererProps) {
             <section
               key={sec.id || sIdx}
               id={sec.id}
-              className="scroll-mt-24 rounded-2xl border border-[#D8CBB3]/15 bg-[#242421] p-6 sm:p-8 space-y-4 shadow-sm"
+              className="scroll-mt-24 rounded-2xl border border-white/10 bg-[#10161F]/80 backdrop-blur-xl p-6 sm:p-8 space-y-4 shadow-xl"
             >
               {/* Section Header */}
-              <div className="flex items-center justify-between pb-3 border-b border-[#D8CBB3]/10">
+              <div className="flex items-center justify-between pb-3 border-b border-white/10">
                 <div className="flex items-center gap-2.5">
-                  <span className="w-6 h-6 rounded-lg bg-[#2F6BFF]/15 text-[#2F6BFF] font-mono text-xs font-bold flex items-center justify-center">
+                  <span className="w-6 h-6 rounded-full bg-[#06B6D4]/15 text-[#06B6D4] font-mono text-xs font-bold flex items-center justify-center border border-[#06B6D4]/30">
                     {sIdx + 1}
                   </span>
-                  <h2 className="text-lg sm:text-xl font-bold text-[#EDE4D3] tracking-tight">
+                  <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
                     {sec.title}
                   </h2>
                 </div>
 
                 <a
                   href={`#${sec.id}`}
-                  className="text-xs font-mono text-[#A69B88] hover:text-[#2F6BFF] transition-colors"
+                  className="text-xs font-mono text-slate-400 hover:text-[#06B6D4] transition-colors"
                   aria-label="Direct anchor"
                 >
                   #{sec.id}
@@ -267,13 +266,13 @@ export function StructuredDocRenderer({ doc }: StructuredDocRendererProps) {
 
               {/* Rendered Section Body */}
               <div
-                className="text-xs sm:text-sm text-[#D8CBB3] leading-relaxed space-y-3
+                className="text-xs sm:text-sm text-slate-300 leading-relaxed space-y-3
                   [&_p]:my-3 [&_p]:leading-relaxed
                   [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:my-3 [&_ul]:space-y-1.5
                   [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:my-3 [&_ol]:space-y-1.5
-                  [&_code]:text-[#60A5FA] [&_code]:font-mono [&_code]:text-xs [&_code]:bg-[#1E1E1C] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded
-                  [&_pre]:bg-[#141413] [&_pre]:p-4 [&_pre]:rounded-xl [&_pre]:border [&_pre]:border-[#D8CBB3]/15 [&_pre]:overflow-x-auto [&_pre]:my-4
-                  [&_a]:text-[#2F6BFF] [&_a]:underline hover:[&_a]:text-[#60A5FA]"
+                  [&_code]:text-[#38BDF8] [&_code]:font-mono [&_code]:text-xs [&_code]:bg-[#090C10] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded
+                  [&_pre]:bg-[#090C10] [&_pre]:p-4 [&_pre]:rounded-2xl [&_pre]:border [&_pre]:border-white/10 [&_pre]:overflow-x-auto [&_pre]:my-4
+                  [&_a]:text-[#06B6D4] [&_a]:underline hover:[&_a]:text-[#38BDF8]"
                 dangerouslySetInnerHTML={{
                   __html: renderSectionHtml(textWithoutMermaid.split("\n")),
                 }}
@@ -292,4 +291,3 @@ export function StructuredDocRenderer({ doc }: StructuredDocRendererProps) {
     </div>
   );
 }
-

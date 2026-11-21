@@ -71,8 +71,8 @@ export default function AdminSosQueuePage() {
   return (
     <div className="space-y-6">
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#292925] border border-[#2F6BFF]/40 text-xs font-mono text-[#D8CBB3] shadow-2xl flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-[#2F6BFF]" /> {toast}
+        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#292925] border border-[#06B6D4]/40 text-xs font-mono text-[#D8CBB3] shadow-2xl flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-[#06B6D4]" /> {toast}
         </div>
       )}
 
@@ -98,7 +98,7 @@ export default function AdminSosQueuePage() {
 
       {/* Alert Banner */}
       <div className="p-4 rounded-xl border border-[#D8CBB3]/20 bg-[#292925] text-[#D8CBB3] flex items-start gap-3.5">
-        <Lock className="w-5 h-5 text-[#2F6BFF] shrink-0 mt-0.5" />
+        <Lock className="w-5 h-5 text-[#06B6D4] shrink-0 mt-0.5" />
         <div className="text-xs space-y-0.5">
           <strong className="text-[#EDE4D3] font-bold block">Restricted operational view · SAMPLE / SYNTHETIC QUEUE</strong>
           <p className="text-[#A69B88]">
@@ -111,7 +111,7 @@ export default function AdminSosQueuePage() {
       <div className="p-6 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-[#D8CBB3]/12">
           <h3 className="text-sm font-bold text-[#D8CBB3]">Assistance Queue</h3>
-          <span className="text-xs font-mono text-[#2F6BFF]">
+          <span className="text-xs font-mono text-[#06B6D4]">
             {queue.filter((q) => q.status === "PENDING").length} Pending Triage · {queue.length} Total
           </span>
         </div>
@@ -133,7 +133,7 @@ export default function AdminSosQueuePage() {
             <tbody className="divide-y divide-[#D8CBB3]/10">
               {queue.map((item) => (
                 <tr key={item.id} className="hover:bg-[#33332E]/50 transition-colors">
-                  <td className="py-3 px-3 text-[#2F6BFF] font-bold">{item.id}</td>
+                  <td className="py-3 px-3 text-[#06B6D4] font-bold">{item.id}</td>
                   <td className="py-3 px-3">
                     <div className="text-[#EDE4D3] font-semibold font-sans">{item.citizen_name}</div>
                     <div className="text-[11px] text-[#A69B88]">{item.phone_number}</div>
@@ -152,7 +152,7 @@ export default function AdminSosQueuePage() {
                           ? "bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/30"
                           : item.status === "DISPATCHED"
                           ? "bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30"
-                          : "bg-[#2F6BFF]/15 text-[#2F6BFF] border-[#2F6BFF]/30"
+                          : "bg-[#06B6D4]/15 text-[#06B6D4] border-[#06B6D4]/30"
                       }`}
                     >
                       {item.status}
@@ -165,7 +165,7 @@ export default function AdminSosQueuePage() {
                     {item.status === "PENDING" ? (
                       <button
                         onClick={() => handleDispatch(item.id)}
-                        className="px-2.5 py-1 rounded bg-[#2F6BFF] text-[11px] text-white font-semibold hover:bg-[#4B80FF] transition-colors"
+                        className="px-2.5 py-1 rounded bg-[#06B6D4] text-[11px] text-white font-semibold hover:bg-[#38BDF8] transition-colors"
                       >
                         Dispatch
                       </button>

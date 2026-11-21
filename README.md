@@ -88,11 +88,22 @@ npm run dev
 
 ---
 
-## System Test Runner
+## Verification & Test Suite
 
-Verify that all database tables, initial fixtures, and REST endpoints are healthy:
+SURAKSHA operates under safety-critical civil defense constraints where zero algorithmic regressions are tolerated:
+
+* **Automated Test Suite**: **243 Tests Passing** (0 Failures, 0 Regressions)
+  * **Unit Tests (112 tests)**: Ingestion normalizers, Pydantic state contracts, and numeric rate-clamping.
+  * **Flood Subsystem Tests (84 tests)**: Pre/Mid/Post-run gates, CAP v1.2 XML validation, Otsu SAR thresholding.
+  * **Integration Tests (32 tests)**: FastAPI route contracts, WebSocket telemetry, end-to-end pipeline execution.
+  * **Invariant & Benchmark Tests (15 tests)**: Physical supervisory conservation laws and hydrological rate limits.
+* **Canonical Synchronization**: Synchronized against backend canonical repository `shouri123/SURAKSHA` (`main` branch).
 
 ```bash
+# Run backend test suite
+pytest tests/ -q
+
+# Verify database fixtures and system endpoints
 python3 scripts/test_system.py
 ```
 

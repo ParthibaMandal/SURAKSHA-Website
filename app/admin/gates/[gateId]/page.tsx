@@ -111,15 +111,15 @@ export default function GateDetailPage({
   return (
     <div className="space-y-6 max-w-[1440px] mx-auto">
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#292925] border border-[#2F6BFF]/50 text-xs font-mono text-[#D8CBB3] shadow-2xl flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-[#2F6BFF]" /> {toast}
+        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#292925] border border-[#06B6D4]/50 text-xs font-mono text-[#D8CBB3] shadow-2xl flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-[#06B6D4]" /> {toast}
         </div>
       )}
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Link
           href="/admin"
-          className="inline-flex items-center gap-1.5 text-xs text-[#A69B88] hover:text-[#2F6BFF] transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs text-[#A69B88] hover:text-[#06B6D4] transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Operations Overview
         </Link>
@@ -136,7 +136,7 @@ export default function GateDetailPage({
               href={`/admin/gates/${g.id}`}
               className={`px-3 py-1 rounded-md text-xs font-mono font-semibold transition-colors ${
                 params.gateId === g.id
-                  ? "bg-[#2F6BFF] text-white"
+                  ? "bg-[#06B6D4] text-white"
                   : "text-[#A69B88] hover:text-[#D8CBB3]"
               }`}
             >
@@ -163,16 +163,16 @@ export default function GateDetailPage({
         <div className="p-4 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-2">
           <div className="flex items-center justify-between text-xs text-[#A69B88]">
             <span>Gate Execution</span>
-            <Activity className="w-3.5 h-3.5 text-[#2F6BFF]" />
+            <Activity className="w-3.5 h-3.5 text-[#06B6D4]" />
           </div>
           <div className="text-2xl font-extrabold font-mono text-[#D8CBB3]">Active</div>
-          <div className="text-[11px] font-mono text-[#2F6BFF]">Automated pipeline check</div>
+          <div className="text-[11px] font-mono text-[#06B6D4]">Automated pipeline check</div>
         </div>
 
         <div className="p-4 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-2">
           <div className="flex items-center justify-between text-xs text-[#A69B88]">
             <span>Checks Performed</span>
-            <Shield className="w-3.5 h-3.5 text-[#2F6BFF]" />
+            <Shield className="w-3.5 h-3.5 text-[#06B6D4]" />
           </div>
           <div className="text-2xl font-extrabold font-mono text-[#D8CBB3]">04 / 04</div>
           <div className="text-[11px] font-mono text-[#A69B88]">Invariants evaluated</div>
@@ -181,19 +181,19 @@ export default function GateDetailPage({
         <div className="p-4 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-2">
           <div className="flex items-center justify-between text-xs text-[#A69B88]">
             <span>Supervisory State</span>
-            <Activity className="w-3.5 h-3.5 text-[#2F6BFF]" />
+            <Activity className="w-3.5 h-3.5 text-[#06B6D4]" />
           </div>
-          <div className="text-2xl font-extrabold font-mono text-[#2F6BFF]">Nominal</div>
+          <div className="text-2xl font-extrabold font-mono text-[#06B6D4]">Nominal</div>
           <div className="text-[11px] font-mono text-[#A69B88]">Sample benchmark</div>
         </div>
 
         <div className="p-4 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-2">
           <div className="flex items-center justify-between text-xs text-[#A69B88]">
             <span>Evidence Score</span>
-            <Shield className="w-3.5 h-3.5 text-[#2F6BFF]" />
+            <Shield className="w-3.5 h-3.5 text-[#06B6D4]" />
           </div>
           <div className="text-2xl font-extrabold font-mono text-[#D8CBB3]">0.94</div>
-          <div className="text-[11px] font-mono text-[#2F6BFF]">High confidence</div>
+          <div className="text-[11px] font-mono text-[#06B6D4]">High confidence</div>
         </div>
       </div>
 
@@ -203,7 +203,7 @@ export default function GateDetailPage({
         <div className="p-6 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-[#D8CBB3]/14">
             <h3 className="text-sm font-bold text-[#D8CBB3]">Verification Invariants</h3>
-            <span className="text-xs font-mono text-[#2F6BFF]">4 Invariants</span>
+            <span className="text-xs font-mono text-[#06B6D4]">4 Invariants</span>
           </div>
 
           <div className="divide-y divide-[#D8CBB3]/12">
@@ -216,7 +216,7 @@ export default function GateDetailPage({
                 <span
                   className={`px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase border ${
                     s === "Pass" || s === "Ready" || s === "Verify"
-                      ? "bg-[#2F6BFF]/18 text-[#2F6BFF] border-[#2F6BFF]/35"
+                      ? "bg-[#06B6D4]/18 text-[#06B6D4] border-[#06B6D4]/35"
                       : "bg-[#F59E0B]/18 text-[#FBBF24] border-[#F59E0B]/40"
                   }`}
                 >
@@ -243,7 +243,7 @@ export default function GateDetailPage({
               <div className="text-xs font-bold font-mono text-[#D8CBB3]">
                 Permitted Gate Outcomes
               </div>
-              <p className="text-xs font-mono text-[#2F6BFF] mt-1.5 leading-relaxed bg-[#1E1E1C] p-3 rounded-lg border border-[#D8CBB3]/12">
+              <p className="text-xs font-mono text-[#06B6D4] mt-1.5 leading-relaxed bg-[#1E1E1C] p-3 rounded-lg border border-[#D8CBB3]/12">
                 {data.decision}
               </p>
             </div>

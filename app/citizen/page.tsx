@@ -92,7 +92,7 @@ export default function CitizenDashboardPage() {
         <div className="p-5 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-2">
           <div className="flex items-center justify-between text-xs text-[#A69B88]">
             <span>Saved locations</span>
-            <MapPin className="w-4 h-4 text-[#2F6BFF]" />
+            <MapPin className="w-4 h-4 text-[#06B6D4]" />
           </div>
           <div className="text-2xl font-extrabold font-mono text-[#EDE4D3]">02</div>
           <div className="text-[11px] font-mono text-[#D8CBB3]">Patna Main · Danapur</div>
@@ -110,7 +110,7 @@ export default function CitizenDashboardPage() {
         <div className="p-5 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-2">
           <div className="flex items-center justify-between text-xs text-[#A69B88]">
             <span>Open SOS requests</span>
-            <AlertTriangle className="w-4 h-4 text-[#2F6BFF]" />
+            <AlertTriangle className="w-4 h-4 text-[#06B6D4]" />
           </div>
           <div className="text-2xl font-extrabold font-mono text-[#EDE4D3]">00</div>
           <div className="text-[11px] font-mono text-[#A69B88]">No active requests</div>
@@ -119,9 +119,9 @@ export default function CitizenDashboardPage() {
         <div className="p-5 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-2">
           <div className="flex items-center justify-between text-xs text-[#A69B88]">
             <span>Nearest station stage</span>
-            <Activity className="w-4 h-4 text-[#2F6BFF]" />
+            <Activity className="w-4 h-4 text-[#06B6D4]" />
           </div>
-          <div className="text-2xl font-extrabold font-mono text-[#2F6BFF]">49.82 m</div>
+          <div className="text-2xl font-extrabold font-mono text-[#06B6D4]">49.82 m</div>
           <div className="text-[11px] font-mono text-[#A69B88]">STN-PAT-01 · Nominal</div>
         </div>
       </div>
@@ -149,7 +149,7 @@ export default function CitizenDashboardPage() {
             </div>
             <div className="p-2.5 rounded-lg bg-[#1E1E1C] border border-[#D8CBB3]/12">
               <span className="text-[10px] text-[#A69B88] block">STAGE / WARN</span>
-              <span className="text-[#2F6BFF] font-bold">49.82 / 50.5m</span>
+              <span className="text-[#06B6D4] font-bold">49.82 / 50.5m</span>
             </div>
             <div className="p-2.5 rounded-lg bg-[#1E1E1C] border border-[#D8CBB3]/12">
               <span className="text-[10px] text-[#A69B88] block">CORRIDOR RISK</span>
@@ -166,7 +166,7 @@ export default function CitizenDashboardPage() {
                 <h3 className="text-sm font-bold text-[#D8CBB3]">Published Advisories & Alert History</h3>
                 <p className="text-xs text-[#A69B88]">Human-authorized public advisories for your saved wards</p>
               </div>
-              <Link href="/citizen/alerts" className="text-xs font-mono text-[#2F6BFF] hover:underline">
+              <Link href="/citizen/alerts" className="text-xs font-mono text-[#06B6D4] hover:underline">
                 Full history →
               </Link>
             </div>
@@ -174,7 +174,7 @@ export default function CitizenDashboardPage() {
             <div className="divide-y divide-[#D8CBB3]/10">
               <div className="py-3.5 space-y-1.5">
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-[10px] font-mono text-[#2F6BFF] uppercase font-bold flex items-center gap-1">
+                  <span className="text-[10px] font-mono text-[#06B6D4] uppercase font-bold flex items-center gap-1">
                     <ShieldCheck className="w-3.5 h-3.5" /> Commander Authorized · CAP-2026-PAT-09
                   </span>
                   <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/30">
@@ -194,7 +194,7 @@ export default function CitizenDashboardPage() {
                   <strong className="text-xs text-[#EDE4D3] block">Gandhighat Sector · Baseline Bulletin</strong>
                   <small className="text-[11px] text-[#A69B88] font-mono">05 Nov 2026 · Stage 49.40 m within normal bounds</small>
                 </div>
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#2F6BFF]/15 text-[#2F6BFF] border border-[#2F6BFF]/30">
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#06B6D4]/15 text-[#06B6D4] border border-[#06B6D4]/30">
                   Cleared
                 </span>
               </div>
@@ -203,7 +203,7 @@ export default function CitizenDashboardPage() {
 
           <div className="pt-3 border-t border-[#D8CBB3]/12 flex items-center justify-between text-xs">
             <span className="text-[#A69B88]">Need immediate flood evacuation or medical assistance?</span>
-            <Link href="/citizen/sos" className="text-[#2F6BFF] font-semibold hover:underline flex items-center gap-1">
+            <Link href="/citizen/sos" className="text-[#06B6D4] font-semibold hover:underline flex items-center gap-1">
               Open SOS Desk <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -219,7 +219,7 @@ export default function CitizenDashboardPage() {
               <h3 className="text-sm font-bold text-[#D8CBB3]">Saved Locations</h3>
               <p className="text-xs text-[#A69B88]">Coarse ward-level monitoring zones</p>
             </div>
-            <Link href="/citizen/locations" className="text-xs font-mono text-[#2F6BFF] hover:underline">
+            <Link href="/citizen/locations" className="text-xs font-mono text-[#06B6D4] hover:underline">
               Add / Edit →
             </Link>
           </div>
@@ -229,7 +229,7 @@ export default function CitizenDashboardPage() {
                 <strong className="text-xs text-[#EDE4D3] block">Patna · Primary Residence (Gandhighat Reach)</strong>
                 <small className="text-[11px] text-[#A69B88] font-mono">Station STN-PAT-01 · 49.82 m · Alert radius 5 km</small>
               </div>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#2F6BFF]/15 text-[#2F6BFF] border border-[#2F6BFF]/30">
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#06B6D4]/15 text-[#06B6D4] border border-[#06B6D4]/30">
                 Primary
               </span>
             </div>
@@ -253,7 +253,7 @@ export default function CitizenDashboardPage() {
               <h3 className="text-sm font-bold text-[#D8CBB3]">Flood Preparedness Checklist</h3>
               <p className="text-xs text-[#A69B88]">Pre-event, during-event, and post-event safety steps</p>
             </div>
-            <Link href="/citizen/safety" className="text-xs font-mono text-[#2F6BFF] hover:underline">
+            <Link href="/citizen/safety" className="text-xs font-mono text-[#06B6D4] hover:underline">
               Safety Guide →
             </Link>
           </div>
@@ -264,11 +264,11 @@ export default function CitizenDashboardPage() {
                 key={item.id}
                 type="button"
                 onClick={() => toggleItem(item.id)}
-                className="w-full text-left p-3 rounded-xl bg-[#1E1E1C] border border-[#D8CBB3]/12 hover:border-[#2F6BFF]/40 transition-colors flex items-start gap-3"
+                className="w-full text-left p-3 rounded-xl bg-[#1E1E1C] border border-[#D8CBB3]/12 hover:border-[#06B6D4]/40 transition-colors flex items-start gap-3"
               >
                 <CheckCircle2
                   className={`w-4 h-4 shrink-0 mt-0.5 ${
-                    item.done ? "text-[#2F6BFF]" : "text-[#A69B88]/40"
+                    item.done ? "text-[#06B6D4]" : "text-[#A69B88]/40"
                   }`}
                 />
                 <div className="flex-1">
@@ -279,7 +279,7 @@ export default function CitizenDashboardPage() {
                   >
                     {item.label}
                   </span>
-                  <span className="text-[10px] font-mono text-[#2F6BFF] uppercase">{item.phase}</span>
+                  <span className="text-[10px] font-mono text-[#06B6D4] uppercase">{item.phase}</span>
                 </div>
               </button>
             ))}

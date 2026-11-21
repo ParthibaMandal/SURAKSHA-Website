@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useRef } from "react";
-import Link from "next/link";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   DocItem,
   getAllDocs,
@@ -12,7 +11,6 @@ import { StructuredDocRenderer } from "@/components/docs/renderers/StructuredDoc
 import {
   ArrowLeft,
   ArrowRight,
-  BookOpen,
   ChevronDown,
   ChevronRight,
   Clock,
@@ -75,6 +73,7 @@ export function DocsReader({
   // Active heading spy on scroll
   useEffect(() => {
     const handleScroll = () => {
+      if (!currentDoc.headings || currentDoc.headings.length === 0) return;
       const headingElements = currentDoc.headings
         .map((h) => document.getElementById(h.id))
         .filter(Boolean) as HTMLElement[];
@@ -154,18 +153,18 @@ export function DocsReader({
   }, [categories, filterQuery]);
 
   return (
-    <div className="flex-1 max-w-[1500px] w-full mx-auto flex overflow-visible">
+    <div className="flex-1 max-w-[1500px] w-full mx-auto flex overflow-visible text-white">
       {/* 1. Left Sidebar Navigation */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-72 sm:w-80 bg-[#1E1E1C] border-r border-[#D8CBB3]/15 lg:static lg:block transform transition-transform duration-200 ease-in-out ${
+        className={`fixed inset-y-0 left-0 z-40 w-72 sm:w-80 bg-[#090C10] border-r border-white/10 lg:static lg:block transform transition-transform duration-200 ease-in-out ${
           mobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         } flex flex-col h-[calc(100vh-64px)] sticky top-16 overflow-hidden`}
       >
         {/* Top actions in sidebar */}
-        <div className="p-3 border-b border-[#D8CBB3]/10 space-y-2">
+        <div className="p-3 border-b border-white/10 space-y-2">
           <button
             onClick={onBackToHome}
-            className="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs text-[#A69B88] hover:text-[#EDE4D3] hover:bg-[#292925] transition-colors"
+            className="w-full flex items-center gap-2 px-3 py-1.5 rounded-full text-xs text-slate-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>← Back to Docs Home</span>
@@ -173,18 +172,18 @@ export function DocsReader({
 
           {/* Quick filter box */}
           <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#A69B88]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
             <input
               type="text"
               placeholder="Filter topics..."
               value={filterQuery}
               onChange={(e) => setFilterQuery(e.target.value)}
-              className="w-full bg-[#292925] border border-[#D8CBB3]/15 rounded-lg pl-8 pr-7 py-1 text-xs text-[#EDE4D3] placeholder-[#A69B88] focus:outline-none focus:border-[#2F6BFF]"
+              className="w-full bg-[#10161F]/80 border border-white/10 rounded-full pl-8 pr-7 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#06B6D4]"
             />
             {filterQuery && (
               <button
                 onClick={() => setFilterQuery("")}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-[#A69B88] hover:text-[#EDE4D3]"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
               >
                 <X className="w-3 h-3" />
               </button>
@@ -193,7 +192,7 @@ export function DocsReader({
         </div>
 
         {/* Category & Doc Tree List */}
-        <div className="flex-1 overflow-y-auto p-3 space-y-3 text-xs divide-y divide-[#D8CBB3]/5">
+        <div className="flex-1 overflow-y-auto p-3 space-y-3 text-xs divide-y divide-white/5">
           {filteredCategories.map((cat) => {
             const isExpanded = expandedCategories[cat.id] ?? false;
             const hasActiveDoc = cat.docs.some((d) => d.id === currentDoc.id);
@@ -202,29 +201,29 @@ export function DocsReader({
               <div key={cat.id} className="pt-2">
                 <button
                   onClick={() => toggleCategory(cat.id)}
-                  className={`w-full flex items-center justify-between px-2 py-1.5 rounded-md text-left transition-colors ${
+                  className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-full text-left transition-colors cursor-pointer ${
                     hasActiveDoc
-                      ? "text-[#2F6BFF] font-semibold"
-                      : "text-[#EDE4D3] hover:bg-[#292925]"
+                      ? "text-[#06B6D4] font-semibold bg-[#06B6D4]/10"
+                      : "text-white hover:bg-white/5"
                   }`}
                 >
                   <span className="truncate pr-2 font-medium">
                     {cat.name}
                   </span>
                   <div className="flex items-center gap-1.5 shrink-0">
-                    <span className="text-[10px] font-mono text-[#A69B88]">
+                    <span className="text-[10px] font-mono text-slate-400">
                       {cat.docs.length}
                     </span>
                     {isExpanded ? (
-                      <ChevronDown className="w-3.5 h-3.5 text-[#A69B88]" />
+                      <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
                     ) : (
-                      <ChevronRight className="w-3.5 h-3.5 text-[#A69B88]" />
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
                     )}
                   </div>
                 </button>
 
                 {isExpanded && (
-                  <div className="mt-1 pl-2 space-y-0.5 border-l border-[#D8CBB3]/15 ml-2">
+                  <div className="mt-1 pl-2 space-y-0.5 border-l border-white/10 ml-2">
                     {cat.docs.map((doc) => {
                       const isSelected = doc.id === currentDoc.id;
                       return (
@@ -234,10 +233,10 @@ export function DocsReader({
                             onSelectDoc(doc.id);
                             if (mobileMenuOpen) onToggleMobileMenu();
                           }}
-                          className={`w-full text-left px-2.5 py-1.5 rounded-md text-[11px] leading-tight transition-all flex items-start gap-1.5 ${
+                          className={`w-full text-left px-2.5 py-1.5 rounded-md text-[11px] leading-tight transition-all flex items-start gap-1.5 cursor-pointer ${
                             isSelected
-                              ? "bg-[#2F6BFF]/15 text-[#EDE4D3] font-medium border-l-2 border-[#2F6BFF]"
-                              : "text-[#D8CBB3] hover:bg-[#292925] hover:text-[#EDE4D3]"
+                              ? "bg-[#06B6D4]/15 text-white font-medium border-l-2 border-[#06B6D4]"
+                              : "text-slate-400 hover:bg-white/5 hover:text-white"
                           }`}
                         >
                           <span className="truncate">{doc.title}</span>
@@ -255,34 +254,34 @@ export function DocsReader({
       {/* 2. Center Column: Main Article */}
       <main className="flex-1 min-w-0 px-4 sm:px-8 lg:px-12 py-8 overflow-x-hidden">
         {/* Breadcrumbs */}
-        <div className="flex items-center gap-2 text-xs text-[#A69B88] mb-4 overflow-x-auto whitespace-nowrap">
+        <div className="flex items-center gap-2 text-xs text-slate-400 mb-4 overflow-x-auto whitespace-nowrap">
           <button
             onClick={onBackToHome}
-            className="hover:text-[#EDE4D3] transition-colors"
+            className="hover:text-white transition-colors cursor-pointer"
           >
             Docs
           </button>
-          <ChevronRight className="w-3.5 h-3.5 text-[#A69B88]/60 shrink-0" />
-          <span className="hover:text-[#EDE4D3] transition-colors truncate">
+          <ChevronRight className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+          <span className="hover:text-white transition-colors truncate">
             {currentDoc.category}
           </span>
-          <ChevronRight className="w-3.5 h-3.5 text-[#A69B88]/60 shrink-0" />
-          <span className="text-[#EDE4D3] font-medium truncate">
+          <ChevronRight className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+          <span className="text-white font-medium truncate">
             {currentDoc.title}
           </span>
         </div>
 
         {/* Article Meta Bar */}
-        <div className="pb-6 border-b border-[#D8CBB3]/15 space-y-4">
+        <div className="pb-6 border-b border-white/10 space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-2.5">
               {/* Status Pill */}
               <span
-                className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium border ${
+                className={`inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-mono font-medium border ${
                   currentDoc.status === "VERIFIED"
                     ? "bg-[#10B981]/15 text-[#10B981] border-[#10B981]/30"
                     : currentDoc.status === "IMPLEMENTED"
-                    ? "bg-[#3B82F6]/15 text-[#60A5FA] border-[#3B82F6]/30"
+                    ? "bg-[#06B6D4]/15 text-[#38BDF8] border-[#06B6D4]/30"
                     : "bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30"
                 }`}
               >
@@ -296,24 +295,24 @@ export function DocsReader({
                 <span>{currentDoc.status}</span>
               </span>
 
-              <span className="text-xs text-[#A69B88] flex items-center gap-1">
+              <span className="text-xs text-slate-400 flex items-center gap-1">
                 <Clock className="w-3.5 h-3.5" />
                 <span>{currentDoc.readingTime} min read</span>
               </span>
 
-              <span className="text-xs text-[#A69B88]">·</span>
+              <span className="text-xs text-slate-600">·</span>
 
-              <span className="text-xs text-[#A69B88]">
+              <span className="text-xs text-slate-400">
                 {currentDoc.wordCount.toLocaleString()} words
               </span>
 
-              <span className="text-xs text-[#A69B88]">·</span>
+              <span className="text-xs text-slate-600">·</span>
 
               <a
                 href={currentDoc.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-[#2F6BFF] hover:underline flex items-center gap-1 font-mono"
+                className="text-xs text-[#06B6D4] hover:underline flex items-center gap-1 font-mono"
               >
                 <Github className="w-3 h-3" />
                 <span>Source</span>
@@ -321,13 +320,13 @@ export function DocsReader({
             </div>
 
             {/* View Mode Switcher: Interactive UI vs Raw Spec */}
-            <div className="flex items-center gap-1 p-1 rounded-xl bg-[#242421] border border-[#D8CBB3]/15 text-xs">
+            <div className="flex items-center gap-1 p-1 rounded-full bg-[#10161F] border border-white/10 text-xs">
               <button
                 onClick={() => setViewMode("interactive")}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-medium transition-all ${
+                className={`flex items-center gap-1.5 px-3.5 py-1 rounded-full font-medium transition-all cursor-pointer ${
                   viewMode === "interactive"
-                    ? "bg-[#2F6BFF] text-white shadow font-semibold"
-                    : "text-[#A69B88] hover:text-[#EDE4D3]"
+                    ? "bg-white text-[#090C10] shadow font-semibold"
+                    : "text-slate-400 hover:text-white"
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5 text-amber-300" />
@@ -335,10 +334,10 @@ export function DocsReader({
               </button>
               <button
                 onClick={() => setViewMode("raw")}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-medium transition-all ${
+                className={`flex items-center gap-1.5 px-3.5 py-1 rounded-full font-medium transition-all cursor-pointer ${
                   viewMode === "raw"
-                    ? "bg-[#2F6BFF] text-white shadow font-semibold"
-                    : "text-[#A69B88] hover:text-[#EDE4D3]"
+                    ? "bg-white text-[#090C10] shadow font-semibold"
+                    : "text-slate-400 hover:text-white"
                 }`}
               >
                 <FileCode className="w-3.5 h-3.5" />
@@ -347,12 +346,12 @@ export function DocsReader({
             </div>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#EDE4D3]">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white">
             {currentDoc.title}
           </h1>
 
           {currentDoc.summary && (
-            <p className="text-sm text-[#A69B88] leading-relaxed">
+            <p className="text-sm text-slate-400 leading-relaxed">
               {currentDoc.summary}
             </p>
           )}
@@ -362,12 +361,12 @@ export function DocsReader({
         {viewMode === "interactive" ? (
           <StructuredDocRenderer doc={currentDoc} />
         ) : (
-          <div className="my-8 rounded-2xl border border-[#D8CBB3]/15 bg-[#141413] p-5 font-mono text-xs text-[#D8CBB3] overflow-x-auto leading-relaxed shadow-lg">
-            <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#D8CBB3]/10 text-[11px] text-[#A69B88]">
+          <div className="my-8 rounded-2xl border border-white/10 bg-[#090C10] p-5 font-mono text-xs text-slate-300 overflow-x-auto leading-relaxed shadow-xl">
+            <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10 text-[11px] text-slate-400">
               <span>Raw Document Specification</span>
               <button
                 onClick={handleCopyMarkdown}
-                className="flex items-center gap-1 text-[#2F6BFF] hover:underline"
+                className="flex items-center gap-1 text-[#06B6D4] hover:underline cursor-pointer"
               >
                 {copiedCode ? <Check className="w-3 h-3 text-[#10B981]" /> : <Copy className="w-3 h-3" />}
                 <span>{copiedCode ? "Copied" : "Copy Raw"}</span>
@@ -380,17 +379,17 @@ export function DocsReader({
         )}
 
         {/* Previous and Next Navigation Footer */}
-        <div className="pt-10 border-t border-[#D8CBB3]/15 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="pt-10 border-t border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-4">
           {prevDoc ? (
             <div
               onClick={() => onSelectDoc(prevDoc.id)}
-              className="cursor-pointer group p-4 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] hover:border-[#2F6BFF] transition-all"
+              className="cursor-pointer group p-4 rounded-2xl border border-white/10 bg-[#10161F]/80 hover:border-[#06B6D4]/50 transition-all shadow-md"
             >
-              <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#A69B88] mb-1">
-                <ArrowLeft className="w-3.5 h-3.5 text-[#2F6BFF]" />
+              <div className="flex items-center gap-1.5 text-[11px] font-mono text-slate-400 mb-1">
+                <ArrowLeft className="w-3.5 h-3.5 text-[#06B6D4]" />
                 <span>Previous</span>
               </div>
-              <div className="font-semibold text-xs text-[#EDE4D3] group-hover:text-[#60A5FA] truncate">
+              <div className="font-semibold text-xs text-white group-hover:text-[#38BDF8] truncate">
                 {prevDoc.title}
               </div>
             </div>
@@ -401,13 +400,13 @@ export function DocsReader({
           {nextDoc && (
             <div
               onClick={() => onSelectDoc(nextDoc.id)}
-              className="cursor-pointer group p-4 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] hover:border-[#2F6BFF] transition-all text-right"
+              className="cursor-pointer group p-4 rounded-2xl border border-white/10 bg-[#10161F]/80 hover:border-[#06B6D4]/50 transition-all text-right shadow-md"
             >
-              <div className="flex items-center justify-end gap-1.5 text-[11px] font-mono text-[#A69B88] mb-1">
+              <div className="flex items-center justify-end gap-1.5 text-[11px] font-mono text-slate-400 mb-1">
                 <span>Next</span>
-                <ArrowRight className="w-3.5 h-3.5 text-[#2F6BFF]" />
+                <ArrowRight className="w-3.5 h-3.5 text-[#06B6D4]" />
               </div>
-              <div className="font-semibold text-xs text-[#EDE4D3] group-hover:text-[#60A5FA] truncate">
+              <div className="font-semibold text-xs text-white group-hover:text-[#38BDF8] truncate">
                 {nextDoc.title}
               </div>
             </div>
@@ -420,7 +419,7 @@ export function DocsReader({
         {/* In-page Table of Contents */}
         {currentDoc.headings && currentDoc.headings.length > 0 && (
           <div className="space-y-3">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-[#A69B88] block">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 block">
               On this page
             </span>
             <nav className="space-y-1 text-xs">
@@ -434,8 +433,8 @@ export function DocsReader({
                       h.level === 3 ? "pl-3 text-[11px]" : ""
                     } ${
                       isActive
-                        ? "text-[#2F6BFF] font-semibold"
-                        : "text-[#A69B88] hover:text-[#EDE4D3]"
+                        ? "text-[#06B6D4] font-semibold"
+                        : "text-slate-400 hover:text-white"
                     }`}
                   >
                     {h.text}
@@ -447,18 +446,18 @@ export function DocsReader({
         )}
 
         {/* Document Tools Card */}
-        <div className="p-4 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-3">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-[#A69B88] block">
+        <div className="p-4 rounded-2xl border border-white/10 bg-[#10161F]/80 space-y-3 shadow-lg">
+          <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block">
             Document Actions
           </span>
 
           <div className="space-y-2">
             <button
               onClick={handleCopyLink}
-              className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-[#1E1E1C] hover:bg-[#343430] text-xs text-[#D8CBB3] transition-colors"
+              className="w-full flex items-center justify-between px-3 py-2 rounded-full bg-white/5 hover:bg-white/10 text-xs text-white transition-colors cursor-pointer"
             >
               <div className="flex items-center gap-2">
-                <Share2 className="w-3.5 h-3.5 text-[#2F6BFF]" />
+                <Share2 className="w-3.5 h-3.5 text-[#06B6D4]" />
                 <span>Copy Page Link</span>
               </div>
               {copiedLink && <Check className="w-3.5 h-3.5 text-[#10B981]" />}
@@ -466,10 +465,10 @@ export function DocsReader({
 
             <button
               onClick={handleCopyMarkdown}
-              className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-[#1E1E1C] hover:bg-[#343430] text-xs text-[#D8CBB3] transition-colors"
+              className="w-full flex items-center justify-between px-3 py-2 rounded-full bg-white/5 hover:bg-white/10 text-xs text-white transition-colors cursor-pointer"
             >
               <div className="flex items-center gap-2">
-                <Copy className="w-3.5 h-3.5 text-[#2F6BFF]" />
+                <Copy className="w-3.5 h-3.5 text-[#06B6D4]" />
                 <span>Copy Specification</span>
               </div>
               {copiedCode && <Check className="w-3.5 h-3.5 text-[#10B981]" />}
@@ -479,13 +478,13 @@ export function DocsReader({
               href={currentDoc.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-[#1E1E1C] hover:bg-[#343430] text-xs text-[#D8CBB3] transition-colors"
+              className="w-full flex items-center justify-between px-3 py-2 rounded-full bg-white/5 hover:bg-white/10 text-xs text-white transition-colors"
             >
               <div className="flex items-center gap-2">
-                <Github className="w-3.5 h-3.5 text-[#2F6BFF]" />
+                <Github className="w-3.5 h-3.5 text-[#06B6D4]" />
                 <span>Edit on GitHub</span>
               </div>
-              <ExternalLink className="w-3 h-3 text-[#A69B88]" />
+              <ExternalLink className="w-3 h-3 text-slate-400" />
             </a>
           </div>
         </div>
@@ -493,7 +492,7 @@ export function DocsReader({
         {/* Related Documents */}
         {relatedDocs && relatedDocs.length > 0 && (
           <div className="space-y-3">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-[#A69B88] block">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 block">
               Related Documents
             </span>
             <div className="space-y-2">
@@ -501,12 +500,12 @@ export function DocsReader({
                 <div
                   key={rDoc.id}
                   onClick={() => onSelectDoc(rDoc.id)}
-                  className="cursor-pointer p-3 rounded-lg border border-[#D8CBB3]/10 bg-[#242421] hover:border-[#2F6BFF]/50 transition-colors space-y-1"
+                  className="cursor-pointer p-3 rounded-xl border border-white/10 bg-[#10161F]/60 hover:border-[#06B6D4]/50 transition-colors space-y-1"
                 >
-                  <span className="text-[9px] font-mono text-[#2F6BFF] uppercase block">
+                  <span className="text-[9px] font-mono text-[#06B6D4] uppercase block">
                     {rDoc.category}
                   </span>
-                  <div className="text-xs font-medium text-[#EDE4D3] line-clamp-2">
+                  <div className="text-xs font-medium text-white line-clamp-2">
                     {rDoc.title}
                   </div>
                 </div>

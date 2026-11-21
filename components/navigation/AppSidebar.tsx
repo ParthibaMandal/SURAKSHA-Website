@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { BrandLogo } from "@/components/shared/BrandLogo";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutGrid,
   Layers,
@@ -18,6 +17,7 @@ import {
   Settings,
   Home,
   LogOut,
+  LogIn,
   Menu,
   X,
 } from "lucide-react";
@@ -38,8 +38,26 @@ interface NavGroup {
 
 export const AppSidebar: React.FC<AppSidebarProps> = ({ role }) => {
   const pathname = usePathname();
+  const router = useRouter();
   const isAdmin = role === "admin";
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const auth = localStorage.getItem("suraksha_auth");
+      setIsAuthenticated(Boolean(auth));
+    }
+  }, []);
+
+  const handleSignOut = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("suraksha_auth");
+      setIsAuthenticated(false);
+    }
+    router.push("/auth/login");
+  };
 
   const adminGroups: NavGroup[] = [
     {
@@ -99,13 +117,18 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ role }) => {
   const groups = isAdmin ? adminGroups : citizenGroups;
 
   const sidebarContent = (
-    <div className="flex flex-col justify-between h-full">
+    <div className="flex flex-col justify-between h-full text-white">
       <div className="space-y-6">
-        {/* Brand Logo Header */}
-        <div className="px-2 pt-1 pb-4 border-b border-[#D8CBB3]/14 flex items-center justify-between">
-          <BrandLogo size="sm" />
-          <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold uppercase tracking-wider bg-[#2F6BFF]/15 text-[#2F6BFF] border border-[#2F6BFF]/30">
-            {isAdmin ? "CMD" : "CITIZEN"}
+        {/* Clean Workspace Badge Header (Duplicate Brand Logo Removed) */}
+        <div className="px-3 pt-2 pb-4 border-b border-white/10 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <span className="w-2 h-2 rounded-full bg-[#06B6D4] shadow-[0_0_8px_#06b6d4]" />
+            <span className="text-xs font-mono font-bold tracking-wider text-white uppercase whitespace-nowrap">
+              {isAdmin ? "Operations Command" : "Citizen Safety Hub"}
+            </span>
+          </div>
+          <span className="px-2.5 py-0.5 rounded-full text-[9px] font-mono font-bold uppercase tracking-wider bg-[#06B6D4]/15 text-[#38BDF8] border border-[#06B6D4]/30 whitespace-nowrap">
+            {isAdmin ? "CMD · LIVE" : "PATNA REACH"}
           </span>
         </div>
 
@@ -113,7 +136,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ role }) => {
         <div className="space-y-5">
           {groups.map((group, gIdx) => (
             <div key={gIdx} className="space-y-1">
-              <div className="px-3 pb-1 text-[10px] font-bold font-mono text-[#7D7465] uppercase tracking-widest">
+              <div className="px-3 pb-1 text-[10px] font-bold font-mono text-slate-400 uppercase tracking-widest whitespace-nowrap">
                 {group.label}
               </div>
               {group.items.map((item) => {
@@ -124,26 +147,26 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ role }) => {
                     key={item.href}
                     href={item.href}
                     onClick={() => setMobileOpen(false)}
-                    className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                    className={`flex items-center justify-between px-3 py-2 rounded-full text-xs font-medium transition-all ${
                       isActive
-                        ? "bg-[#2F6BFF]/15 text-[#EDE4D3] border border-[#2F6BFF]/40 shadow-sm"
-                        : "text-[#A69B88] hover:text-[#D8CBB3] hover:bg-[#292925] border border-transparent"
+                        ? "bg-[#06B6D4]/15 text-white border border-[#06B6D4]/40 shadow-sm"
+                        : "text-slate-400 hover:text-white hover:bg-white/5 border border-transparent"
                     }`}
                   >
-                    <span className="flex items-center gap-2.5">
+                    <span className="flex items-center gap-2.5 whitespace-nowrap">
                       <Icon
-                        className={`w-4 h-4 ${
-                          isActive ? "text-[#2F6BFF]" : "text-[#7D7465]"
+                        className={`w-4 h-4 shrink-0 ${
+                          isActive ? "text-[#06B6D4]" : "text-slate-400"
                         }`}
                       />
-                      {item.label}
+                      <span className="whitespace-nowrap">{item.label}</span>
                     </span>
                     {item.badge && (
                       <span
-                        className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold ${
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold whitespace-nowrap ${
                           isActive
-                            ? "bg-[#2F6BFF] text-white"
-                            : "bg-[#292925] text-[#A69B88] border border-[#D8CBB3]/14"
+                            ? "bg-[#06B6D4] text-[#090C10]"
+                            : "bg-white/5 text-slate-400 border border-white/10"
                         }`}
                       >
                         {item.badge}
@@ -158,30 +181,44 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ role }) => {
       </div>
 
       {/* Sidebar Bottom Controls & User Chip */}
-      <div className="pt-4 mt-6 border-t border-[#D8CBB3]/14 space-y-2">
+      <div className="pt-4 mt-6 border-t border-white/10 space-y-2">
         <Link
           href="/"
-          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-[#A69B88] hover:text-[#D8CBB3] hover:bg-[#292925] transition-colors"
+          className="flex items-center gap-2.5 px-3 py-2 rounded-full text-xs font-medium text-slate-400 hover:text-white hover:bg-white/5 transition-colors whitespace-nowrap"
         >
-          <Home className="w-4 h-4 text-[#7D7465]" /> Public Website
-        </Link>
-        <Link
-          href="/auth/login"
-          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-[#A69B88] hover:text-[#D8CBB3] hover:bg-[#292925] transition-colors"
-        >
-          <LogOut className="w-4 h-4 text-[#7D7465]" /> Sign Out
+          <Home className="w-4 h-4 text-slate-400 shrink-0" />
+          <span className="whitespace-nowrap">Public Portal</span>
         </Link>
 
+        {/* Authenticated Sign Out / Unauthenticated Sign In Toggle */}
+        {isAuthenticated ? (
+          <button
+            onClick={handleSignOut}
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-full text-xs font-medium text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors whitespace-nowrap text-left"
+          >
+            <LogOut className="w-4 h-4 text-rose-400 shrink-0" />
+            <span className="whitespace-nowrap">Sign Out</span>
+          </button>
+        ) : (
+          <Link
+            href="/auth/login"
+            className="flex items-center gap-2.5 px-3 py-2 rounded-full text-xs font-medium text-[#06B6D4] hover:text-[#38BDF8] hover:bg-[#06B6D4]/10 transition-colors whitespace-nowrap"
+          >
+            <LogIn className="w-4 h-4 text-[#06B6D4] shrink-0" />
+            <span className="whitespace-nowrap">Sign In →</span>
+          </Link>
+        )}
+
         {/* User Chip */}
-        <div className="p-2.5 rounded-xl bg-[#292925] border border-[#D8CBB3]/15 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-[#2F6BFF]/18 border border-[#2F6BFF]/40 grid place-items-center text-xs font-mono font-bold text-[#2F6BFF]">
+        <div className="p-2.5 rounded-2xl bg-[#10161F]/80 border border-white/10 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-[#06B6D4]/20 border border-[#06B6D4]/40 grid place-items-center text-xs font-mono font-bold text-[#06B6D4] shrink-0">
             {isAdmin ? "OP" : "CZ"}
           </div>
           <div className="overflow-hidden">
-            <strong className="text-xs text-[#D8CBB3] block truncate">
+            <strong className="text-xs text-white block truncate whitespace-nowrap">
               {isAdmin ? "Duty Hydrologist" : "Citizen Account"}
             </strong>
-            <small className="text-[10px] font-mono text-[#A69B88] block truncate">
+            <small className="text-[10px] font-mono text-slate-400 block truncate whitespace-nowrap">
               {isAdmin ? "Ganga Basin Command" : "Patna Reach (Preview)"}
             </small>
           </div>
@@ -192,12 +229,17 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ role }) => {
 
   return (
     <>
-      {/* Mobile Sidebar Trigger Bar */}
-      <div className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-[#D8CBB3]/14 bg-[#1E1E1C]">
-        <BrandLogo size="sm" />
+      {/* Mobile Sidebar Trigger Bar (Uses workspace identifier without duplicate brand logo) */}
+      <div className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-white/10 bg-[#090C10] text-white">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-[#06B6D4] shadow-[0_0_8px_#06b6d4]" />
+          <span className="text-xs font-mono font-bold uppercase tracking-wider text-white">
+            {isAdmin ? "Command Workspace" : "Citizen Portal"}
+          </span>
+        </div>
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="p-2 rounded-lg border border-[#D8CBB3]/20 bg-[#292925] text-[#D8CBB3]"
+          className="p-2 rounded-full border border-white/15 bg-white/5 text-white"
           aria-label="Toggle workspace navigation"
         >
           {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -206,8 +248,8 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ role }) => {
 
       {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 bg-black/70 flex">
-          <aside className="w-72 max-w-[85vw] bg-[#1E1E1C] border-r border-[#D8CBB3]/18 p-4 overflow-y-auto">
+        <div className="lg:hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex">
+          <aside className="w-72 max-w-[85vw] bg-[#090C10] border-r border-white/10 p-4 overflow-y-auto">
             {sidebarContent}
           </aside>
           <div className="flex-1" onClick={() => setMobileOpen(false)} />
@@ -215,7 +257,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ role }) => {
       )}
 
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-64 shrink-0 border-r border-[#D8CBB3]/14 bg-[#1E1E1C] flex-col justify-between p-4 min-h-screen">
+      <aside className="hidden lg:flex w-64 shrink-0 border-r border-white/10 bg-[#090C10] flex-col justify-between p-4 min-h-screen">
         {sidebarContent}
       </aside>
     </>

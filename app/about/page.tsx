@@ -51,19 +51,19 @@ export default function AboutPage() {
             <h3 className="text-lg font-bold text-[#EDE4D3]">What SURAKSHA Aims to Do</h3>
             <ul className="space-y-2 text-xs text-[#A69B88]">
               <li className="flex items-start gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#2F6BFF] mt-1.5 shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#06B6D4] mt-1.5 shrink-0" />
                 Organise hydrological and geospatial evidence with clear provenance.
               </li>
               <li className="flex items-start gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#2F6BFF] mt-1.5 shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#06B6D4] mt-1.5 shrink-0" />
                 Expose forecast uncertainty and Pre/Mid/Post-Run gate checks.
               </li>
               <li className="flex items-start gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#2F6BFF] mt-1.5 shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#06B6D4] mt-1.5 shrink-0" />
                 Connect predicted conditions with ward-level consequence estimates.
               </li>
               <li className="flex items-start gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#2F6BFF] mt-1.5 shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#06B6D4] mt-1.5 shrink-0" />
                 Support human-approved OASIS CAP v1.2 advisories and incident workflows.
               </li>
             </ul>

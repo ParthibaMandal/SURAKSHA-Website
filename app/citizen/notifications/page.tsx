@@ -21,8 +21,8 @@ export default function CitizenNotificationsPage() {
   return (
     <div className="space-y-6">
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#292925] border border-[#2F6BFF]/40 text-xs font-mono text-[#D8CBB3] shadow-2xl flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-[#2F6BFF]" /> {toast}
+        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#292925] border border-[#06B6D4]/40 text-xs font-mono text-[#D8CBB3] shadow-2xl flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-[#06B6D4]" /> {toast}
         </div>
       )}
 
@@ -57,7 +57,7 @@ export default function CitizenNotificationsPage() {
                 type="checkbox"
                 checked={preferences.push}
                 onChange={(e) => setPreferences({ ...preferences, push: e.target.checked })}
-                className="rounded border-[#D8CBB3]/30 bg-[#1E1E1C] accent-[#2F6BFF]"
+                className="rounded border-[#D8CBB3]/30 bg-[#1E1E1C] accent-[#06B6D4]"
               />
               Enabled
             </label>
@@ -73,7 +73,7 @@ export default function CitizenNotificationsPage() {
                 type="checkbox"
                 checked={preferences.alarms}
                 onChange={(e) => setPreferences({ ...preferences, alarms: e.target.checked })}
-                className="rounded border-[#D8CBB3]/30 bg-[#1E1E1C] accent-[#2F6BFF]"
+                className="rounded border-[#D8CBB3]/30 bg-[#1E1E1C] accent-[#06B6D4]"
               />
               Enabled
             </label>
@@ -89,7 +89,7 @@ export default function CitizenNotificationsPage() {
                 type="checkbox"
                 checked={preferences.vibration}
                 onChange={(e) => setPreferences({ ...preferences, vibration: e.target.checked })}
-                className="rounded border-[#D8CBB3]/30 bg-[#1E1E1C] accent-[#2F6BFF]"
+                className="rounded border-[#D8CBB3]/30 bg-[#1E1E1C] accent-[#06B6D4]"
               />
               Enabled
             </label>
@@ -105,7 +105,7 @@ export default function CitizenNotificationsPage() {
                 type="checkbox"
                 checked={preferences.email}
                 onChange={(e) => setPreferences({ ...preferences, email: e.target.checked })}
-                className="rounded border-[#D8CBB3]/30 bg-[#1E1E1C] accent-[#2F6BFF]"
+                className="rounded border-[#D8CBB3]/30 bg-[#1E1E1C] accent-[#06B6D4]"
               />
               Enabled
             </label>

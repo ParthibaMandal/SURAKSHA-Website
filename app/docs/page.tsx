@@ -14,7 +14,7 @@ export default function DocsPage() {
       fallback={
         <div className="min-h-screen bg-[#1E1E1C] flex items-center justify-center text-xs text-[#A69B88]">
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded-full border-2 border-[#2F6BFF] border-t-transparent animate-spin" />
+            <div className="w-4 h-4 rounded-full border-2 border-[#06B6D4] border-t-transparent animate-spin" />
             <span>Loading SURAKSHA Documentation Portal...</span>
           </div>
         </div>

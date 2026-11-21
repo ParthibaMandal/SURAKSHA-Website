@@ -101,13 +101,13 @@ export function InteractiveStationRegistry() {
               onClick={() => setSelectedStationId(stn.id)}
               className={`cursor-pointer p-4 rounded-2xl border transition-all flex flex-col justify-between ${
                 isSelected
-                  ? "bg-[#292925] border-[#2F6BFF] shadow-lg shadow-[#2F6BFF]/10 ring-1 ring-[#2F6BFF]"
+                  ? "bg-[#292925] border-[#06B6D4] shadow-lg shadow-[#06B6D4]/10 ring-1 ring-[#06B6D4]"
                   : "bg-[#242421] border-[#D8CBB3]/15 hover:border-[#D8CBB3]/30"
               }`}
             >
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-[10px] text-[#2F6BFF] font-semibold">
+                  <span className="font-mono text-[10px] text-[#06B6D4] font-semibold">
                     {stn.id}
                   </span>
                   <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30">
@@ -140,7 +140,7 @@ export function InteractiveStationRegistry() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#D8CBB3]/15">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="font-mono text-xs text-[#2F6BFF] uppercase font-bold">
+              <span className="font-mono text-xs text-[#06B6D4] uppercase font-bold">
                 {selectedStation.id} · CWC Official Telemetry Gauge
               </span>
               <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#10B981]/15 text-[#10B981]">
@@ -157,7 +157,7 @@ export function InteractiveStationRegistry() {
 
           <div className="text-right">
             <span className="text-xs text-[#A69B88] font-mono block">Current River Stage</span>
-            <span className="text-2xl font-bold text-[#60A5FA] font-mono">
+            <span className="text-2xl font-bold text-[#38BDF8] font-mono">
               {selectedStation.currentStage} m
             </span>
           </div>
@@ -176,7 +176,7 @@ export function InteractiveStationRegistry() {
           <div className="relative w-full h-8 bg-[#141413] rounded-xl overflow-hidden border border-[#D8CBB3]/20">
             {/* Water Fill */}
             <div
-              className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-[#2F6BFF] to-[#60A5FA] transition-all duration-500 rounded-l-xl"
+              className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-[#06B6D4] to-[#38BDF8] transition-all duration-500 rounded-l-xl"
               style={{ width: `${getPercent(selectedStation.currentStage)}%` }}
             />
 

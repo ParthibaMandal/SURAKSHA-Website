@@ -97,7 +97,7 @@ export const FallbackCanvas2D: React.FC<FallbackCanvas2DProps> = ({ isSurge = fa
       // Station beacons
       const beacons = [
         { x: -14, y: 0, label: "STN-SON-01", color: "#F59E0B" },
-        { x: 2, y: 1, label: "STN-PAT-01", color: "#2F6BFF" },
+        { x: 2, y: 1, label: "STN-PAT-01", color: "#06B6D4" },
         { x: 16, y: -1, label: "STN-GAN-01", color: "#D8CBB3" },
       ];
 

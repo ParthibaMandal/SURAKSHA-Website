@@ -320,7 +320,7 @@ print(response.json())`;
           </div>
           <div className="flex items-center gap-2 text-xs font-mono text-[#A69B88]">
             <span>Base URL:</span>
-            <code className="text-[#60A5FA] bg-[#1E1E1C] px-2 py-0.5 rounded border border-[#D8CBB3]/15">
+            <code className="text-[#38BDF8] bg-[#1E1E1C] px-2 py-0.5 rounded border border-[#D8CBB3]/15">
               http://localhost:8000/api/v1/flood
             </code>
           </div>
@@ -354,7 +354,7 @@ print(response.json())`;
               onClick={() => setSelectedMethod(method)}
               className={`px-3 py-1 rounded-lg font-mono text-[11px] transition-colors ${
                 selectedMethod === method
-                  ? "bg-[#2F6BFF] text-white font-semibold shadow"
+                  ? "bg-[#06B6D4] text-white font-semibold shadow"
                   : "text-[#A69B88] hover:text-[#EDE4D3]"
               }`}
             >
@@ -371,7 +371,7 @@ print(response.json())`;
             placeholder="Search API endpoints..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#242421] border border-[#D8CBB3]/20 rounded-xl pl-9 pr-4 py-1.5 text-xs text-[#EDE4D3] placeholder-[#A69B88] focus:outline-none focus:border-[#2F6BFF]"
+            className="w-full bg-[#242421] border border-[#D8CBB3]/20 rounded-xl pl-9 pr-4 py-1.5 text-xs text-[#EDE4D3] placeholder-[#A69B88] focus:outline-none focus:border-[#06B6D4]"
           />
         </div>
       </div>
@@ -395,7 +395,7 @@ print(response.json())`;
                     className={`px-2.5 py-1 rounded-md text-xs font-mono font-bold tracking-wider ${
                       ep.method === "GET"
                         ? "bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/40"
-                        : "bg-[#3B82F6]/20 text-[#60A5FA] border border-[#3B82F6]/40"
+                        : "bg-[#3B82F6]/20 text-[#38BDF8] border border-[#3B82F6]/40"
                     }`}
                   >
                     {ep.method}
@@ -445,7 +445,7 @@ print(response.json())`;
                         <tbody className="divide-y divide-[#D8CBB3]/5 bg-[#242421]/60">
                           {ep.parameters.map((param) => (
                             <tr key={param.name}>
-                              <td className="p-2.5 font-mono text-[#60A5FA] font-medium">
+                              <td className="p-2.5 font-mono text-[#38BDF8] font-medium">
                                 {param.name}
                               </td>
                               <td className="p-2.5 font-mono text-[11px] text-[#A69B88]">

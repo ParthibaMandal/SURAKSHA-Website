@@ -59,8 +59,8 @@ export default function AdminGatesIndexPage() {
   return (
     <div className="space-y-6">
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#292925] border border-[#2F6BFF]/40 text-xs font-mono text-[#D8CBB3] shadow-2xl flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-[#2F6BFF]" /> {toast}
+        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#292925] border border-[#06B6D4]/40 text-xs font-mono text-[#D8CBB3] shadow-2xl flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-[#06B6D4]" /> {toast}
         </div>
       )}
 
@@ -112,21 +112,21 @@ export default function AdminGatesIndexPage() {
           <Link
             key={g.id}
             href={`/admin/gates/${g.id}`}
-            className="p-5 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] hover:border-[#2F6BFF]/50 transition-colors flex flex-col justify-between gap-3"
+            className="p-5 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] hover:border-[#06B6D4]/50 transition-colors flex flex-col justify-between gap-3"
           >
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] font-mono font-bold text-[#2F6BFF] uppercase tracking-wider">
+                <span className="text-[10px] font-mono font-bold text-[#06B6D4] uppercase tracking-wider">
                   {g.step}
                 </span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#2F6BFF]/15 text-[#2F6BFF] border border-[#2F6BFF]/30">
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#06B6D4]/15 text-[#06B6D4] border border-[#06B6D4]/30">
                   {g.status}
                 </span>
               </div>
               <h3 className="text-sm font-bold text-[#D8CBB3]">{g.name}</h3>
               <p className="text-xs text-[#A69B88] mt-1 leading-relaxed">{g.desc}</p>
             </div>
-            <span className="text-[11px] font-mono text-[#2F6BFF]">Open gate audit →</span>
+            <span className="text-[11px] font-mono text-[#06B6D4]">Open gate audit →</span>
           </Link>
         ))}
       </div>
@@ -153,7 +153,7 @@ export default function AdminGatesIndexPage() {
           >
             <div>
               <div className="flex items-center justify-between pb-3 border-b border-[#D8CBB3]/10">
-                <span className="text-xs font-mono font-bold text-[#2F6BFF]">{gate.id}</span>
+                <span className="text-xs font-mono font-bold text-[#06B6D4]">{gate.id}</span>
                 <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#33332E] text-[#D8CBB3] border border-[#D8CBB3]/20">
                   {gate.mode} · SAMPLE
                 </span>
@@ -169,7 +169,7 @@ export default function AdminGatesIndexPage() {
                 </div>
                 <div className="p-2.5 rounded-lg bg-[#1E1E1C] border border-[#D8CBB3]/12">
                   <span className="text-[#A69B88] block text-[10px]">DISCHARGE</span>
-                  <span className="text-sm font-bold text-[#2F6BFF]">{gate.discharge_rate_cusecs} cfs</span>
+                  <span className="text-sm font-bold text-[#06B6D4]">{gate.discharge_rate_cusecs} cfs</span>
                 </div>
               </div>
 
@@ -185,7 +185,7 @@ export default function AdminGatesIndexPage() {
                   max="100"
                   value={gate.current_opening_pct}
                   onChange={(e) => handleAdjust(gate.id, parseInt(e.target.value))}
-                  className="w-full accent-[#2F6BFF] cursor-pointer"
+                  className="w-full accent-[#06B6D4] cursor-pointer"
                 />
                 <div className="flex justify-between text-[10px] font-mono text-[#A69B88]">
                   <span>0% (Closed)</span>
@@ -201,7 +201,7 @@ export default function AdminGatesIndexPage() {
               </span>
               <Link
                 href={`/admin/gates/${gate.id}`}
-                className="text-[#2F6BFF] hover:underline flex items-center gap-1 font-mono text-[11px]"
+                className="text-[#06B6D4] hover:underline flex items-center gap-1 font-mono text-[11px]"
               >
                 Inspect telemetry →
               </Link>

@@ -652,7 +652,7 @@ export function BasinScrollStoryHero() {
           {/* Layer L0: Hero Headline */}
           <div ref={layerL0Ref} className="absolute inset-0 pointer-events-none z-[4]">
             <div ref={heroCopyRef} className="absolute left-0 right-0 text-center pointer-events-none">
-              <div className="inline-flex items-center justify-center h-[22px] px-[9px] bg-[#2F6BFF] text-white rounded-[3px] font-sans text-[11px] tracking-wider uppercase font-semibold shadow-[0_2px_8px_rgba(47,107,255,0.3)]">
+              <div className="inline-flex items-center justify-center h-[22px] px-[9px] bg-[#06B6D4] text-white rounded-[3px] font-sans text-[11px] tracking-wider uppercase font-semibold shadow-[0_2px_8px_rgba(6,182,212,0.3)]">
                 BASIN TELEMETRY
               </div>
               <h1 className="mt-[18px] font-heading text-[clamp(44px,5.8vw,98px)] font-bold leading-[0.92] tracking-[-0.045em] text-[#0d141b]">
@@ -726,7 +726,7 @@ export function BasinScrollStoryHero() {
                 <div className="absolute left-0 top-[10px] w-[22px] h-[1px] bg-white/90" />
                 <div className="absolute top-0 left-[10px] w-[1px] h-[22px] bg-white/90" />
               </div>
-              <div className="inline-flex items-center justify-center h-[20px] px-[8px] bg-[#2F6BFF] text-white rounded-[3px] font-sans text-[10px] tracking-wider uppercase font-semibold">
+              <div className="inline-flex items-center justify-center h-[20px] px-[8px] bg-[#06B6D4] text-white rounded-[3px] font-sans text-[10px] tracking-wider uppercase font-semibold">
                 STN-PAT-01
               </div>
               <pre className="font-mono text-[11px] tracking-[0.12em] leading-[1.65] text-white [text-shadow:0_1px_6px_rgba(0,0,0,0.5)] mt-[10px]">
@@ -750,7 +750,7 @@ ELEV 49.82 M`}
             {/* Bottom-left Caption */}
             <div
               ref={captionRef}
-              className="absolute left-[34px] bottom-[34px] pl-[16px] border-l-2 border-[#2F6BFF] font-sans text-xs leading-relaxed uppercase tracking-wider text-[#223040]"
+              className="absolute left-[34px] bottom-[34px] pl-[16px] border-l-2 border-[#06B6D4] font-sans text-xs leading-relaxed uppercase tracking-wider text-[#223040]"
             >
               Real-time Ganga basin telemetry.
               <br />
@@ -777,7 +777,7 @@ ELEV 49.82 M`}
               ref={visionRef}
               className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(820px,90vw)] text-center text-white pointer-events-auto"
             >
-              <div className="chip inline-flex items-center justify-center h-[22px] px-[9px] bg-[#2F6BFF] text-white rounded-[3px] font-sans text-[11px] tracking-wider uppercase font-semibold">
+              <div className="chip inline-flex items-center justify-center h-[22px] px-[9px] bg-[#06B6D4] text-white rounded-[3px] font-sans text-[11px] tracking-wider uppercase font-semibold">
                 OPERATIONAL MANDATE
               </div>
               <h2 className="font-heading text-[clamp(34px,4.6vw,70px)] font-bold leading-none tracking-[-0.04em] my-[18px] text-white [text-shadow:0_2px_40px_rgba(10,30,15,0.65),0_1px_3px_rgba(10,30,15,0.4)]">
@@ -824,14 +824,14 @@ ELEV 49.82 M`}
               }`}
               onClick={() => setActiveHotspot(activeHotspot === 1 ? null : 1)}
             >
-              <div className="hs-dot w-[22px] h-[22px] rounded-full bg-[#2F6BFF] relative flex items-center justify-center shadow-md">
+              <div className="hs-dot w-[22px] h-[22px] rounded-full bg-[#06B6D4] relative flex items-center justify-center shadow-md">
                 <div className="w-[10px] h-[1.4px] bg-white" />
                 <div className="absolute w-[1.4px] h-[10px] bg-white" />
               </div>
               <div className="hs-pill font-sans text-[11px] font-semibold tracking-wider uppercase text-[#0d141b] px-[9px] py-[6px] rounded-[4px] bg-[#ffffff] border border-[#d8cbb3]/40 flex flex-col gap-[2px] shadow-sm">
                 <span>River Stage</span>
                 <em
-                  className={`not-italic text-[#2F6BFF] font-semibold overflow-hidden transition-all duration-300 ${
+                  className={`not-italic text-[#06B6D4] font-semibold overflow-hidden transition-all duration-300 ${
                     activeHotspot === 1 ? "max-h-[20px] opacity-100" : "max-h-0 opacity-0"
                   }`}
                 >
@@ -847,14 +847,14 @@ ELEV 49.82 M`}
               }`}
               onClick={() => setActiveHotspot(activeHotspot === 2 ? null : 2)}
             >
-              <div className="hs-dot w-[22px] h-[22px] rounded-full bg-[#2F6BFF] relative flex items-center justify-center shadow-md">
+              <div className="hs-dot w-[22px] h-[22px] rounded-full bg-[#06B6D4] relative flex items-center justify-center shadow-md">
                 <div className="w-[10px] h-[1.4px] bg-white" />
                 <div className="absolute w-[1.4px] h-[10px] bg-white" />
               </div>
               <div className="hs-pill font-sans text-[11px] font-semibold tracking-wider uppercase text-[#0d141b] px-[9px] py-[6px] rounded-[4px] bg-[#ffffff] border border-[#d8cbb3]/40 flex flex-col gap-[2px] shadow-sm">
                 <span>Upstream Inflow</span>
                 <em
-                  className={`not-italic text-[#2F6BFF] font-semibold overflow-hidden transition-all duration-300 ${
+                  className={`not-italic text-[#06B6D4] font-semibold overflow-hidden transition-all duration-300 ${
                     activeHotspot === 2 ? "max-h-[20px] opacity-100" : "max-h-0 opacity-0"
                   }`}
                 >
@@ -870,14 +870,14 @@ ELEV 49.82 M`}
               }`}
               onClick={() => setActiveHotspot(activeHotspot === 3 ? null : 3)}
             >
-              <div className="hs-dot w-[22px] h-[22px] rounded-full bg-[#2F6BFF] relative flex items-center justify-center shadow-md">
+              <div className="hs-dot w-[22px] h-[22px] rounded-full bg-[#06B6D4] relative flex items-center justify-center shadow-md">
                 <div className="w-[10px] h-[1.4px] bg-white" />
                 <div className="absolute w-[1.4px] h-[10px] bg-white" />
               </div>
               <div className="hs-pill font-sans text-[11px] font-semibold tracking-wider uppercase text-[#0d141b] px-[9px] py-[6px] rounded-[4px] bg-[#ffffff] border border-[#d8cbb3]/40 flex flex-col gap-[2px] shadow-sm">
                 <span>Soil Saturation</span>
                 <em
-                  className={`not-italic text-[#2F6BFF] font-semibold overflow-hidden transition-all duration-300 ${
+                  className={`not-italic text-[#06B6D4] font-semibold overflow-hidden transition-all duration-300 ${
                     activeHotspot === 3 ? "max-h-[20px] opacity-100" : "max-h-0 opacity-0"
                   }`}
                 >
@@ -893,14 +893,14 @@ ELEV 49.82 M`}
               }`}
               onClick={() => setActiveHotspot(activeHotspot === 4 ? null : 4)}
             >
-              <div className="hs-dot w-[22px] h-[22px] rounded-full bg-[#2F6BFF] relative flex items-center justify-center shadow-md">
+              <div className="hs-dot w-[22px] h-[22px] rounded-full bg-[#06B6D4] relative flex items-center justify-center shadow-md">
                 <div className="w-[10px] h-[1.4px] bg-white" />
                 <div className="absolute w-[1.4px] h-[10px] bg-white" />
               </div>
               <div className="hs-pill font-sans text-[11px] font-semibold tracking-wider uppercase text-[#0d141b] px-[9px] py-[6px] rounded-[4px] bg-[#ffffff] border border-[#d8cbb3]/40 flex flex-col gap-[2px] shadow-sm">
                 <span>Ensemble Spread</span>
                 <em
-                  className={`not-italic text-[#2F6BFF] font-semibold overflow-hidden transition-all duration-300 ${
+                  className={`not-italic text-[#06B6D4] font-semibold overflow-hidden transition-all duration-300 ${
                     activeHotspot === 4 ? "max-h-[20px] opacity-100" : "max-h-0 opacity-0"
                   }`}
                 >
@@ -914,7 +914,7 @@ ELEV 49.82 M`}
           <div ref={layerL4Ref} className="absolute inset-0 pointer-events-none z-[8] invisible">
             {/* Station Heading */}
             <div ref={credRef} className="absolute left-[34px] top-[13vh] max-w-[400px] pointer-events-auto">
-              <div className="inline-flex items-center font-sans text-[11px] tracking-wider uppercase font-semibold px-[8px] py-[4px] rounded-[3px] bg-[#2F6BFF] text-white mb-[12px]">
+              <div className="inline-flex items-center font-sans text-[11px] tracking-wider uppercase font-semibold px-[8px] py-[4px] rounded-[3px] bg-[#06B6D4] text-white mb-[12px]">
                 ✕ GAUGE STATION 01 · PATNA GANDHI GHAT
               </div>
               <h3 className="font-heading text-[clamp(22px,2vw,30px)] font-bold leading-[1.08] tracking-[-0.025em] text-[#0d141b] [text-shadow:0_0_24px_rgba(255,255,255,0.9)]">
@@ -943,7 +943,7 @@ ELEV 49.82 M`}
                 <span className="font-mono text-[10px] tracking-wider text-[#A69B88]">METERS</span>
               </div>
 
-              <div className="absolute right-[16px] top-[96px] bg-[#2F6BFF] text-white font-sans text-[10px] tracking-wider px-[7px] py-[3px] rounded-[3px] font-semibold">
+              <div className="absolute right-[16px] top-[96px] bg-[#06B6D4] text-white font-sans text-[10px] tracking-wider px-[7px] py-[3px] rounded-[3px] font-semibold">
                 +1.68 m SURGE
               </div>
 
@@ -978,7 +978,7 @@ ELEV 49.82 M`}
                 <div
                   key={row.idx}
                   className={`feat-row grid grid-cols-[30px_1fr_16px] gap-[8px] items-center py-[11px] font-mono text-[11px] tracking-[0.12em] uppercase cursor-pointer border-b border-[#10291a]/15 last:border-b-0 transition-all ${
-                    activeFeat === i ? "text-[#2F6BFF] pl-[6px]" : "hover:text-[#2F6BFF] hover:pl-[6px]"
+                    activeFeat === i ? "text-[#06B6D4] pl-[6px]" : "hover:text-[#06B6D4] hover:pl-[6px]"
                   }`}
                   onClick={() => setActiveFeat(activeFeat === i ? null : i)}
                 >
@@ -994,7 +994,7 @@ ELEV 49.82 M`}
           <div className="absolute bottom-[22px] left-1/2 -translate-x-1/2 w-[120px] h-[2px] bg-[#10291a]/20 rounded-[2px] overflow-hidden z-[10]">
             <div
               ref={progBarRef}
-              className="w-full h-full bg-[#2F6BFF] origin-left scale-x-0 will-change-transform"
+              className="w-full h-full bg-[#06B6D4] origin-left scale-x-0 will-change-transform"
             />
           </div>
         </div>
@@ -1007,7 +1007,7 @@ ELEV 49.82 M`}
       >
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-12">
           <div className="max-w-[640px]">
-            <div className="inline-flex items-center justify-center h-[22px] px-[9px] bg-[#2F6BFF] text-white rounded-[3px] font-sans text-[11px] tracking-wider uppercase font-semibold mb-4">
+            <div className="inline-flex items-center justify-center h-[22px] px-[9px] bg-[#06B6D4] text-white rounded-[3px] font-sans text-[11px] tracking-wider uppercase font-semibold mb-4">
               OPERATIONAL CAPABILITIES
             </div>
             <h2 className="font-heading text-[clamp(32px,3.9vw,54px)] font-bold leading-tight tracking-[-0.03em] text-[#ede4d3]">
@@ -1023,7 +1023,7 @@ ELEV 49.82 M`}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-10">
           {/* Card 1 */}
           <div
-            className="group relative h-[440px] rounded-[12px] overflow-hidden bg-[#292925] text-[#ede4d3] border border-[#d8cbb3]/15 transition-all duration-300 hover:border-[#2F6BFF]/60 cursor-pointer"
+            className="group relative h-[440px] rounded-[12px] overflow-hidden bg-[#292925] text-[#ede4d3] border border-[#d8cbb3]/15 transition-all duration-300 hover:border-[#06B6D4]/60 cursor-pointer"
             onPointerMove={(e) => {
               const rect = e.currentTarget.getBoundingClientRect();
               const x = (e.clientX - rect.left) / rect.width - 0.5;
@@ -1047,7 +1047,7 @@ ELEV 49.82 M`}
               <span className="font-sans text-[11px] tracking-wider uppercase font-semibold text-[#ede4d3]/90">
                 [Hydrological Forecasting]
               </span>
-              <div className="w-[28px] h-[28px] rounded-full bg-[#2F6BFF] text-white flex items-center justify-center text-xs transition-transform duration-300 group-hover:-rotate-45">
+              <div className="w-[28px] h-[28px] rounded-full bg-[#06B6D4] text-white flex items-center justify-center text-xs transition-transform duration-300 group-hover:-rotate-45">
                 →
               </div>
             </div>
@@ -1063,7 +1063,7 @@ ELEV 49.82 M`}
 
           {/* Card 2 */}
           <div
-            className="group relative h-[440px] rounded-[12px] overflow-hidden bg-[#292925] text-[#ede4d3] border border-[#d8cbb3]/15 transition-all duration-300 hover:border-[#2F6BFF]/60 cursor-pointer"
+            className="group relative h-[440px] rounded-[12px] overflow-hidden bg-[#292925] text-[#ede4d3] border border-[#d8cbb3]/15 transition-all duration-300 hover:border-[#06B6D4]/60 cursor-pointer"
             onPointerMove={(e) => {
               const rect = e.currentTarget.getBoundingClientRect();
               const x = (e.clientX - rect.left) / rect.width - 0.5;
@@ -1087,7 +1087,7 @@ ELEV 49.82 M`}
               <span className="font-sans text-[11px] tracking-wider uppercase font-semibold text-[#ede4d3]/90">
                 [Satellite Mapping]
               </span>
-              <div className="w-[28px] h-[28px] rounded-full bg-[#2F6BFF] text-white flex items-center justify-center text-xs transition-transform duration-300 group-hover:-rotate-45">
+              <div className="w-[28px] h-[28px] rounded-full bg-[#06B6D4] text-white flex items-center justify-center text-xs transition-transform duration-300 group-hover:-rotate-45">
                 →
               </div>
             </div>
@@ -1103,7 +1103,7 @@ ELEV 49.82 M`}
 
           {/* Card 3 */}
           <div
-            className="group relative h-[440px] rounded-[12px] overflow-hidden bg-[#292925] text-[#ede4d3] border border-[#d8cbb3]/15 transition-all duration-300 hover:border-[#2F6BFF]/60 cursor-pointer"
+            className="group relative h-[440px] rounded-[12px] overflow-hidden bg-[#292925] text-[#ede4d3] border border-[#d8cbb3]/15 transition-all duration-300 hover:border-[#06B6D4]/60 cursor-pointer"
             onPointerMove={(e) => {
               const rect = e.currentTarget.getBoundingClientRect();
               const x = (e.clientX - rect.left) / rect.width - 0.5;
@@ -1128,7 +1128,7 @@ ELEV 49.82 M`}
               <span className="font-sans text-[11px] tracking-wider uppercase font-semibold text-[#ede4d3]/90">
                 [Emergency Governance]
               </span>
-              <div className="w-[28px] h-[28px] rounded-full bg-[#2F6BFF] text-white flex items-center justify-center text-xs transition-transform duration-300 group-hover:-rotate-45">
+              <div className="w-[28px] h-[28px] rounded-full bg-[#06B6D4] text-white flex items-center justify-center text-xs transition-transform duration-300 group-hover:-rotate-45">
                 →
               </div>
             </div>
@@ -1194,7 +1194,7 @@ ELEV 49.82 M`}
           <div className="flex items-center gap-3">
             <Link
               href="/admin"
-              className="font-semibold text-[#2F6BFF] hover:underline flex items-center gap-1"
+              className="font-semibold text-[#06B6D4] hover:underline flex items-center gap-1"
             >
               Access Operations Command Centre <ArrowRight className="w-3.5 h-3.5" />
             </Link>
