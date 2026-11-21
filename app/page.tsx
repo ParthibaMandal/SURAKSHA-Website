@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { BasinScrollStoryHero } from "@/components/hero/BasinScrollStoryHero";
+import { HimalayasToPlainsHero } from "@/components/hero/HimalayasToPlainsHero";
 import { DigitalTwinScene } from "@/components/three/DigitalTwinScene";
 import { TacticalMapSvg } from "@/components/three/TacticalMapSvg";
 import { HydrologicalChart } from "@/components/shared/HydrologicalChart";
@@ -14,8 +14,8 @@ export default function HomePage() {
 
   return (
     <div className="relative bg-[#1E1E1C] text-[#D8CBB3]">
-      {/* 1. Cinematic 5-Beat Pinned Scroll Fly-In Hero Section */}
-      <BasinScrollStoryHero />
+      {/* 1. Himalayas to Plains Early Warning Hero Section */}
+      <HimalayasToPlainsHero />
 
       {/* 2. Operations Console & Architecture (Real Product Picture + Operational Telemetry Breakdown) */}
       <section className="relative z-10 py-16 border-t border-[#D8CBB3]/15 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8">

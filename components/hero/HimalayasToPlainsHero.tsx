@@ -1,0 +1,443 @@
+"use client";
+
+import React, { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import {
+  TrendingUp,
+  ArrowRight,
+  Play,
+  Radio,
+  Cpu,
+  Bell,
+  ShieldCheck,
+  Mountain,
+  Waves,
+  X,
+  ExternalLink,
+  ChevronRight,
+  Activity,
+} from "lucide-react";
+
+export const HimalayasToPlainsHero: React.FC = () => {
+  const [isDemoOpen, setIsDemoOpen] = useState(false);
+
+  return (
+    <>
+      <section className="relative min-h-[94vh] lg:min-h-screen w-full flex flex-col justify-between overflow-hidden bg-[#0A0D14] text-white">
+        {/* =========================================================================
+            BACKGROUND HERO PANORAMA (User Provided Asset)
+           ========================================================================= */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/images/hero-himalayas-ganga.jpg"
+            alt="From the Himalayas to the Plains — SURAKSHA Flood Early Warning System"
+            fill
+            priority
+            quality={95}
+            className="object-cover object-[center_35%] scale-[1.02] transition-transform duration-1000 ease-out"
+          />
+
+          {/* Left Vignette & Gradient Overlays for High Legibility */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent w-full md:w-[65%]" />
+          
+          {/* Top Navbar Shadow */}
+          <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-black/75 via-black/30 to-transparent" />
+          
+          {/* Bottom Blend to Page Background (#1E1E1C) */}
+          <div className="absolute bottom-0 inset-x-0 h-44 bg-gradient-to-t from-[#1E1E1C] via-[#1E1E1C]/70 to-transparent" />
+          
+          {/* Subtle Sunset Warmth Overlay on Right */}
+          <div className="absolute inset-0 bg-gradient-to-l from-amber-500/10 via-transparent to-transparent pointer-events-none" />
+
+          {/* =========================================================================
+              ORBITAL SATELLITE TRACKING ARC (Sky Overlays)
+             ========================================================================= */}
+          <svg
+            className="absolute inset-0 w-full h-full pointer-events-none opacity-40 hidden sm:block"
+            viewBox="0 0 1440 800"
+            fill="none"
+            preserveAspectRatio="none"
+          >
+            {/* Dashed Orbital Trajectory Arc */}
+            <path
+              d="M 680 180 C 880 70, 1140 50, 1420 160"
+              stroke="#38BDF8"
+              strokeWidth="1.2"
+              strokeDasharray="4 6"
+            />
+            <path
+              d="M 720 220 C 940 110, 1200 90, 1440 210"
+              stroke="#38BDF8"
+              strokeWidth="0.8"
+              strokeDasharray="3 8"
+              opacity="0.6"
+            />
+            {/* Subtle orbital coordinates projection ring */}
+            <ellipse
+              cx="1100"
+              cy="160"
+              rx="280"
+              ry="95"
+              stroke="#38BDF8"
+              strokeWidth="0.6"
+              strokeDasharray="2 6"
+              opacity="0.3"
+              transform="rotate(-10 1100 160)"
+            />
+          </svg>
+        </div>
+
+        {/* =========================================================================
+            HUD TELEMETRY CARD 1: HIMALAYAS (Glaciers Melting)
+           ========================================================================= */}
+        <div className="hidden md:block absolute top-[17%] lg:top-[19%] left-[45%] lg:left-[47%] z-20">
+          <div className="relative group transition-all duration-300 hover:scale-[1.03]">
+            {/* Glacier Surface Beacon Anchor */}
+            <div className="absolute -bottom-16 left-6 flex items-center pointer-events-none">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-80" />
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-cyan-300 shadow-[0_0_12px_#38bdf8]" />
+              </span>
+              {/* Tether Line */}
+              <svg className="w-12 h-16 -ml-1 text-cyan-400/70" viewBox="0 0 50 70" fill="none">
+                <path d="M 6 65 L 18 20 L 45 4" stroke="currentColor" strokeWidth="1.5" strokeDasharray="2 3" />
+              </svg>
+            </div>
+
+            {/* Telemetry Card */}
+            <div className="p-3.5 rounded-2xl bg-black/60 backdrop-blur-xl border border-white/25 shadow-[0_12px_40px_rgba(0,0,0,0.6)] flex items-center gap-3.5 hover:border-cyan-400/50 transition-colors">
+              <div className="flex flex-col">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="w-7 h-7 rounded-lg bg-sky-500/20 border border-sky-400/40 flex items-center justify-center">
+                    <Mountain className="w-4 h-4 text-sky-400" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold text-white tracking-tight leading-none">Himalayas</h4>
+                    <p className="text-[11px] text-white/70 mt-0.5">Glaciers Melting</p>
+                  </div>
+                </div>
+
+                <div className="mt-1 flex items-center gap-1.5">
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-rose-500/20 border border-rose-500/30 text-[11px] font-mono font-semibold text-rose-300">
+                    <span className="text-[9px]">▲</span> +0.8°C
+                  </span>
+                  <span className="text-[9px] text-white/50 font-mono">Gangotri AWS</span>
+                </div>
+              </div>
+
+              {/* Glacier Thumbnail */}
+              <div className="relative w-[96px] h-[64px] rounded-xl overflow-hidden border border-white/20 shadow-inner flex-shrink-0">
+                <Image
+                  src="/images/glacier-thumb-hd.jpg"
+                  alt="Himalayas Gangotri glacier telemetry"
+                  fill
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* =========================================================================
+            HUD TELEMETRY CARD 2: GANGA BASIN (Water Levels Rising)
+           ========================================================================= */}
+        <div className="hidden md:block absolute top-[44%] lg:top-[47%] right-[6%] lg:right-[15%] z-20">
+          <div className="relative group transition-all duration-300 hover:scale-[1.03]">
+            {/* River Surface Beacon Anchor */}
+            <div className="absolute -bottom-20 -left-6 flex items-center pointer-events-none">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-80" />
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-cyan-300 shadow-[0_0_12px_#38bdf8]" />
+              </span>
+              {/* Tether Line */}
+              <svg className="w-16 h-20 -ml-2 text-cyan-400/70" viewBox="0 0 65 80" fill="none">
+                <path d="M 6 75 L 30 40 L 60 8" stroke="currentColor" strokeWidth="1.5" strokeDasharray="2 3" />
+              </svg>
+            </div>
+
+            {/* Telemetry Card */}
+            <div className="p-4 rounded-2xl bg-black/60 backdrop-blur-xl border border-white/25 shadow-[0_12px_40px_rgba(0,0,0,0.6)] min-w-[240px] flex flex-col gap-2.5 hover:border-cyan-400/50 transition-colors">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-teal-500/20 border border-teal-400/40 flex items-center justify-center">
+                    <Waves className="w-4 h-4 text-teal-400" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold text-white tracking-tight leading-none">Ganga Basin</h4>
+                    <p className="text-[11px] text-white/70 mt-0.5">Water Levels Rising</p>
+                  </div>
+                </div>
+
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-rose-500/20 border border-rose-500/30 text-[11px] font-mono font-semibold text-rose-300">
+                  <span className="text-[9px]">▲</span> +12 cm
+                </span>
+              </div>
+
+              {/* Hydrograph Sparkline */}
+              <div className="pt-2 border-t border-white/10">
+                <div className="flex items-center justify-between text-[10px] text-white/60 mb-1">
+                  <span>Stage Hydrograph</span>
+                  <span className="font-mono text-cyan-300">49.82 m MSL</span>
+                </div>
+                <svg className="w-full h-8 overflow-visible" viewBox="0 0 160 30" fill="none">
+                  <defs>
+                    <linearGradient id="gangaSparkGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#2DD4BF" stopOpacity="0.45" />
+                      <stop offset="100%" stopColor="#2DD4BF" stopOpacity="0.0" />
+                    </linearGradient>
+                  </defs>
+                  {/* Area */}
+                  <path
+                    d="M 0 25 Q 40 22 80 18 T 160 6 L 160 30 L 0 30 Z"
+                    fill="url(#gangaSparkGradient)"
+                  />
+                  {/* Hydrograph line */}
+                  <path
+                    d="M 0 25 Q 40 22 80 18 T 160 6"
+                    stroke="#2DD4BF"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                  {/* Warning line */}
+                  <line
+                    x1="0"
+                    y1="8"
+                    x2="160"
+                    y2="8"
+                    stroke="#EF4444"
+                    strokeWidth="0.8"
+                    strokeDasharray="3 3"
+                    opacity="0.6"
+                  />
+                  {/* Current reading pulsing node */}
+                  <circle cx="160" cy="6" r="3" fill="#38BDF8" className="animate-pulse" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* =========================================================================
+            HERO MAIN CONTENT (Left Column)
+           ========================================================================= */}
+        <div className="max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10 pt-28 sm:pt-32 lg:pt-36 pb-8 flex-1 flex flex-col justify-between">
+          <div className="max-w-2xl lg:max-w-[620px] flex flex-col items-start">
+            {/* Real-Time Flood Intelligence Eyebrow */}
+            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/15 text-xs text-white/90 shadow-lg mb-6">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </span>
+              <span className="font-medium tracking-wide">Real-Time Flood Intelligence</span>
+              <TrendingUp className="w-3.5 h-3.5 text-[#2DD4BF]" />
+            </div>
+
+            {/* Main Headline with Cyan/Teal Gradient */}
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[62px] font-bold tracking-tight text-white leading-[1.08] mb-5">
+              From the Himalayas<br />
+              to the Plains —<br />
+              <span className="bg-gradient-to-r from-[#2DD4BF] via-[#38BDF8] to-[#60A5FA] bg-clip-text text-transparent">
+                We Track. You Prepare.
+              </span>
+            </h1>
+
+            {/* Subtitle */}
+            <p className="text-base sm:text-lg text-white/80 max-w-xl font-normal leading-relaxed mb-8">
+              Satellite. Sensors. AI. — A complete flood early warning system, from source to shore.
+            </p>
+
+            {/* Call to Action Buttons */}
+            <div className="flex flex-wrap items-center gap-5 mb-10 sm:mb-14">
+              {/* Primary: Explore Platform */}
+              <Link
+                href="/platform"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white text-slate-900 font-semibold text-sm hover:bg-neutral-100 transition-all duration-200 shadow-xl shadow-black/40 group"
+              >
+                <span>Explore the Platform</span>
+                <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
+              </Link>
+
+              {/* Secondary: Watch Demo */}
+              <button
+                type="button"
+                onClick={() => setIsDemoOpen(true)}
+                className="inline-flex items-center gap-3 text-sm font-medium text-white/90 hover:text-white transition-colors group cursor-pointer"
+              >
+                <span className="w-10 h-10 rounded-full bg-white/10 group-hover:bg-white/20 backdrop-blur-md border border-white/25 flex items-center justify-center transition-all duration-200 shadow-lg">
+                  <Play className="w-4 h-4 fill-white text-white ml-0.5" />
+                </span>
+                <span>Watch Demo</span>
+              </button>
+            </div>
+
+            {/* Mobile-Only Telemetry Cards Stack (< 768px) */}
+            <div className="md:hidden w-full grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+              {/* Himalayas Mobile Card */}
+              <div className="p-3 rounded-xl bg-black/60 backdrop-blur-md border border-white/20 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded-lg bg-sky-500/20 border border-sky-400/40 flex items-center justify-center">
+                    <Mountain className="w-3.5 h-3.5 text-sky-400" />
+                  </div>
+                  <div>
+                    <h5 className="text-xs font-semibold text-white">Himalayas (Gangotri)</h5>
+                    <p className="text-[10px] text-white/70">Glaciers Melting</p>
+                  </div>
+                </div>
+                <span className="px-1.5 py-0.5 rounded bg-rose-500/20 border border-rose-500/30 text-[10px] font-mono font-semibold text-rose-300">
+                  ▲ +0.8°C
+                </span>
+              </div>
+
+              {/* Ganga Basin Mobile Card */}
+              <div className="p-3 rounded-xl bg-black/60 backdrop-blur-md border border-white/20 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded-lg bg-teal-500/20 border border-teal-400/40 flex items-center justify-center">
+                    <Waves className="w-3.5 h-3.5 text-teal-400" />
+                  </div>
+                  <div>
+                    <h5 className="text-xs font-semibold text-white">Ganga Basin (Patna)</h5>
+                    <p className="text-[10px] text-white/70">Water Levels Rising</p>
+                  </div>
+                </div>
+                <span className="px-1.5 py-0.5 rounded bg-rose-500/20 border border-rose-500/30 text-[10px] font-mono font-semibold text-rose-300">
+                  ▲ +12 cm
+                </span>
+              </div>
+            </div>
+
+            {/* =========================================================================
+                4-ITEM FEATURE HIGHLIGHTS ROW
+               ========================================================================= */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-6 border-t border-white/15 w-full max-w-2xl mb-8">
+              {/* 1. Satellite Monitoring */}
+              <div className="flex flex-col gap-2">
+                <Radio className="w-5 h-5 text-sky-400" />
+                <span className="text-xs font-semibold text-white/90 leading-tight">
+                  Satellite<br />Monitoring
+                </span>
+              </div>
+
+              {/* 2. AI-Powered Forecasting */}
+              <div className="flex flex-col gap-2">
+                <Cpu className="w-5 h-5 text-teal-400" />
+                <span className="text-xs font-semibold text-white/90 leading-tight">
+                  AI-Powered<br />Forecasting
+                </span>
+              </div>
+
+              {/* 3. Early Alerts */}
+              <div className="flex flex-col gap-2">
+                <Bell className="w-5 h-5 text-amber-400" />
+                <span className="text-xs font-semibold text-white/90 leading-tight">
+                  Early<br />Alerts
+                </span>
+              </div>
+
+              {/* 4. Safer Communities */}
+              <div className="flex flex-col gap-2">
+                <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                <span className="text-xs font-semibold text-white/90 leading-tight">
+                  Safer<br />Communities
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* =========================================================================
+              SCROLL INDICATOR (Bottom Bar)
+             ========================================================================= */}
+          <div className="flex items-center gap-4 w-full pt-2">
+            <div className="flex items-center gap-2.5 text-[11px] font-medium text-white/60 tracking-wider">
+              <span className="w-4 h-6 rounded-full border border-white/30 flex items-start justify-center p-1">
+                <span className="w-1 h-1.5 rounded-full bg-white animate-bounce" />
+              </span>
+              <span>Scroll to explore</span>
+            </div>
+            <div className="flex-1 h-[1px] bg-gradient-to-r from-white/20 via-white/10 to-transparent" />
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================================
+          WATCH DEMO MODAL
+         ========================================================================= */}
+      {isDemoOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="relative w-full max-w-3xl rounded-2xl border border-white/20 bg-[#1E1E1C] p-6 shadow-2xl text-[#D8CBB3]">
+            {/* Close button */}
+            <button
+              onClick={() => setIsDemoOpen(false)}
+              className="absolute top-4 right-4 p-2 rounded-lg border border-white/10 bg-white/5 text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+              aria-label="Close demo"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Modal Header */}
+            <div className="mb-4 pr-10">
+              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#2F6BFF]/20 text-[#38BDF8] border border-[#2F6BFF]/30 text-xs font-mono font-semibold mb-2">
+                <Activity className="w-3.5 h-3.5" /> SURAKSHA HYDROLOGICAL INTELLIGENCE
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-white">
+                Early Warning Operations Walkthrough
+              </h3>
+              <p className="text-xs sm:text-sm text-[#A69B88] mt-1">
+                From Himalayan glacial melt to Gangetic floodplain inundation: experience the live digital twin and decision support system.
+              </p>
+            </div>
+
+            {/* Video / Interactive Preview Frame */}
+            <div className="relative aspect-video rounded-xl overflow-hidden border border-white/15 bg-black/60 mb-6 group">
+              <Image
+                src="/images/hero-himalayas-ganga.jpg"
+                alt="SURAKSHA Platform Preview"
+                fill
+                className="object-cover opacity-80"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+              
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
+                <div className="w-16 h-16 rounded-full bg-[#2F6BFF] flex items-center justify-center shadow-xl shadow-[#2F6BFF]/40 text-white mb-3">
+                  <Play className="w-6 h-6 fill-white ml-1" />
+                </div>
+                <h4 className="text-lg font-bold text-white mb-1">Interactive Demo Simulation</h4>
+                <p className="text-xs text-white/70 max-w-md">
+                  Explore hydrodynamic reach routing, automated CAP alert generation, and gauge ensemble validation in our sandbox lab.
+                </p>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="flex flex-wrap items-center justify-end gap-3 pt-2 border-t border-white/10">
+              <button
+                onClick={() => setIsDemoOpen(false)}
+                className="px-4 py-2 rounded-lg border border-white/15 text-xs text-white/80 hover:bg-white/5 transition-colors"
+              >
+                Close Preview
+              </button>
+              <Link
+                href="/demo-lab"
+                onClick={() => setIsDemoOpen(false)}
+                className="px-4 py-2 rounded-lg bg-[#292925] border border-white/20 text-xs text-white hover:bg-[#33332E] transition-colors flex items-center gap-1.5"
+              >
+                <span>Open Demo Lab</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </Link>
+              <Link
+                href="/platform"
+                onClick={() => setIsDemoOpen(false)}
+                className="px-5 py-2 rounded-lg bg-[#2F6BFF] hover:bg-[#4B80FF] text-xs font-semibold text-white transition-colors flex items-center gap-1.5"
+              >
+                <span>Launch Digital Twin</span>
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
