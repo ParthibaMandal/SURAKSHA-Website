@@ -398,18 +398,18 @@ export default function HomePage() {
               <Link href="/demo-lab">
                 <button
                   type="button"
-                  className="px-6 py-3 rounded-full bg-white text-black font-semibold text-xs sm:text-sm hover:bg-neutral-100 transition-all shadow-xl shadow-black/40 flex items-center gap-2 cursor-pointer"
+                  className="btn-glass-primary px-6 py-3 text-xs sm:text-sm font-semibold text-white group cursor-pointer"
                 >
-                  <span>Open Simulation Lab</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <span className="relative z-10">Open Simulation Lab</span>
+                  <ArrowRight className="relative z-10 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1.5" />
                 </button>
               </Link>
               <Link href="/admin">
                 <button
                   type="button"
-                  className="px-6 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/20 text-xs sm:text-sm font-semibold text-white transition-colors cursor-pointer"
+                  className="btn-glass-secondary px-6 py-3 text-xs sm:text-sm font-semibold text-white cursor-pointer"
                 >
-                  <span>Operations Portal</span>
+                  <span className="relative z-10">Operations Portal</span>
                 </button>
               </Link>
             </div>

@@ -114,27 +114,27 @@ export const HimalayasToPlainsHero: React.FC = () => {
               Satellite. Sensors. AI. — A complete flood early warning system, from source to shore.
             </p>
 
-            {/* Call to Action Buttons */}
-            <div className="flex flex-wrap items-center gap-5 mb-4">
-              {/* Primary: Explore Platform */}
+            {/* Call to Action Buttons (Animated Glassmorphism) */}
+            <div className="flex flex-wrap items-center gap-4 mb-4">
+              {/* Primary Glass Button: Explore Platform */}
               <Link
                 href="/platform"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white text-black font-semibold text-sm hover:bg-neutral-100 transition-all duration-200 shadow-xl shadow-black/40 group"
+                className="btn-glass-primary px-7 py-3.5 text-sm font-semibold text-white group cursor-pointer"
               >
-                <span>Explore the Platform</span>
-                <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
+                <span className="relative z-10">Explore the Platform</span>
+                <ArrowRight className="relative z-10 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1.5" />
               </Link>
 
-              {/* Secondary: Watch Demo */}
+              {/* Secondary Glass Button: Watch Demo */}
               <button
                 type="button"
                 onClick={() => setIsDemoOpen(true)}
-                className="inline-flex items-center gap-3 text-sm font-medium text-white/90 hover:text-white transition-colors group cursor-pointer"
+                className="btn-glass-secondary pl-2.5 pr-6 py-2 text-sm font-medium text-white/95 hover:text-white group cursor-pointer"
               >
-                <span className="w-10 h-10 rounded-full bg-white/10 group-hover:bg-white/20 backdrop-blur-md border border-white/25 flex items-center justify-center transition-all duration-200 shadow-lg">
-                  <Play className="w-4 h-4 fill-white text-white ml-0.5" />
+                <span className="relative z-10 w-9 h-9 rounded-full bg-white/15 group-hover:bg-white/25 border border-white/30 flex items-center justify-center transition-all duration-300 group-hover:scale-110 shadow-inner">
+                  <Play className="w-3.5 h-3.5 fill-white text-white ml-0.5 transition-transform duration-300 group-hover:scale-110" />
                 </span>
-                <span>Watch Demo</span>
+                <span className="relative z-10">Watch Demo</span>
               </button>
             </div>
           </div>
@@ -248,25 +248,25 @@ export const HimalayasToPlainsHero: React.FC = () => {
             <div className="flex flex-wrap items-center justify-end gap-3 pt-2 border-t border-white/10">
               <button
                 onClick={() => setIsDemoOpen(false)}
-                className="px-5 py-2.5 rounded-full border border-white/15 text-xs text-zinc-400 hover:text-white hover:bg-white/5 transition-colors"
+                className="btn-glass-secondary px-5 py-2.5 text-xs text-zinc-300 hover:text-white cursor-pointer"
               >
-                Close Preview
+                <span className="relative z-10">Close Preview</span>
               </button>
               <Link
                 href="/demo-lab"
                 onClick={() => setIsDemoOpen(false)}
-                className="px-5 py-2.5 rounded-full bg-white/5 border border-white/20 text-xs text-white hover:bg-white/10 transition-colors flex items-center gap-1.5"
+                className="btn-glass-secondary px-5 py-2.5 text-xs text-white group"
               >
-                <span>Open Simulation Lab</span>
-                <ExternalLink className="w-3.5 h-3.5" />
+                <span className="relative z-10">Open Simulation Lab</span>
+                <ExternalLink className="relative z-10 w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </Link>
               <Link
                 href="/platform"
                 onClick={() => setIsDemoOpen(false)}
-                className="px-6 py-2.5 rounded-full bg-white text-black hover:bg-neutral-100 text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-lg"
+                className="btn-glass-primary px-6 py-2.5 text-xs font-semibold text-white group"
               >
-                <span>Launch Digital Twin</span>
-                <ChevronRight className="w-4 h-4" />
+                <span className="relative z-10">Launch Digital Twin</span>
+                <ChevronRight className="relative z-10 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
             </div>
           </div>

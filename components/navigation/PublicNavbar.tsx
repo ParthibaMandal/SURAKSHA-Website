@@ -166,10 +166,10 @@ export const PublicNavbar: React.FC = () => {
             <div className="flex items-center gap-3">
               <Link
                 href={portalHref}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-white/20 bg-white/10 hover:bg-white/20 text-xs font-semibold text-white transition-all shadow-sm"
+                className="btn-glass-primary px-4 py-2 text-xs font-semibold text-white group"
               >
-                <span>{portalLabel}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <span className="relative z-10">{portalLabel}</span>
+                <ArrowRight className="relative z-10 w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
 
               <div className="relative">
@@ -223,10 +223,10 @@ export const PublicNavbar: React.FC = () => {
           ) : (
             <Link
               href="/auth/login"
-              className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full border border-white/20 bg-white/5 hover:bg-white/15 hover:border-white/40 text-xs font-semibold text-white transition-all shadow-sm"
+              className="btn-glass-primary px-5 py-2 text-xs font-semibold text-white group"
             >
-              <span>Sign In</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <span className="relative z-10">Sign In</span>
+              <ArrowRight className="relative z-10 w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
           )}
         </div>
