@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { PublicNavbar } from "@/components/navigation/PublicNavbar";
 import { PublicFooter } from "@/components/navigation/PublicFooter";
+import { AuthProvider } from "@/lib/supabase/auth-context";
 
 export const metadata: Metadata = {
   title: "SURAKSHA | Hydrological Intelligence & Flood Decision Support",
@@ -28,9 +29,11 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-black text-white flex flex-col min-h-screen selection:bg-white/20 selection:text-white">
-        <PublicNavbar />
-        <main className="flex-1">{children}</main>
-        <PublicFooter />
+        <AuthProvider>
+          <PublicNavbar />
+          <main className="flex-1">{children}</main>
+          <PublicFooter />
+        </AuthProvider>
       </body>
     </html>
   );

@@ -13,8 +13,10 @@ import {
   ShieldCheck,
   PhoneCall,
 } from "lucide-react";
+import { useAuth } from "@/lib/supabase/auth-context";
 
 export default function CitizenDashboardPage() {
+  const { profile } = useAuth();
   const [checklist, setChecklist] = useState([
     {
       id: "c1",
@@ -58,7 +60,7 @@ export default function CitizenDashboardPage() {
             Personal Flood-Safety Dashboard
           </h1>
           <p className="text-xs text-[#A69B88] mt-1">
-            Monitor saved locations, human-approved public advisories, preparedness checklists, and SOS assistance.
+            {profile?.full_name ? `Welcome back, ${profile.full_name} · ` : ""}Monitor saved locations, human-approved public advisories, preparedness checklists, and SOS assistance.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2.5">

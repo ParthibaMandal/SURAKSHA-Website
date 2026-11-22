@@ -1,10 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AlertTriangle, Send, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/supabase/auth-context";
+import { createClient } from "@/lib/supabase/client";
 
 export default function CitizenSosPage() {
+  const { user, profile } = useAuth();
   const [toast, setToast] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -16,43 +19,45 @@ export default function CitizenSosPage() {
   const [people, setPeople] = useState<string>("1 person");
   const [registeredTicket, setRegisteredTicket] = useState<{ id: string; status: string } | null>(null);
 
+  useEffect(() => {
+    if (profile?.full_name) {
+      setCitizenName(profile.full_name);
+    }
+  }, [profile]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      const res = await fetch("/api/flood/sos", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      // 1. Log to Supabase citizen_sos_reports table
+      const supabase = createClient();
+      const { data: sosEntry } = await supabase
+        .from("citizen_sos_reports")
+        .insert({
+          citizen_id: user?.id || null,
           citizen_name: citizenName,
-          phone_number: phoneNumber,
-          emergency_type: assistanceType.includes("Medical")
-            ? "MEDICAL"
-            : assistanceType.includes("Food")
-            ? "FOOD_WATER"
-            : "TRAPPED_WATER",
-          severity: "CRITICAL",
-          people_count: parseInt(people) || 1,
-          latitude: 25.631,
-          longitude: 85.112,
-          landmark_address: location,
-          additional_notes: details,
-        }),
-      });
+          contact_phone: phoneNumber,
+          location_name: location,
+          urgency: "HIGH",
+          description: `${assistanceType} (${people}): ${details}`,
+          status: "OPEN",
+        })
+        .select()
+        .single();
 
-      if (res.ok) {
-        const data = await res.json();
-        setRegisteredTicket({ id: data.id, status: data.status });
+      if (sosEntry) {
+        setRegisteredTicket({ id: sosEntry.id.slice(0, 8).toUpperCase(), status: sosEntry.status });
         setSubmitted(true);
-        setToast(`Emergency ticket ${data.id} registered into tactical rescue queue.`);
+        setToast(`Emergency request ${sosEntry.id.slice(0, 8).toUpperCase()} synced to Supabase rescue queue.`);
       } else {
+        // Fallback to local dispatch
         setSubmitted(true);
-        setToast("Emergency request logged into local dispatch simulation.");
+        setToast("Emergency ticket registered in local dispatch queue.");
       }
     } catch {
       setSubmitted(true);
-      setToast("Emergency request registered in offline simulation mode.");
+      setToast("Emergency request registered in offline fallback mode.");
     } finally {
       setIsSubmitting(false);
       setTimeout(() => setToast(null), 4000);

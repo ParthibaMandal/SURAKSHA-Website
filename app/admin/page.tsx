@@ -17,6 +17,8 @@ import {
   Clock,
   ArrowUpRight,
 } from "lucide-react";
+import { useAuth } from "@/lib/supabase/auth-context";
+import { createClient } from "@/lib/supabase/client";
 
 interface StationRow {
   id: string;
@@ -157,10 +159,51 @@ export default function AdminOverviewPage() {
       "Values displayed reflect example research telemetry and synthetic scenarios. Not connected to live government warning feeds.",
   });
 
+  const { user, profile } = useAuth();
+  const [stations, setStations] = useState<StationRow[]>(COMMAND_STATIONS);
   const [stationSearch, setStationSearch] = useState("");
   const [riskFilter, setRiskFilter] = useState<"ALL" | "NORMAL" | "ADVISORY" | "WARNING">("ALL");
   const [surgePreview, setSurgePreview] = useState(false);
   const [alertItems, setAlertItems] = useState<AlertWorkflowItem[]>(INITIAL_ALERTS);
+
+  useEffect(() => {
+    async function loadSupabaseData() {
+      try {
+        const supabase = createClient();
+        const { data: stnData } = await supabase.from("monitoring_stations").select("*");
+        if (stnData && stnData.length > 0) {
+          const mapped: StationRow[] = stnData.map((s) => ({
+            id: s.id,
+            name: s.name,
+            river: s.river,
+            stage: s.current_stage,
+            warning: s.warning_level,
+            danger: s.danger_level,
+            trend: s.trend,
+            lastObs: "live sync",
+            dataState: "SAMPLE",
+            risk: s.status === "WARNING" ? "WARNING" : s.status === "ADVISORY" ? "ADVISORY" : "NORMAL",
+          }));
+          setStations(mapped);
+        }
+
+        const { data: alertData } = await supabase.from("flood_alerts").select("*");
+        if (alertData && alertData.length > 0) {
+          const mappedAlerts: AlertWorkflowItem[] = alertData.map((a) => ({
+            id: a.id,
+            title: a.headline,
+            sector: a.area_desc,
+            timestamp: new Date(a.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            state: a.state as AlertWorkflowItem["state"],
+          }));
+          setAlertItems(mappedAlerts);
+        }
+      } catch (err) {
+        console.warn("Supabase telemetry fetch:", err);
+      }
+    }
+    loadSupabaseData();
+  }, []);
 
   useEffect(() => {
     async function checkHealth() {
@@ -183,7 +226,7 @@ export default function AdminOverviewPage() {
     checkHealth();
   }, []);
 
-  const filteredStations = COMMAND_STATIONS.filter((st) => {
+  const filteredStations = stations.filter((st) => {
     const matchesSearch =
       st.id.toLowerCase().includes(stationSearch.toLowerCase()) ||
       st.name.toLowerCase().includes(stationSearch.toLowerCase()) ||
@@ -192,16 +235,26 @@ export default function AdminOverviewPage() {
     return matchesSearch && matchesRisk;
   });
 
-  const handleAdvanceAlert = (id: string) => {
+  const handleAdvanceAlert = async (id: string) => {
+    const item = alertItems.find((a) => a.id === id);
+    if (!item) return;
+    const nextState =
+      item.state === "DRAFT"
+        ? "PENDING_REVIEW"
+        : item.state === "PENDING_REVIEW"
+        ? "APPROVED"
+        : "DISPATCHED";
+
     setAlertItems((prev) =>
-      prev.map((item) => {
-        if (item.id !== id) return item;
-        if (item.state === "DRAFT") return { ...item, state: "PENDING_REVIEW" };
-        if (item.state === "PENDING_REVIEW") return { ...item, state: "APPROVED" };
-        if (item.state === "APPROVED") return { ...item, state: "DISPATCHED" };
-        return item;
-      })
+      prev.map((it) => (it.id === id ? { ...it, state: nextState } : it))
     );
+
+    try {
+      const supabase = createClient();
+      await supabase.from("flood_alerts").update({ state: nextState }).eq("id", id);
+    } catch {
+      // offline fallback
+    }
   };
 
   return (
@@ -214,7 +267,7 @@ export default function AdminOverviewPage() {
             Operations Overview
           </h1>
           <p className="text-xs text-[#A69B88] mt-1 font-mono">
-            Ganga Basin · Patna Study Area · Scientific Decision-Support Workspace
+            Ganga Basin · Patna Study Area · Duty Officer: <span className="text-white font-semibold">{profile?.full_name || "Duty Hydrologist"}</span>
           </p>
         </div>
 

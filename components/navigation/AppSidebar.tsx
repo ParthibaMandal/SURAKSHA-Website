@@ -21,6 +21,7 @@ import {
   Menu,
   X,
 } from "lucide-react";
+import { useAuth } from "@/lib/supabase/auth-context";
 
 interface AppSidebarProps {
   role: "citizen" | "admin";
@@ -39,23 +40,14 @@ interface NavGroup {
 export const AppSidebar: React.FC<AppSidebarProps> = ({ role }) => {
   const pathname = usePathname();
   const router = useRouter();
+  const { user, profile, signOut } = useAuth();
   const isAdmin = role === "admin";
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const isAuthenticated = Boolean(user);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const auth = localStorage.getItem("suraksha_auth");
-      setIsAuthenticated(Boolean(auth));
-    }
-  }, []);
-
-  const handleSignOut = (e: React.MouseEvent) => {
+  const handleSignOut = async (e: React.MouseEvent) => {
     e.preventDefault();
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("suraksha_auth");
-      setIsAuthenticated(false);
-    }
+    await signOut();
     router.push("/auth/login");
   };
 
@@ -203,14 +195,14 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ role }) => {
         {/* User Chip */}
         <div className="p-2.5 rounded-2xl bg-[#0A0A0A] border border-white/10 flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-white/10 border border-white/20 grid place-items-center text-xs font-mono font-bold text-white shrink-0">
-            {isAdmin ? "OP" : "CZ"}
+            {profile?.role === "admin" || profile?.role === "hydrologist" || profile?.role === "operator" ? "OP" : "CZ"}
           </div>
           <div className="overflow-hidden">
             <strong className="text-xs text-white block truncate whitespace-nowrap">
-              {isAdmin ? "Duty Hydrologist" : "Citizen Account"}
+              {profile?.full_name || (isAdmin ? "Duty Hydrologist" : "Citizen Account")}
             </strong>
             <small className="text-[10px] font-mono text-zinc-500 block truncate whitespace-nowrap">
-              {isAdmin ? "Ganga Basin Command" : "Patna Reach (Preview)"}
+              {profile?.email || (isAdmin ? "Ganga Basin Command" : "Patna Reach (Preview)")}
             </small>
           </div>
         </div>
