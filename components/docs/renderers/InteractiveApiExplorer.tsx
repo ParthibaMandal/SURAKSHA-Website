@@ -310,17 +310,17 @@ print(response.json())`;
   return (
     <div className="space-y-8 my-8">
       {/* Top Protocol & Base URL Card */}
-      <div className="p-5 rounded-2xl border border-[#D8CBB3]/20 bg-[#242421] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="p-5 rounded-2xl border border-[#A1A1AA]/20 bg-[#242421] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-pulse" />
-            <span className="font-mono text-xs uppercase tracking-wider text-[#EDE4D3] font-semibold">
+            <span className="font-mono text-xs uppercase tracking-wider text-[#FFFFFF] font-semibold">
               SURAKSHA REST API Gateway · FastAPI Engine
             </span>
           </div>
           <div className="flex items-center gap-2 text-xs font-mono text-[#A69B88]">
             <span>Base URL:</span>
-            <code className="text-[#38BDF8] bg-[#1E1E1C] px-2 py-0.5 rounded border border-[#D8CBB3]/15">
+            <code className="text-[#E4E4E7] bg-[#000000] px-2 py-0.5 rounded border border-[#A1A1AA]/15">
               http://localhost:8000/api/v1/flood
             </code>
           </div>
@@ -328,7 +328,7 @@ print(response.json())`;
 
         <button
           onClick={() => handleCopy("base-url", "http://localhost:8000/api/v1/flood")}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1E1E1C] hover:bg-[#2D2D29] border border-[#D8CBB3]/20 text-xs text-[#EDE4D3] transition-colors shrink-0"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#000000] hover:bg-[#2D2D29] border border-[#A1A1AA]/20 text-xs text-[#FFFFFF] transition-colors shrink-0"
         >
           {copiedId === "base-url" ? (
             <>
@@ -347,15 +347,15 @@ print(response.json())`;
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         {/* Method filter pills */}
-        <div className="flex items-center gap-1.5 bg-[#242421] p-1 rounded-xl border border-[#D8CBB3]/15 text-xs">
+        <div className="flex items-center gap-1.5 bg-[#242421] p-1 rounded-xl border border-[#A1A1AA]/15 text-xs">
           {["ALL", "GET", "POST"].map((method) => (
             <button
               key={method}
               onClick={() => setSelectedMethod(method)}
               className={`px-3 py-1 rounded-lg font-mono text-[11px] transition-colors ${
                 selectedMethod === method
-                  ? "bg-[#06B6D4] text-white font-semibold shadow"
-                  : "text-[#A69B88] hover:text-[#EDE4D3]"
+                  ? "bg-[#FFFFFF] text-white font-semibold shadow"
+                  : "text-[#A69B88] hover:text-[#FFFFFF]"
               }`}
             >
               {method}
@@ -371,7 +371,7 @@ print(response.json())`;
             placeholder="Search API endpoints..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#242421] border border-[#D8CBB3]/20 rounded-xl pl-9 pr-4 py-1.5 text-xs text-[#EDE4D3] placeholder-[#A69B88] focus:outline-none focus:border-[#06B6D4]"
+            className="w-full bg-[#242421] border border-[#A1A1AA]/20 rounded-xl pl-9 pr-4 py-1.5 text-xs text-[#FFFFFF] placeholder-[#A69B88] focus:outline-none focus:border-[#FFFFFF]"
           />
         </div>
       </div>
@@ -386,27 +386,27 @@ print(response.json())`;
           return (
             <div
               key={ep.id}
-              className="rounded-2xl border border-[#D8CBB3]/15 bg-[#242421] overflow-hidden shadow-md"
+              className="rounded-2xl border border-[#A1A1AA]/15 bg-[#242421] overflow-hidden shadow-md"
             >
               {/* Endpoint Header Bar */}
-              <div className="p-4 sm:p-5 border-b border-[#D8CBB3]/10 bg-[#292925] flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div className="p-4 sm:p-5 border-b border-[#A1A1AA]/10 bg-[#0A0A0A] flex flex-col md:flex-row md:items-center justify-between gap-3">
                 <div className="flex flex-wrap items-center gap-3">
                   <span
                     className={`px-2.5 py-1 rounded-md text-xs font-mono font-bold tracking-wider ${
                       ep.method === "GET"
                         ? "bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/40"
-                        : "bg-[#3B82F6]/20 text-[#38BDF8] border border-[#3B82F6]/40"
+                        : "bg-[#3B82F6]/20 text-[#E4E4E7] border border-[#3B82F6]/40"
                     }`}
                   >
                     {ep.method}
                   </span>
-                  <span className="font-mono text-sm font-semibold text-[#EDE4D3] tracking-tight">
+                  <span className="font-mono text-sm font-semibold text-[#FFFFFF] tracking-tight">
                     {ep.path}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-2 text-xs">
-                  <span className="px-2 py-0.5 rounded font-mono text-[10px] bg-[#1E1E1C] text-[#A69B88] border border-[#D8CBB3]/10">
+                  <span className="px-2 py-0.5 rounded font-mono text-[10px] bg-[#000000] text-[#A69B88] border border-[#A1A1AA]/10">
                     Auth: {ep.auth}
                   </span>
                   <span className="px-2 py-0.5 rounded font-mono text-[10px] bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30">
@@ -418,7 +418,7 @@ print(response.json())`;
               {/* Endpoint Description */}
               <div className="p-5 space-y-4">
                 <div>
-                  <h4 className="font-semibold text-sm text-[#EDE4D3] mb-1">
+                  <h4 className="font-semibold text-sm text-[#FFFFFF] mb-1">
                     {ep.summary}
                   </h4>
                   <p className="text-xs text-[#A69B88] leading-relaxed">
@@ -432,9 +432,9 @@ print(response.json())`;
                     <span className="font-mono text-[11px] uppercase tracking-wider text-[#A69B88] block">
                       Parameters
                     </span>
-                    <div className="border border-[#D8CBB3]/10 rounded-xl overflow-hidden text-xs">
+                    <div className="border border-[#A1A1AA]/10 rounded-xl overflow-hidden text-xs">
                       <table className="w-full text-left">
-                        <thead className="bg-[#1E1E1C] text-[#A69B88] border-b border-[#D8CBB3]/10 font-mono text-[11px]">
+                        <thead className="bg-[#000000] text-[#A69B88] border-b border-[#A1A1AA]/10 font-mono text-[11px]">
                           <tr>
                             <th className="p-2.5">Field</th>
                             <th className="p-2.5">Type</th>
@@ -442,10 +442,10 @@ print(response.json())`;
                             <th className="p-2.5">Description</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-[#D8CBB3]/5 bg-[#242421]/60">
+                        <tbody className="divide-y divide-[#A1A1AA]/5 bg-[#242421]/60">
                           {ep.parameters.map((param) => (
                             <tr key={param.name}>
-                              <td className="p-2.5 font-mono text-[#38BDF8] font-medium">
+                              <td className="p-2.5 font-mono text-[#E4E4E7] font-medium">
                                 {param.name}
                               </td>
                               <td className="p-2.5 font-mono text-[11px] text-[#A69B88]">
@@ -462,7 +462,7 @@ print(response.json())`;
                                   </span>
                                 )}
                               </td>
-                              <td className="p-2.5 text-[#D8CBB3] text-xs">
+                              <td className="p-2.5 text-[#A1A1AA] text-xs">
                                 {param.description}
                               </td>
                             </tr>
@@ -475,14 +475,14 @@ print(response.json())`;
 
                 {/* Request / Response Tabbed Box */}
                 <div className="pt-2 space-y-2">
-                  <div className="flex items-center justify-between border-b border-[#D8CBB3]/10 pb-1">
+                  <div className="flex items-center justify-between border-b border-[#A1A1AA]/10 pb-1">
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => setTab(ep.id, "response")}
                         className={`px-2.5 py-1 rounded-md text-[11px] font-mono transition-colors ${
                           tab === "response"
-                            ? "bg-[#292925] text-[#EDE4D3] font-semibold border border-[#D8CBB3]/20"
-                            : "text-[#A69B88] hover:text-[#EDE4D3]"
+                            ? "bg-[#0A0A0A] text-[#FFFFFF] font-semibold border border-[#A1A1AA]/20"
+                            : "text-[#A69B88] hover:text-[#FFFFFF]"
                         }`}
                       >
                         Response (JSON)
@@ -491,8 +491,8 @@ print(response.json())`;
                         onClick={() => setTab(ep.id, "curl")}
                         className={`px-2.5 py-1 rounded-md text-[11px] font-mono transition-colors ${
                           tab === "curl"
-                            ? "bg-[#292925] text-[#EDE4D3] font-semibold border border-[#D8CBB3]/20"
-                            : "text-[#A69B88] hover:text-[#EDE4D3]"
+                            ? "bg-[#0A0A0A] text-[#FFFFFF] font-semibold border border-[#A1A1AA]/20"
+                            : "text-[#A69B88] hover:text-[#FFFFFF]"
                         }`}
                       >
                         cURL Request
@@ -501,8 +501,8 @@ print(response.json())`;
                         onClick={() => setTab(ep.id, "python")}
                         className={`px-2.5 py-1 rounded-md text-[11px] font-mono transition-colors ${
                           tab === "python"
-                            ? "bg-[#292925] text-[#EDE4D3] font-semibold border border-[#D8CBB3]/20"
-                            : "text-[#A69B88] hover:text-[#EDE4D3]"
+                            ? "bg-[#0A0A0A] text-[#FFFFFF] font-semibold border border-[#A1A1AA]/20"
+                            : "text-[#A69B88] hover:text-[#FFFFFF]"
                         }`}
                       >
                         Python (httpx)
@@ -520,7 +520,7 @@ print(response.json())`;
                             : pyCode
                         )
                       }
-                      className="flex items-center gap-1 text-[11px] font-mono text-[#A69B88] hover:text-[#EDE4D3] transition-colors"
+                      className="flex items-center gap-1 text-[11px] font-mono text-[#A69B88] hover:text-[#FFFFFF] transition-colors"
                     >
                       {copiedId === ep.id ? (
                         <>
@@ -537,7 +537,7 @@ print(response.json())`;
                   </div>
 
                   {/* Code Container */}
-                  <div className="rounded-xl border border-[#D8CBB3]/15 bg-[#141413] p-4 overflow-x-auto text-xs font-mono text-[#D8CBB3] leading-relaxed">
+                  <div className="rounded-xl border border-[#A1A1AA]/15 bg-[#141413] p-4 overflow-x-auto text-xs font-mono text-[#A1A1AA] leading-relaxed">
                     <pre>
                       <code>
                         {tab === "response"

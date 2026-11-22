@@ -124,13 +124,13 @@ export function InteractiveArchitectureView() {
   return (
     <div className="space-y-8 my-8">
       {/* View Switcher Tabs */}
-      <div className="flex items-center gap-2 border-b border-[#D8CBB3]/15 pb-2">
+      <div className="flex items-center gap-2 border-b border-[#A1A1AA]/15 pb-2">
         <button
           onClick={() => setActiveTab("agents")}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
             activeTab === "agents"
-              ? "bg-[#06B6D4] text-white shadow-lg shadow-[#06B6D4]/20"
-              : "text-[#A69B88] hover:text-[#EDE4D3] hover:bg-[#292925]"
+              ? "bg-[#FFFFFF] text-white shadow-lg shadow-[#FFFFFF]/20"
+              : "text-[#A69B88] hover:text-[#FFFFFF] hover:bg-[#0A0A0A]"
           }`}
         >
           <Network className="w-4 h-4" />
@@ -141,8 +141,8 @@ export function InteractiveArchitectureView() {
           onClick={() => setActiveTab("gates")}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
             activeTab === "gates"
-              ? "bg-[#06B6D4] text-white shadow-lg shadow-[#06B6D4]/20"
-              : "text-[#A69B88] hover:text-[#EDE4D3] hover:bg-[#292925]"
+              ? "bg-[#FFFFFF] text-white shadow-lg shadow-[#FFFFFF]/20"
+              : "text-[#A69B88] hover:text-[#FFFFFF] hover:bg-[#0A0A0A]"
           }`}
         >
           <Shield className="w-4 h-4" />
@@ -153,8 +153,8 @@ export function InteractiveArchitectureView() {
           onClick={() => setActiveTab("adrs")}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
             activeTab === "adrs"
-              ? "bg-[#06B6D4] text-white shadow-lg shadow-[#06B6D4]/20"
-              : "text-[#A69B88] hover:text-[#EDE4D3] hover:bg-[#292925]"
+              ? "bg-[#FFFFFF] text-white shadow-lg shadow-[#FFFFFF]/20"
+              : "text-[#A69B88] hover:text-[#FFFFFF] hover:bg-[#0A0A0A]"
           }`}
         >
           <Layers className="w-4 h-4" />
@@ -176,20 +176,20 @@ export function InteractiveArchitectureView() {
                     onClick={() => setSelectedAgentId(agent.id)}
                     className={`cursor-pointer p-4 rounded-xl border transition-all flex flex-col justify-between ${
                       isSelected
-                        ? "bg-[#292925] border-[#06B6D4] shadow-lg shadow-[#06B6D4]/10"
-                        : "bg-[#242421] border-[#D8CBB3]/15 hover:border-[#D8CBB3]/30"
+                        ? "bg-[#0A0A0A] border-[#FFFFFF] shadow-lg shadow-[#FFFFFF]/10"
+                        : "bg-[#242421] border-[#A1A1AA]/15 hover:border-[#A1A1AA]/30"
                     }`}
                   >
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="font-mono text-[10px] text-[#06B6D4] uppercase font-bold tracking-wider">
+                        <span className="font-mono text-[10px] text-[#FFFFFF] uppercase font-bold tracking-wider">
                           Specialist Agent
                         </span>
                         <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30">
                           {agent.contractStatus}
                         </span>
                       </div>
-                      <h4 className="font-bold text-sm text-[#EDE4D3]">
+                      <h4 className="font-bold text-sm text-[#FFFFFF]">
                         {agent.name}
                       </h4>
                       <p className="text-xs text-[#A69B88] line-clamp-2">
@@ -197,7 +197,7 @@ export function InteractiveArchitectureView() {
                       </p>
                     </div>
 
-                    <div className="pt-3 border-t border-[#D8CBB3]/10 mt-3 flex items-center justify-between text-[11px] text-[#A69B88]">
+                    <div className="pt-3 border-t border-[#A1A1AA]/10 mt-3 flex items-center justify-between text-[11px] text-[#A69B88]">
                       <span>{agent.inputs.length} Inputs</span>
                       <span>{agent.outputs.length} Outputs</span>
                     </div>
@@ -207,10 +207,10 @@ export function InteractiveArchitectureView() {
             </div>
 
             {/* Right Col: Selected Agent Detail Inspector */}
-            <div className="p-5 rounded-2xl border border-[#D8CBB3]/20 bg-[#292925] flex flex-col justify-between space-y-4">
+            <div className="p-5 rounded-2xl border border-[#A1A1AA]/20 bg-[#0A0A0A] flex flex-col justify-between space-y-4">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono text-[#06B6D4] uppercase font-semibold">
+                  <span className="text-xs font-mono text-[#FFFFFF] uppercase font-semibold">
                     Agent Contract Specification
                   </span>
                   <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30">
@@ -219,7 +219,7 @@ export function InteractiveArchitectureView() {
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-bold text-[#EDE4D3]">
+                  <h3 className="text-lg font-bold text-[#FFFFFF]">
                     {selectedAgent.name}
                   </h3>
                   <p className="text-xs text-[#A69B88] mt-1">
@@ -236,9 +236,9 @@ export function InteractiveArchitectureView() {
                     {selectedAgent.inputs.map((inp, idx) => (
                       <div
                         key={idx}
-                        className="p-2 rounded-lg bg-[#1E1E1C] border border-[#D8CBB3]/10 text-xs text-[#EDE4D3] font-mono flex items-center gap-2"
+                        className="p-2 rounded-lg bg-[#000000] border border-[#A1A1AA]/10 text-xs text-[#FFFFFF] font-mono flex items-center gap-2"
                       >
-                        <ArrowRight className="w-3 h-3 text-[#06B6D4] shrink-0" />
+                        <ArrowRight className="w-3 h-3 text-[#FFFFFF] shrink-0" />
                         <span>{inp}</span>
                       </div>
                     ))}
@@ -254,7 +254,7 @@ export function InteractiveArchitectureView() {
                     {selectedAgent.outputs.map((out, idx) => (
                       <div
                         key={idx}
-                        className="p-2 rounded-lg bg-[#1E1E1C] border border-[#D8CBB3]/10 text-xs text-[#10B981] font-mono flex items-center gap-2"
+                        className="p-2 rounded-lg bg-[#000000] border border-[#A1A1AA]/10 text-xs text-[#10B981] font-mono flex items-center gap-2"
                       >
                         <CheckCircle2 className="w-3 h-3 text-[#10B981] shrink-0" />
                         <span>{out}</span>
@@ -264,8 +264,8 @@ export function InteractiveArchitectureView() {
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-[#D8CBB3]/10 text-[11px] text-[#A69B88] font-mono">
-                Source: <code className="text-[#38BDF8]">src/suraksha/disasters/flood/agents/</code>
+              <div className="pt-4 border-t border-[#A1A1AA]/10 text-[11px] text-[#A69B88] font-mono">
+                Source: <code className="text-[#E4E4E7]">src/suraksha/disasters/flood/agents/</code>
               </div>
             </div>
           </div>
@@ -275,7 +275,7 @@ export function InteractiveArchitectureView() {
       {/* Tab 2: Three-Gate Jev Supervisor */}
       {activeTab === "gates" && (
         <div className="space-y-6">
-          <div className="p-4 rounded-xl border border-[#06B6D4]/30 bg-[#06B6D4]/10 text-xs text-[#EDE4D3] leading-relaxed">
+          <div className="p-4 rounded-xl border border-[#FFFFFF]/30 bg-[#FFFFFF]/10 text-xs text-[#FFFFFF] leading-relaxed">
             <strong className="text-white">Why Jev System One Supervision Matters:</strong> Language and neural models can hallucinate sudden catastrophic surges or miss critical physical warnings. SURAKSHA embeds a deterministic three-tier supervisory harness that enforces hard physical invariants before, during, and after inference.
           </div>
 
@@ -283,11 +283,11 @@ export function InteractiveArchitectureView() {
             {GATES.map((gate) => (
               <div
                 key={gate.id}
-                className="p-5 rounded-2xl border border-[#D8CBB3]/20 bg-[#242421] flex flex-col justify-between space-y-4"
+                className="p-5 rounded-2xl border border-[#A1A1AA]/20 bg-[#242421] flex flex-col justify-between space-y-4"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="w-7 h-7 rounded-lg bg-[#06B6D4]/20 text-[#06B6D4] font-mono font-bold flex items-center justify-center text-xs">
+                    <span className="w-7 h-7 rounded-lg bg-[#FFFFFF]/20 text-[#FFFFFF] font-mono font-bold flex items-center justify-center text-xs">
                       {gate.num}
                     </span>
                     <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30">
@@ -296,17 +296,17 @@ export function InteractiveArchitectureView() {
                   </div>
 
                   <div>
-                    <h4 className="font-bold text-sm text-[#EDE4D3]">
+                    <h4 className="font-bold text-sm text-[#FFFFFF]">
                       {gate.name}
                     </h4>
-                    <span className="text-[11px] text-[#06B6D4] font-mono block">
+                    <span className="text-[11px] text-[#FFFFFF] font-mono block">
                       {gate.stage}
                     </span>
                   </div>
 
                   <div className="space-y-2 text-xs">
                     <div>
-                      <strong className="text-[#EDE4D3] block mb-0.5">Physical Invariant:</strong>
+                      <strong className="text-[#FFFFFF] block mb-0.5">Physical Invariant:</strong>
                       <p className="text-[#A69B88] leading-relaxed">
                         {gate.assertion}
                       </p>
@@ -319,8 +319,8 @@ export function InteractiveArchitectureView() {
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-[#D8CBB3]/10 text-[10px] font-mono text-[#A69B88]">
-                  Enforcement: <code className="text-[#38BDF8]">src/suraksha/disasters/flood/supervisor/</code>
+                <div className="pt-2 border-t border-[#A1A1AA]/10 text-[10px] font-mono text-[#A69B88]">
+                  Enforcement: <code className="text-[#E4E4E7]">src/suraksha/disasters/flood/supervisor/</code>
                 </div>
               </div>
             ))}
@@ -331,11 +331,11 @@ export function InteractiveArchitectureView() {
       {/* Tab 3: ADRs */}
       {activeTab === "adrs" && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="p-5 rounded-2xl border border-[#D8CBB3]/15 bg-[#242421] space-y-3">
+          <div className="p-5 rounded-2xl border border-[#A1A1AA]/15 bg-[#242421] space-y-3">
             <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30">
               ADR-001 · ACCEPTED
             </span>
-            <h4 className="font-bold text-sm text-[#EDE4D3]">
+            <h4 className="font-bold text-sm text-[#FFFFFF]">
               Modular Monolith Architecture
             </h4>
             <p className="text-xs text-[#A69B88] leading-relaxed">
@@ -343,11 +343,11 @@ export function InteractiveArchitectureView() {
             </p>
           </div>
 
-          <div className="p-5 rounded-2xl border border-[#D8CBB3]/15 bg-[#242421] space-y-3">
+          <div className="p-5 rounded-2xl border border-[#A1A1AA]/15 bg-[#242421] space-y-3">
             <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30">
               ADR-002 · ACCEPTED
             </span>
-            <h4 className="font-bold text-sm text-[#EDE4D3]">
+            <h4 className="font-bold text-sm text-[#FFFFFF]">
               Three-Gate Jev Supervisor
             </h4>
             <p className="text-xs text-[#A69B88] leading-relaxed">
@@ -355,11 +355,11 @@ export function InteractiveArchitectureView() {
             </p>
           </div>
 
-          <div className="p-5 rounded-2xl border border-[#D8CBB3]/15 bg-[#242421] space-y-3">
+          <div className="p-5 rounded-2xl border border-[#A1A1AA]/15 bg-[#242421] space-y-3">
             <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30">
               ADR-003 · ACCEPTED
             </span>
-            <h4 className="font-bold text-sm text-[#EDE4D3]">
+            <h4 className="font-bold text-sm text-[#FFFFFF]">
               FastAPI Asynchronous Gateway
             </h4>
             <p className="text-xs text-[#A69B88] leading-relaxed">

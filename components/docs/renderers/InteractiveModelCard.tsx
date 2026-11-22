@@ -115,8 +115,8 @@ export function InteractiveModelCard() {
               onClick={() => setSelectedModelId(model.id)}
               className={`cursor-pointer p-5 rounded-2xl border transition-all flex flex-col justify-between ${
                 isSelected
-                  ? "bg-[#292925] border-[#06B6D4] shadow-lg shadow-[#06B6D4]/10 ring-1 ring-[#06B6D4]"
-                  : "bg-[#242421] border-[#D8CBB3]/15 hover:border-[#D8CBB3]/30"
+                  ? "bg-[#0A0A0A] border-[#FFFFFF] shadow-lg shadow-[#FFFFFF]/10 ring-1 ring-[#FFFFFF]"
+                  : "bg-[#242421] border-[#A1A1AA]/15 hover:border-[#A1A1AA]/30"
               }`}
             >
               <div className="space-y-3">
@@ -126,18 +126,18 @@ export function InteractiveModelCard() {
                       model.tier.includes("Champion")
                         ? "bg-[#10B981]/15 text-[#10B981] border-[#10B981]/30"
                         : model.tier.includes("Challenger")
-                        ? "bg-[#3B82F6]/15 text-[#38BDF8] border-[#3B82F6]/30"
+                        ? "bg-[#3B82F6]/15 text-[#E4E4E7] border-[#3B82F6]/30"
                         : "bg-[#A69B88]/15 text-[#A69B88] border-[#A69B88]/30"
                     }`}
                   >
                     {model.tier}
                   </span>
-                  <span className="text-xs font-mono text-[#EDE4D3] font-bold">
+                  <span className="text-xs font-mono text-[#FFFFFF] font-bold">
                     NSE: {model.nse}
                   </span>
                 </div>
 
-                <h4 className="font-bold text-sm text-[#EDE4D3]">
+                <h4 className="font-bold text-sm text-[#FFFFFF]">
                   {model.name}
                 </h4>
 
@@ -146,9 +146,9 @@ export function InteractiveModelCard() {
                 </p>
               </div>
 
-              <div className="pt-4 border-t border-[#D8CBB3]/10 mt-4 flex items-center justify-between text-xs">
-                <span className="text-[#A69B88]">RMSE: <strong className="text-[#EDE4D3]">{model.rmseMeters} m</strong></span>
-                <span className="text-[#A69B88]">Latency: <strong className="text-[#EDE4D3]">{model.latencyMs} ms</strong></span>
+              <div className="pt-4 border-t border-[#A1A1AA]/10 mt-4 flex items-center justify-between text-xs">
+                <span className="text-[#A69B88]">RMSE: <strong className="text-[#FFFFFF]">{model.rmseMeters} m</strong></span>
+                <span className="text-[#A69B88]">Latency: <strong className="text-[#FFFFFF]">{model.latencyMs} ms</strong></span>
               </div>
             </div>
           );
@@ -156,18 +156,18 @@ export function InteractiveModelCard() {
       </div>
 
       {/* Model Detail Visualizer */}
-      <div className="p-6 sm:p-8 rounded-3xl border border-[#D8CBB3]/20 bg-[#242421] space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#D8CBB3]/15">
+      <div className="p-6 sm:p-8 rounded-3xl border border-[#A1A1AA]/20 bg-[#242421] space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#A1A1AA]/15">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="font-mono text-xs text-[#06B6D4] uppercase font-bold">
+              <span className="font-mono text-xs text-[#FFFFFF] uppercase font-bold">
                 Model Evaluation & Verification Specification
               </span>
               <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#10B981]/15 text-[#10B981]">
                 Test Suite Verified
               </span>
             </div>
-            <h3 className="text-xl font-bold text-[#EDE4D3]">
+            <h3 className="text-xl font-bold text-[#FFFFFF]">
               {selectedModel.name}
             </h3>
             <p className="text-xs text-[#A69B88] mt-0.5">
@@ -177,20 +177,20 @@ export function InteractiveModelCard() {
 
           <div className="text-right">
             <span className="text-xs text-[#A69B88] font-mono block">Evaluated Horizon</span>
-            <span className="text-sm font-bold text-[#EDE4D3] font-mono">{selectedModel.leadTime}</span>
+            <span className="text-sm font-bold text-[#FFFFFF] font-mono">{selectedModel.leadTime}</span>
           </div>
         </div>
 
         {/* Metric Gauges Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="p-4 rounded-xl bg-[#1E1E1C] border border-[#D8CBB3]/10">
+          <div className="p-4 rounded-xl bg-[#000000] border border-[#A1A1AA]/10">
             <span className="text-[11px] font-mono text-[#A69B88] uppercase block">
               Nash-Sutcliffe (NSE)
             </span>
             <div className="text-2xl font-bold text-[#10B981] font-mono mt-1">
               {selectedModel.nse}
             </div>
-            <div className="w-full bg-[#292925] h-1.5 rounded-full mt-2 overflow-hidden">
+            <div className="w-full bg-[#0A0A0A] h-1.5 rounded-full mt-2 overflow-hidden">
               <div
                 className="bg-[#10B981] h-full rounded-full"
                 style={{ width: `${selectedModel.nse * 100}%` }}
@@ -198,27 +198,27 @@ export function InteractiveModelCard() {
             </div>
           </div>
 
-          <div className="p-4 rounded-xl bg-[#1E1E1C] border border-[#D8CBB3]/10">
+          <div className="p-4 rounded-xl bg-[#000000] border border-[#A1A1AA]/10">
             <span className="text-[11px] font-mono text-[#A69B88] uppercase block">
               RMSE Accuracy
             </span>
-            <div className="text-2xl font-bold text-[#38BDF8] font-mono mt-1">
+            <div className="text-2xl font-bold text-[#E4E4E7] font-mono mt-1">
               {selectedModel.rmseMeters} m
             </div>
             <span className="text-[10px] text-[#A69B88] mt-1 block">Root Mean Square Error</span>
           </div>
 
-          <div className="p-4 rounded-xl bg-[#1E1E1C] border border-[#D8CBB3]/10">
+          <div className="p-4 rounded-xl bg-[#000000] border border-[#A1A1AA]/10">
             <span className="text-[11px] font-mono text-[#A69B88] uppercase block">
               Mean Absolute Error
             </span>
-            <div className="text-2xl font-bold text-[#EDE4D3] font-mono mt-1">
+            <div className="text-2xl font-bold text-[#FFFFFF] font-mono mt-1">
               {selectedModel.maeMeters} m
             </div>
             <span className="text-[10px] text-[#A69B88] mt-1 block">Average stage error</span>
           </div>
 
-          <div className="p-4 rounded-xl bg-[#1E1E1C] border border-[#D8CBB3]/10">
+          <div className="p-4 rounded-xl bg-[#000000] border border-[#A1A1AA]/10">
             <span className="text-[11px] font-mono text-[#A69B88] uppercase block">
               Inference Latency
             </span>
@@ -238,9 +238,9 @@ export function InteractiveModelCard() {
             {selectedModel.inputFeatures.map((feat, idx) => (
               <div
                 key={idx}
-                className="p-3 rounded-xl bg-[#1E1E1C] border border-[#D8CBB3]/10 flex items-center gap-2.5 text-xs text-[#EDE4D3]"
+                className="p-3 rounded-xl bg-[#000000] border border-[#A1A1AA]/10 flex items-center gap-2.5 text-xs text-[#FFFFFF]"
               >
-                <div className="w-2 h-2 rounded-full bg-[#06B6D4] shrink-0" />
+                <div className="w-2 h-2 rounded-full bg-[#FFFFFF] shrink-0" />
                 <span className="font-mono">{feat}</span>
               </div>
             ))}
@@ -254,7 +254,7 @@ export function InteractiveModelCard() {
               <CheckCircle2 className="w-4 h-4" />
               <span>Hydrological Strengths</span>
             </span>
-            <ul className="space-y-1.5 text-xs text-[#D8CBB3]">
+            <ul className="space-y-1.5 text-xs text-[#A1A1AA]">
               {selectedModel.pros.map((p, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <span className="text-[#10B981] mt-0.5">•</span>
@@ -269,7 +269,7 @@ export function InteractiveModelCard() {
               <Activity className="w-4 h-4" />
               <span>Operational Constraints</span>
             </span>
-            <ul className="space-y-1.5 text-xs text-[#D8CBB3]">
+            <ul className="space-y-1.5 text-xs text-[#A1A1AA]">
               {selectedModel.cons.map((c, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <span className="text-[#F59E0B] mt-0.5">•</span>

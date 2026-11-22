@@ -12,78 +12,94 @@ export const FallbackCanvas2D: React.FC<FallbackCanvas2DProps> = ({ isSurge = fa
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     let animId: number;
-    let angle = -0.4;
-    let isDown = false;
-    let lastX = 0;
     let t = 0;
+    let rotX = 0.55;
+    let rotY = 0.35;
+    let isDragging = false;
+    let lastX = 0;
+    let lastY = 0;
 
     const onMouseDown = (e: MouseEvent) => {
-      isDown = true;
+      isDragging = true;
       lastX = e.clientX;
+      lastY = e.clientY;
     };
+
     const onMouseUp = () => {
-      isDown = false;
+      isDragging = false;
     };
+
     const onMouseMove = (e: MouseEvent) => {
-      if (isDown) {
-        angle += (e.clientX - lastX) * 0.008;
-        lastX = e.clientX;
-      }
+      if (!isDragging) return;
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      rotY += dx * 0.006;
+      rotX += dy * 0.006;
+      lastX = e.clientX;
+      lastY = e.clientY;
     };
 
     canvas.addEventListener("mousedown", onMouseDown);
     window.addEventListener("mouseup", onMouseUp);
     canvas.addEventListener("mousemove", onMouseMove);
 
+    const project = (x: number, y: number, z: number) => {
+      const cosY = Math.cos(rotY);
+      const sinY = Math.sin(rotY);
+      const cosX = Math.cos(rotX);
+      const sinX = Math.sin(rotX);
+
+      // Rotate Y
+      const x1 = x * cosY + z * sinY;
+      const z1 = -x * sinY + z * cosY;
+
+      // Rotate X
+      const y2 = y * cosX - z1 * sinX;
+      const z2 = y * sinX + z1 * cosX;
+
+      const scale = 280 / (z2 + 60);
+      return {
+        x: canvas.width / 2 + x1 * scale * 7.5,
+        y: canvas.height / 2 + y2 * scale * 7.5,
+      };
+    };
+
     const render = () => {
       animId = requestAnimationFrame(render);
-      t += 0.03;
-      if (!isDown) angle += 0.002;
+      t += 0.02;
 
-      const w = (canvas.width = canvas.parentElement?.clientWidth || 500);
-      const h = (canvas.height = canvas.parentElement?.clientHeight || 280);
-      ctx.clearRect(0, 0, w, h);
+      canvas.width = canvas.parentElement?.clientWidth || 640;
+      canvas.height = canvas.parentElement?.clientHeight || 400;
 
-      const cx = w / 2;
-      const cy = h / 2 + 30;
-      const fov = 380;
-      const dist = 55;
+      // Pure black canvas
+      ctx.fillStyle = "#000000";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      const project = (x: number, y: number, z: number) => {
-        const rx = x * Math.cos(angle) - y * Math.sin(angle);
-        const ry = x * Math.sin(angle) + y * Math.cos(angle);
-        const rz = z;
-        const pitch = 0.55;
-        const py = ry * Math.cos(pitch) - rz * Math.sin(pitch);
-        const pz = ry * Math.sin(pitch) + rz * Math.cos(pitch);
-        const scale = fov / (dist + py);
-        return { x: cx + rx * scale, y: cy - pz * scale };
-      };
-
-      // Sand terrain wireframe
-      ctx.strokeStyle = "rgba(216, 203, 179, 0.28)";
+      // Topographic elevation contour grid
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
       ctx.lineWidth = 1;
 
-      for (let y = -14; y <= 14; y += 2) {
+      const gridSize = 14;
+      const step = 2.4;
+
+      for (let i = -gridSize; i <= gridSize; i += 2) {
         ctx.beginPath();
-        for (let x = -26; x <= 26; x += 2) {
-          const canyon = Math.exp(-Math.pow(y, 2) / 20) * -5.5;
-          const z = canyon + Math.sin(x * 0.18) * 2 + Math.cos(y * 0.22) * 1.5;
-          const p = project(x, y, z);
-          if (x === -26) ctx.moveTo(p.x, p.y);
+        for (let j = -gridSize; j <= gridSize; j += 2) {
+          const elev = Math.sin(i * 0.2 + t * 0.5) * Math.cos(j * 0.2) * 1.5;
+          const p = project(i * step, elev, j * step);
+          if (j === -gridSize) ctx.moveTo(p.x, p.y);
           else ctx.lineTo(p.x, p.y);
         }
         ctx.stroke();
       }
 
-      // Procedural river wave stream (Electric Blue nominal, Amber surge)
-      ctx.strokeStyle = isSurge ? "rgba(245, 158, 11, 0.95)" : "rgba(47, 107, 255, 0.95)";
-      ctx.lineWidth = isSurge ? 4 : 3;
+      // Procedural river wave stream
+      ctx.strokeStyle = isSurge ? "rgba(245, 158, 11, 0.95)" : "rgba(255, 255, 255, 0.95)";
+      ctx.lineWidth = isSurge ? 4 : 2.5;
       ctx.beginPath();
       for (let x = -26; x <= 26; x += 1.5) {
         const wave = Math.sin(x * 0.35 + t * 2) * 0.6;
@@ -97,8 +113,8 @@ export const FallbackCanvas2D: React.FC<FallbackCanvas2DProps> = ({ isSurge = fa
       // Station beacons
       const beacons = [
         { x: -14, y: 0, label: "STN-SON-01", color: "#F59E0B" },
-        { x: 2, y: 1, label: "STN-PAT-01", color: "#06B6D4" },
-        { x: 16, y: -1, label: "STN-GAN-01", color: "#D8CBB3" },
+        { x: 2, y: 1, label: "STN-PAT-01", color: "#FFFFFF" },
+        { x: 16, y: -1, label: "STN-GAN-01", color: "#A1A1AA" },
       ];
 
       beacons.forEach((b) => {
@@ -111,12 +127,12 @@ export const FallbackCanvas2D: React.FC<FallbackCanvas2DProps> = ({ isSurge = fa
         ctx.arc(p.x, p.y, pulse, 0, Math.PI * 2);
         ctx.stroke();
 
-        ctx.fillStyle = "#EDE4D3";
+        ctx.fillStyle = "#FFFFFF";
         ctx.beginPath();
         ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.fillStyle = "#D8CBB3";
+        ctx.fillStyle = "#A1A1AA";
         ctx.font = "10px 'JetBrains Mono', monospace";
         ctx.fillText(b.label, p.x + 8, p.y - 8);
       });

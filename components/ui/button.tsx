@@ -3,24 +3,24 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#06B6D4] disabled:pointer-events-none disabled:opacity-50 select-none",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 disabled:pointer-events-none disabled:opacity-50 select-none",
   {
     variants: {
       variant: {
         default:
-          "bg-white text-[#090C10] shadow-sm hover:bg-slate-100 active:scale-[0.99]",
+          "bg-white text-black shadow-sm hover:bg-neutral-100 active:scale-[0.99]",
         destructive:
           "bg-[#EF4444] text-white shadow-sm hover:bg-red-500 active:scale-[0.99]",
         outline:
-          "border border-white/15 bg-white/5 text-white shadow-sm hover:bg-white/10 hover:border-white/25",
+          "border border-white/15 bg-white/5 text-white shadow-sm hover:bg-white/10 hover:border-white/30",
         secondary:
-          "bg-[#10161F] text-white border border-white/10 shadow-sm hover:bg-[#16202C]",
+          "bg-[#0A0A0A] text-white border border-white/10 shadow-sm hover:bg-[#141414]",
         ghost:
-          "hover:bg-white/5 text-slate-300 hover:text-white",
+          "hover:bg-white/5 text-zinc-300 hover:text-white",
         link:
-          "text-[#06B6D4] underline-offset-4 hover:underline",
+          "text-white underline-offset-4 hover:underline",
         subtle:
-          "bg-[#06B6D4]/14 text-[#38BDF8] border border-[#06B6D4]/30 hover:bg-[#06B6D4]/22",
+          "bg-white/10 text-white border border-white/20 hover:bg-white/15",
       },
       size: {
         default: "h-10 px-5 py-2",

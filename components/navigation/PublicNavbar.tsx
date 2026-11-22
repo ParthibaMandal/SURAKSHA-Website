@@ -39,16 +39,15 @@ export const PublicNavbar: React.FC = () => {
     { href: "/about", label: "About" },
   ];
 
-  // Dynamic header styles: On homepage, seamlessly transparent with NO white border line
+  // Dynamic header styles: On homepage, seamlessly transparent with NO white border line; on scroll or inner pages, solid black
   const headerClass = isHome
     ? scrolled
-      ? "fixed top-0 inset-x-0 z-50 bg-[#090C10]/90 backdrop-blur-md shadow-lg transition-all duration-300 border-b border-white/10"
+      ? "fixed top-0 inset-x-0 z-50 bg-black/90 backdrop-blur-md shadow-lg transition-all duration-300 border-b border-white/10"
       : "fixed top-0 inset-x-0 z-50 bg-transparent border-none transition-all duration-300"
-    : "sticky top-0 z-50 w-full border-b border-white/10 bg-[#090C10]/95 backdrop-blur-md transition-colors";
+    : "sticky top-0 z-50 w-full border-b border-white/10 bg-black/95 backdrop-blur-md transition-colors";
 
   return (
     <header className={headerClass}>
-      {/* Full-width container from edge to edge (matching user arrows: logo on far left, Sign In on far right) */}
       <div className="w-full px-6 sm:px-10 lg:px-14 h-16 sm:h-20 flex items-center justify-between gap-6">
         {/* Brand Logo - Shield Mark + SURAKSHA on far left */}
         <BrandLogo />
@@ -56,7 +55,12 @@ export const PublicNavbar: React.FC = () => {
         {/* Desktop Navigation Links - Centered */}
         <nav className="hidden md:flex items-center gap-8" aria-label="Main Navigation">
           {links.map((link) => {
-            const isActive = pathname === link.href || (link.hasDropdown && (pathname.startsWith("/platform") || pathname.startsWith("/study-area") || pathname.startsWith("/demo-lab")));
+            const isActive =
+              pathname === link.href ||
+              (link.hasDropdown &&
+                (pathname.startsWith("/platform") ||
+                  pathname.startsWith("/study-area") ||
+                  pathname.startsWith("/demo-lab")));
 
             if (link.hasDropdown) {
               return (
@@ -66,37 +70,36 @@ export const PublicNavbar: React.FC = () => {
                   onMouseEnter={() => setPlatformDropdownOpen(true)}
                   onMouseLeave={() => setPlatformDropdownOpen(false)}
                 >
-                  {/* Pure dropdown trigger button: prevents accidental navigation while opening dropdown */}
                   <button
                     type="button"
                     onClick={() => setPlatformDropdownOpen(!platformDropdownOpen)}
                     aria-expanded={platformDropdownOpen}
                     className={`inline-flex items-center gap-1.5 py-1 text-sm font-medium transition-colors cursor-pointer ${
-                      isActive ? "text-white" : "text-slate-300 hover:text-white"
+                      isActive ? "text-white" : "text-zinc-300 hover:text-white"
                     }`}
                   >
                     <span>{link.label}</span>
                     <ChevronDown
                       className={`w-3.5 h-3.5 opacity-70 transition-transform duration-200 ${
-                        platformDropdownOpen ? "rotate-180 opacity-100 text-[#06B6D4]" : ""
+                        platformDropdownOpen ? "rotate-180 opacity-100 text-white" : ""
                       }`}
                     />
                   </button>
 
                   {/* Dropdown Menu */}
                   {platformDropdownOpen && (
-                    <div className="absolute top-full left-0 mt-2 w-64 rounded-2xl bg-[#10161F]/95 backdrop-blur-xl border border-white/10 p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+                    <div className="absolute top-full left-0 mt-2 w-64 rounded-2xl bg-[#0A0A0A] backdrop-blur-xl border border-white/10 p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-1 duration-150">
                       <Link
                         href="/platform"
                         onClick={() => setPlatformDropdownOpen(false)}
                         className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-colors text-xs group"
                       >
-                        <div className="w-7 h-7 rounded-lg bg-[#06B6D4]/15 border border-[#06B6D4]/30 flex items-center justify-center text-[#06B6D4] shrink-0 mt-0.5">
+                        <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white shrink-0 mt-0.5">
                           <LayoutDashboard className="w-3.5 h-3.5" />
                         </div>
                         <div>
-                          <span className="font-semibold text-white block group-hover:text-[#06B6D4] transition-colors">Platform Overview</span>
-                          <span className="text-[11px] text-slate-400">3D Basin simulation & reach models</span>
+                          <span className="font-semibold text-white block group-hover:text-zinc-200 transition-colors">Platform Overview</span>
+                          <span className="text-[11px] text-zinc-400">3D Basin simulation & reach models</span>
                         </div>
                       </Link>
 
@@ -105,12 +108,12 @@ export const PublicNavbar: React.FC = () => {
                         onClick={() => setPlatformDropdownOpen(false)}
                         className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-colors text-xs group"
                       >
-                        <div className="w-7 h-7 rounded-lg bg-[#14B8A6]/15 border border-[#14B8A6]/30 flex items-center justify-center text-[#14B8A6] shrink-0 mt-0.5">
+                        <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white shrink-0 mt-0.5">
                           <MapPin className="w-3.5 h-3.5" />
                         </div>
                         <div>
-                          <span className="font-semibold text-white block group-hover:text-[#14B8A6] transition-colors">Catchment Study Area</span>
-                          <span className="text-[11px] text-slate-400">Middle Ganga reach stations</span>
+                          <span className="font-semibold text-white block group-hover:text-zinc-200 transition-colors">Catchment Study Area</span>
+                          <span className="text-[11px] text-zinc-400">Middle Ganga reach stations</span>
                         </div>
                       </Link>
 
@@ -119,12 +122,12 @@ export const PublicNavbar: React.FC = () => {
                         onClick={() => setPlatformDropdownOpen(false)}
                         className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-colors text-xs group"
                       >
-                        <div className="w-7 h-7 rounded-lg bg-[#38BDF8]/15 border border-[#38BDF8]/30 flex items-center justify-center text-[#38BDF8] shrink-0 mt-0.5">
+                        <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white shrink-0 mt-0.5">
                           <FlaskConical className="w-3.5 h-3.5" />
                         </div>
                         <div>
-                          <span className="font-semibold text-white block group-hover:text-[#38BDF8] transition-colors">Simulation Lab</span>
-                          <span className="text-[11px] text-slate-400">Test scenarios & emergency alerts</span>
+                          <span className="font-semibold text-white block group-hover:text-zinc-200 transition-colors">Simulation Lab</span>
+                          <span className="text-[11px] text-zinc-400">Test scenarios & emergency alerts</span>
                         </div>
                       </Link>
                     </div>
@@ -138,7 +141,7 @@ export const PublicNavbar: React.FC = () => {
                 key={link.href}
                 href={link.href}
                 className={`relative py-1 text-sm font-medium transition-colors ${
-                  isActive ? "text-white" : "text-slate-300 hover:text-white"
+                  isActive ? "text-white" : "text-zinc-300 hover:text-white"
                 }`}
               >
                 {link.label}
@@ -178,7 +181,7 @@ export const PublicNavbar: React.FC = () => {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-b border-white/10 bg-[#090C10]/95 backdrop-blur-xl px-6 pt-3 pb-6 space-y-3">
+        <div className="md:hidden border-b border-white/10 bg-black/95 backdrop-blur-xl px-6 pt-3 pb-6 space-y-3">
           <div className="flex flex-col space-y-1">
             {links.map((link) => (
               <Link
@@ -187,8 +190,8 @@ export const PublicNavbar: React.FC = () => {
                 onClick={() => setMobileMenuOpen(false)}
                 className={`px-3 py-2 rounded-xl text-xs font-semibold ${
                   pathname === link.href
-                    ? "bg-[#06B6D4]/15 text-[#06B6D4] border border-[#06B6D4]/30"
-                    : "text-slate-300 hover:text-white hover:bg-white/5"
+                    ? "bg-white/10 text-white border border-white/20"
+                    : "text-zinc-300 hover:text-white hover:bg-white/5"
                 }`}
               >
                 {link.label}
@@ -197,7 +200,7 @@ export const PublicNavbar: React.FC = () => {
             <Link
               href="/demo-lab"
               onClick={() => setMobileMenuOpen(false)}
-              className="px-3 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5"
+              className="px-3 py-2 rounded-xl text-xs font-semibold text-zinc-300 hover:text-white hover:bg-white/5"
             >
               Simulation Lab
             </Link>
@@ -215,7 +218,7 @@ export const PublicNavbar: React.FC = () => {
               </Button>
             </Link>
             <Link href="/auth/login" onClick={() => setMobileMenuOpen(false)}>
-              <Button className="w-full text-xs justify-center font-semibold bg-white text-[#090C10] hover:bg-neutral-100 rounded-full shadow-lg">
+              <Button className="w-full text-xs justify-center font-semibold bg-white text-black hover:bg-neutral-100 rounded-full shadow-lg">
                 Sign In →
               </Button>
             </Link>

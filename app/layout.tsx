@@ -27,7 +27,7 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap"
         />
       </head>
-      <body className="bg-[#090C10] text-[#F8FAFC] flex flex-col min-h-screen selection:bg-[#06B6D4]/30 selection:text-white">
+      <body className="bg-black text-white flex flex-col min-h-screen selection:bg-white/20 selection:text-white">
         <PublicNavbar />
         <main className="flex-1">{children}</main>
         <PublicFooter />

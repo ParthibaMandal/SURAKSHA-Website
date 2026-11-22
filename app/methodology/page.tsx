@@ -57,7 +57,7 @@ export default function MethodologyPage() {
       <FadeIn>
         <div className="max-w-3xl">
           <div className="eyebrow">DATA & METHODOLOGY</div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-[#D8CBB3] tracking-tight">
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-[#A1A1AA] tracking-tight">
             Every signal needs a source and a timestamp.
           </h1>
           <p className="text-base text-[#A69B88] mt-4 leading-relaxed">
@@ -67,29 +67,29 @@ export default function MethodologyPage() {
       </FadeIn>
 
       <FadeIn delay={0.1}>
-        <div className="rounded-xl border border-[#D8CBB3]/15 bg-[#292925] p-6 space-y-4 overflow-hidden">
+        <div className="rounded-xl border border-[#A1A1AA]/15 bg-[#0A0A0A] p-6 space-y-4 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs font-mono">
               <thead>
-                <tr className="border-b border-[#D8CBB3]/15 text-[#A69B88] uppercase text-[10px]">
+                <tr className="border-b border-[#A1A1AA]/15 text-[#A69B88] uppercase text-[10px]">
                   <th className="py-3 px-4">Source Family</th>
                   <th className="py-3 px-4">Potential Use</th>
                   <th className="py-3 px-4">Required Metadata</th>
                   <th className="py-3 px-4">Integration State</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#D8CBB3]/10">
+              <tbody className="divide-y divide-[#A1A1AA]/10">
                 {sources.map((s, idx) => (
-                  <tr key={idx} className="hover:bg-[#33332E]/50">
-                    <td className="py-3 px-4 font-bold text-[#EDE4D3] font-sans">{s.family}</td>
-                    <td className="py-3 px-4 text-[#D8CBB3]">{s.use}</td>
+                  <tr key={idx} className="hover:bg-[#141414]/50">
+                    <td className="py-3 px-4 font-bold text-[#FFFFFF] font-sans">{s.family}</td>
+                    <td className="py-3 px-4 text-[#A1A1AA]">{s.use}</td>
                     <td className="py-3 px-4 text-[#A69B88]">{s.meta}</td>
                     <td className="py-3 px-4">
                       <span
                         className={`px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${
                           s.stateType === "warning"
                             ? "bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30"
-                            : "bg-[#33332E] text-[#D8CBB3] border-[#D8CBB3]/20"
+                            : "bg-[#141414] text-[#A1A1AA] border-[#A1A1AA]/20"
                         }`}
                       >
                         {s.state}
@@ -105,17 +105,17 @@ export default function MethodologyPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <FadeIn delay={0.2}>
-          <div className="p-6 sm:p-8 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-2">
-            <h3 className="text-lg font-bold text-[#EDE4D3]">Explicit Data Provenance States</h3>
+          <div className="p-6 sm:p-8 rounded-xl border border-[#A1A1AA]/15 bg-[#0A0A0A] space-y-2">
+            <h3 className="text-lg font-bold text-[#FFFFFF]">Explicit Data Provenance States</h3>
             <p className="text-xs text-[#A69B88] leading-relaxed">
-              Observed (<span className="font-mono text-[#D8CBB3]">LIVE</span>), sample (<span className="font-mono text-[#D8CBB3]">SAMPLE</span>), synthetic (<span className="font-mono text-[#D8CBB3]">SYNTHETIC</span>), stale (<span className="font-mono text-[#D8CBB3]">STALE</span>), and unavailable (<span className="font-mono text-[#D8CBB3]">UNAVAILABLE</span>) records are visually distinct across all views.
+              Observed (<span className="font-mono text-[#A1A1AA]">LIVE</span>), sample (<span className="font-mono text-[#A1A1AA]">SAMPLE</span>), synthetic (<span className="font-mono text-[#A1A1AA]">SYNTHETIC</span>), stale (<span className="font-mono text-[#A1A1AA]">STALE</span>), and unavailable (<span className="font-mono text-[#A1A1AA]">UNAVAILABLE</span>) records are visually distinct across all views.
             </p>
           </div>
         </FadeIn>
 
         <FadeIn delay={0.3}>
-          <div className="p-6 sm:p-8 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-2">
-            <h3 className="text-lg font-bold text-[#EDE4D3]">Data Lineage</h3>
+          <div className="p-6 sm:p-8 rounded-xl border border-[#A1A1AA]/15 bg-[#0A0A0A] space-y-2">
+            <h3 className="text-lg font-bold text-[#FFFFFF]">Data Lineage</h3>
             <p className="text-xs text-[#A69B88] leading-relaxed">
               Retains source identifiers, retrieval timestamps, processing versions, physical units, spatial reference systems, and transformation history throughout the lifecycle.
             </p>

@@ -12,7 +12,7 @@ export default function AboutPage() {
       <FadeIn>
         <div className="max-w-3xl">
           <div className="eyebrow">ABOUT THE PROJECT</div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-[#D8CBB3] tracking-tight">
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-[#A1A1AA] tracking-tight">
             A decision-support layer for a changing river system.
           </h1>
           <p className="text-base text-[#A69B88] mt-4 leading-relaxed">
@@ -23,9 +23,9 @@ export default function AboutPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <FadeIn delay={0.1}>
-          <div className="p-6 sm:p-8 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-3">
+          <div className="p-6 sm:p-8 rounded-xl border border-[#A1A1AA]/15 bg-[#0A0A0A] space-y-3">
             <div className="eyebrow">OUR PURPOSE</div>
-            <h3 className="text-xl font-bold text-[#EDE4D3]">
+            <h3 className="text-xl font-bold text-[#FFFFFF]">
               Make complex flood information easier to verify and act upon.
             </h3>
             <p className="text-xs text-[#A69B88] leading-relaxed">
@@ -35,9 +35,9 @@ export default function AboutPage() {
         </FadeIn>
 
         <FadeIn delay={0.2}>
-          <div className="p-6 sm:p-8 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-3">
+          <div className="p-6 sm:p-8 rounded-xl border border-[#A1A1AA]/15 bg-[#0A0A0A] space-y-3">
             <div className="eyebrow">CURRENT SCOPE</div>
-            <h3 className="text-xl font-bold text-[#EDE4D3]">
+            <h3 className="text-xl font-bold text-[#FFFFFF]">
               Flood-first, evidence-led development.
             </h3>
             <p className="text-xs text-[#A69B88] leading-relaxed">
@@ -47,23 +47,23 @@ export default function AboutPage() {
         </FadeIn>
 
         <FadeIn delay={0.3}>
-          <div className="p-6 sm:p-8 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-4">
-            <h3 className="text-lg font-bold text-[#EDE4D3]">What SURAKSHA Aims to Do</h3>
+          <div className="p-6 sm:p-8 rounded-xl border border-[#A1A1AA]/15 bg-[#0A0A0A] space-y-4">
+            <h3 className="text-lg font-bold text-[#FFFFFF]">What SURAKSHA Aims to Do</h3>
             <ul className="space-y-2 text-xs text-[#A69B88]">
               <li className="flex items-start gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#06B6D4] mt-1.5 shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#FFFFFF] mt-1.5 shrink-0" />
                 Organise hydrological and geospatial evidence with clear provenance.
               </li>
               <li className="flex items-start gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#06B6D4] mt-1.5 shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#FFFFFF] mt-1.5 shrink-0" />
                 Expose forecast uncertainty and Pre/Mid/Post-Run gate checks.
               </li>
               <li className="flex items-start gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#06B6D4] mt-1.5 shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#FFFFFF] mt-1.5 shrink-0" />
                 Connect predicted conditions with ward-level consequence estimates.
               </li>
               <li className="flex items-start gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#06B6D4] mt-1.5 shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#FFFFFF] mt-1.5 shrink-0" />
                 Support human-approved OASIS CAP v1.2 advisories and incident workflows.
               </li>
             </ul>
@@ -71,8 +71,8 @@ export default function AboutPage() {
         </FadeIn>
 
         <FadeIn delay={0.4}>
-          <div className="p-6 sm:p-8 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-4">
-            <h3 className="text-lg font-bold text-[#EDE4D3]">What SURAKSHA Does Not Claim</h3>
+          <div className="p-6 sm:p-8 rounded-xl border border-[#A1A1AA]/15 bg-[#0A0A0A] space-y-4">
+            <h3 className="text-lg font-bold text-[#FFFFFF]">What SURAKSHA Does Not Claim</h3>
             <ul className="space-y-2 text-xs text-[#A69B88]">
               <li className="flex items-start gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#EF4444] mt-1.5 shrink-0" />

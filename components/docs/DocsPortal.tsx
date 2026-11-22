@@ -74,7 +74,7 @@ export function DocsPortal() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#090C10] text-[#F8FAFC] selection:bg-[#06B6D4] selection:text-[#090C10]">
+    <div className="flex flex-col min-h-screen bg-black text-white selection:bg-white/20 selection:text-white">
       {/* Sticky Docs Header */}
       <DocsHeader
         metadata={manifest.metadata}
@@ -101,7 +101,7 @@ export function DocsPortal() {
         />
       )}
 
-      {/* Quick Command Palette / Search Modal */}
+      {/* Quick Search Modal */}
       <DocsSearchModal
         isOpen={searchModalOpen}
         onClose={() => setSearchModalOpen(false)}
@@ -110,4 +110,3 @@ export function DocsPortal() {
     </div>
   );
 }
-

@@ -35,16 +35,16 @@ export function MermaidRenderer({ chart, id }: MermaidRendererProps) {
           fontFamily: "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
           themeVariables: {
             darkMode: true,
-            background: "#090C10",
-            primaryColor: "#06B6D4",
-            primaryTextColor: "#F8FAFC",
-            primaryBorderColor: "#0891B2",
-            lineColor: "#38BDF8",
-            secondaryColor: "#10161F",
-            tertiaryColor: "#090C10",
-            edgeLabelBackground: "#10161F",
-            mainBkg: "#10161F",
-            nodeBorder: "#06B6D4",
+            background: "#000000",
+            primaryColor: "#FFFFFF",
+            primaryTextColor: "#FFFFFF",
+            primaryBorderColor: "rgba(255, 255, 255, 0.2)",
+            lineColor: "#A1A1AA",
+            secondaryColor: "#0A0A0A",
+            tertiaryColor: "#000000",
+            edgeLabelBackground: "#0A0A0A",
+            mainBkg: "#0A0A0A",
+            nodeBorder: "rgba(255, 255, 255, 0.2)",
           },
         });
 
@@ -77,11 +77,11 @@ export function MermaidRenderer({ chart, id }: MermaidRendererProps) {
   }, [chart, id]);
 
   return (
-    <div className="my-6 rounded-2xl border border-white/10 bg-[#090C10] overflow-hidden shadow-lg">
+    <div className="my-6 rounded-2xl border border-white/10 bg-black overflow-hidden shadow-lg">
       {/* Header bar */}
-      <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10 bg-[#10161F]/80 text-xs text-slate-400">
+      <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10 bg-[#0A0A0A] text-xs text-zinc-400">
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-[#06B6D4] shadow-[0_0_8px_#06b6d4]" />
+          <span className="w-2 h-2 rounded-full bg-white" />
           <span className="font-mono text-[11px] uppercase tracking-wider text-white">
             Architecture Diagram
           </span>
@@ -92,48 +92,47 @@ export function MermaidRenderer({ chart, id }: MermaidRendererProps) {
         >
           {showSource ? (
             <>
-              <Eye className="w-3.5 h-3.5 text-[#06B6D4]" />
+              <Eye className="w-3.5 h-3.5 text-white" />
               <span>View Diagram</span>
             </>
           ) : (
             <>
-              <Code2 className="w-3.5 h-3.5 text-slate-400" />
-              <span>View Source</span>
+              <Code2 className="w-3.5 h-3.5 text-zinc-400" />
+              <span>View Raw Spec</span>
             </>
           )}
         </button>
       </div>
 
-      {/* Main View Area */}
-      {showSource ? (
-        <pre className="p-4 text-xs font-mono text-slate-300 bg-[#06080B] overflow-x-auto leading-relaxed">
-          <code>{chart}</code>
-        </pre>
-      ) : error ? (
-        <div className="p-6 text-xs text-slate-400">
-          <div className="flex items-center gap-2 text-amber-400 mb-2 font-medium">
-            <AlertCircle className="w-4 h-4" />
-            <span>Diagram Preview Unavailable</span>
+      {/* Render Area */}
+      <div className="p-4 sm:p-6 overflow-x-auto min-h-[160px] flex items-center justify-center bg-black">
+        {loading ? (
+          <div className="flex items-center gap-2 text-xs font-mono text-zinc-500 py-8">
+            <span className="w-3 h-3 rounded-full border-2 border-white/20 border-t-white animate-spin" />
+            <span>Rendering diagram...</span>
           </div>
-          <p className="mb-3 text-[11px]">
-            The diagram definition uses advanced formatting. You can inspect the raw architecture logic below:
-          </p>
-          <pre className="p-3 rounded-xl bg-[#10161F] border border-white/10 font-mono text-[11px] text-white overflow-x-auto">
-            <code>{chart}</code>
+        ) : error ? (
+          <div className="p-4 rounded-xl border border-rose-500/20 bg-rose-500/10 text-xs text-rose-300 flex items-start gap-2.5 max-w-lg">
+            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+            <div>
+              <strong className="block font-semibold">Diagram Specification</strong>
+              <pre className="mt-2 p-2 rounded bg-black/60 overflow-x-auto text-[11px] text-zinc-300 font-mono">
+                {chart}
+              </pre>
+            </div>
+          </div>
+        ) : showSource ? (
+          <pre className="w-full text-xs font-mono text-zinc-300 bg-[#0A0A0A] p-4 rounded-xl border border-white/10 overflow-x-auto">
+            {chart}
           </pre>
-        </div>
-      ) : loading ? (
-        <div className="flex items-center justify-center p-12 text-xs text-slate-400">
-          <div className="w-4 h-4 rounded-full border-2 border-[#06B6D4] border-t-transparent animate-spin mr-2" />
-          Rendering interactive diagram...
-        </div>
-      ) : (
-        <div
-          ref={containerRef}
-          className="p-6 overflow-x-auto flex justify-center [&>svg]:max-w-full [&>svg]:h-auto bg-[#090C10]"
-          dangerouslySetInnerHTML={{ __html: svgHtml }}
-        />
-      )}
+        ) : (
+          <div
+            ref={containerRef}
+            className="w-full flex justify-center [&_svg]:max-w-full [&_svg]:h-auto"
+            dangerouslySetInnerHTML={{ __html: svgHtml }}
+          />
+        )}
+      </div>
     </div>
   );
 }

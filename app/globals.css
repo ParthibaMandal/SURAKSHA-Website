@@ -6,33 +6,36 @@
 
 @layer base {
   :root, .dark {
-    /* Hero Obsidian Canvas & Glass Surfaces */
-    --background: #090C10;
-    --surface-glass: rgba(16, 22, 31, 0.72);
+    /* Pure Black & White Monochromatic Theme (Inspired by Google Antigravity) */
+    --background: #000000;
+    --foreground: #FFFFFF;
+
+    --surface: #0A0A0A;
+    --surface-elevated: #121212;
+    --surface-glass: rgba(10, 10, 10, 0.85);
+
     --border: rgba(255, 255, 255, 0.10);
-    --foreground: #F8FAFC;
-    --muted: rgba(16, 22, 31, 0.85);
-    --muted-foreground: #94A3B8;
+    --border-hover: rgba(255, 255, 255, 0.20);
+    --border-focus: rgba(255, 255, 255, 0.40);
 
-    --card: #10161F;
-    --card-foreground: #F8FAFC;
-    --elevated: #16202C;
-    --popover: #10161F;
-    --popover-foreground: #F8FAFC;
+    --muted: #121212;
+    --muted-foreground: #A1A1AA;
 
-    /* Hero Pill CTA & Teal-to-Cyan Telemetry (Replaces flat #2F6BFF) */
+    --card: #0A0A0A;
+    --card-foreground: #FFFFFF;
+    --popover: #0A0A0A;
+    --popover-foreground: #FFFFFF;
+
+    /* Clean Monochromatic Actions (Zero Neons) */
     --primary: #FFFFFF;
-    --primary-foreground: #090C10;
+    --primary-foreground: #000000;
     --secondary: rgba(255, 255, 255, 0.08);
-    --secondary-foreground: #F8FAFC;
+    --secondary-foreground: #FFFFFF;
 
-    --accent-teal: #14B8A6;
-    --accent-cyan: #06B6D4;
-    --accent-sky: #38BDF8;
-    --accent: #06B6D4;
-    --accent-foreground: #090C10;
+    --accent: rgba(255, 255, 255, 0.12);
+    --accent-foreground: #FFFFFF;
 
-    /* Semantic Status Pills */
+    /* Semantic Status (Muted, Non-Neon) */
     --status-live: #10B981;
     --status-watch: #F59E0B;
     --status-danger: #EF4444;
@@ -40,10 +43,10 @@
     --destructive-foreground: #FFFFFF;
     --warning: #F59E0B;
 
-    --ring: #06B6D4;
+    --ring: rgba(255, 255, 255, 0.30);
     --radius-pill: 9999px;
-    --radius-card: 1rem;
-    --radius: 0.75rem;
+    --radius-card: 0.875rem;
+    --radius: 0.5rem;
 
     --font-heading: 'IBM Plex Sans', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-sans: 'Inter', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -53,12 +56,13 @@
 
 body {
   margin: 0;
-  background-color: #090C10;
-  color: #F8FAFC;
+  background-color: #000000;
+  color: #FFFFFF;
   font-family: var(--font-sans);
   overflow-x: hidden;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1,
@@ -77,46 +81,45 @@ pre,
   font-family: var(--font-mono);
 }
 
-/* Custom scrollbars */
+/* Minimalist Antigravity Scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #090C10;
+  background: #000000;
 }
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.15);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #06B6D4;
+  background: rgba(255, 255, 255, 0.35);
 }
 
-/* Editorial Eyebrow Labels */
+/* Minimalist Eyebrow Labels */
 .eyebrow {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: var(--font-sans);
+  font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #94A3B8;
-  font-weight: 600;
+  color: #A1A1AA;
+  font-weight: 500;
   margin-bottom: 6px;
 }
 .eyebrow::before {
   content: "";
   display: inline-block;
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  background: #06B6D4;
-  box-shadow: 0 0 8px #06B6D4;
+  background: #FFFFFF;
 }
 
-/* Pill Utilities */
+/* Minimalist Pill Utilities (Zero Neons) */
 .pill {
   display: inline-flex;
   align-items: center;
@@ -124,40 +127,35 @@ pre,
   padding: 4px 12px;
   border-radius: 9999px;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.04em;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(16, 22, 31, 0.85);
-  color: #F8FAFC;
+  background: rgba(255, 255, 255, 0.05);
+  color: #FFFFFF;
   backdrop-filter: blur(8px);
 }
 
 .pill .dot {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
 }
 .pill .dot.green {
   background: #10B981;
-  box-shadow: 0 0 8px #10B981;
 }
 .pill .dot.amber {
   background: #F59E0B;
-  box-shadow: 0 0 8px #F59E0B;
 }
 .pill .dot.red {
   background: #EF4444;
-  box-shadow: 0 0 8px #EF4444;
 }
-.pill .dot.cyan {
-  background: #06B6D4;
-  box-shadow: 0 0 8px #06B6D4;
+.pill .dot.neutral {
+  background: #A1A1AA;
 }
 
-/* Glass Card */
+/* Sleek Dark Card */
 .glass-panel {
-  background: rgba(16, 22, 31, 0.72);
-  backdrop-filter: blur(16px);
+  background: #0A0A0A;
   border: 1px solid rgba(255, 255, 255, 0.10);
-  border-radius: 1rem;
+  border-radius: 0.875rem;
 }

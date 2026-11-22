@@ -108,8 +108,8 @@ export default function CitizenSafetyPage() {
       {/* Heading */}
       <div className="pb-4 border-b border-white/10 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider bg-[#06B6D4]/15 text-[#38BDF8] border border-[#06B6D4]/30 mb-2">
-            <span className="w-2 h-2 rounded-full bg-[#06B6D4] shadow-[0_0_8px_#06b6d4]" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider bg-[#FFFFFF]/15 text-[#E4E4E7] border border-[#FFFFFF]/30 mb-2">
+            <span className="w-2 h-2 rounded-full bg-[#FFFFFF] shadow-[0_0_8px_#FFFFFF]" />
             Citizen Preparedness Workspace
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
@@ -133,9 +133,9 @@ export default function CitizenSafetyPage() {
       </div>
 
       {/* Progress Metric Card */}
-      <div className="p-6 rounded-2xl border border-white/10 bg-[#10161F]/80 backdrop-blur-xl shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="p-6 rounded-2xl border border-white/10 bg-[#0A0A0A]/80 backdrop-blur-xl shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="space-y-1.5 text-center md:text-left">
-          <div className="text-xs font-mono uppercase font-bold text-[#06B6D4] tracking-wider">
+          <div className="text-xs font-mono uppercase font-bold text-[#FFFFFF] tracking-wider">
             Overall Readiness Score
           </div>
           <div className="text-3xl font-black text-white">
@@ -149,15 +149,15 @@ export default function CitizenSafetyPage() {
         </div>
 
         <div className="w-full md:w-64 space-y-2">
-          <div className="h-3 w-full bg-[#090C10] rounded-full overflow-hidden border border-white/10 p-0.5">
+          <div className="h-3 w-full bg-[#000000] rounded-full overflow-hidden border border-white/10 p-0.5">
             <div
-              className="h-full bg-gradient-to-r from-[#14B8A6] via-[#06B6D4] to-[#38BDF8] rounded-full transition-all duration-500"
+              className="h-full bg-gradient-to-r from-[#E4E4E7] via-[#FFFFFF] to-[#E4E4E7] rounded-full transition-all duration-500"
               style={{ width: `${percentage}%` }}
             />
           </div>
           <div className="flex justify-between text-[11px] font-mono text-slate-400">
             <span>Preparedness status</span>
-            <span className={percentage === 100 ? "text-[#14B8A6] font-bold" : "text-[#38BDF8]"}>
+            <span className={percentage === 100 ? "text-[#E4E4E7] font-bold" : "text-[#E4E4E7]"}>
               {percentage === 100 ? "FULLY READY" : "IN PROGRESS"}
             </span>
           </div>
@@ -167,12 +167,12 @@ export default function CitizenSafetyPage() {
       {/* 3 Safety Phase Cards with Interactive Checkboxes */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Phase 1: Pre-Event */}
-        <article className="p-6 rounded-2xl border border-white/10 bg-[#10161F]/80 backdrop-blur-xl space-y-4 shadow-xl">
+        <article className="p-6 rounded-2xl border border-white/10 bg-[#0A0A0A]/80 backdrop-blur-xl space-y-4 shadow-xl">
           <div className="flex items-center justify-between">
-            <div className="w-10 h-10 rounded-full bg-[#06B6D4]/15 border border-[#06B6D4]/30 grid place-items-center text-[#06B6D4]">
+            <div className="w-10 h-10 rounded-full bg-[#FFFFFF]/15 border border-[#FFFFFF]/30 grid place-items-center text-[#FFFFFF]">
               <Home className="w-5 h-5" />
             </div>
-            <span className="px-2.5 py-1 rounded-full text-[10px] font-mono text-[#38BDF8] uppercase font-bold bg-[#06B6D4]/10 border border-[#06B6D4]/25">
+            <span className="px-2.5 py-1 rounded-full text-[10px] font-mono text-[#E4E4E7] uppercase font-bold bg-[#FFFFFF]/10 border border-[#FFFFFF]/25">
               PHASE 01 · PRE-EVENT
             </span>
           </div>
@@ -191,14 +191,14 @@ export default function CitizenSafetyPage() {
                   onClick={() => toggleItem(item.id)}
                   className={`p-3 rounded-xl border transition-all cursor-pointer flex items-start gap-3 select-none ${
                     isChecked
-                      ? "bg-[#06B6D4]/10 border-[#06B6D4]/40 text-slate-200"
-                      : "bg-[#090C10]/60 border-white/10 text-slate-400 hover:border-white/20 hover:text-white"
+                      ? "bg-[#FFFFFF]/10 border-[#FFFFFF]/40 text-slate-200"
+                      : "bg-[#000000]/60 border-white/10 text-slate-400 hover:border-white/20 hover:text-white"
                   }`}
                 >
                   <div
                     className={`w-5 h-5 rounded-md border mt-0.5 shrink-0 grid place-items-center transition-colors ${
                       isChecked
-                        ? "bg-[#06B6D4] border-[#06B6D4] text-[#090C10]"
+                        ? "bg-[#FFFFFF] border-[#FFFFFF] text-[#000000]"
                         : "border-white/30 bg-transparent"
                     }`}
                   >
@@ -214,7 +214,7 @@ export default function CitizenSafetyPage() {
         </article>
 
         {/* Phase 2: During Event */}
-        <article className="p-6 rounded-2xl border border-amber-500/20 bg-[#10161F]/80 backdrop-blur-xl space-y-4 shadow-xl">
+        <article className="p-6 rounded-2xl border border-amber-500/20 bg-[#0A0A0A]/80 backdrop-blur-xl space-y-4 shadow-xl">
           <div className="flex items-center justify-between">
             <div className="w-10 h-10 rounded-full bg-amber-500/15 border border-amber-500/30 grid place-items-center text-amber-400">
               <AlertTriangle className="w-5 h-5" />
@@ -239,13 +239,13 @@ export default function CitizenSafetyPage() {
                   className={`p-3 rounded-xl border transition-all cursor-pointer flex items-start gap-3 select-none ${
                     isChecked
                       ? "bg-amber-500/10 border-amber-500/40 text-slate-200"
-                      : "bg-[#090C10]/60 border-white/10 text-slate-400 hover:border-white/20 hover:text-white"
+                      : "bg-[#000000]/60 border-white/10 text-slate-400 hover:border-white/20 hover:text-white"
                   }`}
                 >
                   <div
                     className={`w-5 h-5 rounded-md border mt-0.5 shrink-0 grid place-items-center transition-colors ${
                       isChecked
-                        ? "bg-amber-400 border-amber-400 text-[#090C10]"
+                        ? "bg-amber-400 border-amber-400 text-[#000000]"
                         : "border-white/30 bg-transparent"
                     }`}
                   >
@@ -261,12 +261,12 @@ export default function CitizenSafetyPage() {
         </article>
 
         {/* Phase 3: Post Event */}
-        <article className="p-6 rounded-2xl border border-white/10 bg-[#10161F]/80 backdrop-blur-xl space-y-4 shadow-xl">
+        <article className="p-6 rounded-2xl border border-white/10 bg-[#0A0A0A]/80 backdrop-blur-xl space-y-4 shadow-xl">
           <div className="flex items-center justify-between">
-            <div className="w-10 h-10 rounded-full bg-[#14B8A6]/15 border border-[#14B8A6]/30 grid place-items-center text-[#14B8A6]">
+            <div className="w-10 h-10 rounded-full bg-[#E4E4E7]/15 border border-[#E4E4E7]/30 grid place-items-center text-[#E4E4E7]">
               <CheckCircle2 className="w-5 h-5" />
             </div>
-            <span className="px-2.5 py-1 rounded-full text-[10px] font-mono text-[#14B8A6] uppercase font-bold bg-[#14B8A6]/10 border border-[#14B8A6]/25">
+            <span className="px-2.5 py-1 rounded-full text-[10px] font-mono text-[#E4E4E7] uppercase font-bold bg-[#E4E4E7]/10 border border-[#E4E4E7]/25">
               PHASE 03 · POST-EVENT
             </span>
           </div>
@@ -285,14 +285,14 @@ export default function CitizenSafetyPage() {
                   onClick={() => toggleItem(item.id)}
                   className={`p-3 rounded-xl border transition-all cursor-pointer flex items-start gap-3 select-none ${
                     isChecked
-                      ? "bg-[#14B8A6]/10 border-[#14B8A6]/40 text-slate-200"
-                      : "bg-[#090C10]/60 border-white/10 text-slate-400 hover:border-white/20 hover:text-white"
+                      ? "bg-[#E4E4E7]/10 border-[#E4E4E7]/40 text-slate-200"
+                      : "bg-[#000000]/60 border-white/10 text-slate-400 hover:border-white/20 hover:text-white"
                   }`}
                 >
                   <div
                     className={`w-5 h-5 rounded-md border mt-0.5 shrink-0 grid place-items-center transition-colors ${
                       isChecked
-                        ? "bg-[#14B8A6] border-[#14B8A6] text-[#090C10]"
+                        ? "bg-[#E4E4E7] border-[#E4E4E7] text-[#000000]"
                         : "border-white/30 bg-transparent"
                     }`}
                   >
@@ -309,8 +309,8 @@ export default function CitizenSafetyPage() {
       </div>
 
       {/* Safety Notice */}
-      <div className="p-4 rounded-2xl border border-white/10 bg-[#10161F]/60 text-xs text-slate-400 flex items-center gap-3">
-        <Shield className="w-5 h-5 text-[#06B6D4] shrink-0" />
+      <div className="p-4 rounded-2xl border border-white/10 bg-[#0A0A0A]/60 text-xs text-slate-400 flex items-center gap-3">
+        <Shield className="w-5 h-5 text-[#FFFFFF] shrink-0" />
         <span>
           This checklist provides general public safety preparedness guidance. Always follow real-time evacuation orders and emergency bulletins issued by the National Disaster Management Authority (NDMA) and Bihar State Disaster Management Authority (BSDMA).
         </span>

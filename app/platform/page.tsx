@@ -47,7 +47,7 @@ export default function PlatformPage() {
       <FadeIn>
         <div className="max-w-3xl">
           <div className="eyebrow">PLATFORM CAPABILITIES</div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-[#D8CBB3] tracking-tight">
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-[#A1A1AA] tracking-tight">
             A connected view of flood intelligence.
           </h1>
           <p className="text-base text-[#A69B88] mt-4 leading-relaxed">
@@ -62,10 +62,10 @@ export default function PlatformPage() {
           return (
             <FadeIn key={idx} delay={idx * 0.08}>
               <TiltCard className="h-full">
-                <div className="w-10 h-10 rounded-xl bg-[#06B6D4]/15 border border-[#06B6D4]/30 flex items-center justify-center text-[#06B6D4] mb-4">
+                <div className="w-10 h-10 rounded-xl bg-[#FFFFFF]/15 border border-[#FFFFFF]/30 flex items-center justify-center text-[#FFFFFF] mb-4">
                   <Icon className="w-5 h-5" />
                 </div>
-                <h3 className="text-lg font-bold text-[#EDE4D3] mb-2">{cap.title}</h3>
+                <h3 className="text-lg font-bold text-[#FFFFFF] mb-2">{cap.title}</h3>
                 <p className="text-xs text-[#A69B88] leading-relaxed">{cap.desc}</p>
               </TiltCard>
             </FadeIn>
@@ -75,7 +75,7 @@ export default function PlatformPage() {
 
       <FadeIn delay={0.3}>
         <div className="notice">
-          Capability availability depends on verified data sources, runtime configuration, and model validation. The platform explicitly distinguishes <span className="font-mono text-[#EDE4D3]">LIVE</span>, <span className="font-mono text-[#EDE4D3]">SAMPLE</span>, <span className="font-mono text-[#EDE4D3]">SYNTHETIC</span>, <span className="font-mono text-[#EDE4D3]">STALE</span>, and <span className="font-mono text-[#EDE4D3]">UNAVAILABLE</span> modules.
+          Capability availability depends on verified data sources, runtime configuration, and model validation. The platform explicitly distinguishes <span className="font-mono text-[#FFFFFF]">LIVE</span>, <span className="font-mono text-[#FFFFFF]">SAMPLE</span>, <span className="font-mono text-[#FFFFFF]">SYNTHETIC</span>, <span className="font-mono text-[#FFFFFF]">STALE</span>, and <span className="font-mono text-[#FFFFFF]">UNAVAILABLE</span> modules.
         </div>
       </FadeIn>
     </div>

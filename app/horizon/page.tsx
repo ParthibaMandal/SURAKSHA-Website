@@ -378,7 +378,7 @@ export const StudioLayout = () => {
             {/* Left Column: Interactive List / Accordion */}
             <div className="lg:col-span-5 flex flex-col gap-6">
               <div className="flex items-center gap-2 text-xs font-semibold tracking-wider uppercase text-neutral-300">
-                <span className="w-2 h-2 rounded-full bg-cyan-400" />
+                <span className="w-2 h-2 rounded-full bg-white/10" />
                 <span>Smart Insights</span>
               </div>
               <p className="text-sm text-neutral-400 leading-relaxed">
@@ -405,7 +405,7 @@ export const StudioLayout = () => {
                         <ChevronRight
                           className={`w-4 h-4 transition-transform ${
                             isActive
-                              ? "rotate-90 text-cyan-400"
+                              ? "rotate-90 text-white"
                               : "text-neutral-600 group-hover:translate-x-1"
                           }`}
                         />
@@ -439,7 +439,7 @@ export const StudioLayout = () => {
                       telemetry-dashboard.v2
                     </span>
                   </div>
-                  <span className="text-[10px] font-mono tracking-wider uppercase text-cyan-400 bg-cyan-950/40 border border-cyan-800/50 px-2 py-0.5 rounded">
+                  <span className="text-[10px] font-mono tracking-wider uppercase text-white bg-white/10 border border-white/20 px-2 py-0.5 rounded">
                     LIVE STREAM
                   </span>
                 </div>
@@ -466,7 +466,7 @@ export const StudioLayout = () => {
                     <div className="text-base sm:text-xl font-bold text-white tracking-tight">
                       {objectives[activeObjective].engagement}
                     </div>
-                    <div className="text-[10px] font-mono text-cyan-400 mt-1">
+                    <div className="text-[10px] font-mono text-white mt-1">
                       Optimal
                     </div>
                   </div>
@@ -684,17 +684,17 @@ export const StudioLayout = () => {
                     {"\n\n"}
                     {"  "}
                     <span className="text-purple-400">return</span> ({"\n"}
-                    {"    "}&lt;<span className="text-cyan-400">Horizon.Canvas</span> layout=&#123;layout&#125; viewport=
+                    {"    "}&lt;<span className="text-white">Horizon.Canvas</span> layout=&#123;layout&#125; viewport=
                     <span className="text-emerald-300">&quot;dynamic&quot;</span>&gt;{"\n"}
-                    {"      "}&lt;<span className="text-cyan-400">Horizon.TypographicScale</span> ratio=&#123;
+                    {"      "}&lt;<span className="text-white">Horizon.TypographicScale</span> ratio=&#123;
                     <span className="text-orange-400">1.25</span>&#125; /&gt;{"\n"}
-                    {"      "}&lt;<span className="text-cyan-400">Horizon.SpatialGrid</span> columns=&#123;
+                    {"      "}&lt;<span className="text-white">Horizon.SpatialGrid</span> columns=&#123;
                     <span className="text-orange-400">12</span>&#125; gap=
                     <span className="text-emerald-300">&quot;fluid&quot;</span> /&gt;{"\n"}
-                    {"      "}&lt;<span className="text-cyan-400">Horizon.Telemetry</span> onInspect=&#123;(m) =&gt;{" "}
+                    {"      "}&lt;<span className="text-white">Horizon.Telemetry</span> onInspect=&#123;(m) =&gt;{" "}
                     <span className="text-blue-400">console</span>.
                     <span className="text-blue-400">log</span>(m)&#125; /&gt;{"\n"}
-                    {"    "}&lt;/<span className="text-cyan-400">Horizon.Canvas</span>&gt;{"\n"}
+                    {"    "}&lt;/<span className="text-white">Horizon.Canvas</span>&gt;{"\n"}
                     {"  "});{"\n"}
                     &#125;;
                   </code>

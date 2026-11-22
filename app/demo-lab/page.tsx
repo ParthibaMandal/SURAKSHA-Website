@@ -104,12 +104,12 @@ export default function DemoLabPage() {
   };
 
   return (
-    <div className="w-full bg-[#090C10] text-[#F8FAFC] min-h-screen">
+    <div className="w-full bg-[#000000] text-[#FFFFFF] min-h-screen">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 py-12 flex flex-col gap-8">
         {/* Toast popup */}
         {toastMessage && (
-          <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-full bg-[#10161F] border border-[#06B6D4]/40 text-xs font-mono text-white shadow-2xl flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
-            <CheckCircle2 className="w-4 h-4 text-[#06B6D4]" /> {toastMessage}
+          <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-full bg-[#0A0A0A] border border-[#FFFFFF]/40 text-xs font-mono text-white shadow-2xl flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
+            <CheckCircle2 className="w-4 h-4 text-[#FFFFFF]" /> {toastMessage}
           </div>
         )}
 
@@ -128,7 +128,7 @@ export default function DemoLabPage() {
 
         {/* Configuration Panel */}
         <FadeIn delay={0.1}>
-          <div className="p-6 rounded-3xl border border-white/10 bg-[#10161F]/80 backdrop-blur-xl space-y-6 shadow-2xl">
+          <div className="p-6 rounded-3xl border border-white/10 bg-[#0A0A0A]/80 backdrop-blur-xl space-y-6 shadow-2xl">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/10">
               <div>
                 <h3 className="text-base font-bold text-white">Scenario & Parameter Configuration</h3>
@@ -150,7 +150,7 @@ export default function DemoLabPage() {
                 <select
                   value={selectedKey}
                   onChange={(e) => handlePresetChange(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-white/15 bg-[#090C10] text-xs font-medium text-white focus:outline-none focus:border-[#06B6D4] cursor-pointer"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-white/15 bg-[#000000] text-xs font-medium text-white focus:outline-none focus:border-[#FFFFFF] cursor-pointer"
                 >
                   <option value="normal">Normal river conditions (46.40m)</option>
                   <option value="rain">Heavy rainfall upstream (47.75m)</option>
@@ -166,7 +166,7 @@ export default function DemoLabPage() {
                   <label className="text-[11px] font-mono font-bold text-slate-300 uppercase tracking-wider">
                     River Stage (m MSL)
                   </label>
-                  <span className="text-xs font-mono font-bold text-[#06B6D4]">
+                  <span className="text-xs font-mono font-bold text-[#FFFFFF]">
                     {stageInput.toFixed(2)} m
                   </span>
                 </div>
@@ -177,7 +177,7 @@ export default function DemoLabPage() {
                   step="0.05"
                   value={stageInput}
                   onChange={(e) => setStageInput(parseFloat(e.target.value))}
-                  className="w-full accent-[#06B6D4] h-1.5 bg-white/10 rounded-lg cursor-pointer"
+                  className="w-full accent-[#FFFFFF] h-1.5 bg-white/10 rounded-lg cursor-pointer"
                 />
                 <div className="flex justify-between text-[9px] font-mono text-slate-500">
                   <span>45.0m (Min)</span>
@@ -193,7 +193,7 @@ export default function DemoLabPage() {
                   <label className="text-[11px] font-mono font-bold text-slate-300 uppercase tracking-wider">
                     Rainfall (mm/hr)
                   </label>
-                  <span className="text-xs font-mono font-bold text-[#14B8A6]">
+                  <span className="text-xs font-mono font-bold text-[#E4E4E7]">
                     {rainInput} mm/hr
                   </span>
                 </div>
@@ -204,7 +204,7 @@ export default function DemoLabPage() {
                   step="1"
                   value={rainInput}
                   onChange={(e) => setRainInput(parseInt(e.target.value))}
-                  className="w-full accent-[#14B8A6] h-1.5 bg-white/10 rounded-lg cursor-pointer"
+                  className="w-full accent-[#E4E4E7] h-1.5 bg-white/10 rounded-lg cursor-pointer"
                 />
                 <div className="flex justify-between text-[9px] font-mono text-slate-500">
                   <span>0 mm/h</span>
@@ -220,7 +220,7 @@ export default function DemoLabPage() {
                   type="button"
                   onClick={handleRun}
                   disabled={isRunning}
-                  className="w-full h-[42px] rounded-full font-semibold text-xs bg-white text-[#090C10] hover:bg-neutral-100 transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+                  className="w-full h-[42px] rounded-full font-semibold text-xs bg-white text-[#000000] hover:bg-neutral-100 transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
                 >
                   {isRunning ? (
                     "Evaluating..."
@@ -239,10 +239,10 @@ export default function DemoLabPage() {
         {/* 4 Forecast Output Stat Cards - Driven by Shared Evaluator */}
         <FadeIn delay={0.15}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-5 rounded-2xl border border-white/10 bg-[#10161F]/70 backdrop-blur-xl space-y-2">
+            <div className="p-5 rounded-2xl border border-white/10 bg-[#0A0A0A]/70 backdrop-blur-xl space-y-2">
               <div className="flex items-center justify-between text-xs text-slate-400">
                 <span>River-Stage Input</span>
-                <Droplets className="w-4 h-4 text-[#06B6D4]" />
+                <Droplets className="w-4 h-4 text-[#FFFFFF]" />
               </div>
               <div className="text-2xl font-extrabold font-mono text-white">
                 {stageInput.toFixed(2)} m
@@ -252,10 +252,10 @@ export default function DemoLabPage() {
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl border border-white/10 bg-[#10161F]/70 backdrop-blur-xl space-y-2">
+            <div className="p-5 rounded-2xl border border-white/10 bg-[#0A0A0A]/70 backdrop-blur-xl space-y-2">
               <div className="flex items-center justify-between text-xs text-slate-400">
                 <span>Rainfall Intensity</span>
-                <Activity className="w-4 h-4 text-[#14B8A6]" />
+                <Activity className="w-4 h-4 text-[#E4E4E7]" />
               </div>
               <div className="text-2xl font-extrabold font-mono text-white">
                 {rainInput} mm/hr
@@ -265,10 +265,10 @@ export default function DemoLabPage() {
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl border border-white/10 bg-[#10161F]/70 backdrop-blur-xl space-y-2">
+            <div className="p-5 rounded-2xl border border-white/10 bg-[#0A0A0A]/70 backdrop-blur-xl space-y-2">
               <div className="flex items-center justify-between text-xs text-slate-400">
                 <span>Gate Decision</span>
-                <Shield className="w-4 h-4 text-[#38BDF8]" />
+                <Shield className="w-4 h-4 text-[#E4E4E7]" />
               </div>
               <div
                 className={`text-2xl font-extrabold font-mono ${
@@ -276,7 +276,7 @@ export default function DemoLabPage() {
                     ? "text-rose-400"
                     : evaluation.statusClass === "watch"
                     ? "text-amber-400"
-                    : "text-[#06B6D4]"
+                    : "text-[#FFFFFF]"
                 }`}
               >
                 {evaluation.gate}
@@ -284,7 +284,7 @@ export default function DemoLabPage() {
               <div className="text-[11px] font-mono text-slate-400">Sequential gate review</div>
             </div>
 
-            <div className="p-5 rounded-2xl border border-white/10 bg-[#10161F]/70 backdrop-blur-xl space-y-2">
+            <div className="p-5 rounded-2xl border border-white/10 bg-[#0A0A0A]/70 backdrop-blur-xl space-y-2">
               <div className="flex items-center justify-between text-xs text-slate-400">
                 <span>Supervisory State</span>
                 <AlertTriangle
@@ -311,14 +311,14 @@ export default function DemoLabPage() {
 
         {/* Hydrograph Chart Section */}
         <FadeIn delay={0.2}>
-          <div className="p-6 rounded-3xl border border-white/10 bg-[#10161F]/80 backdrop-blur-xl space-y-4 shadow-2xl">
+          <div className="p-6 rounded-3xl border border-white/10 bg-[#0A0A0A]/80 backdrop-blur-xl space-y-4 shadow-2xl">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-white/10">
               <div>
                 <h3 className="text-base font-bold text-white">
                   Simulated Ensemble Hydrograph & Threshold Response
                 </h3>
                 <p className="text-xs text-slate-400">
-                  Observed stage, cyan forecast curve (#06B6D4), 90% confidence spread, Warning (47.60m) & Danger (48.60m)
+                  Observed stage, cyan forecast curve (#FFFFFF), 90% confidence spread, Warning (47.60m) & Danger (48.60m)
                 </p>
               </div>
               <span className="px-3 py-1 rounded-full text-[10px] font-mono font-bold uppercase bg-white/5 text-slate-300 border border-white/15">
@@ -333,12 +333,12 @@ export default function DemoLabPage() {
         <FadeIn delay={0.25}>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Left Panel: Forecast Outputs & Gate Review Cards */}
-            <div className="p-6 rounded-3xl border border-white/10 bg-[#10161F]/80 backdrop-blur-xl space-y-5 shadow-2xl">
+            <div className="p-6 rounded-3xl border border-white/10 bg-[#0A0A0A]/80 backdrop-blur-xl space-y-5 shadow-2xl">
               <div className="flex items-center justify-between pb-3 border-b border-white/10">
                 <h3 className="text-base font-bold text-white">
                   Pre-Run, Mid-Run & Post-Run Gate Review
                 </h3>
-                <span className="px-3 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase bg-[#06B6D4]/15 text-[#38BDF8] border border-[#06B6D4]/30">
+                <span className="px-3 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase bg-[#FFFFFF]/15 text-[#E4E4E7] border border-[#FFFFFF]/30">
                   VERIFIED
                 </span>
               </div>
@@ -346,20 +346,20 @@ export default function DemoLabPage() {
               <p className="text-xs text-slate-300 leading-relaxed">{evaluation.n}</p>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-                <div className="p-4 rounded-2xl border border-white/10 bg-[#090C10]/60 space-y-1.5">
-                  <span className="text-[10px] font-mono font-bold text-[#06B6D4] block">GATE 01 · PRE-RUN</span>
+                <div className="p-4 rounded-2xl border border-white/10 bg-[#000000]/60 space-y-1.5">
+                  <span className="text-[10px] font-mono font-bold text-[#FFFFFF] block">GATE 01 · PRE-RUN</span>
                   <strong className="text-xs font-bold text-white block">Input Integrity</strong>
                   <p className="text-[11px] text-slate-400 leading-normal">{evaluation.pre}</p>
                 </div>
 
-                <div className="p-4 rounded-2xl border border-white/10 bg-[#090C10]/60 space-y-1.5">
-                  <span className="text-[10px] font-mono font-bold text-[#14B8A6] block">GATE 02 · MID-RUN</span>
+                <div className="p-4 rounded-2xl border border-white/10 bg-[#000000]/60 space-y-1.5">
+                  <span className="text-[10px] font-mono font-bold text-[#E4E4E7] block">GATE 02 · MID-RUN</span>
                   <strong className="text-xs font-bold text-white block">Model Convergence</strong>
                   <p className="text-[11px] text-slate-400 leading-normal">{evaluation.mid}</p>
                 </div>
 
-                <div className="p-4 rounded-2xl border border-white/10 bg-[#090C10]/60 space-y-1.5">
-                  <span className="text-[10px] font-mono font-bold text-[#38BDF8] block">GATE 03 · POST-RUN</span>
+                <div className="p-4 rounded-2xl border border-white/10 bg-[#000000]/60 space-y-1.5">
+                  <span className="text-[10px] font-mono font-bold text-[#E4E4E7] block">GATE 03 · POST-RUN</span>
                   <strong className="text-xs font-bold text-white block">CAP Readiness</strong>
                   <p className="text-[11px] text-slate-400 leading-normal">{evaluation.post}</p>
                 </div>
@@ -367,7 +367,7 @@ export default function DemoLabPage() {
             </div>
 
             {/* Right Panel: Scenario Response Pathway */}
-            <div className="p-6 rounded-3xl border border-white/10 bg-[#10161F]/80 backdrop-blur-xl space-y-5 shadow-2xl">
+            <div className="p-6 rounded-3xl border border-white/10 bg-[#0A0A0A]/80 backdrop-blur-xl space-y-5 shadow-2xl">
               <div className="flex items-center justify-between pb-3 border-b border-white/10">
                 <h3 className="text-base font-bold text-white">Scenario Response Pathway</h3>
                 <small className="text-xs font-mono text-slate-400">Decision-Support Pipeline</small>
@@ -375,7 +375,7 @@ export default function DemoLabPage() {
 
               <div className="space-y-4">
                 <div className="flex items-start gap-3.5">
-                  <div className="w-7 h-7 rounded-lg bg-[#06B6D4]/15 border border-[#06B6D4]/30 grid place-items-center text-xs font-mono font-bold text-[#06B6D4] shrink-0">
+                  <div className="w-7 h-7 rounded-lg bg-[#FFFFFF]/15 border border-[#FFFFFF]/30 grid place-items-center text-xs font-mono font-bold text-[#FFFFFF] shrink-0">
                     01
                   </div>
                   <div>
@@ -389,7 +389,7 @@ export default function DemoLabPage() {
                 </div>
 
                 <div className="flex items-start gap-3.5">
-                  <div className="w-7 h-7 rounded-lg bg-[#14B8A6]/15 border border-[#14B8A6]/30 grid place-items-center text-xs font-mono font-bold text-[#14B8A6] shrink-0">
+                  <div className="w-7 h-7 rounded-lg bg-[#E4E4E7]/15 border border-[#E4E4E7]/30 grid place-items-center text-xs font-mono font-bold text-[#E4E4E7] shrink-0">
                     02
                   </div>
                   <div>
@@ -403,7 +403,7 @@ export default function DemoLabPage() {
                 </div>
 
                 <div className="flex items-start gap-3.5">
-                  <div className="w-7 h-7 rounded-lg bg-[#38BDF8]/15 border border-[#38BDF8]/30 grid place-items-center text-xs font-mono font-bold text-[#38BDF8] shrink-0">
+                  <div className="w-7 h-7 rounded-lg bg-[#E4E4E7]/15 border border-[#E4E4E7]/30 grid place-items-center text-xs font-mono font-bold text-[#E4E4E7] shrink-0">
                     03
                   </div>
                   <div>

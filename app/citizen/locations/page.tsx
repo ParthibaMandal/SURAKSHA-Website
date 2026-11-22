@@ -64,16 +64,16 @@ export default function CitizenLocationsPage() {
   return (
     <div className="space-y-6">
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#292925] border border-[#06B6D4]/40 text-xs font-mono text-[#D8CBB3] shadow-2xl flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-[#06B6D4]" /> {toast}
+        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#0A0A0A] border border-[#FFFFFF]/40 text-xs font-mono text-[#A1A1AA] shadow-2xl flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-[#FFFFFF]" /> {toast}
         </div>
       )}
 
       {/* Heading */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#D8CBB3]/15">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#A1A1AA]/15">
         <div>
           <div className="eyebrow">CITIZEN WORKSPACE</div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#D8CBB3] tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#A1A1AA] tracking-tight">
             Saved Locations
           </h1>
           <p className="text-xs text-[#A69B88] mt-1">
@@ -85,7 +85,7 @@ export default function CitizenLocationsPage() {
       {/* Add New Location Form */}
       <form
         onSubmit={handleAdd}
-        className="p-5 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] flex flex-col sm:flex-row items-stretch sm:items-end gap-3"
+        className="p-5 rounded-xl border border-[#A1A1AA]/15 bg-[#0A0A0A] flex flex-col sm:flex-row items-stretch sm:items-end gap-3"
       >
         <div className="flex-1 space-y-1">
           <label className="text-[10px] font-mono uppercase tracking-wider text-[#A69B88]">
@@ -95,7 +95,7 @@ export default function CitizenLocationsPage() {
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             placeholder="e.g., Kankarbagh Workplace"
-            className="w-full px-3.5 py-2 rounded-lg bg-[#1E1E1C] border border-[#D8CBB3]/20 text-xs text-[#D8CBB3] placeholder:text-[#A69B88]/50 focus:outline-none focus:border-[#06B6D4]"
+            className="w-full px-3.5 py-2 rounded-lg bg-[#000000] border border-[#A1A1AA]/20 text-xs text-[#A1A1AA] placeholder:text-[#A69B88]/50 focus:outline-none focus:border-[#FFFFFF]"
           />
         </div>
         <div className="sm:w-56 space-y-1">
@@ -105,7 +105,7 @@ export default function CitizenLocationsPage() {
           <select
             value={newArea}
             onChange={(e) => setNewArea(e.target.value)}
-            className="w-full px-3.5 py-2 rounded-lg bg-[#1E1E1C] border border-[#D8CBB3]/20 text-xs text-[#D8CBB3] focus:outline-none focus:border-[#06B6D4]"
+            className="w-full px-3.5 py-2 rounded-lg bg-[#000000] border border-[#A1A1AA]/20 text-xs text-[#A1A1AA] focus:outline-none focus:border-[#FFFFFF]"
           >
             <option>Patna East Reach</option>
             <option>Gandhighat Urban Sector</option>
@@ -119,16 +119,16 @@ export default function CitizenLocationsPage() {
       </form>
 
       {/* Saved Locations Table Panel */}
-      <div className="p-6 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-4">
-        <div className="flex items-center justify-between pb-3 border-b border-[#D8CBB3]/12">
-          <h3 className="text-sm font-bold text-[#D8CBB3]">Monitored Locations</h3>
+      <div className="p-6 rounded-xl border border-[#A1A1AA]/15 bg-[#0A0A0A] space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-[#A1A1AA]/12">
+          <h3 className="text-sm font-bold text-[#A1A1AA]">Monitored Locations</h3>
           <span className="text-xs font-mono text-[#A69B88]">{locations.length} Saved · SAMPLE</span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs font-mono">
             <thead>
-              <tr className="border-b border-[#D8CBB3]/15 text-[#A69B88] uppercase text-[10px]">
+              <tr className="border-b border-[#A1A1AA]/15 text-[#A69B88] uppercase text-[10px]">
                 <th className="py-2.5 px-3">Location</th>
                 <th className="py-2.5 px-3">Area Context</th>
                 <th className="py-2.5 px-3">Linked Station</th>
@@ -137,19 +137,19 @@ export default function CitizenLocationsPage() {
                 <th className="py-2.5 px-3">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#D8CBB3]/10">
+            <tbody className="divide-y divide-[#A1A1AA]/10">
               {locations.map((loc) => (
-                <tr key={loc.id} className="hover:bg-[#33332E]/50 transition-colors">
-                  <td className="py-3 px-3 font-semibold text-[#EDE4D3] font-sans">{loc.name}</td>
-                  <td className="py-3 px-3 text-[#D8CBB3]">{loc.area}</td>
-                  <td className="py-3 px-3 text-[#06B6D4]">{loc.station}</td>
+                <tr key={loc.id} className="hover:bg-[#141414]/50 transition-colors">
+                  <td className="py-3 px-3 font-semibold text-[#FFFFFF] font-sans">{loc.name}</td>
+                  <td className="py-3 px-3 text-[#A1A1AA]">{loc.area}</td>
+                  <td className="py-3 px-3 text-[#FFFFFF]">{loc.station}</td>
                   <td className="py-3 px-3 text-[#A69B88]">{loc.subscription}</td>
                   <td className="py-3 px-3">
                     <span
                       className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${
                         loc.state === "Watch"
                           ? "bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30"
-                          : "bg-[#06B6D4]/15 text-[#06B6D4] border-[#06B6D4]/30"
+                          : "bg-[#FFFFFF]/15 text-[#FFFFFF] border-[#FFFFFF]/30"
                       }`}
                     >
                       {loc.state}
@@ -158,13 +158,13 @@ export default function CitizenLocationsPage() {
                   <td className="py-3 px-3 flex items-center gap-2">
                     <button
                       onClick={() => showToast(`Updated alert radius for ${loc.name}.`)}
-                      className="px-2.5 py-1 rounded bg-[#33332E] border border-[#D8CBB3]/20 text-[11px] text-[#D8CBB3] hover:border-[#06B6D4] flex items-center gap-1"
+                      className="px-2.5 py-1 rounded bg-[#141414] border border-[#A1A1AA]/20 text-[11px] text-[#A1A1AA] hover:border-[#FFFFFF] flex items-center gap-1"
                     >
                       <Edit3 className="w-3 h-3" /> Edit
                     </button>
                     <button
                       onClick={() => handleRemove(loc.id)}
-                      className="px-2.5 py-1 rounded bg-[#1E1E1C] border border-[#EF4444]/30 text-[11px] text-[#EF4444] hover:bg-[#EF4444]/10 flex items-center gap-1"
+                      className="px-2.5 py-1 rounded bg-[#000000] border border-[#EF4444]/30 text-[11px] text-[#EF4444] hover:bg-[#EF4444]/10 flex items-center gap-1"
                     >
                       <Trash2 className="w-3 h-3" /> Remove
                     </button>

@@ -17,7 +17,7 @@ export default function ContactPage() {
           <Badge variant="default" className="mb-3">
             CONNECT WITH RESEARCHERS
           </Badge>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-[#D8CBB3] tracking-tight">
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-[#A1A1AA] tracking-tight">
             Research & Institutional Inquiries
           </h1>
           <p className="text-base text-[#A69B88] mt-4 leading-relaxed">
@@ -27,10 +27,10 @@ export default function ContactPage() {
       </FadeIn>
 
       <FadeIn delay={0.2}>
-        <div className="rounded-xl border border-[#D8CBB3]/15 bg-[#292925] p-8">
+        <div className="rounded-xl border border-[#A1A1AA]/15 bg-[#0A0A0A] p-8">
           {submitted && (
-            <div className="mb-6 p-3.5 rounded-lg bg-[#06B6D4]/15 border border-[#06B6D4]/30 text-xs font-mono text-[#EDE4D3] flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-[#06B6D4]" /> Academic inquiry recorded in local preview log.
+            <div className="mb-6 p-3.5 rounded-lg bg-[#FFFFFF]/15 border border-[#FFFFFF]/30 text-xs font-mono text-[#FFFFFF] flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-[#FFFFFF]" /> Academic inquiry recorded in local preview log.
             </div>
           )}
           <form
@@ -42,13 +42,13 @@ export default function ContactPage() {
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
-                <label className="block text-xs font-bold text-[#D8CBB3] uppercase tracking-wider mb-2">
+                <label className="block text-xs font-bold text-[#A1A1AA] uppercase tracking-wider mb-2">
                   Full Name
                 </label>
                 <Input required placeholder="Dr. S. Kumar" />
               </div>
               <div>
-                <label className="block text-xs font-bold text-[#D8CBB3] uppercase tracking-wider mb-2">
+                <label className="block text-xs font-bold text-[#A1A1AA] uppercase tracking-wider mb-2">
                   Affiliation / University
                 </label>
                 <Input required placeholder="National Institute of Hydrology" />
@@ -56,21 +56,21 @@ export default function ContactPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#D8CBB3] uppercase tracking-wider mb-2">
+              <label className="block text-xs font-bold text-[#A1A1AA] uppercase tracking-wider mb-2">
                 Email Address
               </label>
               <Input required type="email" placeholder="researcher@institute.edu" />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#D8CBB3] uppercase tracking-wider mb-2">
+              <label className="block text-xs font-bold text-[#A1A1AA] uppercase tracking-wider mb-2">
                 Inquiry Focus
               </label>
               <textarea
                 required
                 rows={4}
                 placeholder="Share your interest in numerical modeling, sensor deployment, or supervisory gate architectures..."
-                className="w-full rounded-lg border border-[#D8CBB3]/20 bg-[#1E1E1C] px-3 py-2 text-sm text-[#D8CBB3] placeholder:text-[#A69B88]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#06B6D4]"
+                className="w-full rounded-lg border border-[#A1A1AA]/20 bg-[#000000] px-3 py-2 text-sm text-[#A1A1AA] placeholder:text-[#A69B88]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFFFFF]"
               />
             </div>
 

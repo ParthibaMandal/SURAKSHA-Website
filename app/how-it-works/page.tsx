@@ -45,7 +45,7 @@ export default function HowItWorksPage() {
       <FadeIn>
         <div className="max-w-3xl">
           <div className="eyebrow">SYSTEM WORKFLOW</div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-[#D8CBB3] tracking-tight">
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-[#A1A1AA] tracking-tight">
             Evidence in. Checks throughout. Context for action.
           </h1>
           <p className="text-base text-[#A69B88] mt-4 leading-relaxed">
@@ -57,12 +57,12 @@ export default function HowItWorksPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {steps.map((st, idx) => (
           <FadeIn key={idx} delay={idx * 0.08}>
-            <div className="p-6 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] flex items-start gap-4">
-              <span className="text-xl font-mono font-bold text-[#06B6D4] shrink-0 bg-[#06B6D4]/15 w-11 h-11 rounded-xl border border-[#06B6D4]/30 grid place-items-center">
+            <div className="p-6 rounded-xl border border-[#A1A1AA]/15 bg-[#0A0A0A] flex items-start gap-4">
+              <span className="text-xl font-mono font-bold text-[#FFFFFF] shrink-0 bg-[#FFFFFF]/15 w-11 h-11 rounded-xl border border-[#FFFFFF]/30 grid place-items-center">
                 {st.no}
               </span>
               <div>
-                <h3 className="text-base font-bold text-[#EDE4D3] mb-1">{st.title}</h3>
+                <h3 className="text-base font-bold text-[#FFFFFF] mb-1">{st.title}</h3>
                 <p className="text-xs text-[#A69B88] leading-relaxed">{st.desc}</p>
               </div>
             </div>
@@ -72,7 +72,7 @@ export default function HowItWorksPage() {
 
       <FadeIn delay={0.3}>
         <div className="notice">
-          Event lifecycle (<span className="font-mono text-[#EDE4D3]">Prepare, Respond, Recover</span>) is separate from analytical verification gates (<span className="font-mono text-[#EDE4D3]">Pre-Run, Mid-Run, Post-Run</span>). The interface displays these as distinct operational dimensions.
+          Event lifecycle (<span className="font-mono text-[#FFFFFF]">Prepare, Respond, Recover</span>) is separate from analytical verification gates (<span className="font-mono text-[#FFFFFF]">Pre-Run, Mid-Run, Post-Run</span>). The interface displays these as distinct operational dimensions.
         </div>
       </FadeIn>
     </div>

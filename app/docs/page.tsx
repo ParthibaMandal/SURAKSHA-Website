@@ -12,10 +12,10 @@ export default function DocsPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#1E1E1C] flex items-center justify-center text-xs text-[#A69B88]">
+        <div className="min-h-screen bg-black flex items-center justify-center text-xs text-zinc-400">
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded-full border-2 border-[#06B6D4] border-t-transparent animate-spin" />
-            <span>Loading SURAKSHA Documentation Portal...</span>
+            <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+            <span>Loading SURAKSHA Documentation...</span>
           </div>
         </div>
       }

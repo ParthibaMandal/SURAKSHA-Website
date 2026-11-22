@@ -101,13 +101,13 @@ export function InteractiveStationRegistry() {
               onClick={() => setSelectedStationId(stn.id)}
               className={`cursor-pointer p-4 rounded-2xl border transition-all flex flex-col justify-between ${
                 isSelected
-                  ? "bg-[#292925] border-[#06B6D4] shadow-lg shadow-[#06B6D4]/10 ring-1 ring-[#06B6D4]"
-                  : "bg-[#242421] border-[#D8CBB3]/15 hover:border-[#D8CBB3]/30"
+                  ? "bg-[#0A0A0A] border-[#FFFFFF] shadow-lg shadow-[#FFFFFF]/10 ring-1 ring-[#FFFFFF]"
+                  : "bg-[#242421] border-[#A1A1AA]/15 hover:border-[#A1A1AA]/30"
               }`}
             >
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-[10px] text-[#06B6D4] font-semibold">
+                  <span className="font-mono text-[10px] text-[#FFFFFF] font-semibold">
                     {stn.id}
                   </span>
                   <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30">
@@ -115,7 +115,7 @@ export function InteractiveStationRegistry() {
                   </span>
                 </div>
 
-                <h4 className="font-bold text-sm text-[#EDE4D3]">
+                <h4 className="font-bold text-sm text-[#FFFFFF]">
                   {stn.name}
                 </h4>
 
@@ -124,9 +124,9 @@ export function InteractiveStationRegistry() {
                 </p>
               </div>
 
-              <div className="pt-3 border-t border-[#D8CBB3]/10 mt-3 flex items-center justify-between text-xs">
+              <div className="pt-3 border-t border-[#A1A1AA]/10 mt-3 flex items-center justify-between text-xs">
                 <span className="text-[#A69B88]">Current:</span>
-                <span className="font-mono font-bold text-[#EDE4D3]">
+                <span className="font-mono font-bold text-[#FFFFFF]">
                   {stn.currentStage} m
                 </span>
               </div>
@@ -136,18 +136,18 @@ export function InteractiveStationRegistry() {
       </div>
 
       {/* Selected Station Deep Gauge Inspector */}
-      <div className="p-6 sm:p-8 rounded-3xl border border-[#D8CBB3]/20 bg-[#242421] space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#D8CBB3]/15">
+      <div className="p-6 sm:p-8 rounded-3xl border border-[#A1A1AA]/20 bg-[#242421] space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#A1A1AA]/15">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="font-mono text-xs text-[#06B6D4] uppercase font-bold">
+              <span className="font-mono text-xs text-[#FFFFFF] uppercase font-bold">
                 {selectedStation.id} · CWC Official Telemetry Gauge
               </span>
               <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#10B981]/15 text-[#10B981]">
                 {selectedStation.status}
               </span>
             </div>
-            <h3 className="text-xl font-bold text-[#EDE4D3]">
+            <h3 className="text-xl font-bold text-[#FFFFFF]">
               {selectedStation.name}
             </h3>
             <p className="text-xs text-[#A69B88] mt-0.5">
@@ -157,14 +157,14 @@ export function InteractiveStationRegistry() {
 
           <div className="text-right">
             <span className="text-xs text-[#A69B88] font-mono block">Current River Stage</span>
-            <span className="text-2xl font-bold text-[#38BDF8] font-mono">
+            <span className="text-2xl font-bold text-[#E4E4E7] font-mono">
               {selectedStation.currentStage} m
             </span>
           </div>
         </div>
 
         {/* Visual Threshold Bar */}
-        <div className="space-y-3 p-5 rounded-2xl bg-[#1E1E1C] border border-[#D8CBB3]/10">
+        <div className="space-y-3 p-5 rounded-2xl bg-[#000000] border border-[#A1A1AA]/10">
           <div className="flex items-center justify-between text-xs font-mono text-[#A69B88]">
             <span>Zero Level: {selectedStation.zeroLevel} m</span>
             <span className="text-[#F59E0B]">Warning: {selectedStation.warningLevel} m</span>
@@ -173,10 +173,10 @@ export function InteractiveStationRegistry() {
           </div>
 
           {/* Bar track */}
-          <div className="relative w-full h-8 bg-[#141413] rounded-xl overflow-hidden border border-[#D8CBB3]/20">
+          <div className="relative w-full h-8 bg-[#141413] rounded-xl overflow-hidden border border-[#A1A1AA]/20">
             {/* Water Fill */}
             <div
-              className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-[#06B6D4] to-[#38BDF8] transition-all duration-500 rounded-l-xl"
+              className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-[#FFFFFF] to-[#E4E4E7] transition-all duration-500 rounded-l-xl"
               style={{ width: `${getPercent(selectedStation.currentStage)}%` }}
             />
 
@@ -196,7 +196,7 @@ export function InteractiveStationRegistry() {
 
             {/* Current Level Indicator */}
             <div
-              className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 z-20 px-2 py-0.5 rounded bg-[#EDE4D3] text-[#1E1E1C] font-mono text-[10px] font-bold shadow"
+              className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 z-20 px-2 py-0.5 rounded bg-[#FFFFFF] text-[#000000] font-mono text-[10px] font-bold shadow"
               style={{ left: `${getPercent(selectedStation.currentStage)}%` }}
             >
               {selectedStation.currentStage} m
@@ -204,19 +204,19 @@ export function InteractiveStationRegistry() {
           </div>
 
           <div className="flex items-center justify-between text-[11px] text-[#A69B88]">
-            <span>Buffer to Warning Level: <strong className="text-[#EDE4D3]">{(selectedStation.warningLevel - selectedStation.currentStage).toFixed(2)} m</strong></span>
-            <span>Buffer to Danger Level: <strong className="text-[#EDE4D3]">{(selectedStation.dangerLevel - selectedStation.currentStage).toFixed(2)} m</strong></span>
-            <span>HFL Recorded: <strong className="text-[#EDE4D3]">{selectedStation.hflDate}</strong></span>
+            <span>Buffer to Warning Level: <strong className="text-[#FFFFFF]">{(selectedStation.warningLevel - selectedStation.currentStage).toFixed(2)} m</strong></span>
+            <span>Buffer to Danger Level: <strong className="text-[#FFFFFF]">{(selectedStation.dangerLevel - selectedStation.currentStage).toFixed(2)} m</strong></span>
+            <span>HFL Recorded: <strong className="text-[#FFFFFF]">{selectedStation.hflDate}</strong></span>
           </div>
         </div>
 
         {/* Operational Context Specs */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-          <div className="p-4 rounded-xl bg-[#1E1E1C] border border-[#D8CBB3]/10 space-y-1">
+          <div className="p-4 rounded-xl bg-[#000000] border border-[#A1A1AA]/10 space-y-1">
             <span className="font-mono text-[10px] uppercase tracking-wider text-[#A69B88] block">
               Hydraulic Zero Level
             </span>
-            <div className="text-lg font-bold text-[#EDE4D3] font-mono">
+            <div className="text-lg font-bold text-[#FFFFFF] font-mono">
               {selectedStation.zeroLevel.toFixed(2)} m
             </div>
             <p className="text-[11px] text-[#A69B88]">
@@ -224,7 +224,7 @@ export function InteractiveStationRegistry() {
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-[#1E1E1C] border border-[#D8CBB3]/10 space-y-1">
+          <div className="p-4 rounded-xl bg-[#000000] border border-[#A1A1AA]/10 space-y-1">
             <span className="font-mono text-[10px] uppercase tracking-wider text-[#F59E0B] block">
               Warning Level
             </span>
@@ -236,7 +236,7 @@ export function InteractiveStationRegistry() {
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-[#1E1E1C] border border-[#D8CBB3]/10 space-y-1">
+          <div className="p-4 rounded-xl bg-[#000000] border border-[#A1A1AA]/10 space-y-1">
             <span className="font-mono text-[10px] uppercase tracking-wider text-[#EF4444] block">
               Danger Level
             </span>

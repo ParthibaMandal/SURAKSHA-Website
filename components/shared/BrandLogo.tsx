@@ -14,9 +14,9 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({ className = "", size = "md
 
   return (
     <Link href="/" className={`inline-flex items-center gap-2.5 group select-none ${className}`}>
-      {/* Brand Mark - Shield with River Waves matching the UI/UX Mockup */}
+      {/* Brand Mark - Shield with River Waves matching monochrome high-contrast aesthetic */}
       <span
-        className={`${markDimensions} border border-white/20 grid place-items-center bg-black/40 backdrop-blur-md group-hover:border-sky-400 group-hover:bg-sky-500/10 transition-all relative overflow-hidden`}
+        className={`${markDimensions} border border-white/20 grid place-items-center bg-black/40 backdrop-blur-md group-hover:border-white/40 group-hover:bg-white/5 transition-all relative overflow-hidden`}
       >
         <svg
           viewBox="0 0 24 24"
@@ -26,7 +26,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({ className = "", size = "md
           {/* Shield Outline */}
           <path
             d="M12 2.5L4.5 5.5v6c0 5 3.5 9.5 7.5 10.5 4-1 7.5-5.5 7.5-10.5v-6L12 2.5z"
-            stroke="#38BDF8"
+            stroke="#FFFFFF"
             strokeWidth="1.8"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -34,13 +34,13 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({ className = "", size = "md
           {/* River Waves inside Shield */}
           <path
             d="M7.5 10c1.5-1 2.5-1 4.5 0s3 1 4.5 0"
-            stroke="#2DD4BF"
+            stroke="#E4E4E7"
             strokeWidth="1.6"
             strokeLinecap="round"
           />
           <path
             d="M7.5 13.5c1.5-1 2.5-1 4.5 0s3 1 4.5 0"
-            stroke="#38BDF8"
+            stroke="#A1A1AA"
             strokeWidth="1.6"
             strokeLinecap="round"
           />

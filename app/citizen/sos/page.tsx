@@ -62,15 +62,15 @@ export default function CitizenSosPage() {
   return (
     <div className="space-y-6">
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#292925] border border-[#06B6D4]/40 text-xs font-mono text-[#D8CBB3] shadow-2xl flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-[#06B6D4]" /> {toast}
+        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#0A0A0A] border border-[#FFFFFF]/40 text-xs font-mono text-[#A1A1AA] shadow-2xl flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-[#FFFFFF]" /> {toast}
         </div>
       )}
 
       {/* Heading */}
-      <div className="pb-4 border-b border-[#D8CBB3]/15">
+      <div className="pb-4 border-b border-[#A1A1AA]/15">
         <div className="eyebrow">CITIZEN WORKSPACE</div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#D8CBB3] tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#A1A1AA] tracking-tight">
           Emergency SOS Assistance
         </h1>
         <p className="text-xs text-[#A69B88] mt-1">
@@ -79,10 +79,10 @@ export default function CitizenSosPage() {
       </div>
 
       {/* Emergency Alert Banner */}
-      <div className="p-4 rounded-xl border border-[#EF4444]/40 bg-[#EF4444]/10 text-[#D8CBB3] flex items-start gap-3.5">
+      <div className="p-4 rounded-xl border border-[#EF4444]/40 bg-[#EF4444]/10 text-[#A1A1AA] flex items-start gap-3.5">
         <AlertTriangle className="w-5 h-5 text-[#EF4444] shrink-0 mt-0.5" />
         <div className="text-xs space-y-0.5">
-          <strong className="text-[#EDE4D3] font-bold block">
+          <strong className="text-[#FFFFFF] font-bold block">
             For immediate life-threatening danger, call your official national emergency helpline (112 / NDRF).
           </strong>
           <p className="text-[#A69B88]">
@@ -94,9 +94,9 @@ export default function CitizenSosPage() {
       {/* Two Column Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left: New assistance request */}
-        <div className="p-6 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-[#D8CBB3]/12">
-            <h3 className="text-sm font-bold text-[#D8CBB3]">New Assistance Request</h3>
+        <div className="p-6 rounded-xl border border-[#A1A1AA]/15 bg-[#0A0A0A] space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-[#A1A1AA]/12">
+            <h3 className="text-sm font-bold text-[#A1A1AA]">New Assistance Request</h3>
             <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/30">
               DEMO DESK
             </span>
@@ -105,37 +105,37 @@ export default function CitizenSosPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#D8CBB3] uppercase tracking-wider">
+                <label className="text-xs font-bold text-[#A1A1AA] uppercase tracking-wider">
                   Citizen Name
                 </label>
                 <input
                   required
                   value={citizenName}
                   onChange={(e) => setCitizenName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#1E1E1C] text-xs text-[#D8CBB3] focus:outline-none focus:border-[#06B6D4]"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#A1A1AA]/20 bg-[#000000] text-xs text-[#A1A1AA] focus:outline-none focus:border-[#FFFFFF]"
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#D8CBB3] uppercase tracking-wider">
+                <label className="text-xs font-bold text-[#A1A1AA] uppercase tracking-wider">
                   Contact Number
                 </label>
                 <input
                   required
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#1E1E1C] text-xs text-[#D8CBB3] focus:outline-none focus:border-[#06B6D4]"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#A1A1AA]/20 bg-[#000000] text-xs text-[#A1A1AA] focus:outline-none focus:border-[#FFFFFF]"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-[#D8CBB3] uppercase tracking-wider">
+              <label className="text-xs font-bold text-[#A1A1AA] uppercase tracking-wider">
                 Type of Assistance
               </label>
               <select
                 value={assistanceType}
                 onChange={(e) => setAssistanceType(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#1E1E1C] text-xs text-[#D8CBB3] focus:outline-none focus:border-[#06B6D4]"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#A1A1AA]/20 bg-[#000000] text-xs text-[#A1A1AA] focus:outline-none focus:border-[#FFFFFF]"
               >
                 <option>Rescue / evacuation support</option>
                 <option>Medical assistance</option>
@@ -145,7 +145,7 @@ export default function CitizenSosPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-[#D8CBB3] uppercase tracking-wider">
+              <label className="text-xs font-bold text-[#A1A1AA] uppercase tracking-wider">
                 Location / Ward Landmark
               </label>
               <input
@@ -153,18 +153,18 @@ export default function CitizenSosPage() {
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 placeholder="e.g., Near Gandhighat Ward 04, Patna"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#1E1E1C] text-xs text-[#D8CBB3] placeholder:text-[#A69B88]/50 focus:outline-none focus:border-[#06B6D4]"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#A1A1AA]/20 bg-[#000000] text-xs text-[#A1A1AA] placeholder:text-[#A69B88]/50 focus:outline-none focus:border-[#FFFFFF]"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-[#D8CBB3] uppercase tracking-wider">
+              <label className="text-xs font-bold text-[#A1A1AA] uppercase tracking-wider">
                 People Affected
               </label>
               <select
                 value={people}
                 onChange={(e) => setPeople(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#1E1E1C] text-xs text-[#D8CBB3] focus:outline-none focus:border-[#06B6D4]"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#A1A1AA]/20 bg-[#000000] text-xs text-[#A1A1AA] focus:outline-none focus:border-[#FFFFFF]"
               >
                 <option>1 person</option>
                 <option>2–5 people</option>
@@ -174,7 +174,7 @@ export default function CitizenSosPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-[#D8CBB3] uppercase tracking-wider">
+              <label className="text-xs font-bold text-[#A1A1AA] uppercase tracking-wider">
                 Notes & Hazard Conditions
               </label>
               <textarea
@@ -182,7 +182,7 @@ export default function CitizenSosPage() {
                 onChange={(e) => setDetails(e.target.value)}
                 rows={3}
                 placeholder="Describe water depth, structural access, or medical needs."
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CBB3]/20 bg-[#1E1E1C] text-xs text-[#D8CBB3] placeholder:text-[#A69B88]/50 focus:outline-none focus:border-[#06B6D4]"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#A1A1AA]/20 bg-[#000000] text-xs text-[#A1A1AA] placeholder:text-[#A69B88]/50 focus:outline-none focus:border-[#FFFFFF]"
               />
             </div>
 
@@ -197,37 +197,37 @@ export default function CitizenSosPage() {
         </div>
 
         {/* Right: Request Status Tracking */}
-        <div className="p-6 rounded-xl border border-[#D8CBB3]/15 bg-[#292925] space-y-4 flex flex-col justify-between">
+        <div className="p-6 rounded-xl border border-[#A1A1AA]/15 bg-[#0A0A0A] space-y-4 flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between pb-3 border-b border-[#D8CBB3]/12">
-              <h3 className="text-sm font-bold text-[#D8CBB3]">Request Status Tracking</h3>
+            <div className="flex items-center justify-between pb-3 border-b border-[#A1A1AA]/12">
+              <h3 className="text-sm font-bold text-[#A1A1AA]">Request Status Tracking</h3>
               <span className="text-xs font-mono text-[#A69B88]">
                 {submitted ? "1 Active Ticket" : "0 Active"}
               </span>
             </div>
 
             {submitted ? (
-              <div className="p-4 rounded-xl border border-[#06B6D4]/30 bg-[#1E1E1C] space-y-2.5 mt-4 font-mono text-xs">
-                <div className="text-[#06B6D4] font-bold flex items-center justify-between">
+              <div className="p-4 rounded-xl border border-[#FFFFFF]/30 bg-[#000000] space-y-2.5 mt-4 font-mono text-xs">
+                <div className="text-[#FFFFFF] font-bold flex items-center justify-between">
                   <span className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4" /> Request Registered
                   </span>
-                  <span className="px-2 py-0.5 rounded bg-[#06B6D4]/15 text-[11px] border border-[#06B6D4]/40">
+                  <span className="px-2 py-0.5 rounded bg-[#FFFFFF]/15 text-[11px] border border-[#FFFFFF]/40">
                     {registeredTicket ? registeredTicket.id : "SOS-CONFIRMED"}
                   </span>
                 </div>
-                <div className="text-[#D8CBB3]">Citizen: {citizenName}</div>
-                <div className="text-[#D8CBB3]">Category: {assistanceType}</div>
-                <div className="text-[#D8CBB3]">Location: {location || "Patna Lowland"}</div>
-                <div className="text-[#D8CBB3]">Affected: {people}</div>
-                <div className="text-[11px] text-[#A69B88] pt-2 border-t border-[#D8CBB3]/12 flex items-center justify-between">
+                <div className="text-[#A1A1AA]">Citizen: {citizenName}</div>
+                <div className="text-[#A1A1AA]">Category: {assistanceType}</div>
+                <div className="text-[#A1A1AA]">Location: {location || "Patna Lowland"}</div>
+                <div className="text-[#A1A1AA]">Affected: {people}</div>
+                <div className="text-[11px] text-[#A69B88] pt-2 border-t border-[#A1A1AA]/12 flex items-center justify-between">
                   <span>Status: Queued in Operations Triage</span>
                   <span className="text-[#F59E0B] font-semibold">{registeredTicket?.status || "PENDING"}</span>
                 </div>
               </div>
             ) : (
               <div className="py-12 text-center space-y-2">
-                <strong className="text-sm text-[#EDE4D3] block">No active SOS requests</strong>
+                <strong className="text-sm text-[#FFFFFF] block">No active SOS requests</strong>
                 <p className="text-xs text-[#A69B88]">
                   Submitted requests appear here with live triage status from the Operations Command Centre.
                 </p>
@@ -235,7 +235,7 @@ export default function CitizenSosPage() {
             )}
           </div>
 
-          <p className="text-[10px] text-[#A69B88] leading-relaxed pt-4 border-t border-[#D8CBB3]/12">
+          <p className="text-[10px] text-[#A69B88] leading-relaxed pt-4 border-t border-[#A1A1AA]/12">
             Personal information submitted during emergencies is confidential and restricted to authorized disaster-response operators.
           </p>
         </div>

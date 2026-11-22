@@ -132,26 +132,26 @@ export function StructuredDocRenderer({ doc }: StructuredDocRendererProps) {
   const renderSectionHtml = (lines: string[]) => {
     let text = lines.join("\n");
 
-    // Replace Callouts > [!NOTE] etc.
+    // Replace Callouts > [!NOTE] etc. with clean monochrome styles
     text = text.replace(
       />\s*\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*([\s\S]*?)(?=(?:\n\n[^\s>]|\n?$))/gi,
       (match, type, body) => {
         const typeUpper = type.toUpperCase();
-        let borderClass = "border-[#06B6D4] bg-[#06B6D4]/10 text-[#38BDF8]";
+        let borderClass = "border-white/30 bg-white/5 text-white";
         let label = "NOTE";
 
         if (typeUpper === "WARNING" || typeUpper === "CAUTION") {
-          borderClass = "border-[#F59E0B] bg-[#F59E0B]/10 text-[#F59E0B]";
+          borderClass = "border-amber-500/40 bg-amber-500/10 text-amber-300";
           label = "WARNING";
         } else if (typeUpper === "IMPORTANT") {
-          borderClass = "border-[#EF4444] bg-[#EF4444]/10 text-[#EF4444]";
+          borderClass = "border-rose-500/40 bg-rose-500/10 text-rose-300";
           label = "CRITICAL REQUIREMENT";
         } else if (typeUpper === "TIP") {
-          borderClass = "border-[#10B981] bg-[#10B981]/10 text-[#10B981]";
+          borderClass = "border-emerald-500/40 bg-emerald-500/10 text-emerald-300";
           label = "ENGINEERING TIP";
         }
 
-        return `<div class="my-5 p-4 rounded-2xl border-l-4 ${borderClass} text-xs leading-relaxed"><div class="font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">${label}</div><div class="text-slate-300">${body.trim()}</div></div>`;
+        return `<div class="my-5 p-4 rounded-2xl border-l-4 ${borderClass} text-xs leading-relaxed"><div class="font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">${label}</div><div class="text-zinc-300">${body.trim()}</div></div>`;
       }
     );
 
@@ -163,10 +163,10 @@ export function StructuredDocRenderer({ doc }: StructuredDocRendererProps) {
       const styledHtml = rawHtml
         .replace(/<table>/gi, '<div class="my-5 rounded-2xl border border-white/10 overflow-hidden"><table class="w-full text-left text-xs">')
         .replace(/<\/table>/gi, '</table></div>')
-        .replace(/<thead>/gi, '<thead class="bg-[#090C10] text-slate-400 font-mono text-[11px] border-b border-white/10">')
-        .replace(/<th>/gi, '<th class="p-3">')
-        .replace(/<tbody>/gi, '<tbody class="divide-y divide-white/5 bg-[#10161F]/60">')
-        .replace(/<td>/gi, '<td class="p-3 text-slate-300">');
+        .replace(/<thead>/gi, '<thead class="bg-black text-zinc-400 font-mono text-[11px] border-b border-white/10">')
+        .replace(/<th>/gi, '<th class="p-3 font-semibold text-zinc-300">')
+        .replace(/<tbody>/gi, '<tbody class="divide-y divide-white/5 bg-[#0A0A0A]">')
+        .replace(/<td>/gi, '<td class="p-3 text-zinc-300">');
 
       return DOMPurify.sanitize(styledHtml, {
         ADD_ATTR: ["target", "id", "class"],
@@ -178,17 +178,17 @@ export function StructuredDocRenderer({ doc }: StructuredDocRendererProps) {
 
   return (
     <div className="space-y-8 my-6 text-white">
-      {/* 1. Sleek Document Metadata Card */}
+      {/* 1. Document Metadata Card */}
       {Object.keys(docMetadata).length > 0 && (
-        <div className="p-5 rounded-2xl border border-white/10 bg-[#10161F]/80 backdrop-blur-xl shadow-lg">
+        <div className="p-5 rounded-2xl border border-white/10 bg-[#0A0A0A] shadow-lg">
           <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] shadow-[0_0_8px_#10b981]" />
-              <span className="font-mono text-xs uppercase tracking-wider text-white font-bold">
+              <span className="w-2 h-2 rounded-full bg-white" />
+              <span className="font-mono text-xs uppercase tracking-wider text-white font-semibold">
                 Technical Specification Metadata
               </span>
             </div>
-            <span className="text-[10px] font-mono px-3 py-0.5 rounded-full bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30">
+            <span className="text-[10px] font-mono px-3 py-0.5 rounded-full bg-white/5 text-zinc-300 border border-white/15">
               {doc.status}
             </span>
           </div>
@@ -196,10 +196,10 @@ export function StructuredDocRenderer({ doc }: StructuredDocRendererProps) {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 text-xs">
             {Object.entries(docMetadata).map(([key, val]) => (
               <div key={key} className="space-y-0.5">
-                <span className="text-[10px] font-mono text-slate-400 uppercase block">
+                <span className="text-[10px] font-mono text-zinc-500 uppercase block">
                   {key}
                 </span>
-                <span className="font-mono text-xs text-white truncate block font-medium">
+                <span className="font-mono text-xs text-zinc-200 truncate block font-medium">
                   {val}
                 </span>
               </div>
@@ -242,22 +242,22 @@ export function StructuredDocRenderer({ doc }: StructuredDocRendererProps) {
             <section
               key={sec.id || sIdx}
               id={sec.id}
-              className="scroll-mt-24 rounded-2xl border border-white/10 bg-[#10161F]/80 backdrop-blur-xl p-6 sm:p-8 space-y-4 shadow-xl"
+              className="scroll-mt-24 rounded-2xl border border-white/10 bg-[#0A0A0A] p-6 sm:p-8 space-y-4 shadow-xl"
             >
               {/* Section Header */}
               <div className="flex items-center justify-between pb-3 border-b border-white/10">
                 <div className="flex items-center gap-2.5">
-                  <span className="w-6 h-6 rounded-full bg-[#06B6D4]/15 text-[#06B6D4] font-mono text-xs font-bold flex items-center justify-center border border-[#06B6D4]/30">
+                  <span className="w-6 h-6 rounded-lg bg-white/5 text-zinc-300 font-mono text-xs font-semibold flex items-center justify-center border border-white/10">
                     {sIdx + 1}
                   </span>
-                  <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                  <h2 className="text-lg sm:text-xl font-semibold text-white tracking-tight">
                     {sec.title}
                   </h2>
                 </div>
 
                 <a
                   href={`#${sec.id}`}
-                  className="text-xs font-mono text-slate-400 hover:text-[#06B6D4] transition-colors"
+                  className="text-xs font-mono text-zinc-500 hover:text-white transition-colors"
                   aria-label="Direct anchor"
                 >
                   #{sec.id}
@@ -266,13 +266,13 @@ export function StructuredDocRenderer({ doc }: StructuredDocRendererProps) {
 
               {/* Rendered Section Body */}
               <div
-                className="text-xs sm:text-sm text-slate-300 leading-relaxed space-y-3
+                className="text-xs sm:text-sm text-zinc-300 leading-relaxed space-y-3
                   [&_p]:my-3 [&_p]:leading-relaxed
                   [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:my-3 [&_ul]:space-y-1.5
                   [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:my-3 [&_ol]:space-y-1.5
-                  [&_code]:text-[#38BDF8] [&_code]:font-mono [&_code]:text-xs [&_code]:bg-[#090C10] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded
-                  [&_pre]:bg-[#090C10] [&_pre]:p-4 [&_pre]:rounded-2xl [&_pre]:border [&_pre]:border-white/10 [&_pre]:overflow-x-auto [&_pre]:my-4
-                  [&_a]:text-[#06B6D4] [&_a]:underline hover:[&_a]:text-[#38BDF8]"
+                  [&_code]:text-white [&_code]:font-mono [&_code]:text-xs [&_code]:bg-white/5 [&_code]:border [&_code]:border-white/10 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded
+                  [&_pre]:bg-black [&_pre]:p-4 [&_pre]:rounded-2xl [&_pre]:border [&_pre]:border-white/10 [&_pre]:overflow-x-auto [&_pre]:my-4
+                  [&_a]:text-white [&_a]:underline hover:[&_a]:text-zinc-300"
                 dangerouslySetInnerHTML={{
                   __html: renderSectionHtml(textWithoutMermaid.split("\n")),
                 }}
