@@ -26,6 +26,7 @@ interface AuthContextType {
     role?: "citizen" | "admin" | "operator" | "hydrologist"
   ) => Promise<{ error: Error | null; user?: User | null }>;
   signInDemo: (targetRole: "admin" | "citizen") => Promise<{ error: Error | null; role: string }>;
+  signInWithGoogle: (redirectTo?: string) => Promise<{ error: Error | null; url?: string | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -230,6 +231,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { error: null, role: targetRole };
   };
 
+  const signInWithGoogle = async (redirectTo?: string) => {
+    setIsLoading(true);
+    const destination =
+      redirectTo ||
+      (typeof window !== "undefined"
+        ? `${window.location.origin}/auth/callback`
+        : "https://suraksha-nine-wheat.vercel.app/auth/callback");
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: destination,
+        queryParams: {
+          access_type: "offline",
+          prompt: "consent",
+        },
+      },
+    });
+
+    if (error) {
+      setIsLoading(false);
+      return { error, url: null };
+    }
+
+    return { error: null, url: data?.url || null };
+  };
+
   const signOut = async () => {
     setIsLoading(true);
     await supabase.auth.signOut();
@@ -261,6 +289,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         signIn,
         signUp,
         signInDemo,
+        signInWithGoogle,
         signOut,
         refreshProfile,
       }}

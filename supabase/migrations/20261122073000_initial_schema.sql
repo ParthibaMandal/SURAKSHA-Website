@@ -162,3 +162,4 @@ VALUES
   ('CAP-2026-204', 'IN-BH-GAN-2026-04', 'SURAKSHA Central Command', 'Actual', 'Alert', 'Public', 'Severe', 'Immediate', 'Observed', 'Tributary Flash Surge', 'Gandak Confluence Rapid Stage Rise Advisory', 'Rapid upstream release detected at Lalganj gauge. Discharge velocity exceeds threshold.', 'Deploy local embankment monitoring teams immediately.', 'Lalganj – Hajipur Sector', 'PENDING_REVIEW'),
   ('CAP-2026-203', 'IN-BH-PAT-2026-03', 'SURAKSHA Central Command', 'Actual', 'Alert', 'Public', 'Moderate', 'Expected', 'Likely', 'Middle Ganga Basin Bulletin', 'Middle Ganga Lowland Watch Bulletin', 'Normal monsoon inflow with controlled dam discharge.', 'Maintain routine gauge readings.', 'Patna Study Area (Digha to Gandhi Ghat)', 'DISPATCHED')
 ON CONFLICT (id) DO NOTHING;
+
