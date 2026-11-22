@@ -26,16 +26,18 @@ export const HimalayasToPlainsHero: React.FC = () => {
     <>
       <section className="relative h-screen min-h-[700px] w-full flex flex-col justify-between overflow-x-hidden overflow-y-hidden bg-black text-white">
         {/* =========================================================================
-            BACKGROUND HERO PANORAMA (User Provided Asset)
+            BACKGROUND HERO VIDEO (User Provided Asset)
            ========================================================================= */}
         <div className="absolute inset-0 z-0 w-full overflow-hidden">
-          <Image
-            src="/images/hero-himalayas-ganga.jpg"
-            alt="From the Himalayas to the Plains — SURAKSHA Flood Early Warning System"
-            fill
-            priority
-            quality={95}
-            className="w-full object-cover object-[center_35%] scale-[1.01]"
+          <video
+            src="/videos/hero-himalayas-ganga.mp4"
+            poster="/images/hero-himalayas-ganga.jpg"
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            className="absolute inset-0 w-full h-full object-cover object-[center_35%] scale-[1.01]"
           />
 
           {/* Left Vignette & Gradient Overlays for High Legibility */}
@@ -397,11 +399,14 @@ export const HimalayasToPlainsHero: React.FC = () => {
 
             {/* Video / Interactive Preview Frame */}
             <div className="relative aspect-video rounded-2xl overflow-hidden border border-white/15 bg-black mb-6 group">
-              <Image
-                src="/images/hero-himalayas-ganga.jpg"
-                alt="SURAKSHA Platform Preview"
-                fill
-                className="object-cover opacity-80"
+              <video
+                src="/videos/hero-himalayas-ganga.mp4"
+                poster="/images/hero-himalayas-ganga.jpg"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover opacity-80"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
               
