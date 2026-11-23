@@ -6,20 +6,13 @@ function backendUrl() {
   return (process.env.SURAKSHA_BACKEND_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
 }
 
-function backendHeaders() {
-  const headers: Record<string, string> = { accept: "application/json" };
-  const operatorKey = process.env.SURAKSHA_OPERATOR_API_KEY?.trim();
-  if (operatorKey) headers.authorization = `Bearer ${operatorKey}`;
-  return headers;
-}
-
 async function proxy(path: string, init?: RequestInit) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
     const response = await fetch(`${backendUrl()}${path}`, {
       ...init,
-      headers: { ...backendHeaders(), ...(init?.headers as Record<string, string> | undefined) },
+      headers: { accept: "application/json", ...(init?.headers as Record<string, string> | undefined) },
       signal: controller.signal,
       cache: "no-store",
       redirect: "error",
