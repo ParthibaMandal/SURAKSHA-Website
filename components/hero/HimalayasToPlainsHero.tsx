@@ -13,17 +13,21 @@ import {
   ExternalLink,
   ChevronRight,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { gsap } from "gsap";
 
 export const HimalayasToPlainsHero: React.FC = () => {
   const [isDemoOpen, setIsDemoOpen] = useState(false);
   const orbitalArcRef = useRef<SVGSVGElement | null>(null);
   const heroContentRef = useRef<HTMLDivElement | null>(null);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
-    if (orbitalArcRef.current) {
-      const paths = orbitalArcRef.current.querySelectorAll("path, ellipse");
+    const root = orbitalArcRef.current;
+    if (!root || prefersReducedMotion) return;
+
+    const context = gsap.context(() => {
+      const paths = root.querySelectorAll("path, ellipse");
       gsap.fromTo(
         paths,
         { strokeDashoffset: 100, opacity: 0 },
@@ -35,8 +39,10 @@ export const HimalayasToPlainsHero: React.FC = () => {
           stagger: 0.25,
         }
       );
-    }
-  }, []);
+    }, root);
+
+    return () => context.revert();
+  }, [prefersReducedMotion]);
 
   return (
     <>
@@ -48,11 +54,11 @@ export const HimalayasToPlainsHero: React.FC = () => {
           <video
             src="/videos/hero-himalayas-ganga.mp4"
             poster="/images/hero-himalayas-ganga.jpg"
-            autoPlay
+            autoPlay={!prefersReducedMotion}
             loop
             muted
             playsInline
-            preload="auto"
+            preload={prefersReducedMotion ? "none" : "metadata"}
             className="absolute inset-0 w-full h-full object-cover object-[center_35%] scale-[1.01]"
           />
 
@@ -115,9 +121,9 @@ export const HimalayasToPlainsHero: React.FC = () => {
           <div className="max-w-2xl lg:max-w-[640px] flex flex-col items-start">
             {/* Main Headline (IBM Plex Sans, tightened tracking, text-balance) */}
             <motion.h1
-              initial={{ opacity: 0, y: 22 }}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 22 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.65, ease: [0.16, 1, 0.3, 1] }}
               className="text-4xl sm:text-5xl md:text-6xl lg:text-[60px] font-heading font-semibold tracking-tight text-white leading-[1.08] mb-4 text-balance"
             >
               From the Himalayas<br />
@@ -127,9 +133,9 @@ export const HimalayasToPlainsHero: React.FC = () => {
 
             {/* Subtitle */}
             <motion.p
-              initial={{ opacity: 0, y: 16 }}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.65, delay: prefersReducedMotion ? 0 : 0.15, ease: [0.16, 1, 0.3, 1] }}
               className="text-base sm:text-lg text-[#9BA5A0] max-w-xl font-normal leading-relaxed mb-6 text-pretty"
             >
               Satellite observations, river-stage sensors, and physics-guided modeling across the Middle Ganga corridor.
@@ -137,9 +143,9 @@ export const HimalayasToPlainsHero: React.FC = () => {
 
             {/* Call to Action Buttons (Animated Glassmorphism) */}
             <motion.div
-              initial={{ opacity: 0, y: 14 }}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65, delay: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.65, delay: prefersReducedMotion ? 0 : 0.28, ease: [0.16, 1, 0.3, 1] }}
               className="flex flex-wrap items-center gap-4 mb-4"
             >
               {/* Primary Glass Button: Explore Platform */}
@@ -171,9 +177,9 @@ export const HimalayasToPlainsHero: React.FC = () => {
           <div className="w-full max-w-2xl flex flex-col gap-5 pt-4">
             {/* 4-Item Feature Highlights Row (Animated Glass Icons) */}
             <motion.div
-              initial={{ opacity: 0, y: 15 }}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.42 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.6, delay: prefersReducedMotion ? 0 : 0.42 }}
               className="grid grid-cols-2 sm:grid-cols-4 gap-5 pt-5 border-t border-white/15 w-full"
             >
               {/* 1. Satellite Monitoring */}
@@ -237,14 +243,14 @@ export const HimalayasToPlainsHero: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.2 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md"
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.25, ease: [0.16, 1, 0.3, 1] }}
               className="relative w-full max-w-3xl rounded-2xl border border-[#1F2823] bg-[#0D100E] p-6 text-white shadow-2xl"
             >
               {/* Close button */}
@@ -274,7 +280,7 @@ export const HimalayasToPlainsHero: React.FC = () => {
                 <video
                   src="/videos/hero-himalayas-ganga.mp4"
                   poster="/images/hero-himalayas-ganga.jpg"
-                  autoPlay
+                  autoPlay={!prefersReducedMotion}
                   loop
                   muted
                   playsInline

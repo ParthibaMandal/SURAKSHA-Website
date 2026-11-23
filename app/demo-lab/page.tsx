@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Activity, ArrowUpRight, CheckCircle2, CircleAlert, Droplets, LoaderCircle, Play, ShieldCheck, Waves } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { FadeIn } from "@/components/motion/FadeIn";
 
 type ScenarioResult = {
@@ -72,7 +73,7 @@ const formatTime = (value: string) => {
 
 function ReviewCheck({ title, passed, detail }: { title: string; passed: boolean; detail: string }) {
   return (
-    <div className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.025] p-4">
+    <motion.div variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }} className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.025] p-4">
       {passed ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" /> : <CircleAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />}
       <div className="min-w-0">
         <p className="text-sm font-semibold text-white">{title}</p>
@@ -81,7 +82,7 @@ function ReviewCheck({ title, passed, detail }: { title: string; passed: boolean
           {passed ? "Passed" : "Needs review"}
         </span>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -92,6 +93,7 @@ export default function DemoLabPage() {
   const [result, setResult] = useState<ScenarioResult | null>(null);
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const prefersReducedMotion = useReducedMotion();
 
   const selectedPreset = PRESETS[preset];
 
@@ -130,12 +132,13 @@ export default function DemoLabPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#050708] text-white">
+    <main className="relative min-h-screen overflow-hidden bg-[#050708] text-white">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[560px] bg-[radial-gradient(ellipse_at_top_right,rgba(16,185,129,0.11),transparent_58%)]" />
       <div className="mx-auto flex w-full max-w-[1320px] flex-col gap-8 px-4 py-10 sm:px-6 sm:py-14 lg:px-10">
         <FadeIn>
           <header className="flex flex-col gap-6 border-b border-white/10 pb-8 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl">
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/[0.06] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-cyan-100">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-300/[0.06] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-100">
                 <Activity className="h-3.5 w-3.5" /> SURAKSHA · Simulation Lab
               </div>
               <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">See how conditions shape a flood response.</h1>
@@ -161,24 +164,28 @@ export default function DemoLabPage() {
                   <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-500">01 / Set conditions</p>
                   <h2 id="scenario-title" className="mt-2 text-xl font-semibold">Choose a scenario</h2>
                 </div>
-                <Waves className="h-5 w-5 text-cyan-200" />
+                <Waves className="h-5 w-5 text-emerald-300" />
               </div>
 
               <div className="space-y-2" role="group" aria-label="Scenario presets">
                 {(Object.entries(PRESETS) as [DemoPreset, typeof PRESETS[DemoPreset]][]).map(([key, item]) => (
-                  <button
+                  <motion.button
                     key={key}
                     type="button"
                     onClick={() => choosePreset(key)}
                     aria-pressed={preset === key}
-                    className={`w-full rounded-2xl border p-4 text-left transition-colors ${preset === key ? "border-cyan-200/50 bg-cyan-200/[0.08]" : "border-white/10 bg-white/[0.02] hover:border-white/20"}`}
+                    whileHover={prefersReducedMotion ? undefined : { y: -2 }}
+                    whileTap={prefersReducedMotion ? undefined : { scale: 0.99 }}
+                    transition={{ type: "spring", stiffness: 380, damping: 30, duration: prefersReducedMotion ? 0 : undefined }}
+                    className={`relative w-full overflow-hidden rounded-2xl border p-4 text-left transition-colors ${preset === key ? "border-emerald-300/35 bg-emerald-300/[0.04]" : "border-white/10 bg-white/[0.02] hover:border-white/20"}`}
                   >
-                    <span className="flex items-center justify-between gap-3">
+                    {preset === key && <motion.span layoutId="selected-scenario" className="absolute inset-0 rounded-2xl bg-emerald-300/[0.045]" transition={{ type: "spring", stiffness: 340, damping: 30 }} />}
+                    <span className="relative z-10 flex items-center justify-between gap-3">
                       <span className="text-sm font-semibold text-white">{item.label}</span>
-                      <span className={`h-2 w-2 rounded-full ${preset === key ? "bg-cyan-200" : "bg-zinc-700"}`} />
+                      <span className={`h-2 w-2 rounded-full ${preset === key ? "bg-emerald-300" : "bg-zinc-700"}`} />
                     </span>
-                    <span className="mt-1.5 block text-xs leading-relaxed text-zinc-400">{item.description}</span>
-                  </button>
+                    <span className="relative z-10 mt-1.5 block text-xs leading-relaxed text-zinc-400">{item.description}</span>
+                  </motion.button>
                 ))}
               </div>
 
@@ -188,7 +195,7 @@ export default function DemoLabPage() {
                     <label htmlFor="inflow" className="text-xs font-medium text-zinc-300">Upstream flow multiplier</label>
                     <span className="rounded-lg bg-white/[0.06] px-2.5 py-1 font-mono text-xs text-white">{inflow.toFixed(2)}×</span>
                   </div>
-                  <input id="inflow" type="range" min="0.5" max="3" step="0.05" value={inflow} onChange={(event) => setInflow(Number(event.target.value))} className="w-full accent-cyan-200" />
+                  <input id="inflow" type="range" min="0.5" max="3" step="0.05" value={inflow} onChange={(event) => setInflow(Number(event.target.value))} className="w-full accent-emerald-300" />
                   <div className="mt-1 flex justify-between text-[10px] text-zinc-600"><span>0.5×</span><span>3.0×</span></div>
                 </div>
                 <div>
@@ -196,14 +203,14 @@ export default function DemoLabPage() {
                     <label htmlFor="rainfall" className="text-xs font-medium text-zinc-300">Added rainfall</label>
                     <span className="rounded-lg bg-white/[0.06] px-2.5 py-1 font-mono text-xs text-white">{rainfall} mm</span>
                   </div>
-                  <input id="rainfall" type="range" min="0" max="500" step="5" value={rainfall} onChange={(event) => setRainfall(Number(event.target.value))} className="w-full accent-cyan-200" />
+                  <input id="rainfall" type="range" min="0" max="500" step="5" value={rainfall} onChange={(event) => setRainfall(Number(event.target.value))} className="w-full accent-emerald-300" />
                   <div className="mt-1 flex justify-between text-[10px] text-zinc-600"><span>0 mm</span><span>500 mm</span></div>
                 </div>
               </div>
 
-              <button type="button" onClick={runScenario} disabled={isRunning} className="mt-7 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-cyan-100 px-5 text-sm font-semibold text-[#061013] transition hover:bg-white disabled:cursor-wait disabled:opacity-70">
+              <motion.button type="button" onClick={runScenario} disabled={isRunning} whileHover={prefersReducedMotion || isRunning ? undefined : { y: -1 }} whileTap={prefersReducedMotion || isRunning ? undefined : { scale: 0.99 }} className="mt-7 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald-300 px-5 text-sm font-semibold text-[#061013] transition-colors hover:bg-emerald-200 disabled:cursor-wait disabled:opacity-70">
                 {isRunning ? <><LoaderCircle className="h-4 w-4 animate-spin" /> Running simulation…</> : <><Play className="h-4 w-4 fill-current" /> Run simulation</>}
-              </button>
+              </motion.button>
               <p className="mt-3 text-center text-[11px] leading-relaxed text-zinc-500">{selectedPreset.basin} · Synthetic inputs</p>
             </section>
           </FadeIn>
@@ -218,37 +225,45 @@ export default function DemoLabPage() {
                 {result && <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-300/20 bg-emerald-300/[0.06] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-emerald-200"><CheckCircle2 className="h-3.5 w-3.5" /> Run complete</span>}
               </div>
 
+              <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={error ? "error" : result?.run_id || "empty-result"}
+                initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.22, ease: [0.22, 1, 0.36, 1] }}
+              >
               {error ? (
                 <div className="mt-7 flex gap-3 rounded-2xl border border-rose-300/20 bg-rose-300/[0.05] p-4 text-sm text-rose-100">
                   <CircleAlert className="mt-0.5 h-4 w-4 shrink-0" /><div><p className="font-semibold">Could not complete this run</p><p className="mt-1 text-xs leading-relaxed text-rose-100/70">{error}</p></div>
                 </div>
               ) : result ? (
                 <>
-                  <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                    <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-4">
-                      <div className="flex items-center gap-2 text-xs text-zinc-400"><Droplets className="h-4 w-4 text-cyan-200" /> Forecast peak</div>
+                  <motion.div initial={prefersReducedMotion ? false : "hidden"} animate="visible" variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.07 } } }} className="mt-6 grid gap-3 sm:grid-cols-3">
+                    <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: prefersReducedMotion ? 0 : 0.3 }} className="rounded-2xl border border-white/10 bg-white/[0.025] p-4">
+                      <div className="flex items-center gap-2 text-xs text-zinc-400"><Droplets className="h-4 w-4 text-emerald-300" /> Forecast peak</div>
                       <p className="mt-3 font-mono text-3xl font-semibold tracking-tight">{result.peak_forecast_m.toFixed(2)}<span className="ml-1 text-sm text-zinc-400">m</span></p>
-                    </div>
-                    <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-4">
-                      <div className="flex items-center gap-2 text-xs text-zinc-400"><Activity className="h-4 w-4 text-cyan-200" /> Flood risk index</div>
+                    </motion.div>
+                    <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: prefersReducedMotion ? 0 : 0.3 }} className="rounded-2xl border border-white/10 bg-white/[0.025] p-4">
+                      <div className="flex items-center gap-2 text-xs text-zinc-400"><Activity className="h-4 w-4 text-emerald-300" /> Flood risk index</div>
                       <p className="mt-3 font-mono text-3xl font-semibold tracking-tight">{Math.round(result.inundation_risk_index * 100)}<span className="ml-1 text-sm text-zinc-400">/ 100</span></p>
-                    </div>
-                    <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-4">
-                      <div className="flex items-center gap-2 text-xs text-zinc-400"><ShieldCheck className="h-4 w-4 text-cyan-200" /> Gate recommendation</div>
+                    </motion.div>
+                    <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: prefersReducedMotion ? 0 : 0.3 }} className="rounded-2xl border border-white/10 bg-white/[0.025] p-4">
+                      <div className="flex items-center gap-2 text-xs text-zinc-400"><ShieldCheck className="h-4 w-4 text-emerald-300" /> Gate recommendation</div>
                       <p className="mt-3 font-mono text-3xl font-semibold tracking-tight">{result.recommended_gate_discharge_pct}<span className="ml-1 text-sm text-zinc-400">%</span></p>
-                    </div>
-                  </div>
+                    </motion.div>
+                  </motion.div>
 
-                  <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-cyan-200/15 bg-cyan-200/[0.04] p-4">
+                  <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-200/15 bg-emerald-200/[0.04] p-4">
                     <div><p className="text-sm font-semibold text-white">Review checks</p><p className="mt-1 text-xs text-zinc-400">A person reviews any advisory before action.</p></div>
-                    <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-cyan-100">{result.jev_status === "LIVE_SUPERVISED" ? "Supervised review" : "Deterministic demo mode"}</span>
+                    <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-emerald-100">{result.jev_status === "LIVE_SUPERVISED" ? "Supervised review" : "Deterministic demo mode"}</span>
                   </div>
 
-                  <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                  <motion.div initial={prefersReducedMotion ? false : "hidden"} animate="visible" variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.07, delayChildren: 0.15 } } }} className="mt-3 grid gap-3 sm:grid-cols-3">
                     <ReviewCheck title="Input checks" passed={result.pre_gate_check.passed} detail={result.pre_gate_check.mass_balance_error_pct !== undefined ? `Balance check: ${result.pre_gate_check.mass_balance_error_pct}%` : "Input validation completed."} />
                     <ReviewCheck title="Calculation checks" passed={result.mid_gate_check.passed} detail={result.mid_gate_check.courant_number !== undefined ? `Stability check: ${result.mid_gate_check.courant_number}` : "Calculation check completed."} />
                     <ReviewCheck title="Safety review" passed={result.post_gate_check.passed} detail="Scenario safety check completed. Confirm station thresholds with the data owner before operational use." />
-                  </div>
+                  </motion.div>
 
                   <div className="mt-5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-white/10 pt-4 text-[10px] text-zinc-500">
                     <span>{formatTime(result.executed_at)}</span>
@@ -258,11 +273,13 @@ export default function DemoLabPage() {
                 </>
               ) : (
                 <div className="flex min-h-[330px] flex-col items-center justify-center px-5 text-center">
-                  <div className="grid h-14 w-14 place-items-center rounded-2xl border border-cyan-200/15 bg-cyan-200/[0.05]"><Waves className="h-6 w-6 text-cyan-100" /></div>
+                  <div className="grid h-14 w-14 place-items-center rounded-2xl border border-emerald-200/15 bg-emerald-200/[0.05]"><Waves className="h-6 w-6 text-emerald-100" /></div>
                   <p className="mt-5 text-base font-semibold text-white">Your results will appear here</p>
                   <p className="mt-2 max-w-sm text-sm leading-relaxed text-zinc-500">Run a scenario to see its forecast peak, risk index, gate recommendation, and review checks.</p>
                 </div>
               )}
+              </motion.div>
+              </AnimatePresence>
             </section>
           </FadeIn>
         </div>

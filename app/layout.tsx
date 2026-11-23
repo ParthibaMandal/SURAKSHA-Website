@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { MotionConfig } from "framer-motion";
 import { PublicNavbar } from "@/components/navigation/PublicNavbar";
 import { PublicFooter } from "@/components/navigation/PublicFooter";
 import { AuthProvider } from "@/lib/supabase/auth-context";
@@ -30,13 +31,15 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-[var(--background)] text-[var(--foreground)] flex flex-col min-h-screen selection:bg-[#10B981]/30 selection:text-white transition-colors duration-200">
-        <ThemeProvider>
-          <AuthProvider>
-            <PublicNavbar />
-            <main className="flex-1">{children}</main>
-            <PublicFooter />
-          </AuthProvider>
-        </ThemeProvider>
+        <MotionConfig reducedMotion="user">
+          <ThemeProvider>
+            <AuthProvider>
+              <PublicNavbar />
+              <main className="flex-1">{children}</main>
+              <PublicFooter />
+            </AuthProvider>
+          </ThemeProvider>
+        </MotionConfig>
       </body>
     </html>
   );

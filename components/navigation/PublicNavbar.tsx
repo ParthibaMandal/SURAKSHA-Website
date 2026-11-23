@@ -20,7 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/supabase/auth-context";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
 export const PublicNavbar: React.FC = () => {
   const pathname = usePathname();
@@ -29,6 +29,7 @@ export const PublicNavbar: React.FC = () => {
   const [platformDropdownOpen, setPlatformDropdownOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
 
   const isHome = pathname === "/";
 
@@ -70,7 +71,15 @@ export const PublicNavbar: React.FC = () => {
     : "sticky top-0 z-50 w-full border-b border-[#1F2823] bg-black/95 backdrop-blur-md transition-colors";
 
   return (
-    <header className={headerClass}>
+    <motion.header
+      className={headerClass}
+      initial={false}
+      animate={{
+        backgroundColor: isHome && !scrolled ? "rgba(0,0,0,0)" : "rgba(0,0,0,0.94)",
+        borderColor: isHome && !scrolled ? "rgba(31,40,35,0)" : "rgba(31,40,35,1)",
+      }}
+      transition={{ duration: prefersReducedMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
+    >
       <div className="w-full px-6 sm:px-10 lg:px-14 h-16 sm:h-20 flex items-center justify-between gap-6">
         {/* Brand Logo - Shield Mark + SURAKSHA on far left */}
         <BrandLogo />
@@ -123,7 +132,7 @@ export const PublicNavbar: React.FC = () => {
                         initial={{ opacity: 0, y: 8, scale: 0.96 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 6, scale: 0.96 }}
-                        transition={{ duration: 0.16, ease: "easeOut" }}
+                        transition={{ duration: prefersReducedMotion ? 0 : 0.2, ease: [0.22, 1, 0.36, 1] }}
                         className="absolute top-full left-0 mt-2.5 w-68 rounded-2xl bg-white/95 dark:bg-[#18231E]/95 backdrop-blur-2xl border border-zinc-200 dark:border-[#2D3C33] p-2 shadow-2xl z-50"
                       >
                         <Link
@@ -239,7 +248,7 @@ export const PublicNavbar: React.FC = () => {
                       initial={{ opacity: 0, y: 8, scale: 0.96 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 6, scale: 0.96 }}
-                      transition={{ duration: 0.16, ease: "easeOut" }}
+                      transition={{ duration: prefersReducedMotion ? 0 : 0.2, ease: [0.22, 1, 0.36, 1] }}
                       className="absolute right-0 mt-2 w-56 rounded-xl bg-white/95 dark:bg-[#18231E]/95 backdrop-blur-xl border border-zinc-200 dark:border-[#2D3C33] p-1.5 shadow-2xl z-50"
                     >
                       <div className="px-3 py-2 border-b border-zinc-200 dark:border-[#2D3C33] mb-1">
@@ -314,8 +323,16 @@ export const PublicNavbar: React.FC = () => {
       </div>
 
       {/* Mobile Drawer */}
-      {mobileMenuOpen && (
-        <div className="md:hidden border-b border-zinc-200 dark:border-[#1F2823] bg-white/95 dark:bg-[#141C18]/95 backdrop-blur-xl px-6 pt-3 pb-6 space-y-3">
+      <AnimatePresence initial={false}>
+        {mobileMenuOpen && (
+        <motion.div
+          key="mobile-navigation"
+          initial={prefersReducedMotion ? false : { opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: prefersReducedMotion ? 0 : 0.2, ease: [0.22, 1, 0.36, 1] }}
+          className="md:hidden border-b border-zinc-200 dark:border-[#1F2823] bg-white/95 dark:bg-[#141C18]/95 backdrop-blur-xl px-6 pt-3 pb-6 space-y-3"
+        >
           <div className="flex flex-col space-y-1">
             {links.map((link) => (
               <Link
@@ -387,8 +404,9 @@ export const PublicNavbar: React.FC = () => {
               </>
             )}
           </div>
-        </div>
+        </motion.div>
       )}
-    </header>
+      </AnimatePresence>
+    </motion.header>
   );
 };

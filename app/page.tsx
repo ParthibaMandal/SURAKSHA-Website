@@ -10,29 +10,35 @@ import { HydrologicalChart } from "@/components/shared/HydrologicalChart";
 import { FadeIn } from "@/components/motion/FadeIn";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Radio, Cpu, Shield } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { gsap } from "gsap";
 
 export default function HomePage() {
   const [isSurgeActive, setIsSurgeActive] = useState(false);
   const matrixRef = useRef<HTMLDivElement | null>(null);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
-    if (matrixRef.current) {
-      const cards = matrixRef.current.children;
+    const root = matrixRef.current;
+    if (!root || prefersReducedMotion) return;
+
+    const context = gsap.context(() => {
+      const cards = root.children;
       gsap.fromTo(
         cards,
-        { opacity: 0.85, y: 12 },
+        { opacity: 0, y: 16 },
         {
           opacity: 1,
           y: 0,
-          duration: 0.8,
-          stagger: 0.15,
-          ease: "power2.out",
+          duration: 0.65,
+          stagger: 0.12,
+          ease: "power3.out",
         }
       );
-    }
-  }, []);
+    }, root);
+
+    return () => context.revert();
+  }, [prefersReducedMotion]);
 
   return (
     <div className="relative bg-black text-white">
