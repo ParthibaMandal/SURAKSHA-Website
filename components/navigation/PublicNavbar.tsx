@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BrandLogo } from "@/components/shared/BrandLogo";
-import { Menu, X, ChevronDown, ArrowRight, LayoutDashboard, MapPin, FlaskConical, LogOut, User } from "lucide-react";
+import { Menu, X, ChevronDown, ArrowRight, LayoutDashboard, MapPin, FlaskConical, BookOpen, Info, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/supabase/auth-context";
 
@@ -36,10 +36,10 @@ export const PublicNavbar: React.FC = () => {
   }
 
   const links = [
-    { href: "/platform", label: "Platform", hasDropdown: true },
-    { href: "/research", label: "Research" },
-    { href: "/docs", label: "Documentation" },
-    { href: "/about", label: "About" },
+    { href: "/platform", label: "Platform", hasDropdown: true, icon: LayoutDashboard },
+    { href: "/research", label: "Research", icon: FlaskConical },
+    { href: "/docs", label: "Documentation", icon: BookOpen },
+    { href: "/about", label: "About", icon: Info },
   ];
 
   const portalHref =
@@ -62,9 +62,13 @@ export const PublicNavbar: React.FC = () => {
         {/* Brand Logo - Shield Mark + SURAKSHA on far left */}
         <BrandLogo />
 
-        {/* Desktop Navigation Links - Centered */}
-        <nav className="hidden md:flex items-center gap-8" aria-label="Main Navigation">
+        {/* Desktop Navigation Links - Animated Glassmorphic Pill Dock */}
+        <nav
+          className="hidden md:flex items-center gap-2.5 p-1.5 rounded-full nav-glass-dock"
+          aria-label="Main Navigation"
+        >
           {links.map((link) => {
+            const Icon = link.icon;
             const isActive =
               pathname === link.href ||
               (link.hasDropdown &&
@@ -84,13 +88,16 @@ export const PublicNavbar: React.FC = () => {
                     type="button"
                     onClick={() => setPlatformDropdownOpen(!platformDropdownOpen)}
                     aria-expanded={platformDropdownOpen}
-                    className={`inline-flex items-center gap-1.5 py-1 text-sm font-medium transition-colors cursor-pointer ${
-                      isActive ? "text-white" : "text-zinc-300 hover:text-white"
+                    className={`nav-glass-pill group text-xs font-semibold cursor-pointer ${
+                      isActive ? "active text-white" : "text-zinc-200 hover:text-white"
                     }`}
                   >
-                    <span>{link.label}</span>
+                    <span className="icon-glass w-6 h-6 rounded-full">
+                      <Icon className="w-3.5 h-3.5 text-white transition-transform duration-300 group-hover:scale-110" />
+                    </span>
+                    <span className="relative z-10">{link.label}</span>
                     <ChevronDown
-                      className={`w-3.5 h-3.5 opacity-70 transition-transform duration-200 ${
+                      className={`relative z-10 w-3.5 h-3.5 opacity-80 transition-transform duration-300 ${
                         platformDropdownOpen ? "rotate-180 opacity-100 text-white" : ""
                       }`}
                     />
@@ -98,17 +105,17 @@ export const PublicNavbar: React.FC = () => {
 
                   {/* Dropdown Menu */}
                   {platformDropdownOpen && (
-                    <div className="absolute top-full left-0 mt-2 w-64 rounded-2xl bg-[#0A0A0A] backdrop-blur-xl border border-white/10 p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+                    <div className="absolute top-full left-0 mt-2.5 w-68 rounded-2xl bg-[#0A0A0A]/90 backdrop-blur-2xl border border-white/15 p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-1 duration-150">
                       <Link
                         href="/platform"
                         onClick={() => setPlatformDropdownOpen(false)}
-                        className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-colors text-xs group"
+                        className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/10 transition-colors text-xs group"
                       >
-                        <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white shrink-0 mt-0.5">
-                          <LayoutDashboard className="w-3.5 h-3.5" />
+                        <div className="icon-glass w-8 h-8 rounded-lg text-white shrink-0 mt-0.5">
+                          <LayoutDashboard className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
                         </div>
                         <div>
-                          <span className="font-semibold text-white block group-hover:text-zinc-200 transition-colors">Platform Overview</span>
+                          <span className="font-semibold text-white block group-hover:text-zinc-100 transition-colors">Platform Overview</span>
                           <span className="text-[11px] text-zinc-400">3D Basin simulation & reach models</span>
                         </div>
                       </Link>
@@ -116,13 +123,13 @@ export const PublicNavbar: React.FC = () => {
                       <Link
                         href="/study-area"
                         onClick={() => setPlatformDropdownOpen(false)}
-                        className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-colors text-xs group"
+                        className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/10 transition-colors text-xs group"
                       >
-                        <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white shrink-0 mt-0.5">
-                          <MapPin className="w-3.5 h-3.5" />
+                        <div className="icon-glass w-8 h-8 rounded-lg text-white shrink-0 mt-0.5">
+                          <MapPin className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
                         </div>
                         <div>
-                          <span className="font-semibold text-white block group-hover:text-zinc-200 transition-colors">Catchment Study Area</span>
+                          <span className="font-semibold text-white block group-hover:text-zinc-100 transition-colors">Catchment Study Area</span>
                           <span className="text-[11px] text-zinc-400">Middle Ganga reach stations</span>
                         </div>
                       </Link>
@@ -130,13 +137,13 @@ export const PublicNavbar: React.FC = () => {
                       <Link
                         href="/demo-lab"
                         onClick={() => setPlatformDropdownOpen(false)}
-                        className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-colors text-xs group"
+                        className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/10 transition-colors text-xs group"
                       >
-                        <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white shrink-0 mt-0.5">
-                          <FlaskConical className="w-3.5 h-3.5" />
+                        <div className="icon-glass w-8 h-8 rounded-lg text-white shrink-0 mt-0.5">
+                          <FlaskConical className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
                         </div>
                         <div>
-                          <span className="font-semibold text-white block group-hover:text-zinc-200 transition-colors">Simulation Lab</span>
+                          <span className="font-semibold text-white block group-hover:text-zinc-100 transition-colors">Simulation Lab</span>
                           <span className="text-[11px] text-zinc-400">Test scenarios & emergency alerts</span>
                         </div>
                       </Link>
@@ -150,11 +157,14 @@ export const PublicNavbar: React.FC = () => {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`relative py-1 text-sm font-medium transition-colors ${
-                  isActive ? "text-white" : "text-zinc-300 hover:text-white"
+                className={`nav-glass-pill group text-xs font-semibold ${
+                  isActive ? "active text-white" : "text-zinc-200 hover:text-white"
                 }`}
               >
-                {link.label}
+                <span className="icon-glass w-6 h-6 rounded-full">
+                  <Icon className="w-3.5 h-3.5 text-white transition-transform duration-300 group-hover:scale-110" />
+                </span>
+                <span className="relative z-10">{link.label}</span>
               </Link>
             );
           })}

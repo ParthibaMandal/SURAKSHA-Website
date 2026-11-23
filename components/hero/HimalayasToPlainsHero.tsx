@@ -143,36 +143,44 @@ export const HimalayasToPlainsHero: React.FC = () => {
               BOTTOM BLOCK: Feature Highlights Row & Scroll Indicator
              ========================================================================= */}
           <div className="w-full max-w-2xl flex flex-col gap-5 pt-4">
-            {/* 4-Item Feature Highlights Row */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-5 border-t border-white/15 w-full">
+            {/* 4-Item Feature Highlights Row (Animated Glass Icons) */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 pt-5 border-t border-white/15 w-full">
               {/* 1. Satellite Monitoring */}
-              <div className="flex flex-col gap-1.5">
-                <Radio className="w-5 h-5 text-white" />
-                <span className="text-xs font-semibold text-white/90 leading-tight">
+              <div className="group flex items-center gap-3 p-2 rounded-2xl transition-all duration-300 hover:bg-white/[0.04]">
+                <span className="icon-glass w-10 h-10 rounded-xl shrink-0">
+                  <Radio className="w-4 h-4 text-white transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" />
+                </span>
+                <span className="text-xs font-semibold text-white/95 leading-tight">
                   Satellite<br />Monitoring
                 </span>
               </div>
 
               {/* 2. AI-Powered Forecasting */}
-              <div className="flex flex-col gap-1.5">
-                <Cpu className="w-5 h-5 text-white" />
-                <span className="text-xs font-semibold text-white/90 leading-tight">
+              <div className="group flex items-center gap-3 p-2 rounded-2xl transition-all duration-300 hover:bg-white/[0.04]">
+                <span className="icon-glass w-10 h-10 rounded-xl shrink-0" style={{ animationDelay: "0.6s" }}>
+                  <Cpu className="w-4 h-4 text-white transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6" />
+                </span>
+                <span className="text-xs font-semibold text-white/95 leading-tight">
                   AI-Powered<br />Forecasting
                 </span>
               </div>
 
               {/* 3. Early Alerts */}
-              <div className="flex flex-col gap-1.5">
-                <Bell className="w-5 h-5 text-white" />
-                <span className="text-xs font-semibold text-white/90 leading-tight">
+              <div className="group flex items-center gap-3 p-2 rounded-2xl transition-all duration-300 hover:bg-white/[0.04]">
+                <span className="icon-glass w-10 h-10 rounded-xl shrink-0" style={{ animationDelay: "1.2s" }}>
+                  <Bell className="w-4 h-4 text-white transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12" />
+                </span>
+                <span className="text-xs font-semibold text-white/95 leading-tight">
                   Early<br />Alerts
                 </span>
               </div>
 
               {/* 4. Safer Communities */}
-              <div className="flex flex-col gap-1.5">
-                <ShieldCheck className="w-5 h-5 text-white" />
-                <span className="text-xs font-semibold text-white/90 leading-tight">
+              <div className="group flex items-center gap-3 p-2 rounded-2xl transition-all duration-300 hover:bg-white/[0.04]">
+                <span className="icon-glass w-10 h-10 rounded-xl shrink-0" style={{ animationDelay: "1.8s" }}>
+                  <ShieldCheck className="w-4 h-4 text-white transition-transform duration-300 group-hover:scale-110" />
+                </span>
+                <span className="text-xs font-semibold text-white/95 leading-tight">
                   Safer<br />Communities
                 </span>
               </div>

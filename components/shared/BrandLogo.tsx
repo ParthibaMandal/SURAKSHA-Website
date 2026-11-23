@@ -14,9 +14,9 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({ className = "", size = "md
 
   return (
     <Link href="/" className={`inline-flex items-center gap-2.5 group select-none ${className}`}>
-      {/* Brand Mark - Shield with River Waves matching monochrome high-contrast aesthetic */}
+      {/* Brand Mark - Animated Glass Shield with River Waves */}
       <span
-        className={`${markDimensions} border border-white/20 grid place-items-center bg-black/40 backdrop-blur-md group-hover:border-white/40 group-hover:bg-white/5 transition-all relative overflow-hidden`}
+        className={`${markDimensions} icon-glass text-white`}
       >
         <svg
           viewBox="0 0 24 24"

@@ -41,10 +41,10 @@ export default function HomePage() {
 
           {/* Operational Metrics and Verification Standards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 rounded-2xl border border-white/10 bg-[#0A0A0A] backdrop-blur-xl flex flex-col justify-between">
+            <div className="group p-6 rounded-2xl border border-white/10 bg-[#0A0A0A] backdrop-blur-xl flex flex-col justify-between hover:border-white/25 transition-colors">
               <div>
-                <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white mb-3">
-                  <Radio className="w-4 h-4" />
+                <div className="icon-glass w-10 h-10 rounded-xl text-white mb-4">
+                  <Radio className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
                 </div>
                 <h3 className="text-base font-semibold text-white mb-2">Telemetry Ingestion</h3>
                 <p className="text-xs text-zinc-400 leading-relaxed mb-4">
@@ -73,10 +73,10 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="p-6 rounded-2xl border border-white/10 bg-[#0A0A0A] backdrop-blur-xl flex flex-col justify-between">
+            <div className="group p-6 rounded-2xl border border-white/10 bg-[#0A0A0A] backdrop-blur-xl flex flex-col justify-between hover:border-white/25 transition-colors">
               <div>
-                <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white mb-3">
-                  <Cpu className="w-4 h-4" />
+                <div className="icon-glass w-10 h-10 rounded-xl text-white mb-4" style={{ animationDelay: "0.7s" }}>
+                  <Cpu className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
                 </div>
                 <h3 className="text-base font-semibold text-white mb-2">Hydrodynamic Modeling</h3>
                 <p className="text-xs text-zinc-400 leading-relaxed mb-4">
@@ -105,10 +105,10 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="p-6 rounded-2xl border border-white/10 bg-[#0A0A0A] backdrop-blur-xl flex flex-col justify-between">
+            <div className="group p-6 rounded-2xl border border-white/10 bg-[#0A0A0A] backdrop-blur-xl flex flex-col justify-between hover:border-white/25 transition-colors">
               <div>
-                <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white mb-3">
-                  <Shield className="w-4 h-4" />
+                <div className="icon-glass w-10 h-10 rounded-xl text-white mb-4" style={{ animationDelay: "1.4s" }}>
+                  <Shield className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
                 </div>
                 <h3 className="text-base font-semibold text-white mb-2">Human-in-the-Loop Sign-off</h3>
                 <p className="text-xs text-zinc-400 leading-relaxed mb-4">
