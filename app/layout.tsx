@@ -3,6 +3,7 @@ import "./globals.css";
 import { PublicNavbar } from "@/components/navigation/PublicNavbar";
 import { PublicFooter } from "@/components/navigation/PublicFooter";
 import { AuthProvider } from "@/lib/supabase/auth-context";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 
 export const metadata: Metadata = {
   title: "SURAKSHA | Hydrological Intelligence & Flood Decision Support",
@@ -19,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -28,12 +29,14 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap"
         />
       </head>
-      <body className="bg-black text-white flex flex-col min-h-screen selection:bg-white/20 selection:text-white">
-        <AuthProvider>
-          <PublicNavbar />
-          <main className="flex-1">{children}</main>
-          <PublicFooter />
-        </AuthProvider>
+      <body className="bg-[var(--background)] text-[var(--foreground)] flex flex-col min-h-screen selection:bg-[#10B981]/30 selection:text-white transition-colors duration-200">
+        <ThemeProvider>
+          <AuthProvider>
+            <PublicNavbar />
+            <main className="flex-1">{children}</main>
+            <PublicFooter />
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

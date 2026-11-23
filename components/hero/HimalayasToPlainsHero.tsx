@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
-  TrendingUp,
   ArrowRight,
   Play,
   Radio,
@@ -13,11 +12,31 @@ import {
   X,
   ExternalLink,
   ChevronRight,
-  Activity,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { gsap } from "gsap";
 
 export const HimalayasToPlainsHero: React.FC = () => {
   const [isDemoOpen, setIsDemoOpen] = useState(false);
+  const orbitalArcRef = useRef<SVGSVGElement | null>(null);
+  const heroContentRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (orbitalArcRef.current) {
+      const paths = orbitalArcRef.current.querySelectorAll("path, ellipse");
+      gsap.fromTo(
+        paths,
+        { strokeDashoffset: 100, opacity: 0 },
+        {
+          strokeDashoffset: 0,
+          opacity: 0.35,
+          duration: 2.2,
+          ease: "power2.out",
+          stagger: 0.25,
+        }
+      );
+    }
+  }, []);
 
   return (
     <>
@@ -39,17 +58,18 @@ export const HimalayasToPlainsHero: React.FC = () => {
 
           {/* Left Vignette & Gradient Overlays for High Legibility */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent w-full md:w-[60%]" />
-          
+
           {/* Top Navbar Shadow */}
           <div className="absolute top-0 inset-x-0 h-28 bg-gradient-to-b from-black/80 via-black/25 to-transparent" />
-          
+
           {/* Bottom Blend to Page Background (#000000) */}
           <div className="absolute bottom-0 inset-x-0 h-28 bg-gradient-to-t from-black via-black/70 to-transparent" />
 
           {/* =========================================================================
-              ORBITAL SATELLITE TRACKING ARC (Sky Overlays)
+              ORBITAL SATELLITE TRACKING ARC (Sky Overlays with GSAP)
              ========================================================================= */}
           <svg
+            ref={orbitalArcRef}
             className="absolute inset-0 w-full h-full pointer-events-none opacity-30 hidden sm:block"
             viewBox="0 0 1440 800"
             fill="none"
@@ -87,35 +107,41 @@ export const HimalayasToPlainsHero: React.FC = () => {
         {/* =========================================================================
             HERO MAIN CONTENT (Full Width Edge-to-Edge Container)
            ========================================================================= */}
-        <div className="w-full px-6 sm:px-10 lg:px-14 h-full relative z-10 pt-24 sm:pt-28 pb-6 flex flex-col justify-between">
+        <div
+          ref={heroContentRef}
+          className="w-full px-6 sm:px-10 lg:px-14 h-full relative z-10 pt-24 sm:pt-28 pb-6 flex flex-col justify-between"
+        >
           {/* Top Block */}
-          <div className="max-w-2xl lg:max-w-[620px] flex flex-col items-start">
-            {/* Real-Time Flood Intelligence Eyebrow */}
-            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-xs text-white/90 shadow-lg mb-5">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-              </span>
-              <span className="font-medium tracking-wide">Real-Time Flood Intelligence · Simulated Preview</span>
-              <TrendingUp className="w-3.5 h-3.5 text-zinc-400" />
-            </div>
-
-            {/* Main Headline (Pure Monochrome White & Silver) */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[62px] font-bold tracking-tight text-white leading-[1.08] mb-4">
+          <div className="max-w-2xl lg:max-w-[640px] flex flex-col items-start">
+            {/* Main Headline (IBM Plex Sans, tightened tracking, text-balance) */}
+            <motion.h1
+              initial={{ opacity: 0, y: 22 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-[60px] font-heading font-semibold tracking-tight text-white leading-[1.08] mb-4 text-balance"
+            >
               From the Himalayas<br />
               to the Plains —<br />
-              <span className="text-white">
-                We Track. You Prepare.
-              </span>
-            </h1>
+              <span className="text-white">We Track. You Prepare.</span>
+            </motion.h1>
 
             {/* Subtitle */}
-            <p className="text-base sm:text-lg text-zinc-300 max-w-xl font-normal leading-relaxed mb-6">
-              Satellite. Sensors. AI. — A complete flood early warning system, from source to shore.
-            </p>
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.65, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+              className="text-base sm:text-lg text-[#9BA5A0] max-w-xl font-normal leading-relaxed mb-6 text-pretty"
+            >
+              Satellite observations, river-stage sensors, and physics-guided modeling across the Middle Ganga corridor.
+            </motion.p>
 
             {/* Call to Action Buttons (Animated Glassmorphism) */}
-            <div className="flex flex-wrap items-center gap-4 mb-4">
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.65, delay: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              className="flex flex-wrap items-center gap-4 mb-4"
+            >
               {/* Primary Glass Button: Explore Platform */}
               <Link
                 href="/platform"
@@ -136,7 +162,7 @@ export const HimalayasToPlainsHero: React.FC = () => {
                 </span>
                 <span className="relative z-10">Watch Demo</span>
               </button>
-            </div>
+            </motion.div>
           </div>
 
           {/* =========================================================================
@@ -144,7 +170,12 @@ export const HimalayasToPlainsHero: React.FC = () => {
              ========================================================================= */}
           <div className="w-full max-w-2xl flex flex-col gap-5 pt-4">
             {/* 4-Item Feature Highlights Row (Animated Glass Icons) */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 pt-5 border-t border-white/15 w-full">
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.42 }}
+              className="grid grid-cols-2 sm:grid-cols-4 gap-5 pt-5 border-t border-white/15 w-full"
+            >
               {/* 1. Satellite Monitoring */}
               <div className="group flex items-center gap-3 p-2 rounded-2xl transition-all duration-300 hover:bg-white/[0.04]">
                 <span className="icon-glass w-10 h-10 rounded-xl shrink-0">
@@ -184,17 +215,14 @@ export const HimalayasToPlainsHero: React.FC = () => {
                   Safer<br />Communities
                 </span>
               </div>
-            </div>
+            </motion.div>
 
             {/* Scroll to Explore Bar */}
             <div className="flex items-center gap-4 w-full">
-              <div className="flex items-center gap-2.5 text-[11px] font-medium text-white/60 tracking-wider">
-                <span className="w-3.5 h-5 rounded-full border border-white/30 flex items-start justify-center p-0.5">
-                  <span className="w-1 h-1.5 rounded-full bg-white animate-bounce" />
-                </span>
-                <span>Scroll to explore</span>
-              </div>
-              <div className="flex-1 h-[1px] bg-gradient-to-r from-white/20 via-white/10 to-transparent" />
+              <span className="text-[11px] font-medium text-[#6A7771] tracking-wider uppercase">
+                Scroll to explore
+              </span>
+              <div className="flex-1 h-[1px] bg-[#1F2823]" />
             </div>
           </div>
         </div>
@@ -203,83 +231,87 @@ export const HimalayasToPlainsHero: React.FC = () => {
       {/* =========================================================================
           WATCH DEMO MODAL
          ========================================================================= */}
-      {isDemoOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="relative w-full max-w-3xl rounded-3xl border border-white/15 bg-[#0A0A0A] p-6 shadow-2xl text-white">
-            {/* Close button */}
-            <button
-              onClick={() => setIsDemoOpen(false)}
-              className="absolute top-4 right-4 p-2 rounded-full border border-white/15 bg-white/5 text-white/80 hover:text-white hover:bg-white/10 transition-colors"
-              aria-label="Close demo"
+      <AnimatePresence>
+        {isDemoOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              className="relative w-full max-w-3xl rounded-2xl border border-[#1F2823] bg-[#0D100E] p-6 text-white shadow-2xl"
             >
-              <X className="w-5 h-5" />
-            </button>
-
-            {/* Modal Header */}
-            <div className="mb-4 pr-10">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 text-zinc-300 border border-white/15 text-xs font-mono font-medium mb-2">
-                <Activity className="w-3.5 h-3.5 text-white" /> SURAKSHA HYDROLOGICAL INTELLIGENCE
-              </div>
-              <h3 className="text-xl sm:text-2xl font-semibold text-white">
-                Early Warning Operations Walkthrough
-              </h3>
-              <p className="text-xs sm:text-sm text-zinc-400 mt-1">
-                From Himalayan glacial melt to Gangetic floodplain inundation: experience the live digital twin and decision support system.
-              </p>
-            </div>
-
-            {/* Video / Interactive Preview Frame */}
-            <div className="relative aspect-video rounded-2xl overflow-hidden border border-white/15 bg-black mb-6 group">
-              <video
-                src="/videos/hero-himalayas-ganga.mp4"
-                poster="/images/hero-himalayas-ganga.jpg"
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="absolute inset-0 w-full h-full object-cover opacity-80"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
-              
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
-                <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-xl text-black mb-3">
-                  <Play className="w-6 h-6 fill-current ml-1" />
-                </div>
-                <h4 className="text-lg font-bold text-white mb-1">Interactive Demo Simulation</h4>
-                <p className="text-xs text-zinc-300 max-w-md">
-                  Explore hydrodynamic reach routing, automated CAP alert generation, and gauge ensemble validation in our sandbox lab.
-                </p>
-              </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="flex flex-wrap items-center justify-end gap-3 pt-2 border-t border-white/10">
+              {/* Close button */}
               <button
                 onClick={() => setIsDemoOpen(false)}
-                className="btn-glass-secondary px-5 py-2.5 text-xs text-zinc-300 hover:text-white cursor-pointer"
+                className="absolute top-4 right-4 p-2 rounded-full border border-white/15 bg-white/5 text-white/80 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                aria-label="Close demo"
               >
-                <span className="relative z-10">Close Preview</span>
+                <X className="w-4 h-4" />
               </button>
-              <Link
-                href="/demo-lab"
-                onClick={() => setIsDemoOpen(false)}
-                className="btn-glass-secondary px-5 py-2.5 text-xs text-white group"
-              >
-                <span className="relative z-10">Open Simulation Lab</span>
-                <ExternalLink className="relative z-10 w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </Link>
-              <Link
-                href="/platform"
-                onClick={() => setIsDemoOpen(false)}
-                className="btn-glass-primary px-6 py-2.5 text-xs font-semibold text-white group"
-              >
-                <span className="relative z-10">Launch Digital Twin</span>
-                <ChevronRight className="relative z-10 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
+
+              {/* Modal Header */}
+              <div className="mb-4 pr-10">
+                <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded border border-[#1F2823] bg-[#141816] text-[#9BA5A0] text-xs font-medium mb-2">
+                  OPERATIONAL DEMO
+                </div>
+                <h3 className="text-xl sm:text-2xl font-heading font-semibold text-white">
+                  Early Warning Operations Walkthrough
+                </h3>
+                <p className="text-xs sm:text-sm text-[#9BA5A0] mt-1">
+                  From Himalayan glacial melt to Gangetic floodplain inundation: experience the live digital twin and decision support system.
+                </p>
+              </div>
+
+              {/* Video Frame */}
+              <div className="relative aspect-video rounded-xl overflow-hidden border border-[#1F2823] bg-black mb-6">
+                <video
+                  src="/videos/hero-himalayas-ganga.mp4"
+                  poster="/images/hero-himalayas-ganga.jpg"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="absolute inset-0 w-full h-full object-cover opacity-80"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+              </div>
+
+              {/* Quick Actions */}
+              <div className="flex flex-wrap items-center justify-end gap-3 pt-3 border-t border-[#1F2823]">
+                <button
+                  onClick={() => setIsDemoOpen(false)}
+                  className="btn-glass-secondary px-5 py-2.5 text-xs text-zinc-300 hover:text-white cursor-pointer"
+                >
+                  <span className="relative z-10">Close Preview</span>
+                </button>
+                <Link
+                  href="/demo-lab"
+                  onClick={() => setIsDemoOpen(false)}
+                  className="btn-glass-secondary px-5 py-2.5 text-xs text-white group"
+                >
+                  <span className="relative z-10">Open Simulation Lab</span>
+                  <ExternalLink className="relative z-10 w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </Link>
+                <Link
+                  href="/platform"
+                  onClick={() => setIsDemoOpen(false)}
+                  className="btn-glass-primary px-6 py-2.5 text-xs font-semibold text-white group"
+                >
+                  <span className="relative z-10">Launch Digital Twin</span>
+                  <ChevronRight className="relative z-10 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </Link>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };

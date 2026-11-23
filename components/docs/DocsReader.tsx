@@ -271,73 +271,32 @@ export function DocsReader({
           </span>
         </div>
 
-        {/* Article Meta Bar */}
-        <div className="pb-6 border-b border-white/10 space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex flex-wrap items-center gap-2.5">
-              {/* Status Pill */}
-              <span
-                className={`inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-mono font-medium border ${
-                  currentDoc.status === "VERIFIED"
-                    ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                    : currentDoc.status === "IMPLEMENTED"
-                    ? "bg-white/5 text-zinc-300 border-white/15"
-                    : "bg-amber-500/10 text-amber-400 border-amber-500/20"
-                }`}
-              >
-                {currentDoc.status === "VERIFIED" ? (
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                ) : currentDoc.status === "IMPLEMENTED" ? (
-                  <Code2 className="w-3.5 h-3.5" />
-                ) : (
-                  <Clock className="w-3.5 h-3.5" />
-                )}
-                <span>{currentDoc.status}</span>
-              </span>
-
-              <span className="text-xs text-zinc-400 flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5" />
-                <span>{currentDoc.readingTime} min read</span>
-              </span>
-
-              <span className="text-xs text-zinc-600">·</span>
-
-              <span className="text-xs text-zinc-400">
-                {currentDoc.wordCount.toLocaleString()} words
-              </span>
-
-              <span className="text-xs text-zinc-600">·</span>
-
-              <a
-                href={currentDoc.githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-zinc-300 hover:text-white hover:underline flex items-center gap-1 font-mono"
-              >
-                <Github className="w-3 h-3" />
-                <span>Source</span>
-              </a>
-            </div>
+        {/* Article Header */}
+        <div className="pb-6 border-b border-[#1F2823] space-y-4">
+          <div className="flex items-center justify-between gap-3">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-semibold tracking-tight text-white">
+              {currentDoc.title}
+            </h1>
 
             {/* View Mode Switcher */}
-            <div className="flex items-center gap-1 p-1 rounded-full bg-[#0A0A0A] border border-white/10 text-xs">
+            <div className="flex items-center gap-1 p-0.5 rounded-md bg-[#0D100E] border border-[#1F2823] text-xs shrink-0">
               <button
                 onClick={() => setViewMode("interactive")}
-                className={`flex items-center gap-1.5 px-3.5 py-1 rounded-full font-medium transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3 py-1 rounded font-medium transition-colors cursor-pointer ${
                   viewMode === "interactive"
-                    ? "bg-white text-black shadow font-semibold"
-                    : "text-zinc-400 hover:text-white"
+                    ? "bg-white text-black font-semibold"
+                    : "text-[#9BA5A0] hover:text-white"
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>Interactive UI View</span>
+                <span>Interactive View</span>
               </button>
               <button
                 onClick={() => setViewMode("raw")}
-                className={`flex items-center gap-1.5 px-3.5 py-1 rounded-full font-medium transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3 py-1 rounded font-medium transition-colors cursor-pointer ${
                   viewMode === "raw"
-                    ? "bg-white text-black shadow font-semibold"
-                    : "text-zinc-400 hover:text-white"
+                    ? "bg-white text-black font-semibold"
+                    : "text-[#9BA5A0] hover:text-white"
                 }`}
               >
                 <FileCode className="w-3.5 h-3.5" />
@@ -346,12 +305,8 @@ export function DocsReader({
             </div>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight text-white">
-            {currentDoc.title}
-          </h1>
-
           {currentDoc.summary && (
-            <p className="text-sm text-zinc-400 leading-relaxed">
+            <p className="text-sm text-[#9BA5A0] leading-relaxed">
               {currentDoc.summary}
             </p>
           )}
@@ -361,14 +316,14 @@ export function DocsReader({
         {viewMode === "interactive" ? (
           <StructuredDocRenderer doc={currentDoc} />
         ) : (
-          <div className="my-8 rounded-2xl border border-white/10 bg-[#0A0A0A] p-5 font-mono text-xs text-zinc-300 overflow-x-auto leading-relaxed shadow-xl">
-            <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10 text-[11px] text-zinc-400">
+          <div className="my-8 rounded-lg border border-[#1F2823] bg-[#0D100E] p-5 font-mono text-xs text-[#9BA5A0] overflow-x-auto leading-relaxed">
+            <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#1F2823] text-[11px] text-[#6A7771]">
               <span>Raw Document Specification</span>
               <button
                 onClick={handleCopyMarkdown}
                 className="flex items-center gap-1 text-white hover:underline cursor-pointer"
               >
-                {copiedCode ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                {copiedCode ? <Check className="w-3 h-3 text-[#10B981]" /> : <Copy className="w-3 h-3" />}
                 <span>{copiedCode ? "Copied" : "Copy Raw"}</span>
               </button>
             </div>

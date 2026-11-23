@@ -7,20 +7,15 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          "btn-glass-primary text-white",
+        default: "btn-glass-primary text-white",
         destructive:
           "bg-[#EF4444]/25 backdrop-blur-xl border border-[#EF4444]/45 text-white shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_8px_24px_rgba(239,68,68,0.25)] hover:bg-[#EF4444]/35 hover:border-[#EF4444]/70",
-        outline:
-          "btn-glass-secondary text-white",
-        secondary:
-          "btn-glass-secondary text-white",
+        outline: "btn-glass-secondary text-white",
+        secondary: "btn-glass-secondary text-white",
         ghost:
           "bg-white/[0.04] hover:bg-white/[0.12] border border-transparent hover:border-white/20 text-zinc-200 hover:text-white backdrop-blur-md",
-        link:
-          "text-white underline-offset-4 hover:underline bg-transparent backdrop-blur-none",
-        subtle:
-          "btn-glass-secondary text-white",
+        link: "text-white underline-offset-4 hover:underline bg-transparent backdrop-blur-none",
+        subtle: "btn-glass-secondary text-white",
       },
       size: {
         default: "h-10 px-5 py-2",
