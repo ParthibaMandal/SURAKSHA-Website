@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const timeoutMs = 15_000;
+const timeoutMs = 30_000;
 
 function backendUrl() {
   return (process.env.SURAKSHA_BACKEND_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
@@ -35,7 +35,7 @@ async function proxy(path: string, init?: RequestInit) {
 }
 
 export async function GET() {
-  return proxy("/api/v1/scenarios");
+  return proxy("/api/v1/flood/demo/scenarios");
 }
 
 export async function POST(request: Request) {
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
   }
 
   const data = payload as Record<string, unknown>;
-  if (typeof data.scenario_id !== "string" || !/^SCEN-[A-Z0-9-]{1,80}$/.test(data.scenario_id)) {
+  if (typeof data.scenario_id !== "string" || !/^[A-Z0-9_-]{1,100}$/.test(data.scenario_id)) {
     return NextResponse.json({ detail: "Choose a valid scenario." }, { status: 400 });
   }
   if (typeof data.upstream_inflow_multiplier !== "number" || data.upstream_inflow_multiplier < 0.5 || data.upstream_inflow_multiplier > 3) {
@@ -61,14 +61,33 @@ export async function POST(request: Request) {
     return NextResponse.json({ detail: "Added rainfall must be between 0 and 500 mm." }, { status: 400 });
   }
 
-  return proxy("/api/v1/scenarios/run", {
+  const catalogResponse = await proxy("/api/v1/flood/demo/scenarios");
+  if (!catalogResponse.ok) return catalogResponse;
+
+  const catalog = await catalogResponse.json();
+  const scenario = catalog?.scenarios?.find((entry: { id?: string }) => entry.id === data.scenario_id);
+  if (!scenario?.input || typeof scenario.input !== "object") {
+    return NextResponse.json({ detail: "That scenario is not available from the SURAKSHA service." }, { status: 400 });
+  }
+
+  const input = JSON.parse(JSON.stringify(scenario.input)) as {
+    current_condition?: { river_discharge_m3s?: number; rainfall_24h_mm?: number };
+  };
+  const conditions = input.current_condition;
+  if (!conditions || typeof conditions !== "object") {
+    return NextResponse.json({ detail: "The selected scenario is missing its starting conditions." }, { status: 502 });
+  }
+
+  if (typeof conditions.river_discharge_m3s === "number") {
+    conditions.river_discharge_m3s = Number((conditions.river_discharge_m3s * data.upstream_inflow_multiplier).toFixed(2));
+  }
+  if (typeof conditions.rainfall_24h_mm === "number") {
+    conditions.rainfall_24h_mm = Number((conditions.rainfall_24h_mm + data.precipitation_anomaly_mm).toFixed(2));
+  }
+
+  return proxy(`/api/v1/flood/demo/scenarios/${encodeURIComponent(data.scenario_id)}/run?mode=static`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      scenario_id: data.scenario_id,
-      upstream_inflow_multiplier: data.upstream_inflow_multiplier,
-      precipitation_anomaly_mm: data.precipitation_anomaly_mm,
-      enable_jev_supervision: false,
-    }),
+    body: JSON.stringify({ input }),
   });
 }

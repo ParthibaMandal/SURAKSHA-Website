@@ -1,25 +1,31 @@
 "use client";
 
 import { useState } from "react";
-import { Activity, ArrowUpRight, CheckCircle2, CircleAlert, Droplets, LoaderCircle, Play, ShieldCheck, Waves } from "lucide-react";
+import { Activity, CheckCircle2, CircleAlert, Droplets, LoaderCircle, Play, ShieldCheck, Users, Waves } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { FadeIn } from "@/components/motion/FadeIn";
 
 type ScenarioResult = {
-  run_id: string;
+  suite_id: string;
   scenario_id: string;
   scenario_name: string;
-  status: string;
-  pre_gate_check: { passed: boolean; mass_balance_error_pct?: number };
-  mid_gate_check: { passed: boolean; courant_number?: number };
-  post_gate_check: { passed: boolean; crest_forecast_m?: number; embankment_threshold_m?: number };
-  jev_status: string;
-  peak_forecast_m: number;
-  inundation_risk_index: number;
-  recommended_gate_discharge_pct: number;
-  cap_draft_generated: boolean;
-  draft_id?: string | null;
-  executed_at: string;
+  mode: string;
+  synthetic_data_only: boolean;
+  result: {
+    event_id: string;
+    timestamp: string;
+    severity: string;
+    risk_score: number;
+    current_condition?: { water_level_m?: number };
+    forecast?: { t_plus_6?: number; t_plus_12?: number; t_plus_24?: number; confidence_interval?: number[] };
+    impact_assessment?: { affected_population?: number };
+    pre_event_assessment?: { exposed_population?: number };
+    active_event_assessment?: { affected_population?: number };
+    post_event_assessment?: { affected_population?: number };
+    grounding_verification?: { corroboration_confirmed?: boolean; is_live_api?: boolean };
+    requires_human_review?: boolean;
+    supervisor?: { requires_human_review?: boolean };
+  };
 };
 
 type DemoPreset = "steady" | "rain" | "surge";
@@ -29,7 +35,7 @@ const PRESETS: Record<DemoPreset, { label: string; description: string; basin: s
     label: "Steady conditions",
     description: "A baseline run with no added upstream pressure.",
     basin: "Middle Ganga",
-    scenarioId: "SCEN-PATNA-CREST",
+    scenarioId: "BEST_01_CALM_BASELINE",
     inflow: 1,
     rainfall: 0,
   },
@@ -37,7 +43,7 @@ const PRESETS: Record<DemoPreset, { label: string; description: string; basin: s
     label: "Heavy rainfall",
     description: "Add rainfall and a modest upstream flow increase.",
     basin: "Middle Ganga",
-    scenarioId: "SCEN-PATNA-CREST",
+    scenarioId: "STRESS_01_HEAVY_RAINFALL",
     inflow: 1.25,
     rainfall: 80,
   },
@@ -45,7 +51,7 @@ const PRESETS: Record<DemoPreset, { label: string; description: string; basin: s
     label: "Rapid upstream rise",
     description: "Explore a high inflow and rainfall scenario in the Gandak basin.",
     basin: "Gandak Basin",
-    scenarioId: "SCEN-GANDAK-SURGE",
+    scenarioId: "WORST_01_RAPID_RIVER_SURGE",
     inflow: 1.6,
     rainfall: 160,
   },
@@ -54,16 +60,11 @@ const PRESETS: Record<DemoPreset, { label: string; description: string; basin: s
 function isScenarioResult(value: unknown): value is ScenarioResult {
   if (!value || typeof value !== "object") return false;
   const data = value as Partial<ScenarioResult>;
-  return typeof data.run_id === "string"
-    && typeof data.scenario_name === "string"
-    && typeof data.jev_status === "string"
-    && typeof data.executed_at === "string"
-    && typeof data.peak_forecast_m === "number" && Number.isFinite(data.peak_forecast_m)
-    && typeof data.inundation_risk_index === "number" && data.inundation_risk_index >= 0 && data.inundation_risk_index <= 1
-    && typeof data.recommended_gate_discharge_pct === "number" && data.recommended_gate_discharge_pct >= 0 && data.recommended_gate_discharge_pct <= 100
-    && typeof data.pre_gate_check?.passed === "boolean"
-    && typeof data.mid_gate_check?.passed === "boolean"
-    && typeof data.post_gate_check?.passed === "boolean";
+  return typeof data.scenario_name === "string"
+    && typeof data.result?.event_id === "string"
+    && typeof data.result.timestamp === "string"
+    && typeof data.result.risk_score === "number"
+    && [data.result.forecast?.t_plus_6, data.result.forecast?.t_plus_12, data.result.forecast?.t_plus_24].some((value) => typeof value === "number" && Number.isFinite(value));
 }
 
 const formatTime = (value: string) => {
@@ -96,6 +97,15 @@ export default function DemoLabPage() {
   const prefersReducedMotion = useReducedMotion();
 
   const selectedPreset = PRESETS[preset];
+  const forecastValues = result ? [result.result.forecast?.t_plus_6, result.result.forecast?.t_plus_12, result.result.forecast?.t_plus_24].filter((value): value is number => typeof value === "number" && Number.isFinite(value)) : [];
+  const forecastPeak = forecastValues.length ? Math.max(...forecastValues) : null;
+  const exposedPopulation = result?.result.pre_event_assessment?.exposed_population
+    ?? result?.result.active_event_assessment?.affected_population
+    ?? result?.result.post_event_assessment?.affected_population
+    ?? result?.result.impact_assessment?.affected_population
+    ?? null;
+  const needsHumanReview = Boolean(result?.result.requires_human_review ?? result?.result.supervisor?.requires_human_review);
+  const externalCheckPassed = Boolean(result?.result.grounding_verification?.corroboration_confirmed);
 
   function choosePreset(value: DemoPreset) {
     setPreset(value);
@@ -122,7 +132,7 @@ export default function DemoLabPage() {
       const data = await response.json();
       if (!response.ok) throw new Error(data?.detail || "The simulation service could not complete this run.");
       if (!isScenarioResult(data)) throw new Error("The simulation service returned an incomplete result.");
-      setResult(data as ScenarioResult);
+      setResult(data);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "The simulation service could not be reached.");
       setResult(null);
@@ -227,7 +237,7 @@ export default function DemoLabPage() {
 
               <AnimatePresence mode="wait" initial={false}>
               <motion.div
-                key={error ? "error" : result?.run_id || "empty-result"}
+                key={error ? "error" : result?.result.event_id || "empty-result"}
                 initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
@@ -241,41 +251,45 @@ export default function DemoLabPage() {
                 <>
                   <motion.div initial={prefersReducedMotion ? false : "hidden"} animate="visible" variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.07 } } }} className="mt-6 grid gap-3 sm:grid-cols-3">
                     <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: prefersReducedMotion ? 0 : 0.3 }} className="rounded-2xl border border-white/10 bg-white/[0.025] p-4">
-                      <div className="flex items-center gap-2 text-xs text-zinc-400"><Droplets className="h-4 w-4 text-emerald-300" /> Forecast peak</div>
-                      <p className="mt-3 font-mono text-3xl font-semibold tracking-tight">{result.peak_forecast_m.toFixed(2)}<span className="ml-1 text-sm text-zinc-400">m</span></p>
+                      <div className="flex items-center gap-2 text-xs text-zinc-400"><Droplets className="h-4 w-4 text-emerald-300" /> 24-hour forecast peak</div>
+                      <p className="mt-3 font-mono text-3xl font-semibold tracking-tight">{forecastPeak?.toFixed(2) ?? "—"}<span className="ml-1 text-sm text-zinc-400">m</span></p>
                     </motion.div>
                     <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: prefersReducedMotion ? 0 : 0.3 }} className="rounded-2xl border border-white/10 bg-white/[0.025] p-4">
-                      <div className="flex items-center gap-2 text-xs text-zinc-400"><Activity className="h-4 w-4 text-emerald-300" /> Flood risk index</div>
-                      <p className="mt-3 font-mono text-3xl font-semibold tracking-tight">{Math.round(result.inundation_risk_index * 100)}<span className="ml-1 text-sm text-zinc-400">/ 100</span></p>
+                      <div className="flex items-center gap-2 text-xs text-zinc-400"><Activity className="h-4 w-4 text-emerald-300" /> Flood risk</div>
+                      <p className="mt-3 font-mono text-3xl font-semibold tracking-tight">{Math.round(result.result.risk_score * 100)}<span className="ml-1 text-sm text-zinc-400">/ 100</span></p>
+                      <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-zinc-500">{result.result.severity.replaceAll("_", " ")}</p>
                     </motion.div>
                     <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: prefersReducedMotion ? 0 : 0.3 }} className="rounded-2xl border border-white/10 bg-white/[0.025] p-4">
-                      <div className="flex items-center gap-2 text-xs text-zinc-400"><ShieldCheck className="h-4 w-4 text-emerald-300" /> Gate recommendation</div>
-                      <p className="mt-3 font-mono text-3xl font-semibold tracking-tight">{result.recommended_gate_discharge_pct}<span className="ml-1 text-sm text-zinc-400">%</span></p>
+                      <div className="flex items-center gap-2 text-xs text-zinc-400"><Users className="h-4 w-4 text-emerald-300" /> Potentially exposed people</div>
+                      <p className="mt-3 font-mono text-3xl font-semibold tracking-tight">{exposedPopulation === null ? "—" : exposedPopulation.toLocaleString()}</p>
                     </motion.div>
                   </motion.div>
 
                   <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-200/15 bg-emerald-200/[0.04] p-4">
                     <div><p className="text-sm font-semibold text-white">Review checks</p><p className="mt-1 text-xs text-zinc-400">A person reviews any advisory before action.</p></div>
-                    <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-emerald-100">{result.jev_status === "LIVE_SUPERVISED" ? "Supervised review" : "Deterministic demo mode"}</span>
+                    <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-emerald-100">{needsHumanReview ? "Manual review advised" : "Review checks complete"}</span>
                   </div>
 
                   <motion.div initial={prefersReducedMotion ? false : "hidden"} animate="visible" variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.07, delayChildren: 0.15 } } }} className="mt-3 grid gap-3 sm:grid-cols-3">
-                    <ReviewCheck title="Input checks" passed={result.pre_gate_check.passed} detail={result.pre_gate_check.mass_balance_error_pct !== undefined ? `Balance check: ${result.pre_gate_check.mass_balance_error_pct}%` : "Input validation completed."} />
-                    <ReviewCheck title="Calculation checks" passed={result.mid_gate_check.passed} detail={result.mid_gate_check.courant_number !== undefined ? `Stability check: ${result.mid_gate_check.courant_number}` : "Calculation check completed."} />
-                    <ReviewCheck title="Safety review" passed={result.post_gate_check.passed} detail="Scenario safety check completed. Confirm station thresholds with the data owner before operational use." />
+                    <ReviewCheck title="Input checks" passed={Boolean(result.result.current_condition)} detail={result.result.current_condition?.water_level_m !== undefined ? `Starting water level: ${result.result.current_condition.water_level_m.toFixed(2)} m` : "Synthetic scenario inputs were accepted."} />
+                    <ReviewCheck title="Forecast & risk" passed={forecastPeak !== null && typeof result.result.risk_score === "number"} detail="Forecast and risk estimates were returned for this scenario." />
+                    <ReviewCheck title="Safety review" passed={!needsHumanReview} detail={needsHumanReview ? "Review the scenario findings before sharing or acting on them." : "No additional review was flagged for this scenario."} />
                   </motion.div>
 
                   <div className="mt-5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-white/10 pt-4 text-[10px] text-zinc-500">
-                    <span>{formatTime(result.executed_at)}</span>
-                    <span className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono"><span>{result.run_id}</span>{result.draft_id && <span className="inline-flex items-center gap-1">Draft {result.draft_id} <ArrowUpRight className="h-3 w-3" /></span>}</span>
+                    <span>{formatTime(result.result.timestamp)}</span>
+                    <span className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono"><span>{result.result.event_id}</span><span>{result.mode} demonstration</span></span>
                   </div>
-                  {result.cap_draft_generated && <p className="mt-3 text-[11px] leading-relaxed text-zinc-500">A draft advisory was created for human review. It is not a public alert or an operational instruction.</p>}
+                  <div className="mt-3 flex items-start gap-2 text-[11px] leading-relaxed text-zinc-500">
+                    <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                    <p>{externalCheckPassed ? "Independent corroboration is available for this run." : "Synthetic scenario only: no live authority bulletin or external source was checked."} This is decision support, not an operational warning.</p>
+                  </div>
                 </>
               ) : (
                 <div className="flex min-h-[330px] flex-col items-center justify-center px-5 text-center">
                   <div className="grid h-14 w-14 place-items-center rounded-2xl border border-emerald-200/15 bg-emerald-200/[0.05]"><Waves className="h-6 w-6 text-emerald-100" /></div>
                   <p className="mt-5 text-base font-semibold text-white">Your results will appear here</p>
-                  <p className="mt-2 max-w-sm text-sm leading-relaxed text-zinc-500">Run a scenario to see its forecast peak, risk index, gate recommendation, and review checks.</p>
+                  <p className="mt-2 max-w-sm text-sm leading-relaxed text-zinc-500">Run a scenario to see its forecast, risk level, potential exposure, and review checks.</p>
                 </div>
               )}
               </motion.div>
