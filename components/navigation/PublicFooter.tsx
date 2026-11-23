@@ -14,16 +14,16 @@ export const PublicFooter: React.FC = () => {
   }
 
   return (
-    <footer className="border-t border-white/10 bg-black text-zinc-400 text-sm mt-20">
+    <footer className="border-t border-[#1F2823] dark:border-[#1F2823] light:border-zinc-200 bg-[#080B09] dark:bg-[#080B09] light:bg-[#F8FAF9] text-[#9BA5A0] dark:text-[#9BA5A0] light:text-zinc-600 text-sm mt-20">
       <div className="max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 py-14">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand Info */}
           <div className="space-y-4">
             <BrandLogo size="md" />
-            <p className="text-xs text-zinc-400 leading-relaxed">
+            <p className="text-xs text-[#9BA5A0] dark:text-[#9BA5A0] light:text-zinc-600 leading-relaxed">
               Connecting hydrological signals, geospatial evidence, and human-governed response intelligence for flood-risk decision support.
             </p>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] text-zinc-300 border border-white/15 bg-white/5 font-mono">
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded text-[11px] text-[#9BA5A0] dark:text-[#9BA5A0] light:text-zinc-700 border border-[#1F2823] dark:border-[#1F2823] light:border-zinc-300 bg-[#141816] dark:bg-[#141816] light:bg-zinc-100">
               Research Prototype · Academic Evaluation
             </div>
           </div>

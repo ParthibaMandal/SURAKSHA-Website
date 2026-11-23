@@ -5,37 +5,81 @@
 @tailwind utilities;
 
 @layer base {
-  :root, .dark {
-    /* Pure Black & White Monochromatic Theme (Inspired by Google Antigravity) */
+  :root {
+    /* Brand Tinted Light Theme */
+    --background: #F8FAF9;
+    --foreground: #0C0F0D;
+
+    --surface: #FFFFFF;
+    --surface-elevated: #F0F4F2;
+    --surface-glass: rgba(255, 255, 255, 0.95);
+
+    --border: #D8DFDB;
+    --border-hover: rgba(16, 185, 129, 0.45);
+    --border-focus: rgba(16, 185, 129, 0.65);
+
+    --muted: #EEF2F0;
+    --muted-foreground: #526059;
+
+    --card: #FFFFFF;
+    --card-foreground: #0C0F0D;
+    --popover: #FFFFFF;
+    --popover-foreground: #0C0F0D;
+
+    --primary: #059669;
+    --primary-foreground: #FFFFFF;
+    --secondary: #E8EFEA;
+    --secondary-foreground: #0C0F0D;
+
+    --accent: rgba(5, 150, 105, 0.12);
+    --accent-foreground: #059669;
+
+    --status-live: #059669;
+    --status-watch: #D97706;
+    --status-danger: #DC2626;
+    --destructive: #DC2626;
+    --destructive-foreground: #FFFFFF;
+    --warning: #D97706;
+
+    --ring: rgba(5, 150, 105, 0.35);
+    --radius-pill: 0.375rem;
+    --radius-card: 0.5rem;
+    --radius: 0.375rem;
+
+    --font-heading: 'IBM Plex Sans', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-sans: 'Inter', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
+  }
+
+  .dark {
+    /* Brand Tinted Dark Theme */
     --background: #000000;
     --foreground: #FFFFFF;
 
-    --surface: #0A0A0A;
-    --surface-elevated: #121212;
-    --surface-glass: rgba(10, 10, 10, 0.85);
+    --surface: #0D100E;
+    --surface-elevated: #141816;
+    --surface-glass: #0D100E;
 
-    --border: rgba(255, 255, 255, 0.10);
-    --border-hover: rgba(255, 255, 255, 0.20);
-    --border-focus: rgba(255, 255, 255, 0.40);
+    --border: #1F2823;
+    --border-hover: rgba(16, 185, 129, 0.35);
+    --border-focus: rgba(16, 185, 129, 0.55);
 
-    --muted: #121212;
-    --muted-foreground: #A1A1AA;
+    --muted: #141816;
+    --muted-foreground: #9BA5A0;
 
-    --card: #0A0A0A;
+    --card: #0D100E;
     --card-foreground: #FFFFFF;
-    --popover: #0A0A0A;
+    --popover: #0D100E;
     --popover-foreground: #FFFFFF;
 
-    /* Clean Monochromatic Actions (Zero Neons) */
-    --primary: #FFFFFF;
+    --primary: #10B981;
     --primary-foreground: #000000;
-    --secondary: rgba(255, 255, 255, 0.08);
+    --secondary: #141816;
     --secondary-foreground: #FFFFFF;
 
-    --accent: rgba(255, 255, 255, 0.12);
+    --accent: rgba(16, 185, 129, 0.12);
     --accent-foreground: #FFFFFF;
 
-    /* Semantic Status (Muted, Non-Neon) */
     --status-live: #10B981;
     --status-watch: #F59E0B;
     --status-danger: #EF4444;
@@ -43,21 +87,14 @@
     --destructive-foreground: #FFFFFF;
     --warning: #F59E0B;
 
-    --ring: rgba(255, 255, 255, 0.30);
-    --radius-pill: 9999px;
-    --radius-card: 0.875rem;
-    --radius: 0.5rem;
-
-    --font-heading: 'IBM Plex Sans', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-sans: 'Inter', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
+    --ring: rgba(16, 185, 129, 0.35);
   }
 }
 
 body {
   margin: 0;
-  background-color: #000000;
-  color: #FFFFFF;
+  background-color: var(--background);
+  color: var(--foreground);
   font-family: var(--font-sans);
   overflow-x: hidden;
   min-height: 100vh;
@@ -102,12 +139,12 @@ pre,
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: var(--font-mono);
+  font-family: var(--font-heading);
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #A1A1AA;
-  font-weight: 500;
+  color: #6A7771;
+  font-weight: 600;
   margin-bottom: 6px;
 }
 .eyebrow::before {
@@ -115,30 +152,29 @@ pre,
   display: inline-block;
   width: 5px;
   height: 5px;
-  border-radius: 50%;
-  background: #FFFFFF;
+  border-radius: 2px;
+  background: #10B981;
 }
 
-/* Minimalist Pill Utilities (Zero Neons) */
+/* Minimalist Tag Utilities (Solid, crisp 4px radius) */
 .pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 12px;
-  border-radius: 9999px;
+  padding: 3px 10px;
+  border-radius: 4px;
   font-size: 11px;
   font-weight: 500;
-  letter-spacing: 0.04em;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.05);
-  color: #FFFFFF;
-  backdrop-filter: blur(8px);
+  letter-spacing: 0.02em;
+  border: 1px solid #1F2823;
+  background: #141816;
+  color: #9BA5A0;
 }
 
 .pill .dot {
   width: 5px;
   height: 5px;
-  border-radius: 50%;
+  border-radius: 2px;
 }
 .pill .dot.green {
   background: #10B981;
@@ -150,12 +186,158 @@ pre,
   background: #EF4444;
 }
 .pill .dot.neutral {
-  background: #A1A1AA;
+  background: #6A7771;
 }
 
-/* Sleek Dark Card */
+/* Sleek Dark Card (Solid, 8px radius, no blur) */
 .glass-panel {
-  background: #0A0A0A;
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  border-radius: 0.875rem;
+  background: #0D100E;
+  border: 1px solid #1F2823;
+  border-radius: 0.5rem;
+}
+
+/* =========================================================================
+   BUTTON SYSTEM (Structured solid & bordered, 6px radius)
+   ========================================================================= */
+.btn-glass,
+.btn-glass-primary,
+.btn-glass-secondary,
+.btn {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.375rem;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.btn-glass-primary {
+  background: #10B981;
+  color: #000000;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+.btn-glass-primary:hover {
+  background: #0EA271;
+}
+
+.btn-glass-secondary {
+  background: #0D100E;
+  color: #FFFFFF;
+  border: 1px solid #1F2823;
+}
+.btn-glass-secondary:hover {
+  background: #141816;
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+/* Specular Shimmer Sweep Overlay */
+.btn-glass::after,
+.btn-glass-primary::after,
+.btn-glass-secondary::after,
+.btn::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -30%;
+  width: 45%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.26) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: translateX(-180%) rotate(22deg);
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.btn-glass:hover::after,
+.btn-glass-primary:hover::after,
+.btn-glass-secondary:hover::after,
+.btn:hover::after {
+  transform: translateX(380%) rotate(22deg);
+}
+
+.btn-glass:hover,
+.btn-glass-primary:hover,
+.btn-glass-secondary:hover,
+.btn:hover {
+  transform: translateY(-2px) scale(1.025);
+}
+
+.btn-glass:active,
+.btn-glass-primary:active,
+.btn-glass-secondary:active,
+.btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Primary Luminous Frosted Glass Button */
+.btn-glass-primary,
+.btn.primary {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(255, 255, 255, 0.10) 50%,
+    rgba(255, 255, 255, 0.16) 100%
+  );
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  animation: glassPulseGlow 4s ease-in-out infinite;
+}
+
+.btn-glass-primary:hover,
+.btn.primary:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.32) 0%,
+    rgba(255, 255, 255, 0.16) 50%,
+    rgba(255, 255, 255, 0.24) 100%
+  );
+  border-color: rgba(255, 255, 255, 0.55);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.6),
+    0 14px 36px -6px rgba(0, 0, 0, 0.7),
+    0 0 28px 2px rgba(255, 255, 255, 0.22);
+}
+
+/* Secondary Smoked Obsidian Glass Button */
+.btn-glass-secondary,
+.btn.secondary {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.11) 0%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.22),
+    0 8px 24px -4px rgba(0, 0, 0, 0.5);
+}
+
+.btn-glass-secondary:hover,
+.btn.secondary:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.20) 0%,
+    rgba(255, 255, 255, 0.09) 100%
+  );
+  border-color: rgba(255, 255, 255, 0.42);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.4),
+    0 12px 32px -4px rgba(0, 0, 0, 0.65),
+    0 0 20px 0 rgba(255, 255, 255, 0.14);
+}
+
+.btn.small {
+  padding: 0.45rem 1rem;
+  font-size: 0.75rem;
 }
