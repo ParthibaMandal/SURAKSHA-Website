@@ -1,425 +1,274 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import { useState } from "react";
+import { Activity, ArrowUpRight, CheckCircle2, CircleAlert, Droplets, LoaderCircle, Play, ShieldCheck, Waves } from "lucide-react";
 import { FadeIn } from "@/components/motion/FadeIn";
-import { Button } from "@/components/ui/button";
-import { HydrologicalChart } from "@/components/shared/HydrologicalChart";
-import {
-  Shield,
-  Droplets,
-  Activity,
-  AlertTriangle,
-  CheckCircle2,
-  ChevronRight,
-  Sliders,
-  Play,
-} from "lucide-react";
 
-// CWC Gandhi Ghat Benchmarks:
-// Baseline Normal: 46.20 m | Warning: 47.60 m | Danger: 48.60 m | HFL: 50.52 m
-function evaluateGandhiGhatState(stageM: number, rainMmHr: number) {
-  if (stageM >= 48.60 || rainMmHr >= 50) {
-    return {
-      gate: "Breach (Danger)",
-      review: "Escalate to Commander (CAP Alert)",
-      statusClass: "danger",
-      isSurge: true,
-      pre: "Telemetry flagged: river stage exceeded CWC danger mark (48.60 m).",
-      mid: `Ensemble projects peak stage at ${(stageM + 0.45).toFixed(2)} m (Breach above 48.60 m threshold).`,
-      post: "Immediate commander-authorized OASIS CAP v1.2 advisory required.",
-      n: "Critical flood breach scenario: Gauges indicate stage exceeding CWC Gandhi Ghat danger mark (48.60 m MSL). Automated incident alerts triggered for low-lying urban wards.",
-    };
-  } else if (stageM >= 47.60 || rainMmHr >= 30) {
-    return {
-      gate: "Review (Watch)",
-      review: "Advisory Review (Stage Rising)",
-      statusClass: "watch",
-      isSurge: true,
-      pre: "Input verified with IMD radar precipitation data.",
-      mid: `Ensemble spread indicates possible ${(stageM + 0.35).toFixed(2)} m rise approaching danger mark.`,
-      post: "Satellite SAR extent comparison flagged for supervisory inspection.",
-      n: "Rising stage watch scenario: Heavy upstream precipitation pushes reach stage across CWC warning threshold (47.60 m MSL). Ward advisories on standby.",
-    };
-  } else {
-    return {
-      gate: "Pass (Nominal)",
-      review: "Nominal Monitoring",
-      statusClass: "nominal",
-      isSurge: false,
-      pre: "Telemetry quality checks passed across all 8 basin stations.",
-      mid: "Ensemble disagreement: 0.04 m (High physical agreement).",
-      post: "Downstream corridor corroboration verified.",
-      n: "Baseline scenario: Hydrograph inputs remain within seasonal average. Zero threshold breaches predicted over 48h horizon.",
-    };
-  }
-}
-
-interface ScenarioPreset {
-  name: string;
-  stage: number;
-  rain: number;
-}
-
-const PRESETS: Record<string, ScenarioPreset> = {
-  normal: { name: "Normal river conditions", stage: 46.40, rain: 4 },
-  rain: { name: "Heavy rainfall upstream", stage: 47.75, rain: 35 },
-  rise: { name: "Rapid river rise (Surge)", stage: 48.95, rain: 65 },
-  sensor: { name: "Conflicting sensor data", stage: 47.10, rain: 12 },
-  satellite: { name: "Satellite unavailable", stage: 46.85, rain: 8 },
+type ScenarioResult = {
+  run_id: string;
+  scenario_id: string;
+  scenario_name: string;
+  status: string;
+  pre_gate_check: { passed: boolean; mass_balance_error_pct?: number };
+  mid_gate_check: { passed: boolean; courant_number?: number };
+  post_gate_check: { passed: boolean; crest_forecast_m?: number; embankment_threshold_m?: number };
+  jev_status: string;
+  peak_forecast_m: number;
+  inundation_risk_index: number;
+  recommended_gate_discharge_pct: number;
+  cap_draft_generated: boolean;
+  draft_id?: string | null;
+  executed_at: string;
 };
 
-export default function DemoLabPage() {
-  const [selectedKey, setSelectedKey] = useState<string>("normal");
-  const [studyContext, setStudyContext] = useState<string>("patna");
-  const [stageInput, setStageInput] = useState<number>(46.40);
-  const [rainInput, setRainInput] = useState<number>(4);
-  const [isRunning, setIsRunning] = useState<boolean>(false);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
+type DemoPreset = "steady" | "rain" | "surge";
 
-  // Shared CWC Gandhi Ghat Evaluator
-  const evaluation = useMemo(() => {
-    return evaluateGandhiGhatState(stageInput, rainInput);
-  }, [stageInput, rainInput]);
+const PRESETS: Record<DemoPreset, { label: string; description: string; basin: string; scenarioId: string; inflow: number; rainfall: number }> = {
+  steady: {
+    label: "Steady conditions",
+    description: "A baseline run with no added upstream pressure.",
+    basin: "Middle Ganga",
+    scenarioId: "SCEN-PATNA-CREST",
+    inflow: 1,
+    rainfall: 0,
+  },
+  rain: {
+    label: "Heavy rainfall",
+    description: "Add rainfall and a modest upstream flow increase.",
+    basin: "Middle Ganga",
+    scenarioId: "SCEN-PATNA-CREST",
+    inflow: 1.25,
+    rainfall: 80,
+  },
+  surge: {
+    label: "Rapid upstream rise",
+    description: "Explore a high inflow and rainfall scenario in the Gandak basin.",
+    basin: "Gandak Basin",
+    scenarioId: "SCEN-GANDAK-SURGE",
+    inflow: 1.6,
+    rainfall: 160,
+  },
+};
 
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
-  };
+function isScenarioResult(value: unknown): value is ScenarioResult {
+  if (!value || typeof value !== "object") return false;
+  const data = value as Partial<ScenarioResult>;
+  return typeof data.run_id === "string"
+    && typeof data.scenario_name === "string"
+    && typeof data.jev_status === "string"
+    && typeof data.executed_at === "string"
+    && typeof data.peak_forecast_m === "number" && Number.isFinite(data.peak_forecast_m)
+    && typeof data.inundation_risk_index === "number" && data.inundation_risk_index >= 0 && data.inundation_risk_index <= 1
+    && typeof data.recommended_gate_discharge_pct === "number" && data.recommended_gate_discharge_pct >= 0 && data.recommended_gate_discharge_pct <= 100
+    && typeof data.pre_gate_check?.passed === "boolean"
+    && typeof data.mid_gate_check?.passed === "boolean"
+    && typeof data.post_gate_check?.passed === "boolean";
+}
 
-  const handlePresetChange = (key: string) => {
-    setSelectedKey(key);
-    const p = PRESETS[key];
-    if (p) {
-      setStageInput(p.stage);
-      setRainInput(p.rain);
-    }
-  };
+const formatTime = (value: string) => {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "Time unavailable" : date.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+};
 
-  const handleRun = () => {
-    setIsRunning(true);
-    setTimeout(() => {
-      setIsRunning(false);
-      showToast("Hydrological verification pipeline executed.");
-    }, 300);
-  };
-
+function ReviewCheck({ title, passed, detail }: { title: string; passed: boolean; detail: string }) {
   return (
-    <div className="w-full bg-[#000000] text-[#FFFFFF] min-h-screen">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 py-12 flex flex-col gap-8">
-        {/* Toast popup */}
-        {toastMessage && (
-          <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-full bg-[#0A0A0A] border border-[#FFFFFF]/40 text-xs font-mono text-white shadow-2xl flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
-            <CheckCircle2 className="w-4 h-4 text-[#FFFFFF]" /> {toastMessage}
-          </div>
-        )}
-
-        {/* Page Hero */}
-        <FadeIn>
-          <div className="max-w-3xl space-y-3">
-            <div className="eyebrow">SIMULATION LAB · SYNTHETIC ENVIRONMENT</div>
-            <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
-              Explore controlled flood scenarios.
-            </h1>
-            <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
-              Configure synthetic river-stage and rainfall parameters to inspect how SURAKSHA’s forecasting committee and Pre-Run, Mid-Run, and Post-Run verification gates evaluate flood evidence. Every value is calibrated to CWC Gandhi Ghat benchmarks (Warning: 47.60 m, Danger: 48.60 m).
-            </p>
-          </div>
-        </FadeIn>
-
-        {/* Configuration Panel */}
-        <FadeIn delay={0.1}>
-          <div className="p-6 rounded-3xl border border-white/10 bg-[#0A0A0A]/80 backdrop-blur-xl space-y-6 shadow-2xl">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/10">
-              <div>
-                <h3 className="text-base font-bold text-white">Scenario & Parameter Configuration</h3>
-                <p className="text-xs text-slate-400">
-                  Select a preset or fine-tune sliders to inspect live CWC threshold transitions
-                </p>
-              </div>
-              <span className="pill self-start sm:self-auto bg-amber-500/10 text-amber-300 border-amber-500/30">
-                <i className="dot amber" /> SIMULATED PREVIEW
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
-              {/* Preset Selector */}
-              <div className="space-y-2">
-                <label className="text-[11px] font-mono font-bold text-slate-300 uppercase tracking-wider block">
-                  Scenario Preset
-                </label>
-                <select
-                  value={selectedKey}
-                  onChange={(e) => handlePresetChange(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-white/15 bg-[#000000] text-xs font-medium text-white focus:outline-none focus:border-[#FFFFFF] cursor-pointer"
-                >
-                  <option value="normal">Normal river conditions (46.40m)</option>
-                  <option value="rain">Heavy rainfall upstream (47.75m)</option>
-                  <option value="rise">Rapid river rise / Surge (48.95m)</option>
-                  <option value="sensor">Conflicting sensor data (47.10m)</option>
-                  <option value="satellite">Satellite unavailable (46.85m)</option>
-                </select>
-              </div>
-
-              {/* River Stage Slider + Readout */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-[11px] font-mono font-bold text-slate-300 uppercase tracking-wider">
-                    River Stage (m MSL)
-                  </label>
-                  <span className="text-xs font-mono font-bold text-[#FFFFFF]">
-                    {stageInput.toFixed(2)} m
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min="45.00"
-                  max="51.00"
-                  step="0.05"
-                  value={stageInput}
-                  onChange={(e) => setStageInput(parseFloat(e.target.value))}
-                  className="w-full accent-[#FFFFFF] h-1.5 bg-white/10 rounded-lg cursor-pointer"
-                />
-                <div className="flex justify-between text-[9px] font-mono text-slate-500">
-                  <span>45.0m (Min)</span>
-                  <span className="text-amber-400">47.6m (Warn)</span>
-                  <span className="text-rose-400">48.6m (Danger)</span>
-                  <span>51.0m</span>
-                </div>
-              </div>
-
-              {/* Rainfall Slider + Readout */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-[11px] font-mono font-bold text-slate-300 uppercase tracking-wider">
-                    Rainfall (mm/hr)
-                  </label>
-                  <span className="text-xs font-mono font-bold text-[#E4E4E7]">
-                    {rainInput} mm/hr
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  step="1"
-                  value={rainInput}
-                  onChange={(e) => setRainInput(parseInt(e.target.value))}
-                  className="w-full accent-[#E4E4E7] h-1.5 bg-white/10 rounded-lg cursor-pointer"
-                />
-                <div className="flex justify-between text-[9px] font-mono text-slate-500">
-                  <span>0 mm/h</span>
-                  <span>30 mm/h</span>
-                  <span>50 mm/h</span>
-                  <span>100 mm/h</span>
-                </div>
-              </div>
-
-              {/* Run Trigger */}
-              <div>
-                <button
-                  type="button"
-                  onClick={handleRun}
-                  disabled={isRunning}
-                  className="w-full h-[42px] rounded-full font-semibold text-xs bg-white text-[#000000] hover:bg-neutral-100 transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
-                >
-                  {isRunning ? (
-                    "Evaluating..."
-                  ) : (
-                    <>
-                      <span>Execute Verification</span>
-                      <ChevronRight className="w-4 h-4" />
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-        </FadeIn>
-
-        {/* 4 Forecast Output Stat Cards - Driven by Shared Evaluator */}
-        <FadeIn delay={0.15}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-5 rounded-2xl border border-white/10 bg-[#0A0A0A]/70 backdrop-blur-xl space-y-2">
-              <div className="flex items-center justify-between text-xs text-slate-400">
-                <span>River-Stage Input</span>
-                <Droplets className="w-4 h-4 text-[#FFFFFF]" />
-              </div>
-              <div className="text-2xl font-extrabold font-mono text-white">
-                {stageInput.toFixed(2)} m
-              </div>
-              <div className="text-[11px] font-mono text-slate-400">
-                CWC GANDHI GHAT · {stageInput >= 48.60 ? "DANGER" : stageInput >= 47.60 ? "WARNING" : "NORMAL"}
-              </div>
-            </div>
-
-            <div className="p-5 rounded-2xl border border-white/10 bg-[#0A0A0A]/70 backdrop-blur-xl space-y-2">
-              <div className="flex items-center justify-between text-xs text-slate-400">
-                <span>Rainfall Intensity</span>
-                <Activity className="w-4 h-4 text-[#E4E4E7]" />
-              </div>
-              <div className="text-2xl font-extrabold font-mono text-white">
-                {rainInput} mm/hr
-              </div>
-              <div className="text-[11px] font-mono text-slate-400">
-                IMD RADAR PRECIPITATION
-              </div>
-            </div>
-
-            <div className="p-5 rounded-2xl border border-white/10 bg-[#0A0A0A]/70 backdrop-blur-xl space-y-2">
-              <div className="flex items-center justify-between text-xs text-slate-400">
-                <span>Gate Decision</span>
-                <Shield className="w-4 h-4 text-[#E4E4E7]" />
-              </div>
-              <div
-                className={`text-2xl font-extrabold font-mono ${
-                  evaluation.statusClass === "danger"
-                    ? "text-rose-400"
-                    : evaluation.statusClass === "watch"
-                    ? "text-amber-400"
-                    : "text-[#FFFFFF]"
-                }`}
-              >
-                {evaluation.gate}
-              </div>
-              <div className="text-[11px] font-mono text-slate-400">Sequential gate review</div>
-            </div>
-
-            <div className="p-5 rounded-2xl border border-white/10 bg-[#0A0A0A]/70 backdrop-blur-xl space-y-2">
-              <div className="flex items-center justify-between text-xs text-slate-400">
-                <span>Supervisory State</span>
-                <AlertTriangle
-                  className={`w-4 h-4 ${
-                    evaluation.statusClass === "danger" ? "text-rose-400" : "text-amber-400"
-                  }`}
-                />
-              </div>
-              <div
-                className={`text-lg font-bold font-mono ${
-                  evaluation.statusClass === "danger"
-                    ? "text-rose-400"
-                    : evaluation.statusClass === "watch"
-                    ? "text-amber-400"
-                    : "text-slate-200"
-                }`}
-              >
-                {evaluation.review}
-              </div>
-              <div className="text-[11px] font-mono text-slate-400">Human-in-the-loop gate</div>
-            </div>
-          </div>
-        </FadeIn>
-
-        {/* Hydrograph Chart Section */}
-        <FadeIn delay={0.2}>
-          <div className="p-6 rounded-3xl border border-white/10 bg-[#0A0A0A]/80 backdrop-blur-xl space-y-4 shadow-2xl">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-white/10">
-              <div>
-                <h3 className="text-base font-bold text-white">
-                  Simulated Ensemble Hydrograph & Threshold Response
-                </h3>
-                <p className="text-xs text-slate-400">
-                  Observed stage, cyan forecast curve (#FFFFFF), 90% confidence spread, Warning (47.60m) & Danger (48.60m)
-                </p>
-              </div>
-              <span className="px-3 py-1 rounded-full text-[10px] font-mono font-bold uppercase bg-white/5 text-slate-300 border border-white/15">
-                CWC Gandhi Ghat Model
-              </span>
-            </div>
-            <HydrologicalChart isSurge={evaluation.isSurge} />
-          </div>
-        </FadeIn>
-
-        {/* Two Columns: Gate Review Cards vs Scenario Response Pathway */}
-        <FadeIn delay={0.25}>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Left Panel: Forecast Outputs & Gate Review Cards */}
-            <div className="p-6 rounded-3xl border border-white/10 bg-[#0A0A0A]/80 backdrop-blur-xl space-y-5 shadow-2xl">
-              <div className="flex items-center justify-between pb-3 border-b border-white/10">
-                <h3 className="text-base font-bold text-white">
-                  Pre-Run, Mid-Run & Post-Run Gate Review
-                </h3>
-                <span className="px-3 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase bg-[#FFFFFF]/15 text-[#E4E4E7] border border-[#FFFFFF]/30">
-                  VERIFIED
-                </span>
-              </div>
-
-              <p className="text-xs text-slate-300 leading-relaxed">{evaluation.n}</p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-                <div className="p-4 rounded-2xl border border-white/10 bg-[#000000]/60 space-y-1.5">
-                  <span className="text-[10px] font-mono font-bold text-[#FFFFFF] block">GATE 01 · PRE-RUN</span>
-                  <strong className="text-xs font-bold text-white block">Input Integrity</strong>
-                  <p className="text-[11px] text-slate-400 leading-normal">{evaluation.pre}</p>
-                </div>
-
-                <div className="p-4 rounded-2xl border border-white/10 bg-[#000000]/60 space-y-1.5">
-                  <span className="text-[10px] font-mono font-bold text-[#E4E4E7] block">GATE 02 · MID-RUN</span>
-                  <strong className="text-xs font-bold text-white block">Model Convergence</strong>
-                  <p className="text-[11px] text-slate-400 leading-normal">{evaluation.mid}</p>
-                </div>
-
-                <div className="p-4 rounded-2xl border border-white/10 bg-[#000000]/60 space-y-1.5">
-                  <span className="text-[10px] font-mono font-bold text-[#E4E4E7] block">GATE 03 · POST-RUN</span>
-                  <strong className="text-xs font-bold text-white block">CAP Readiness</strong>
-                  <p className="text-[11px] text-slate-400 leading-normal">{evaluation.post}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Panel: Scenario Response Pathway */}
-            <div className="p-6 rounded-3xl border border-white/10 bg-[#0A0A0A]/80 backdrop-blur-xl space-y-5 shadow-2xl">
-              <div className="flex items-center justify-between pb-3 border-b border-white/10">
-                <h3 className="text-base font-bold text-white">Scenario Response Pathway</h3>
-                <small className="text-xs font-mono text-slate-400">Decision-Support Pipeline</small>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex items-start gap-3.5">
-                  <div className="w-7 h-7 rounded-lg bg-[#FFFFFF]/15 border border-[#FFFFFF]/30 grid place-items-center text-xs font-mono font-bold text-[#FFFFFF] shrink-0">
-                    01
-                  </div>
-                  <div>
-                    <strong className="text-xs font-bold text-white block">
-                      Pre-Run Input Quality Check
-                    </strong>
-                    <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">
-                      Verify station quorum, gauge timestamp freshness (&lt;15m), and physical river-stage bounds before executing ensemble forecasts.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3.5">
-                  <div className="w-7 h-7 rounded-lg bg-[#E4E4E7]/15 border border-[#E4E4E7]/30 grid place-items-center text-xs font-mono font-bold text-[#E4E4E7] shrink-0">
-                    02
-                  </div>
-                  <div>
-                    <strong className="text-xs font-bold text-white block">
-                      Mid-Run Physics & Mass Conservation
-                    </strong>
-                    <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">
-                      Check 1D channel routing and 2D depression filling for numerical convergence, mass conservation, and Courant stability.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3.5">
-                  <div className="w-7 h-7 rounded-lg bg-[#E4E4E7]/15 border border-[#E4E4E7]/30 grid place-items-center text-xs font-mono font-bold text-[#E4E4E7] shrink-0">
-                    03
-                  </div>
-                  <div>
-                    <strong className="text-xs font-bold text-white block">
-                      Post-Run Human-Governed CAP Advisory
-                    </strong>
-                    <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">
-                      Corroborate satellite SAR inundation polygons with local elevation, staging OASIS CAP v1.2 alerts for commander authorization.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </FadeIn>
+    <div className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.025] p-4">
+      {passed ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" /> : <CircleAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />}
+      <div className="min-w-0">
+        <p className="text-sm font-semibold text-white">{title}</p>
+        <p className="mt-1 text-xs leading-relaxed text-zinc-400">{detail}</p>
+        <span className={`mt-2 inline-flex text-[10px] font-semibold uppercase tracking-[0.16em] ${passed ? "text-emerald-300" : "text-amber-200"}`}>
+          {passed ? "Passed" : "Needs review"}
+        </span>
       </div>
     </div>
+  );
+}
+
+export default function DemoLabPage() {
+  const [preset, setPreset] = useState<DemoPreset>("steady");
+  const [inflow, setInflow] = useState(PRESETS.steady.inflow);
+  const [rainfall, setRainfall] = useState(PRESETS.steady.rainfall);
+  const [result, setResult] = useState<ScenarioResult | null>(null);
+  const [isRunning, setIsRunning] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const selectedPreset = PRESETS[preset];
+
+  function choosePreset(value: DemoPreset) {
+    setPreset(value);
+    setInflow(PRESETS[value].inflow);
+    setRainfall(PRESETS[value].rainfall);
+    setError(null);
+  }
+
+  async function runScenario() {
+    setIsRunning(true);
+    setError(null);
+    try {
+      const response = await fetch("/api/flood/scenarios", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          scenario_id: selectedPreset.scenarioId,
+          upstream_inflow_multiplier: inflow,
+          precipitation_anomaly_mm: rainfall,
+          enable_jev_supervision: false,
+        }),
+        cache: "no-store",
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data?.detail || "The simulation service could not complete this run.");
+      if (!isScenarioResult(data)) throw new Error("The simulation service returned an incomplete result.");
+      setResult(data as ScenarioResult);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "The simulation service could not be reached.");
+      setResult(null);
+    } finally {
+      setIsRunning(false);
+    }
+  }
+
+  return (
+    <main className="min-h-screen bg-[#050708] text-white">
+      <div className="mx-auto flex w-full max-w-[1320px] flex-col gap-8 px-4 py-10 sm:px-6 sm:py-14 lg:px-10">
+        <FadeIn>
+          <header className="flex flex-col gap-6 border-b border-white/10 pb-8 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-3xl">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/[0.06] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-cyan-100">
+                <Activity className="h-3.5 w-3.5" /> SURAKSHA · Simulation Lab
+              </div>
+              <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">See how conditions shape a flood response.</h1>
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-400 sm:text-base">
+                Choose a scenario, adjust the conditions, and review the forecast and checks returned by SURAKSHA.
+              </p>
+            </div>
+            <div className="flex w-fit items-center gap-3 rounded-2xl border border-amber-300/20 bg-amber-300/[0.06] px-4 py-3">
+              <span className="h-2 w-2 rounded-full bg-amber-300" />
+              <div>
+                <p className="text-xs font-semibold text-amber-100">Synthetic scenario</p>
+                <p className="mt-0.5 text-[11px] text-zinc-400">For demonstration and review</p>
+              </div>
+            </div>
+          </header>
+        </FadeIn>
+
+        <div className="grid gap-6 lg:grid-cols-[0.88fr_1.12fr]">
+          <FadeIn delay={0.08}>
+            <section className="h-full rounded-3xl border border-white/10 bg-[#0b1012] p-5 shadow-2xl sm:p-7" aria-labelledby="scenario-title">
+              <div className="mb-6 flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-500">01 / Set conditions</p>
+                  <h2 id="scenario-title" className="mt-2 text-xl font-semibold">Choose a scenario</h2>
+                </div>
+                <Waves className="h-5 w-5 text-cyan-200" />
+              </div>
+
+              <div className="space-y-2" role="group" aria-label="Scenario presets">
+                {(Object.entries(PRESETS) as [DemoPreset, typeof PRESETS[DemoPreset]][]).map(([key, item]) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => choosePreset(key)}
+                    aria-pressed={preset === key}
+                    className={`w-full rounded-2xl border p-4 text-left transition-colors ${preset === key ? "border-cyan-200/50 bg-cyan-200/[0.08]" : "border-white/10 bg-white/[0.02] hover:border-white/20"}`}
+                  >
+                    <span className="flex items-center justify-between gap-3">
+                      <span className="text-sm font-semibold text-white">{item.label}</span>
+                      <span className={`h-2 w-2 rounded-full ${preset === key ? "bg-cyan-200" : "bg-zinc-700"}`} />
+                    </span>
+                    <span className="mt-1.5 block text-xs leading-relaxed text-zinc-400">{item.description}</span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="mt-7 space-y-6 border-t border-white/10 pt-6">
+                <div>
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <label htmlFor="inflow" className="text-xs font-medium text-zinc-300">Upstream flow multiplier</label>
+                    <span className="rounded-lg bg-white/[0.06] px-2.5 py-1 font-mono text-xs text-white">{inflow.toFixed(2)}×</span>
+                  </div>
+                  <input id="inflow" type="range" min="0.5" max="3" step="0.05" value={inflow} onChange={(event) => setInflow(Number(event.target.value))} className="w-full accent-cyan-200" />
+                  <div className="mt-1 flex justify-between text-[10px] text-zinc-600"><span>0.5×</span><span>3.0×</span></div>
+                </div>
+                <div>
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <label htmlFor="rainfall" className="text-xs font-medium text-zinc-300">Added rainfall</label>
+                    <span className="rounded-lg bg-white/[0.06] px-2.5 py-1 font-mono text-xs text-white">{rainfall} mm</span>
+                  </div>
+                  <input id="rainfall" type="range" min="0" max="500" step="5" value={rainfall} onChange={(event) => setRainfall(Number(event.target.value))} className="w-full accent-cyan-200" />
+                  <div className="mt-1 flex justify-between text-[10px] text-zinc-600"><span>0 mm</span><span>500 mm</span></div>
+                </div>
+              </div>
+
+              <button type="button" onClick={runScenario} disabled={isRunning} className="mt-7 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-cyan-100 px-5 text-sm font-semibold text-[#061013] transition hover:bg-white disabled:cursor-wait disabled:opacity-70">
+                {isRunning ? <><LoaderCircle className="h-4 w-4 animate-spin" /> Running simulation…</> : <><Play className="h-4 w-4 fill-current" /> Run simulation</>}
+              </button>
+              <p className="mt-3 text-center text-[11px] leading-relaxed text-zinc-500">{selectedPreset.basin} · Synthetic inputs</p>
+            </section>
+          </FadeIn>
+
+          <FadeIn delay={0.14}>
+            <section className="min-h-[440px] rounded-3xl border border-white/10 bg-[#0b1012] p-5 shadow-2xl sm:p-7" aria-live="polite" aria-labelledby="result-title">
+              <div className="flex flex-wrap items-start justify-between gap-4 border-b border-white/10 pb-5">
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-500">02 / Review outcome</p>
+                  <h2 id="result-title" className="mt-2 text-xl font-semibold">Simulation result</h2>
+                </div>
+                {result && <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-300/20 bg-emerald-300/[0.06] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-emerald-200"><CheckCircle2 className="h-3.5 w-3.5" /> Run complete</span>}
+              </div>
+
+              {error ? (
+                <div className="mt-7 flex gap-3 rounded-2xl border border-rose-300/20 bg-rose-300/[0.05] p-4 text-sm text-rose-100">
+                  <CircleAlert className="mt-0.5 h-4 w-4 shrink-0" /><div><p className="font-semibold">Could not complete this run</p><p className="mt-1 text-xs leading-relaxed text-rose-100/70">{error}</p></div>
+                </div>
+              ) : result ? (
+                <>
+                  <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                    <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-4">
+                      <div className="flex items-center gap-2 text-xs text-zinc-400"><Droplets className="h-4 w-4 text-cyan-200" /> Forecast peak</div>
+                      <p className="mt-3 font-mono text-3xl font-semibold tracking-tight">{result.peak_forecast_m.toFixed(2)}<span className="ml-1 text-sm text-zinc-400">m</span></p>
+                    </div>
+                    <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-4">
+                      <div className="flex items-center gap-2 text-xs text-zinc-400"><Activity className="h-4 w-4 text-cyan-200" /> Flood risk index</div>
+                      <p className="mt-3 font-mono text-3xl font-semibold tracking-tight">{Math.round(result.inundation_risk_index * 100)}<span className="ml-1 text-sm text-zinc-400">/ 100</span></p>
+                    </div>
+                    <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-4">
+                      <div className="flex items-center gap-2 text-xs text-zinc-400"><ShieldCheck className="h-4 w-4 text-cyan-200" /> Gate recommendation</div>
+                      <p className="mt-3 font-mono text-3xl font-semibold tracking-tight">{result.recommended_gate_discharge_pct}<span className="ml-1 text-sm text-zinc-400">%</span></p>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-cyan-200/15 bg-cyan-200/[0.04] p-4">
+                    <div><p className="text-sm font-semibold text-white">Review checks</p><p className="mt-1 text-xs text-zinc-400">A person reviews any advisory before action.</p></div>
+                    <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-cyan-100">{result.jev_status === "LIVE_SUPERVISED" ? "Supervised review" : "Deterministic demo mode"}</span>
+                  </div>
+
+                  <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                    <ReviewCheck title="Input checks" passed={result.pre_gate_check.passed} detail={result.pre_gate_check.mass_balance_error_pct !== undefined ? `Balance check: ${result.pre_gate_check.mass_balance_error_pct}%` : "Input validation completed."} />
+                    <ReviewCheck title="Calculation checks" passed={result.mid_gate_check.passed} detail={result.mid_gate_check.courant_number !== undefined ? `Stability check: ${result.mid_gate_check.courant_number}` : "Calculation check completed."} />
+                    <ReviewCheck title="Safety review" passed={result.post_gate_check.passed} detail="Scenario safety check completed. Confirm station thresholds with the data owner before operational use." />
+                  </div>
+
+                  <div className="mt-5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-white/10 pt-4 text-[10px] text-zinc-500">
+                    <span>{formatTime(result.executed_at)}</span>
+                    <span className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono"><span>{result.run_id}</span>{result.draft_id && <span className="inline-flex items-center gap-1">Draft {result.draft_id} <ArrowUpRight className="h-3 w-3" /></span>}</span>
+                  </div>
+                  {result.cap_draft_generated && <p className="mt-3 text-[11px] leading-relaxed text-zinc-500">A draft advisory was created for human review. It is not a public alert or an operational instruction.</p>}
+                </>
+              ) : (
+                <div className="flex min-h-[330px] flex-col items-center justify-center px-5 text-center">
+                  <div className="grid h-14 w-14 place-items-center rounded-2xl border border-cyan-200/15 bg-cyan-200/[0.05]"><Waves className="h-6 w-6 text-cyan-100" /></div>
+                  <p className="mt-5 text-base font-semibold text-white">Your results will appear here</p>
+                  <p className="mt-2 max-w-sm text-sm leading-relaxed text-zinc-500">Run a scenario to see its forecast peak, risk index, gate recommendation, and review checks.</p>
+                </div>
+              )}
+            </section>
+          </FadeIn>
+        </div>
+
+        <p className="mx-auto max-w-3xl text-center text-[11px] leading-relaxed text-zinc-600">This lab uses synthetic scenario inputs for demonstration. Results are decision-support outputs and must not be treated as live flood warnings or used to operate infrastructure.</p>
+      </div>
+    </main>
   );
 }

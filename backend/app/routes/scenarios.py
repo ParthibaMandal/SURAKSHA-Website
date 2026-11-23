@@ -1,6 +1,8 @@
+import secrets
 from typing import List, Dict, Any
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException
 from sqlalchemy.orm import Session
+from backend.app.config import settings
 from backend.app.database import get_db
 from backend.app.models.scenario import AnalysisRun
 from backend.app.models.alert import AlertDraft
@@ -8,6 +10,14 @@ from backend.app.schemas.scenario import ScenarioRunRequest, ScenarioRunResponse
 from backend.app.services.flood_simulator import SCENARIO_CATALOG, simulate_hydrodynamic_run
 
 router = APIRouter(prefix="/scenarios", tags=["Flood Lab Physics Simulation"])
+
+def require_operator(authorization: str | None = Header(default=None)) -> None:
+    expected_key = settings.OPERATOR_API_KEY
+    if len(expected_key) < 32:
+        raise HTTPException(status_code=503, detail="Scenario execution is not configured for this environment.")
+    scheme, _, supplied_key = (authorization or "").partition(" ")
+    if scheme.lower() != "bearer" or not supplied_key or not secrets.compare_digest(supplied_key, expected_key):
+        raise HTTPException(status_code=401, detail="Valid operator authorization is required.", headers={"WWW-Authenticate": "Bearer"})
 
 @router.get("", response_model=List[Dict[str, Any]])
 def get_scenario_catalog():
@@ -23,7 +33,7 @@ def get_scenario_catalog():
         })
     return catalog
 
-@router.post("/run", response_model=ScenarioRunResponse)
+@router.post("/run", response_model=ScenarioRunResponse, dependencies=[Depends(require_operator)])
 def run_scenario(payload: ScenarioRunRequest, db: Session = Depends(get_db)):
     result = simulate_hydrodynamic_run(
         scenario_id=payload.scenario_id,
