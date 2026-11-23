@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   TrendingUp,
@@ -10,6 +11,8 @@ import {
   Cpu,
   Bell,
   ShieldCheck,
+  Mountain,
+  Waves,
   X,
   ExternalLink,
   ChevronRight,
@@ -85,6 +88,145 @@ export const HimalayasToPlainsHero: React.FC = () => {
         </div>
 
         {/* =========================================================================
+            HUD TELEMETRY CARD 1: HIMALAYAS (Glaciers Melting)
+           ========================================================================= */}
+        <div className="hidden md:block absolute top-[18%] lg:top-[20%] left-[48%] lg:left-[50%] z-20">
+          <div className="relative group transition-all duration-300 hover:scale-[1.03]">
+            {/* Glacier Surface Beacon Anchor */}
+            <div className="absolute -bottom-16 left-6 flex items-center pointer-events-none">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white" />
+              </span>
+              {/* Tether Line */}
+              <svg className="w-12 h-16 -ml-1 text-white/50" viewBox="0 0 50 70" fill="none">
+                <path d="M 6 65 L 18 20 L 45 4" stroke="currentColor" strokeWidth="1.2" strokeDasharray="2 3" />
+              </svg>
+            </div>
+
+            {/* Telemetry Card */}
+            <div className="p-3.5 rounded-2xl bg-[#0A0A0A]/90 backdrop-blur-xl border border-white/15 shadow-[0_12px_40px_rgba(0,0,0,0.8)] flex items-center gap-3.5 hover:border-white/30 transition-colors">
+              <div className="flex flex-col">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
+                    <Mountain className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold text-white tracking-tight leading-none">Himalayas</h4>
+                    <p className="text-[11px] text-zinc-400 mt-0.5">Glaciers Melting</p>
+                  </div>
+                </div>
+
+                <div className="mt-1 flex items-center gap-1.5">
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-[11px] font-mono font-semibold text-rose-300">
+                    <span className="text-[9px]">▲</span> +0.8°C
+                  </span>
+                  <span className="text-[10px] text-zinc-400 font-mono">Gangotri AWS</span>
+                </div>
+
+                {/* 30-Day Temp Delta Sparkline */}
+                <div className="mt-2 pt-1.5 border-t border-white/10 w-full">
+                  <div className="flex items-center justify-between text-[9px] text-zinc-400 mb-0.5">
+                    <span>Melt Rate Trend</span>
+                    <span className="font-mono text-rose-300">+0.8°C</span>
+                  </div>
+                  <svg className="w-28 h-4 overflow-visible" viewBox="0 0 100 20" fill="none">
+                    <defs>
+                      <linearGradient id="glacierTempGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#FB7185" stopOpacity="0.3" />
+                        <stop offset="100%" stopColor="#FB7185" stopOpacity="0" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M 0 16 Q 25 14 50 11 T 100 3 L 100 20 L 0 20 Z" fill="url(#glacierTempGrad)" />
+                    <path d="M 0 16 Q 25 14 50 11 T 100 3" stroke="#FB7185" strokeWidth="1.5" strokeLinecap="round" />
+                    <circle cx="100" cy="3" r="2" fill="#FDA4AF" className="animate-pulse" />
+                  </svg>
+                </div>
+              </div>
+
+              {/* Glacier Thumbnail */}
+              <div className="relative w-[96px] h-[72px] rounded-xl overflow-hidden border border-white/20 shadow-inner flex-shrink-0">
+                <Image
+                  src="/images/glacier-thumb-hd.jpg"
+                  alt="Himalayas Gangotri glacier telemetry"
+                  fill
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* =========================================================================
+            HUD TELEMETRY CARD 2: GANGA BASIN (Water Levels Rising)
+           ========================================================================= */}
+        <div className="hidden md:block absolute top-[44%] lg:top-[46%] right-[16%] lg:right-[18%] z-20">
+          <div className="relative group transition-all duration-300 hover:scale-[1.03]">
+            {/* River Surface Beacon Anchor */}
+            <div className="absolute -bottom-20 -left-6 flex items-center pointer-events-none">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white" />
+              </span>
+              {/* Tether Line */}
+              <svg className="w-16 h-20 -ml-2 text-white/50" viewBox="0 0 65 80" fill="none">
+                <path d="M 6 75 L 30 40 L 60 8" stroke="currentColor" strokeWidth="1.2" strokeDasharray="2 3" />
+              </svg>
+            </div>
+
+            {/* Telemetry Card */}
+            <div className="p-4 rounded-2xl bg-[#0A0A0A]/90 backdrop-blur-xl border border-white/15 shadow-[0_12px_40px_rgba(0,0,0,0.8)] min-w-[240px] flex flex-col gap-2.5 hover:border-white/30 transition-colors">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
+                    <Waves className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold text-white tracking-tight leading-none">Ganga Basin</h4>
+                    <p className="text-[11px] text-zinc-400 mt-0.5">Water Levels Rising</p>
+                  </div>
+                </div>
+
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-[11px] font-mono font-semibold text-rose-300">
+                  <span className="text-[9px]">▲</span> +12 cm
+                </span>
+              </div>
+
+              {/* Hydrograph Sparkline (Crisp Silver & White) */}
+              <div className="pt-2 border-t border-white/10">
+                <div className="flex items-center justify-between text-[9px] text-zinc-400 mb-0.5">
+                  <span>Reach Hydrograph</span>
+                  <span className="font-mono text-zinc-200">47.12 m MSL</span>
+                </div>
+                <svg className="w-full h-8 overflow-visible" viewBox="0 0 160 30" fill="none">
+                  <defs>
+                    <linearGradient id="gangaSparkGradMono" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.25" />
+                      <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.0" />
+                    </linearGradient>
+                  </defs>
+                  {/* Area */}
+                  <path
+                    d="M 0 25 Q 40 22 80 18 T 160 6 L 160 30 L 0 30 Z"
+                    fill="url(#gangaSparkGradMono)"
+                  />
+                  {/* Hydrograph line */}
+                  <path
+                    d="M 0 25 Q 40 22 80 18 T 160 6"
+                    stroke="#FFFFFF"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                  />
+                  {/* Current reading node */}
+                  <circle cx="160" cy="6" r="2.5" fill="#FFFFFF" className="animate-pulse" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* =========================================================================
             HERO MAIN CONTENT (Full Width Edge-to-Edge Container)
            ========================================================================= */}
         <div className="w-full px-6 sm:px-10 lg:px-14 h-full relative z-10 pt-24 sm:pt-28 pb-6 flex flex-col justify-between">
@@ -114,28 +256,63 @@ export const HimalayasToPlainsHero: React.FC = () => {
               Satellite. Sensors. AI. — A complete flood early warning system, from source to shore.
             </p>
 
-            {/* Call to Action Buttons (Animated Glassmorphism) */}
-            <div className="flex flex-wrap items-center gap-4 mb-4">
-              {/* Primary Glass Button: Explore Platform */}
+            {/* Call to Action Buttons */}
+            <div className="flex flex-wrap items-center gap-5 mb-4">
+              {/* Primary: Explore Platform */}
               <Link
                 href="/platform"
-                className="btn-glass-primary px-7 py-3.5 text-sm font-semibold text-white group cursor-pointer"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white text-black font-semibold text-sm hover:bg-neutral-100 transition-all duration-200 shadow-xl shadow-black/40 group"
               >
-                <span className="relative z-10">Explore the Platform</span>
-                <ArrowRight className="relative z-10 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1.5" />
+                <span>Explore the Platform</span>
+                <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
               </Link>
 
-              {/* Secondary Glass Button: Watch Demo */}
+              {/* Secondary: Watch Demo */}
               <button
                 type="button"
                 onClick={() => setIsDemoOpen(true)}
-                className="btn-glass-secondary pl-2.5 pr-6 py-2 text-sm font-medium text-white/95 hover:text-white group cursor-pointer"
+                className="inline-flex items-center gap-3 text-sm font-medium text-white/90 hover:text-white transition-colors group cursor-pointer"
               >
-                <span className="relative z-10 w-9 h-9 rounded-full bg-white/15 group-hover:bg-white/25 border border-white/30 flex items-center justify-center transition-all duration-300 group-hover:scale-110 shadow-inner">
-                  <Play className="w-3.5 h-3.5 fill-white text-white ml-0.5 transition-transform duration-300 group-hover:scale-110" />
+                <span className="w-10 h-10 rounded-full bg-white/10 group-hover:bg-white/20 backdrop-blur-md border border-white/25 flex items-center justify-center transition-all duration-200 shadow-lg">
+                  <Play className="w-4 h-4 fill-white text-white ml-0.5" />
                 </span>
-                <span className="relative z-10">Watch Demo</span>
+                <span>Watch Demo</span>
               </button>
+            </div>
+
+            {/* Mobile-Only Telemetry Cards Stack */}
+            <div className="md:hidden w-full grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
+              {/* Himalayas Mobile Card */}
+              <div className="p-2.5 rounded-2xl bg-[#0A0A0A]/90 backdrop-blur-md border border-white/15 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
+                    <Mountain className="w-3.5 h-3.5 text-white" />
+                  </div>
+                  <div>
+                    <h5 className="text-xs font-semibold text-white">Himalayas (Gangotri)</h5>
+                    <p className="text-[10px] text-zinc-400">Glaciers Melting</p>
+                  </div>
+                </div>
+                <span className="px-2 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-[10px] font-mono font-semibold text-rose-300">
+                  ▲ +0.8°C
+                </span>
+              </div>
+
+              {/* Ganga Basin Mobile Card */}
+              <div className="p-2.5 rounded-2xl bg-[#0A0A0A]/90 backdrop-blur-md border border-white/15 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
+                    <Waves className="w-3.5 h-3.5 text-white" />
+                  </div>
+                  <div>
+                    <h5 className="text-xs font-semibold text-white">Ganga Basin (Patna)</h5>
+                    <p className="text-[10px] text-zinc-400">Water Levels Rising</p>
+                  </div>
+                </div>
+                <span className="px-2 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-[10px] font-mono font-semibold text-rose-300">
+                  ▲ +12 cm
+                </span>
+              </div>
             </div>
           </div>
 
@@ -248,25 +425,25 @@ export const HimalayasToPlainsHero: React.FC = () => {
             <div className="flex flex-wrap items-center justify-end gap-3 pt-2 border-t border-white/10">
               <button
                 onClick={() => setIsDemoOpen(false)}
-                className="btn-glass-secondary px-5 py-2.5 text-xs text-zinc-300 hover:text-white cursor-pointer"
+                className="px-5 py-2.5 rounded-full border border-white/15 text-xs text-zinc-400 hover:text-white hover:bg-white/5 transition-colors"
               >
-                <span className="relative z-10">Close Preview</span>
+                Close Preview
               </button>
               <Link
                 href="/demo-lab"
                 onClick={() => setIsDemoOpen(false)}
-                className="btn-glass-secondary px-5 py-2.5 text-xs text-white group"
+                className="px-5 py-2.5 rounded-full bg-white/5 border border-white/20 text-xs text-white hover:bg-white/10 transition-colors flex items-center gap-1.5"
               >
-                <span className="relative z-10">Open Simulation Lab</span>
-                <ExternalLink className="relative z-10 w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                <span>Open Simulation Lab</span>
+                <ExternalLink className="w-3.5 h-3.5" />
               </Link>
               <Link
                 href="/platform"
                 onClick={() => setIsDemoOpen(false)}
-                className="btn-glass-primary px-6 py-2.5 text-xs font-semibold text-white group"
+                className="px-6 py-2.5 rounded-full bg-white text-black hover:bg-neutral-100 text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-lg"
               >
-                <span className="relative z-10">Launch Digital Twin</span>
-                <ChevronRight className="relative z-10 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                <span>Launch Digital Twin</span>
+                <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
