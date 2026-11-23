@@ -14,15 +14,9 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({ className = "", size = "md
 
   return (
     <Link href="/" className={`inline-flex items-center gap-2.5 group select-none ${className}`}>
-      {/* Brand Mark - Shield with River Waves */}
-      <span
-        className={`${markDimensions} border border-[#1F2823] dark:border-[#1F2823] light:border-zinc-300 grid place-items-center bg-[#141816] dark:bg-[#141816] light:bg-zinc-100 group-hover:border-[#10B981]/50 transition-all relative overflow-hidden`}
-      >
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          className={iconSize}
-        >
+      {/* Brand Mark - Animated Glass Shield with River Waves */}
+      <span className={`${markDimensions} icon-glass text-white`}>
+        <svg viewBox="0 0 24 24" fill="none" className={iconSize}>
           {/* Shield Outline */}
           <path
             d="M12 2.5L4.5 5.5v6c0 5 3.5 9.5 7.5 10.5 4-1 7.5-5.5 7.5-10.5v-6L12 2.5z"
@@ -49,7 +43,9 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({ className = "", size = "md
       </span>
 
       {/* Brand Typography */}
-      <span className={`font-heading font-bold tracking-[0.14em] text-white dark:text-white light:text-zinc-900 ${titleSize} leading-none`}>
+      <span
+        className={`font-heading font-bold tracking-[0.14em] text-white dark:text-white light:text-zinc-900 ${titleSize} leading-none`}
+      >
         SURAKSHA
       </span>
     </Link>

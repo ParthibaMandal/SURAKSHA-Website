@@ -9,6 +9,7 @@ import { TacticalMapSvg } from "@/components/three/TacticalMapSvg";
 import { HydrologicalChart } from "@/components/shared/HydrologicalChart";
 import { FadeIn } from "@/components/motion/FadeIn";
 import { Button } from "@/components/ui/button";
+import { ArrowRight, Radio, Cpu, Shield } from "lucide-react";
 import { motion } from "framer-motion";
 import { gsap } from "gsap";
 
@@ -57,11 +58,17 @@ export default function HomePage() {
             <PatnaCommandWorkspacePreview />
           </div>
 
-          {/* Operational Pipeline Matrix (Real specifications, clean solid surface, 8px radius) */}
-          <div ref={matrixRef} className="rounded-lg border border-[#1F2823] bg-[#0D100E] divide-y divide-[#1F2823] lg:divide-y-0 lg:divide-x lg:grid lg:grid-cols-3">
-            <div className="p-6 flex flex-col justify-between">
+          {/* Operational Pipeline Matrix with Animated Glass Icons */}
+          <div
+            ref={matrixRef}
+            className="rounded-2xl border border-[#1F2823] bg-[#0D100E] divide-y divide-[#1F2823] lg:divide-y-0 lg:divide-x lg:grid lg:grid-cols-3"
+          >
+            <div className="group p-6 flex flex-col justify-between">
               <div>
-                <span className="text-xs font-semibold text-white">Telemetry Ingestion</span>
+                <div className="icon-glass w-10 h-10 rounded-xl text-white mb-3.5">
+                  <Radio className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
+                </div>
+                <span className="text-sm font-semibold text-white block">Telemetry Ingestion</span>
                 <p className="text-xs text-[#9BA5A0] leading-relaxed mt-2 mb-4">
                   Streams river-stage observations from CWC basin gauges and IMD precipitation grids across the Middle Ganga catchment.
                 </p>
@@ -87,9 +94,12 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="p-6 flex flex-col justify-between">
+            <div className="group p-6 flex flex-col justify-between">
               <div>
-                <span className="text-xs font-semibold text-white">Hydrodynamic Modeling</span>
+                <div className="icon-glass w-10 h-10 rounded-xl text-white mb-3.5" style={{ animationDelay: "0.7s" }}>
+                  <Cpu className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
+                </div>
+                <span className="text-sm font-semibold text-white block">Hydrodynamic Modeling</span>
                 <p className="text-xs text-[#9BA5A0] leading-relaxed mt-2 mb-4">
                   Pairs 1D river-channel calculations with 2D floodplain depression filling for corridor inundation mapping.
                 </p>
@@ -115,9 +125,12 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="p-6 flex flex-col justify-between">
+            <div className="group p-6 flex flex-col justify-between">
               <div>
-                <span className="text-xs font-semibold text-white">Human-in-the-Loop Sign-off</span>
+                <div className="icon-glass w-10 h-10 rounded-xl text-white mb-3.5" style={{ animationDelay: "1.4s" }}>
+                  <Shield className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
+                </div>
+                <span className="text-sm font-semibold text-white block">Human-in-the-Loop Sign-off</span>
                 <p className="text-xs text-[#9BA5A0] leading-relaxed mt-2 mb-4">
                   Enforces automated physics and plausibility checks before any public CAP v1.2 advisory is released.
                 </p>
@@ -160,7 +173,7 @@ export default function HomePage() {
                 </p>
               </div>
               <Link href="/admin/forecasts">
-                <Button variant="outline" size="sm" className="text-xs font-medium rounded-md border-[#1F2823] bg-[#141816] text-white hover:border-[#10B981]/50 hover:bg-[#1A201D]">
+                <Button variant="outline" size="sm" className="text-xs font-medium">
                   Open Forecasting Workspace →
                 </Button>
               </Link>
@@ -376,7 +389,7 @@ export default function HomePage() {
 
               <div className="pt-2">
                 <Link href="/study-area">
-                  <Button variant="outline" className="text-xs font-medium rounded-md border-[#1F2823] bg-[#141816] text-white hover:border-[#10B981]/50 hover:bg-[#1A201D]">
+                  <Button variant="outline" className="text-xs font-medium">
                     Explore Study Area Details
                   </Button>
                 </Link>
@@ -422,17 +435,18 @@ export default function HomePage() {
               <Link href="/demo-lab">
                 <button
                   type="button"
-                  className="inline-flex items-center justify-center rounded-md bg-[#10B981] px-5 py-2.5 text-xs sm:text-sm font-semibold text-black hover:bg-[#0EA271] transition-colors"
+                  className="btn-glass-primary px-6 py-3 text-xs sm:text-sm font-semibold text-white group cursor-pointer"
                 >
-                  Open Simulation Lab
+                  <span className="relative z-10">Open Simulation Lab</span>
+                  <ArrowRight className="relative z-10 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1.5" />
                 </button>
               </Link>
               <Link href="/admin">
                 <button
                   type="button"
-                  className="inline-flex items-center justify-center rounded-md border border-[#1F2823] bg-[#141816] px-5 py-2.5 text-xs sm:text-sm font-medium text-white hover:border-[#10B981]/50 hover:bg-[#1A201D] transition-colors"
+                  className="btn-glass-secondary px-6 py-3 text-xs sm:text-sm font-semibold text-white cursor-pointer"
                 >
-                  Operations Portal
+                  <span className="relative z-10">Operations Portal</span>
                 </button>
               </Link>
             </div>

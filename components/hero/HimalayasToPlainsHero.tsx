@@ -2,7 +2,17 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Play, X } from "lucide-react";
+import {
+  ArrowRight,
+  Play,
+  Radio,
+  Cpu,
+  Bell,
+  ShieldCheck,
+  X,
+  ExternalLink,
+  ChevronRight,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { gsap } from "gsap";
 
@@ -48,10 +58,10 @@ export const HimalayasToPlainsHero: React.FC = () => {
 
           {/* Left Vignette & Gradient Overlays for High Legibility */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent w-full md:w-[60%]" />
-          
+
           {/* Top Navbar Shadow */}
           <div className="absolute top-0 inset-x-0 h-28 bg-gradient-to-b from-black/80 via-black/25 to-transparent" />
-          
+
           {/* Bottom Blend to Page Background (#000000) */}
           <div className="absolute bottom-0 inset-x-0 h-28 bg-gradient-to-t from-black via-black/70 to-transparent" />
 
@@ -97,7 +107,10 @@ export const HimalayasToPlainsHero: React.FC = () => {
         {/* =========================================================================
             HERO MAIN CONTENT (Full Width Edge-to-Edge Container)
            ========================================================================= */}
-        <div ref={heroContentRef} className="w-full px-6 sm:px-10 lg:px-14 h-full relative z-10 pt-24 sm:pt-28 pb-6 flex flex-col justify-between">
+        <div
+          ref={heroContentRef}
+          className="w-full px-6 sm:px-10 lg:px-14 h-full relative z-10 pt-24 sm:pt-28 pb-6 flex flex-col justify-between"
+        >
           {/* Top Block */}
           <div className="max-w-2xl lg:max-w-[640px] flex flex-col items-start">
             {/* Main Headline (IBM Plex Sans, tightened tracking, text-balance) */}
@@ -109,9 +122,7 @@ export const HimalayasToPlainsHero: React.FC = () => {
             >
               From the Himalayas<br />
               to the Plains —<br />
-              <span className="text-white">
-                We Track. You Prepare.
-              </span>
+              <span className="text-white">We Track. You Prepare.</span>
             </motion.h1>
 
             {/* Subtitle */}
@@ -124,32 +135,33 @@ export const HimalayasToPlainsHero: React.FC = () => {
               Satellite observations, river-stage sensors, and physics-guided modeling across the Middle Ganga corridor.
             </motion.p>
 
-            {/* Call to Action Buttons (Clean 6px radius, solid surfaces, no pill/blur) */}
+            {/* Call to Action Buttons (Animated Glassmorphism) */}
             <motion.div
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.65, delay: 0.28, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-wrap items-center gap-3.5 mb-4"
+              className="flex flex-wrap items-center gap-4 mb-4"
             >
-              <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}>
-                <Link
-                  href="/platform"
-                  className="inline-flex items-center justify-center rounded-md bg-[#10B981] px-5 py-2.5 text-xs sm:text-sm font-semibold text-black hover:bg-[#0EA271] transition-colors shadow-lg shadow-[#10B981]/15"
-                >
-                  Explore the Platform
-                </Link>
-              </motion.div>
+              {/* Primary Glass Button: Explore Platform */}
+              <Link
+                href="/platform"
+                className="btn-glass-primary px-7 py-3.5 text-sm font-semibold text-white group cursor-pointer"
+              >
+                <span className="relative z-10">Explore the Platform</span>
+                <ArrowRight className="relative z-10 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1.5" />
+              </Link>
 
-              <motion.button
+              {/* Secondary Glass Button: Watch Demo */}
+              <button
                 type="button"
                 onClick={() => setIsDemoOpen(true)}
-                whileHover={{ y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                className="inline-flex items-center justify-center gap-2 rounded-md border border-[#1F2823] bg-[#0D100E] px-4 py-2.5 text-xs sm:text-sm font-medium text-white hover:border-[#10B981]/50 hover:bg-[#141816] transition-colors cursor-pointer"
+                className="btn-glass-secondary pl-2.5 pr-6 py-2 text-sm font-medium text-white/95 hover:text-white group cursor-pointer"
               >
-                <Play className="w-3.5 h-3.5 fill-white text-white" />
-                <span>Watch Demo</span>
-              </motion.button>
+                <span className="relative z-10 w-9 h-9 rounded-full bg-white/15 group-hover:bg-white/25 border border-white/30 flex items-center justify-center transition-all duration-300 group-hover:scale-110 shadow-inner">
+                  <Play className="w-3.5 h-3.5 fill-white text-white ml-0.5 transition-transform duration-300 group-hover:scale-110" />
+                </span>
+                <span className="relative z-10">Watch Demo</span>
+              </button>
             </motion.div>
           </div>
 
@@ -157,38 +169,50 @@ export const HimalayasToPlainsHero: React.FC = () => {
               BOTTOM BLOCK: Feature Highlights Row & Scroll Indicator
              ========================================================================= */}
           <div className="w-full max-w-2xl flex flex-col gap-5 pt-4">
-            {/* 4-Item Feature Highlights Row (Text-first, no numbered pills, staggered motion reveal) */}
+            {/* 4-Item Feature Highlights Row (Animated Glass Icons) */}
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.42 }}
-              className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-5 border-t border-[#1F2823] w-full"
+              className="grid grid-cols-2 sm:grid-cols-4 gap-5 pt-5 border-t border-white/15 w-full"
             >
-              <div className="flex flex-col gap-1">
-                <span className="text-[10px] font-medium text-[#10B981] uppercase tracking-wider">Surface Observation</span>
-                <span className="text-xs font-medium text-white leading-tight">
-                  Satellite Monitoring
+              {/* 1. Satellite Monitoring */}
+              <div className="group flex items-center gap-3 p-2 rounded-2xl transition-all duration-300 hover:bg-white/[0.04]">
+                <span className="icon-glass w-10 h-10 rounded-xl shrink-0">
+                  <Radio className="w-4 h-4 text-white transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" />
+                </span>
+                <span className="text-xs font-semibold text-white/95 leading-tight">
+                  Satellite<br />Monitoring
                 </span>
               </div>
 
-              <div className="flex flex-col gap-1">
-                <span className="text-[10px] font-medium text-[#10B981] uppercase tracking-wider">Simulation Engine</span>
-                <span className="text-xs font-medium text-white leading-tight">
-                  Hydrodynamic Modeling
+              {/* 2. AI-Powered Forecasting */}
+              <div className="group flex items-center gap-3 p-2 rounded-2xl transition-all duration-300 hover:bg-white/[0.04]">
+                <span className="icon-glass w-10 h-10 rounded-xl shrink-0" style={{ animationDelay: "0.6s" }}>
+                  <Cpu className="w-4 h-4 text-white transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6" />
+                </span>
+                <span className="text-xs font-semibold text-white/95 leading-tight">
+                  AI-Powered<br />Forecasting
                 </span>
               </div>
 
-              <div className="flex flex-col gap-1">
-                <span className="text-[10px] font-medium text-[#10B981] uppercase tracking-wider">CAP Protocol</span>
-                <span className="text-xs font-medium text-white leading-tight">
-                  Early Advisories
+              {/* 3. Early Alerts */}
+              <div className="group flex items-center gap-3 p-2 rounded-2xl transition-all duration-300 hover:bg-white/[0.04]">
+                <span className="icon-glass w-10 h-10 rounded-xl shrink-0" style={{ animationDelay: "1.2s" }}>
+                  <Bell className="w-4 h-4 text-white transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12" />
+                </span>
+                <span className="text-xs font-semibold text-white/95 leading-tight">
+                  Early<br />Alerts
                 </span>
               </div>
 
-              <div className="flex flex-col gap-1">
-                <span className="text-[10px] font-medium text-[#10B981] uppercase tracking-wider">Emergency Reach</span>
-                <span className="text-xs font-medium text-white leading-tight">
-                  Community Safety
+              {/* 4. Safer Communities */}
+              <div className="group flex items-center gap-3 p-2 rounded-2xl transition-all duration-300 hover:bg-white/[0.04]">
+                <span className="icon-glass w-10 h-10 rounded-xl shrink-0" style={{ animationDelay: "1.8s" }}>
+                  <ShieldCheck className="w-4 h-4 text-white transition-transform duration-300 group-hover:scale-110" />
+                </span>
+                <span className="text-xs font-semibold text-white/95 leading-tight">
+                  Safer<br />Communities
                 </span>
               </div>
             </motion.div>
@@ -205,7 +229,7 @@ export const HimalayasToPlainsHero: React.FC = () => {
       </section>
 
       {/* =========================================================================
-          WATCH DEMO MODAL (Clean solid surface, 8px radius, animated with Framer Motion)
+          WATCH DEMO MODAL
          ========================================================================= */}
       <AnimatePresence>
         {isDemoOpen && (
@@ -214,19 +238,19 @@ export const HimalayasToPlainsHero: React.FC = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md"
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-              className="relative w-full max-w-3xl rounded-lg border border-[#1F2823] bg-[#0D100E] p-6 text-white shadow-2xl"
+              className="relative w-full max-w-3xl rounded-2xl border border-[#1F2823] bg-[#0D100E] p-6 text-white shadow-2xl"
             >
               {/* Close button */}
               <button
                 onClick={() => setIsDemoOpen(false)}
-                className="absolute top-4 right-4 p-1.5 rounded-md border border-[#1F2823] bg-[#141816] text-[#9BA5A0] hover:text-white hover:border-[#10B981]/40 transition-colors cursor-pointer"
+                className="absolute top-4 right-4 p-2 rounded-full border border-white/15 bg-white/5 text-white/80 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                 aria-label="Close demo"
               >
                 <X className="w-4 h-4" />
@@ -246,7 +270,7 @@ export const HimalayasToPlainsHero: React.FC = () => {
               </div>
 
               {/* Video Frame */}
-              <div className="relative aspect-video rounded-md overflow-hidden border border-[#1F2823] bg-black mb-6">
+              <div className="relative aspect-video rounded-xl overflow-hidden border border-[#1F2823] bg-black mb-6">
                 <video
                   src="/videos/hero-himalayas-ganga.mp4"
                   poster="/images/hero-himalayas-ganga.jpg"
@@ -263,23 +287,25 @@ export const HimalayasToPlainsHero: React.FC = () => {
               <div className="flex flex-wrap items-center justify-end gap-3 pt-3 border-t border-[#1F2823]">
                 <button
                   onClick={() => setIsDemoOpen(false)}
-                  className="rounded-md border border-[#1F2823] bg-[#141816] px-4 py-2 text-xs font-medium text-[#9BA5A0] hover:text-white transition-colors cursor-pointer"
+                  className="btn-glass-secondary px-5 py-2.5 text-xs text-zinc-300 hover:text-white cursor-pointer"
                 >
-                  Close Preview
+                  <span className="relative z-10">Close Preview</span>
                 </button>
                 <Link
                   href="/demo-lab"
                   onClick={() => setIsDemoOpen(false)}
-                  className="rounded-md border border-[#1F2823] bg-[#141816] px-4 py-2 text-xs font-medium text-white hover:border-[#10B981]/50 transition-colors"
+                  className="btn-glass-secondary px-5 py-2.5 text-xs text-white group"
                 >
-                  Open Simulation Lab
+                  <span className="relative z-10">Open Simulation Lab</span>
+                  <ExternalLink className="relative z-10 w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </Link>
                 <Link
                   href="/platform"
                   onClick={() => setIsDemoOpen(false)}
-                  className="rounded-md bg-[#10B981] px-5 py-2 text-xs font-semibold text-black hover:bg-[#0EA271] transition-colors"
+                  className="btn-glass-primary px-6 py-2.5 text-xs font-semibold text-white group"
                 >
-                  Launch Digital Twin
+                  <span className="relative z-10">Launch Digital Twin</span>
+                  <ChevronRight className="relative z-10 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
                 </Link>
               </div>
             </motion.div>
