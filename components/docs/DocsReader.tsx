@@ -47,6 +47,11 @@ export function DocsReader({
   const allDocs = useMemo(() => getAllDocs(), []);
   const categories = useMemo(() => getDocCategories(), []);
   const relatedDocs = useMemo(() => getRelatedDocs(currentDoc, 3), [currentDoc]);
+  const filteredHeadings = useMemo(() => {
+    return (currentDoc.headings || []).filter(
+      (h) => !/metadata/i.test(h.text) && !/metadata/i.test(h.id)
+    );
+  }, [currentDoc.headings]);
 
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({
     [currentDoc.categoryId]: true,
@@ -76,8 +81,8 @@ export function DocsReader({
   // Active heading spy on scroll
   useEffect(() => {
     const handleScroll = () => {
-      if (!currentDoc.headings || currentDoc.headings.length === 0) return;
-      const headingElements = currentDoc.headings
+      if (!filteredHeadings || filteredHeadings.length === 0) return;
+      const headingElements = filteredHeadings
         .map((h) => document.getElementById(h.id))
         .filter(Boolean) as HTMLElement[];
 
@@ -101,7 +106,7 @@ export function DocsReader({
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [currentDoc]);
+  }, [filteredHeadings]);
 
   // Toggle category in sidebar
   const toggleCategory = (catId: string) => {
@@ -283,7 +288,7 @@ export function DocsReader({
             <Menu className="w-3.5 h-3.5 text-emerald-500" />
             <span>Browse Guides</span>
           </button>
-          {currentDoc.headings && currentDoc.headings.length > 0 && (
+          {filteredHeadings && filteredHeadings.length > 0 && (
             <button
               onClick={() => setMobileTocOpen(!mobileTocOpen)}
               className="flex items-center gap-1.5 font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] cursor-pointer"
@@ -296,13 +301,13 @@ export function DocsReader({
         </div>
 
         {/* Mobile Expandable Table of Contents */}
-        {mobileTocOpen && currentDoc.headings && currentDoc.headings.length > 0 && (
+        {mobileTocOpen && filteredHeadings && filteredHeadings.length > 0 && (
           <div className="lg:hidden p-4 rounded-2xl border border-[var(--border)] bg-[var(--surface)] mb-6 space-y-2 text-xs shadow-sm">
             <span className="font-mono text-[10px] uppercase font-bold text-[var(--muted-foreground)] tracking-wider block">
               Contents on this page
             </span>
             <div className="space-y-1.5 max-h-56 overflow-y-auto">
-              {currentDoc.headings.map((h) => (
+              {filteredHeadings.map((h) => (
                 <a
                   key={h.id}
                   href={`#${h.id}`}
@@ -426,13 +431,13 @@ export function DocsReader({
       {/* 3. Right Column: Sticky Table of Contents & Tools (Desktop only) */}
       <aside className="hidden xl:block w-64 shrink-0 p-6 space-y-6 h-[calc(100vh-64px)] sticky top-16 overflow-y-auto border-l border-[var(--border)] bg-[var(--surface)]/30">
         {/* In-page Table of Contents */}
-        {currentDoc.headings && currentDoc.headings.length > 0 && (
+        {filteredHeadings && filteredHeadings.length > 0 && (
           <div className="space-y-3">
             <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--muted-foreground)] font-bold block">
               On this page
             </span>
             <nav className="space-y-1 text-xs">
-              {currentDoc.headings.map((h) => {
+              {filteredHeadings.map((h) => {
                 const isActive = activeHeadingId === h.id;
                 return (
                   <a

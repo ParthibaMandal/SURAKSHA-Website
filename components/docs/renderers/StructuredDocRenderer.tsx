@@ -1,75 +1,85 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import { DocItem } from "@/lib/docs";
+import { marked } from "marked";
+import DOMPurify from "isomorphic-dompurify";
 import { MermaidRenderer } from "@/components/docs/MermaidRenderer";
 import { InteractiveApiExplorer } from "./InteractiveApiExplorer";
 import { InteractiveArchitectureView } from "./InteractiveArchitectureView";
 import { InteractiveModelCard } from "./InteractiveModelCard";
 import { InteractiveStationRegistry } from "./InteractiveStationRegistry";
 import {
-  FileText,
-  Code2,
-  Copy,
-  Check,
   ShieldCheck,
-  Info,
-  AlertTriangle,
-  CheckCircle2,
-  AlertCircle,
-  ExternalLink,
-  ChevronDown,
-  ChevronRight,
-  Terminal,
-  Layers,
-  Sparkles,
   Clock,
-  BookOpen,
+  Sparkles,
+  CheckCircle2,
 } from "lucide-react";
-import DOMPurify from "isomorphic-dompurify";
-import { marked } from "marked";
 
 interface StructuredDocRendererProps {
   doc: DocItem;
 }
 
 export function StructuredDocRenderer({ doc }: StructuredDocRendererProps) {
-  const [copiedCodeId, setCopiedCodeId] = useState<string | null>(null);
-  const [showMetadata, setShowMetadata] = useState(false);
+  // Determine if this doc warrants an embedded interactive workbench
+  const isApiDoc = useMemo(
+    () =>
+      doc.id.includes("api") ||
+      doc.title.toLowerCase().includes("api reference") ||
+      doc.path.includes("API"),
+    [doc]
+  );
 
-  const handleCopyCode = (id: string, code: string) => {
-    if (typeof window !== "undefined") {
-      navigator.clipboard.writeText(code);
-      setCopiedCodeId(id);
-      setTimeout(() => setCopiedCodeId(null), 2000);
-    }
-  };
+  const isArchitectureDoc = useMemo(
+    () =>
+      doc.id.includes("system-architecture") ||
+      doc.id.includes("overview") ||
+      doc.title.toLowerCase().includes("architecture"),
+    [doc]
+  );
 
-  // Check if doc matches specialized interactive views
-  const isApiDoc = doc.id.includes("api-reference") || doc.id.includes("backend-architecture");
-  const isArchitectureDoc = doc.id.includes("architecture-overview") || doc.id.includes("flood-architecture");
-  const isModelDoc = doc.id.includes("bilstm") || doc.id.includes("sarima") || doc.id.includes("forecasting-methodology");
-  const isStationDoc = doc.id.includes("station-registry") || doc.id.includes("data-source-registry");
+  const isModelDoc = useMemo(
+    () =>
+      doc.id.includes("model") ||
+      doc.id.includes("forecast") ||
+      doc.title.toLowerCase().includes("hydrological model"),
+    [doc]
+  );
 
-  // Format a question-led section title
+  const isStationDoc = useMemo(
+    () =>
+      doc.id.includes("station") ||
+      doc.title.toLowerCase().includes("station") ||
+      doc.title.toLowerCase().includes("telemetry"),
+    [doc]
+  );
+
+  // Question-led section header mapping for clarity
   const formatQuestionTitle = (title: string, index: number) => {
-    // If title already has question format, keep it
-    if (title.endsWith("?") || /^(Why|What|How|Where|When|Who)\b/i.test(title)) {
-      return title;
-    }
+    // If the title is already phrased as a question, keep it
+    if (title.endsWith("?")) return title;
+
+    // Clean numeric prefix if present (e.g., "1. Scope" -> "Scope")
+    const clean = title.replace(/^\d+[\.\)]\s*/, "").trim();
+
     // Context-sensitive phrasing for standard section headers
-    if (/scope|boundary/i.test(title)) return `What is within the operational boundary and scope?`;
-    if (/overview|introduction/i.test(title)) return `What is the objective of this specification?`;
-    if (/architecture|pipeline/i.test(title)) return `How is the pipeline structured and verified?`;
-    if (/methodology|model/i.test(title)) return `How do the predictive models calculate risk?`;
-    if (/station|telemetry|sensor/i.test(title)) return `Where are observations measured and ingested?`;
-    if (/api|endpoint|request/i.test(title)) return `How do clients interact with the verified endpoints?`;
-    if (/safety|supervisory|review/i.test(title)) return `How does human supervisory review safeguard outputs?`;
-    if (/implementation|evidence/i.test(title)) return `What evidence validates this implementation?`;
-    return title;
+    if (/scope|boundary/i.test(clean)) return `What is within the operational boundary and scope?`;
+    if (/objective|purpose|why/i.test(clean)) return `Why was this operational capability defined?`;
+    if (/overview|introduction/i.test(clean)) return `What is the objective of this specification?`;
+    if (/geograph|corridor|patna|gandhi/i.test(clean)) return `What geographical area does this cover?`;
+    if (/architecture|pipeline|flow/i.test(clean)) return `How is the pipeline structured and verified?`;
+    if (/methodology|model|predict/i.test(clean)) return `How do the predictive models calculate risk?`;
+    if (/station|telemetry|sensor|gauge/i.test(clean)) return `Where are observations measured and ingested?`;
+    if (/api|endpoint|request/i.test(clean)) return `How do clients interact with the verified endpoints?`;
+    if (/safety|supervisory|review|human/i.test(clean)) return `How does human supervisory review safeguard outputs?`;
+    if (/simulat|advisory|offline/i.test(clean)) return `Which capabilities are simulated or advisory only?`;
+    if (/outside|limit|unsupported/i.test(clean)) return `What is explicitly outside the current scope?`;
+    if (/implementation|evidence|test/i.test(clean)) return `What evidence validates this implementation?`;
+    if (/learn|resource|next|reference/i.test(clean)) return `Where can developers and researchers learn more?`;
+    return clean;
   };
 
-  // Parse sections based on ## Headings
+  // Parse sections based on ## Headings, completely omitting any "Document Metadata"
   const parsedSections = useMemo(() => {
     const raw = doc.content;
     const lines = raw.split("\n");
@@ -99,11 +109,18 @@ export function StructuredDocRenderer({ doc }: StructuredDocRendererProps) {
       }
 
       if (!inCode && line.trim().startsWith("## ")) {
-        if (currentSection.lines.length > 0) {
-          sections.push(currentSection);
-        }
         const rawTitle = line.trim().replace(/^##\s+/, "").trim();
         const cleanTitle = rawTitle.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1").replace(/[*`_]/g, "");
+
+        // Completely omit metadata section
+        if (/metadata/i.test(cleanTitle) || /document metadata/i.test(rawTitle)) {
+          continue;
+        }
+
+        if (currentSection.lines.length > 0 && !/metadata/i.test(currentSection.title)) {
+          sections.push(currentSection);
+        }
+
         const id = cleanTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
         currentSection = {
           title: cleanTitle,
@@ -113,48 +130,35 @@ export function StructuredDocRenderer({ doc }: StructuredDocRendererProps) {
           lines: [],
         };
       } else {
+        // Skip metadata lines even if they are in the preamble before the first header
+        if (
+          line.trim().startsWith("- **Document ID**:") ||
+          line.trim().startsWith("- **Version**:") ||
+          line.trim().startsWith("- **Status**:") ||
+          line.trim().startsWith("- **Owner**:") ||
+          line.trim().startsWith("- **Created Date**:") ||
+          line.trim().startsWith("- **Last Updated**:") ||
+          line.trim().startsWith("- **Last Verified Against Commit**:") ||
+          line.trim().startsWith("- **Applicable Module**:") ||
+          line.trim().startsWith("- **Related Documents**:")
+        ) {
+          continue;
+        }
+
         currentSection.lines.push(line);
       }
     }
 
-    if (currentSection.lines.length > 0) {
+    if (currentSection.lines.length > 0 && !/metadata/i.test(currentSection.title)) {
       sections.push(currentSection);
     }
 
-    return sections;
-  }, [doc]);
-
-  // Extract metadata table from document
-  const docMetadata = useMemo(() => {
-    const lines = doc.content.split("\n");
-    const meta: Record<string, string> = {};
-
-    let inMetaTable = false;
-    for (const l of lines) {
-      if (l.includes("| Field | Value |") || l.includes("| Attribute | Detail |")) {
-        inMetaTable = true;
-        continue;
-      }
-      if (inMetaTable) {
-        if (l.trim().startsWith("|---")) continue;
-        if (l.trim().startsWith("|") && l.includes("|")) {
-          const parts = l.split("|").filter((p) => p.trim() !== "");
-          if (parts.length >= 2) {
-            const key = parts[0].replace(/[*_`]/g, "").trim();
-            const val = parts[1].replace(/[*_`]/g, "").trim();
-            meta[key] = val;
-          }
-        } else {
-          break;
-        }
-      }
-    }
-    return meta;
+    // Filter out any section that only has metadata or is titled metadata
+    return sections.filter((s) => !/metadata/i.test(s.title) && !/metadata/i.test(s.rawTitle));
   }, [doc]);
 
   // Generate dynamic key takeaways
   const keyTakeaways = useMemo(() => {
-    // If specific document has known takeaways
     if (doc.id.includes("scope") || doc.id.includes("boundary")) {
       return [
         "What SURAKSHA currently covers in production.",
@@ -188,12 +192,15 @@ export function StructuredDocRenderer({ doc }: StructuredDocRendererProps) {
   }, [doc.id, parsedSections]);
 
   // Render a block of markdown text into clean HTML
-  const renderSectionHtml = (lines: string[]) => {
-    let text = lines.join("\n");
+  const renderSectionHtml = (rawText: string) => {
+    let text = rawText;
 
-    // Filter out redundant metadata tables at the top of content since we handle it in the header
+    // Filter out redundant metadata tables or bullets
     text = text.replace(/\| Field \| Value \|[\s\S]*?(?=\n\n[^\s|]|\n?$)/gi, "");
     text = text.replace(/\| Attribute \| Detail \|[\s\S]*?(?=\n\n[^\s|]|\n?$)/gi, "");
+    text = text.replace(/## Document Metadata[\s\S]*?(?=\n---|\n##|$)/gi, "");
+    text = text.replace(/-\s*\*\*Document ID\*\*:.*$/gim, "");
+    text = text.replace(/-\s*\*\*Last Verified Against Commit\*\*:.*$/gim, "");
 
     // Replace Callouts > [!NOTE] etc. with clean editorial styles
     text = text.replace(
@@ -224,11 +231,20 @@ export function StructuredDocRenderer({ doc }: StructuredDocRendererProps) {
 
       // Add modern clean classes to tables
       const styledHtml = rawHtml
-        .replace(/<table>/gi, '<div class="my-6 rounded-xl border border-[var(--border)] overflow-x-auto shadow-xs"><table class="w-full text-left text-xs sm:text-sm border-collapse">')
-        .replace(/<\/table>/gi, '</table></div>')
-        .replace(/<thead>/gi, '<thead class="bg-[var(--surface-elevated)] text-[var(--muted-foreground)] font-mono text-xs border-b border-[var(--border)]">')
+        .replace(
+          /<table>/gi,
+          '<div class="my-6 rounded-xl border border-[var(--border)] overflow-x-auto shadow-xs"><table class="w-full text-left text-xs sm:text-sm border-collapse">'
+        )
+        .replace(/<\/table>/gi, "</table></div>")
+        .replace(
+          /<thead>/gi,
+          '<thead class="bg-[var(--surface-elevated)] text-[var(--muted-foreground)] font-mono text-xs border-b border-[var(--border)]">'
+        )
         .replace(/<th>/gi, '<th class="p-3.5 font-bold text-[var(--foreground)]">')
-        .replace(/<tbody>/gi, '<tbody class="divide-y divide-[var(--border)] bg-[var(--surface)] text-[var(--foreground)]">')
+        .replace(
+          /<tbody>/gi,
+          '<tbody class="divide-y divide-[var(--border)] bg-[var(--surface)] text-[var(--foreground)]">'
+        )
         .replace(/<td>/gi, '<td class="p-3.5 leading-relaxed text-[var(--foreground)]/90">');
 
       return DOMPurify.sanitize(styledHtml, {
@@ -243,7 +259,7 @@ export function StructuredDocRenderer({ doc }: StructuredDocRendererProps) {
     <article className="space-y-10 my-4 text-[var(--foreground)] font-sans transition-colors duration-200">
       {/* 1. Editorial Document Header Hero */}
       <header className="space-y-4 pb-8 border-b border-[var(--border)]">
-        {/* Category & Verified Status Overline */}
+        {/* Category & Status Badges */}
         <div className="flex flex-wrap items-center gap-2.5 text-xs">
           <span className="font-mono font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
             DOCUMENTATION · {doc.category}
@@ -295,34 +311,6 @@ export function StructuredDocRenderer({ doc }: StructuredDocRendererProps) {
             </ul>
           </div>
         )}
-
-        {/* Collapsible Technical Metadata Drawer */}
-        {Object.keys(docMetadata).length > 0 && (
-          <div className="pt-2">
-            <button
-              onClick={() => setShowMetadata(!showMetadata)}
-              className="flex items-center gap-2 text-xs font-mono text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors cursor-pointer"
-            >
-              <span>{showMetadata ? "Hide" : "Show"} Technical Specification Metadata ({Object.keys(docMetadata).length} fields)</span>
-              <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showMetadata ? "rotate-180" : ""}`} />
-            </button>
-
-            {showMetadata && (
-              <div className="mt-3 p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 text-xs">
-                {Object.entries(docMetadata).map(([key, val]) => (
-                  <div key={key} className="space-y-0.5">
-                    <span className="text-[10px] font-mono text-[var(--muted-foreground)] uppercase block">
-                      {key}
-                    </span>
-                    <span className="font-mono text-xs text-[var(--foreground)] truncate block font-medium">
-                      {val}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
       </header>
 
       {/* 2. Specialized Interactive Components If Relevant */}
@@ -331,30 +319,20 @@ export function StructuredDocRenderer({ doc }: StructuredDocRendererProps) {
       {isModelDoc && <InteractiveModelCard />}
       {isStationDoc && <InteractiveStationRegistry />}
 
-      {/* 3. Question-Led Editorial Article Sections (No heavy box cards!) */}
+      {/* 3. Question-Led Editorial Article Sections with In-Place Diagram Rendering */}
       <div className="space-y-12">
         {parsedSections.map((sec, sIdx) => {
-          // Check if section contains mermaid
           const sectionText = sec.lines.join("\n");
-          const hasMermaid = sectionText.includes("```mermaid");
 
-          let mermaidCode = "";
-          let textWithoutMermaid = sectionText;
-
-          if (hasMermaid) {
-            const match = /```mermaid\s*([\s\S]*?)```/.exec(sectionText);
-            if (match) {
-              mermaidCode = match[1].trim();
-              textWithoutMermaid = sectionText.replace(/```mermaid\s*[\s\S]*?```/, "");
-            }
-          }
-
-          // Skip empty or pure title overview sections
+          // Skip sections that only have empty lines or comments
           if (!sec.lines.some((l) => l.trim() && !l.trim().startsWith("#"))) {
             return null;
           }
 
           const questionTitle = formatQuestionTitle(sec.title, sIdx);
+
+          // Split section by Mermaid diagrams to render diagrams directly in-place
+          const contentBlocks = sectionText.split(/(```mermaid[\s\S]*?```)/g);
 
           return (
             <section
@@ -382,27 +360,45 @@ export function StructuredDocRenderer({ doc }: StructuredDocRendererProps) {
                 </a>
               </div>
 
-              {/* Editorial Section Body Text */}
-              <div
-                className="text-[15px] sm:text-base text-[var(--foreground)]/85 leading-[1.8] space-y-4
-                  [&_p]:my-4 [&_p]:leading-[1.8]
-                  [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-4 [&_ul]:space-y-2
-                  [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-4 [&_ol]:space-y-2
-                  [&_li]:leading-[1.7]
-                  [&_code]:text-emerald-600 dark:text-emerald-300 [&_code]:font-mono [&_code]:text-[13px] [&_code]:bg-[var(--surface-elevated)] [&_code]:border [&_code]:border-[var(--border)] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded
-                  [&_pre]:bg-[var(--surface-elevated)] [&_pre]:p-4 [&_pre]:rounded-xl [&_pre]:border [&_pre]:border-[var(--border)] [&_pre]:overflow-x-auto [&_pre]:my-5
-                  [&_a]:text-emerald-600 dark:text-emerald-400 [&_a]:underline hover:[&_a]:text-emerald-500"
-                dangerouslySetInnerHTML={{
-                  __html: renderSectionHtml(textWithoutMermaid.split("\n")),
-                }}
-              />
+              {/* Render Section Blocks: Prose Text & Inline Flowchart Diagrams */}
+              <div className="space-y-4">
+                {contentBlocks.map((block, bIdx) => {
+                  if (block.startsWith("```mermaid")) {
+                    const chartCode = block
+                      .replace(/^```mermaid\s*/i, "")
+                      .replace(/```$/, "")
+                      .trim();
 
-              {/* Mermaid Diagram Full-Width Render */}
-              {hasMermaid && mermaidCode && (
-                <div className="pt-3 my-6">
-                  <MermaidRenderer id={`${sec.id}-diagram`} chart={mermaidCode} />
-                </div>
-              )}
+                    return (
+                      <div key={bIdx} className="my-6 w-full">
+                        <MermaidRenderer
+                          id={`${sec.id}-chart-${bIdx}`}
+                          chart={chartCode}
+                        />
+                      </div>
+                    );
+                  }
+
+                  if (!block.trim()) return null;
+
+                  return (
+                    <div
+                      key={bIdx}
+                      className="text-[15px] sm:text-base text-[var(--foreground)]/85 leading-[1.8] space-y-4
+                        [&_p]:my-4 [&_p]:leading-[1.8]
+                        [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-4 [&_ul]:space-y-2
+                        [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-4 [&_ol]:space-y-2
+                        [&_li]:leading-[1.7]
+                        [&_code]:text-emerald-600 dark:text-emerald-300 [&_code]:font-mono [&_code]:text-[13px] [&_code]:bg-[var(--surface-elevated)] [&_code]:border [&_code]:border-[var(--border)] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded
+                        [&_pre]:bg-[var(--surface-elevated)] [&_pre]:p-4 [&_pre]:rounded-xl [&_pre]:border [&_pre]:border-[var(--border)] [&_pre]:overflow-x-auto [&_pre]:my-5
+                        [&_a]:text-emerald-600 dark:text-emerald-400 [&_a]:underline hover:[&_a]:text-emerald-500"
+                      dangerouslySetInnerHTML={{
+                        __html: renderSectionHtml(block),
+                      }}
+                    />
+                  );
+                })}
+              </div>
             </section>
           );
         })}
