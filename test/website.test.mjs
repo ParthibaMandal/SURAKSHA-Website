@@ -401,3 +401,29 @@ test('admin stations catalogue does not claim false telemetry streams or continu
   assert.match(stationsPage, /No active live stream/);
   assert.match(stationsPage, /Configure Source \(Server-managed\)/);
 });
+
+test('code quality and security constraints are preserved', async () => {
+  const [tokensCss, clientSupabase, serverSupabase, serverMjs, authCallback] = await Promise.all([
+    read('design-system/tokens.css'),
+    read('lib/supabase/client.ts'),
+    read('lib/supabase/server.ts'),
+    read('server.mjs'),
+    read('app/auth/callback/route.ts'),
+  ]);
+
+  // CSS tokens: accessibility reset does not use specificity-polluting !important
+  assert.doesNotMatch(tokensCss, /!important/, 'design-system/tokens.css should avoid !important overrides');
+
+  // Supabase clients: no hardcoded JWT tokens in source code
+  assert.doesNotMatch(clientSupabase, /eyJhbGciOi/, 'client.ts must not hardcode JWT anon key');
+  assert.doesNotMatch(serverSupabase, /eyJhbGciOi/, 'server.ts must not hardcode JWT anon key');
+
+  // server.mjs: safe linear key matching without backtracking regexes, path traversal guards
+  assert.doesNotMatch(serverMjs, /\(\.\*\)\$/, 'server.mjs must avoid greedy backtracking regex on env parsing');
+  assert.match(serverMjs, /normalizedSafePath\s*=\s*path\.normalize/);
+  assert.match(serverMjs, /!filePath\.startsWith\(root\)/);
+
+  // auth callback: open-redirect and host-header injection guards
+  assert.match(authCallback, /forwardedHost/);
+  assert.match(authCallback, /new URL\(next, origin\)/);
+});

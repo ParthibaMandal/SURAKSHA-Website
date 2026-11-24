@@ -15,13 +15,10 @@ export async function GET(request: Request) {
     if (!error) {
       const forwardedHost = request.headers.get("x-forwarded-host");
       const isLocalEnv = process.env.NODE_ENV === "development";
-      if (isLocalEnv) {
-        return NextResponse.redirect(`${origin}${next}`);
-      } else if (forwardedHost) {
-        return NextResponse.redirect(`https://${forwardedHost}${next}`);
-      } else {
-        return NextResponse.redirect(`${origin}${next}`);
+      if (isLocalEnv || !forwardedHost || !/^[a-zA-Z0-9.-]+(:\d+)?$/.test(forwardedHost)) {
+        return NextResponse.redirect(new URL(next, origin));
       }
+      return NextResponse.redirect(new URL(next, `https://${forwardedHost}`));
     }
   }
 
@@ -29,6 +26,6 @@ export async function GET(request: Request) {
   const failurePath = next === "/auth/reset-password"
     ? "/auth/forgot-password?error=reset_link_invalid"
     : "/auth/login?error=oauth_exchange_failed";
-  return NextResponse.redirect(`${origin}${failurePath}`);
+  return NextResponse.redirect(new URL(failurePath, origin));
 }
 
