@@ -35,7 +35,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
 
   // Roles come only from the protected profiles row; user-editable auth metadata is display-only.
-  const fetchProfile = async (currentUser: User): Promise<UserProfile> => {
+  const fetchProfile = async (currentUser: User): Promise<UserProfile | null> => {
     try {
       const { data, error } = await supabase
         .from("profiles")
@@ -45,15 +45,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (error) {
         console.warn("Could not load user profile:", error.message);
+        setProfile(null);
+        return null;
       }
 
       if (data) {
-        const profileData = data as UserProfile;
         const allowedRoles = ["admin", "hydrologist", "operator", "citizen"];
-        const trustedProfile: UserProfile = {
-          ...profileData,
-          role: allowedRoles.includes(profileData.role) ? profileData.role : "citizen",
-        };
+        if (!allowedRoles.includes(data.role)) {
+          console.warn("The account profile has an unsupported role.");
+          setProfile(null);
+          return null;
+        }
+
+        const trustedProfile = data as UserProfile;
         setProfile(trustedProfile);
         return trustedProfile;
       }
@@ -61,15 +65,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.warn("Profile fetch error:", err);
     }
 
-    const fallbackProfile: UserProfile = {
-      id: currentUser.id,
-      email: currentUser.email || null,
-      full_name: currentUser.user_metadata?.full_name || currentUser.email?.split("@")[0] || "User",
-      role: "citizen",
-      jurisdiction_sector: "Patna Reach",
-    };
-    setProfile(fallbackProfile);
-    return fallbackProfile;
+    setProfile(null);
+    return null;
   };
 
   useEffect(() => {
@@ -122,11 +119,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (data.user) {
       const userProfile = await fetchProfile(data.user);
       setIsLoading(false);
+      if (!userProfile) {
+        return {
+          error: new Error("Your account was authenticated, but its SURAKSHA profile could not be verified. Please contact an administrator."),
+        };
+      }
       return { error: null, role: userProfile.role };
     }
 
     setIsLoading(false);
-    return { error: null };
+    return { error: new Error("Authentication did not return an account that SURAKSHA could verify.") };
   };
 
   const signUp = async (email: string, password: string, fullName: string) => {
@@ -199,7 +201,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const computedRole = profile?.role || (user ? "citizen" : "guest");
+  const computedRole = profile?.role || "guest";
 
   return (
     <AuthContext.Provider

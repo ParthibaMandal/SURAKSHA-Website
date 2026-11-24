@@ -155,3 +155,20 @@ test('generated API documentation uses the website-owned verified contract overr
   assert.equal(manifest.metadata.operationalContext.primaryGaugeStation, 'Gandhi Ghat, Patna (GANGES_PATNA)');
   assert.equal(manifest.metadata.totalWords, docs.reduce((sum, doc) => sum + doc.wordCount, 0));
 });
+
+test('missing or invalid Supabase profiles never become citizen identities', async () => {
+  const [auth, navbar, sidebar] = await Promise.all([
+    read('lib/supabase/auth-context.tsx'),
+    read('components/navigation/PublicNavbar.tsx'),
+    read('components/navigation/AppSidebar.tsx'),
+  ]);
+  assert.match(auth, /Promise<UserProfile \| null>/);
+  assert.match(auth, /if \(!allowedRoles\.includes\(data\.role\)\)/);
+  assert.doesNotMatch(auth, /fallbackProfile|role:\s*"citizen"/);
+  assert.match(auth, /const computedRole = profile\?\.role \|\| "guest"/);
+  assert.match(auth, /SURAKSHA profile could not be verified/);
+  assert.match(navbar, /ROLE: \{profile\?\.role \|\| "Unavailable"\}/);
+  assert.match(navbar, /Account role could not be verified/);
+  assert.match(sidebar, /Profile unavailable/);
+  assert.doesNotMatch(sidebar, /Duty Hydrologist|Citizen Account|Patna Reach \(Preview\)/);
+});
