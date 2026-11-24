@@ -77,12 +77,12 @@ export const CWC_GANDHI_GHAT_BENCHMARKS = {
 };
 
 export const SIMULATION_EVENT_DRIVERS = [
-  { id: "glacier_melt", name: "Glacier & Snowmelt Acceleration", icon: "Mountain", defaultAnomaly: 2.1 },
-  { id: "cloudburst", name: "Foothills Cloudburst Event", icon: "Zap", defaultAnomaly: 180 },
-  { id: "persistent_rain", name: "Persistent Monsoon Low-Pressure Deluge", icon: "CloudRain", defaultAnomaly: 140 },
-  { id: "tributary_surge", name: "Tributary Inflow Synchronous Surge", icon: "Waves", defaultAnomaly: 8500 },
-  { id: "glof", name: "Glacial Lake Outburst Flood (GLOF) Wave", icon: "Flame", defaultAnomaly: 2.4 },
-  { id: "reservoir_release", name: "Upstream Dam Emergency Spillway Release", icon: "Sliders", defaultAnomaly: 42000 },
+  { id: "glacier_melt", name: "Glacier / Snowmelt Acceleration", icon: "Mountain", defaultAnomaly: 2.1 },
+  { id: "persistent_rain", name: "Heavy Monsoon Rainfall", icon: "CloudRain", defaultAnomaly: 140 },
+  { id: "cloudburst", name: "Cloudburst Event", icon: "Zap", defaultAnomaly: 220 },
+  { id: "tributary_surge", name: "Elevated Tributary Inflow", icon: "Waves", defaultAnomaly: 8500 },
+  { id: "glof", name: "Glacial Lake Outburst", icon: "Flame", defaultAnomaly: 2.4 },
+  { id: "reservoir_release", name: "Upstream Water Release", icon: "Sliders", defaultAnomaly: 42000 },
 ];
 
 /**
@@ -159,15 +159,15 @@ export function computeImpactAssessment(stage: number, embankmentStatus: string)
  * 20 Benchmark Scenarios for the SURAKSHA Flood Scenario Simulation Laboratory
  */
 export const SIMULATION_SCENARIOS: SimulationScenario[] = [
-  // 1. S11 — Flagship 21-Day Compound Flood Event (High-Risk)
+  // 1. S04 — Flagship 21-Day Compound Flood Event (High-Risk)
   {
     id: "WORST_01_RAPID_RIVER_SURGE",
-    code: "S11",
-    title: "Compound Glacial Melt & Monsoon Escalation",
+    code: "S04",
+    title: "Compound Flood Event (GANGA-01)",
     category: "High-Risk",
-    shortDescription: "Elevated Himalayan thaw, intensifying catchment rain, and saturated tributary inflows.",
-    fullDescription: "Flagship 21-day compound flood event at Gandhi Ghat. Begins with early summer snowmelt swell in the Alaknanda/Gangotri headwaters, followed by a persistent monsoon depression over Bihar and saturated soil runoff.",
-    testingObjective: "Multi-variable compound risk escalation, antecedent soil saturation modeling, and 72h early warning lead times.",
+    shortDescription: "Snowmelt + rainfall + soil saturation + tributary inflow multi-variable escalation.",
+    fullDescription: "Flagship 21-day compound flood event at Gandhi Ghat, Patna. Begins with early summer snowmelt swell in the Alaknanda/Gangotri headwaters, followed by a persistent monsoon depression over Bihar, saturated soil runoff, and tributary backwater surge.",
+    testingObjective: "Demonstrates SURAKSHA's multi-variable intelligence: non-linear compound interaction between cryosphere thaw, heavy precipitation, and saturated catchment runoff.",
     benchmarkStation: "Gandhi Ghat, Patna (STN-PAT-01)",
     warningLevel: 47.6,
     dangerLevel: 48.6,
@@ -373,15 +373,15 @@ export const SIMULATION_SCENARIOS: SimulationScenario[] = [
     ],
   },
 
-  // 2. S01 — Normal River Baseline (Low-Risk)
+  // 2. S01 — Normal River Conditions (Low-Risk)
   {
     id: "BEST_01_CALM_BASELINE",
     code: "S01",
-    title: "Normal River Baseline Conditions",
+    title: "Normal River Conditions",
     category: "Low-Risk",
-    shortDescription: "Stable baseflow, zero precipitation anomaly, dry catchment.",
+    shortDescription: "Stable discharge, minimal rainfall, normal soil moisture.",
     fullDescription: "Demonstrates model stability during routine, dry-weather river conditions without rainfall forcing.",
-    testingObjective: "Verification of zero false alarms during tranquil early season flow regimes.",
+    testingObjective: "Baseline testing: Verification of zero false alarms during tranquil early season flow regimes.",
     benchmarkStation: "Gandhi Ghat, Patna (STN-PAT-01)",
     warningLevel: 47.6,
     dangerLevel: 48.6,
@@ -402,15 +402,15 @@ export const SIMULATION_SCENARIOS: SimulationScenario[] = [
     ],
   },
 
-  // 3. S02 — Seasonal Snowmelt (Low-Risk)
+  // 3. S03 — Himalayan Meltwater Surge (Moderate-Risk)
   {
     id: "BEST_02_SEASONAL_SNOWMELT",
-    code: "S02",
-    title: "Seasonal Himalayan Snowmelt Pulse",
-    category: "Low-Risk",
-    shortDescription: "Moderate snowpack meltwater pulse from Alaknanda & Bhagirathi headwaters.",
-    fullDescription: "Evaluates whether the model properly captures upstream meltwater contribution without misclassifying it as a severe rainstorm.",
-    testingObjective: "Verification of cryosphere forcing isolation and travel time attenuation.",
+    code: "S03",
+    title: "Himalayan Meltwater Surge",
+    category: "Moderate-Risk",
+    shortDescription: "Increasing snowmelt contribution and upstream discharge.",
+    fullDescription: "Evaluates whether the model properly captures upstream cryosphere meltwater contribution and travel time attenuation.",
+    testingObjective: "Upstream hydrological changes: Cryosphere forcing isolation and non-rainfall discharge propagation.",
     benchmarkStation: "Gandhi Ghat, Patna (STN-PAT-01)",
     warningLevel: 47.6,
     dangerLevel: 48.6,
@@ -460,15 +460,15 @@ export const SIMULATION_SCENARIOS: SimulationScenario[] = [
     ],
   },
 
-  // 5. S15 — Extreme Stage & Embankment Breach (Extreme-Event)
+  // 5. S05 — Extreme Flood & Infrastructure Stress (Extreme-Event)
   {
     id: "WORST_02_EMBANKMENT_BREACH",
-    code: "S15",
-    title: "Extreme Stage & Embankment Breach at Danapur",
+    code: "S05",
+    title: "Extreme Flood & Infrastructure Stress",
     category: "Extreme-Event",
-    shortDescription: "High river stage combined with hypothetical structural failure along Danapur embankment.",
+    shortDescription: "Severe rainfall, high discharge and hypothetical embankment failure.",
     fullDescription: "Simulates a catastrophic multi-variable failure: river level cresting above Danger Mark alongside structural saturation breach at western Patna embankment, triggering urban inundation modeling.",
-    testingObjective: "HAND urban depth mapping, infrastructure exposure analysis, shelter routing, and emergency CAP v1.2 alerts.",
+    testingObjective: "Extreme-event assessment: HAND urban depth mapping, infrastructure exposure analysis, shelter routing, and emergency CAP alerts.",
     benchmarkStation: "Gandhi Ghat, Patna (STN-PAT-01)",
     warningLevel: 47.6,
     dangerLevel: 48.6,
@@ -489,15 +489,15 @@ export const SIMULATION_SCENARIOS: SimulationScenario[] = [
     ],
   },
 
-  // 6. S14 — Foothills Cloudburst (Extreme-Event)
+  // 6. S02 — Cloudburst Event (High-Risk)
   {
     id: "EXT_14_CATCHMENT_CLOUDBURST",
-    code: "S14",
-    title: "Foothills Cloudburst & Rapid Torrent",
-    category: "Extreme-Event",
-    shortDescription: "Extreme 220mm/24h cloudburst spike over sub-Himalayan tributary catchments.",
+    code: "S02",
+    title: "Cloudburst Event",
+    category: "High-Risk",
+    shortDescription: "Intense rainfall, increasing runoff, high soil saturation.",
     fullDescription: "Simulates sudden, hyper-localized convective cloudburst forcing sudden hydrograph spikes within 6 to 12 hours.",
-    testingObjective: "Evaluating fast hydrological response time and emergency flash warning generation.",
+    testingObjective: "Rainfall-driven flooding: Fast hydrological response time and emergency flash warning generation.",
     benchmarkStation: "Gandhi Ghat, Patna (STN-PAT-01)",
     warningLevel: 47.6,
     dangerLevel: 48.6,
@@ -645,7 +645,7 @@ export interface CustomScenarioInput {
   initialSoilSaturation: number;
   initialTributaryInflow: number;
   initialStageM?: number;
-  eventPattern: "compound_surge" | "flash_cloudburst" | "glacier_wave" | "steady_recession";
+  eventPattern?: "compound_surge" | "flash_cloudburst" | "glacier_wave" | "steady_recession";
   activeDrivers?: string[];
   embankmentBreachRisk?: boolean;
 }
@@ -659,9 +659,16 @@ export function generateCustomScenario(input: CustomScenarioInput): SimulationSc
 
   const activeDrivers = input.activeDrivers && input.activeDrivers.length > 0
     ? input.activeDrivers
-    : [input.eventPattern === "flash_cloudburst" ? "cloudburst" : input.eventPattern === "glacier_wave" ? "glacier_melt" : "persistent_rain"];
+    : ["glacier_melt", "persistent_rain", "tributary_surge"];
 
-  const isCompound = activeDrivers.length >= 2 || input.eventPattern === "compound_surge";
+  const hasGlacier = activeDrivers.includes("glacier_melt");
+  const hasRain = activeDrivers.includes("persistent_rain");
+  const hasCloudburst = activeDrivers.includes("cloudburst");
+  const hasTributary = activeDrivers.includes("tributary_surge");
+  const hasGlof = activeDrivers.includes("glof");
+  const hasReservoir = activeDrivers.includes("reservoir_release");
+
+  const isCompound = activeDrivers.length >= 2 || (hasGlacier && (hasRain || hasTributary));
   const startStage = input.initialStageM ?? 44.20;
 
   const days = [1, 3, 5, 7, 9, 11, 13, 15, 18, 21];
@@ -670,39 +677,35 @@ export function generateCustomScenario(input: CustomScenarioInput): SimulationSc
     let meltFactor = 1.0;
     let flowFactor = 1.0;
 
-    if (activeDrivers.includes("cloudburst")) {
-      if (day <= 3) rainFactor = 0.2;
+    if (hasCloudburst) {
+      if (day <= 3) rainFactor = 0.3;
       else if (day <= 7) rainFactor = 2.4;
       else if (day <= 11) rainFactor = 1.2;
       else rainFactor = 0.3;
       flowFactor = day <= 3 ? 0.9 : day <= 9 ? 1.7 : 1.1;
-    } else if (activeDrivers.includes("glof")) {
+    } else if (hasGlof) {
       meltFactor = day <= 5 ? 1.5 : day <= 10 ? 2.6 : 1.3;
       flowFactor = day <= 5 ? 1.2 : day <= 10 ? 1.9 : 1.1;
       rainFactor = 0.5;
-    } else if (input.eventPattern === "glacier_wave" || activeDrivers.includes("glacier_melt")) {
+    } else if (hasGlacier && !hasRain) {
       meltFactor = day <= 9 ? 1.0 + (day / 9) * 0.9 : Math.max(1.0, 1.9 - ((day - 9) / 12) * 0.7);
       rainFactor = 0.5 + (day / 21) * 0.5;
       flowFactor = 1.0 + (day <= 11 ? (day / 11) * 0.6 : 0.6 - ((day - 11) / 10) * 0.4);
-    } else if (input.eventPattern === "steady_recession") {
-      const decay = (21 - day) / 20;
-      flowFactor = 0.6 + 0.4 * decay;
-      rainFactor = 0.2 + 0.8 * decay;
-      meltFactor = 0.8 + 0.2 * decay;
     } else {
-      // Compound surge
+      // Compound surge or general monsoon
       if (day <= 5) {
-        meltFactor = 1.0 + (day / 5) * 0.6;
-        rainFactor = 0.3 + (day / 5) * 0.5;
-        flowFactor = 1.0 + (day / 5) * 0.25;
+        meltFactor = hasGlacier ? 1.0 + (day / 5) * 0.6 : 1.0;
+        rainFactor = hasRain ? 0.3 + (day / 5) * 0.5 : 0.4;
+        flowFactor = hasTributary ? 1.0 + (day / 5) * 0.25 : 1.0;
       } else if (day <= 15) {
-        meltFactor = 1.6 - ((day - 5) / 10) * 0.3;
-        rainFactor = 0.8 + ((day - 5) / 10) * 1.0;
-        flowFactor = 1.25 + ((day - 5) / 10) * 0.6;
+        meltFactor = hasGlacier ? 1.6 - ((day - 5) / 10) * 0.3 : 1.0;
+        rainFactor = hasRain ? 0.8 + ((day - 5) / 10) * 1.0 : 0.5;
+        flowFactor = hasTributary ? 1.25 + ((day - 5) / 10) * 0.6 : (hasReservoir ? 1.6 : 1.1);
       } else {
+        // Recession phase naturally occurs on Days 16-21 after the flood peak
         meltFactor = 1.1;
-        rainFactor = 0.4;
-        flowFactor = 1.4 - ((day - 15) / 6) * 0.5;
+        rainFactor = 0.3;
+        flowFactor = 1.3 - ((day - 15) / 6) * 0.5;
       }
     }
 
@@ -801,7 +804,7 @@ export function generateCustomScenario(input: CustomScenarioInput): SimulationSc
     title: input.title,
     category,
     shortDescription: input.description || `Custom multi-driver simulation: ${input.initialInflowMultiplier}× discharge, ${input.initialRainfallAnomaly}mm rain, ${input.initialSnowmeltIndex}× melt.`,
-    fullDescription: `User-defined synthetic simulation scenario testing hydrological response to ${input.initialInflowMultiplier}× initial discharge, ${input.initialRainfallAnomaly} mm rainfall anomaly, ${input.initialSnowmeltIndex}× cryosphere thaw, and ${input.initialSoilSaturation}% soil saturation under a ${input.eventPattern.replace("_", " ")} pattern.`,
+    fullDescription: `User-defined synthetic simulation scenario testing hydrological response to ${input.initialInflowMultiplier}× initial discharge, ${input.initialRainfallAnomaly} mm rainfall anomaly, ${input.initialSnowmeltIndex}× cryosphere thaw, and ${input.initialSoilSaturation}% soil saturation under a ${input.eventPattern ? input.eventPattern.replace("_", " ") : "multi-driver compound"} pattern.`,
     testingObjective: `Custom evaluation of multi-variable flood risk escalation and predictive warning lead time.`,
     benchmarkStation: CWC_GANDHI_GHAT_BENCHMARKS.stationName,
     warningLevel: CWC_GANDHI_GHAT_BENCHMARKS.warningLevel,

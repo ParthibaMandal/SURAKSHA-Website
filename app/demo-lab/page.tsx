@@ -245,14 +245,29 @@ export default function DemoLabPage() {
 
   // Custom Scenario Creator Studio Modal State
   const [isStudioOpen, setIsStudioOpen] = useState<boolean>(false);
-  const [customTitle, setCustomTitle] = useState<string>("Custom Upper Ganga Inflow Surge");
-  const [customPattern, setCustomPattern] = useState<"compound_surge" | "flash_cloudburst" | "glacier_wave" | "steady_recession">("compound_surge");
+  const [customTitle, setCustomTitle] = useState<string>("Custom Multi-Driver Inflow Scenario");
+  const [customDrivers, setCustomDrivers] = useState<string[]>([
+    "glacier_melt",
+    "persistent_rain",
+    "tributary_surge",
+  ]);
   const [customInflow, setCustomInflow] = useState<number>(1.5);
   const [customRainfall, setCustomRainfall] = useState<number>(150);
   const [customSnowmelt, setCustomSnowmelt] = useState<number>(2.0);
   const [customSoil, setCustomSoil] = useState<number>(75);
   const [customTributary, setCustomTributary] = useState<number>(6800);
   const [customBreachRisk, setCustomBreachRisk] = useState<boolean>(false);
+
+  function toggleCustomDriver(driverId: string) {
+    setCustomDrivers((prev) =>
+      prev.includes(driverId) ? prev.filter((d) => d !== driverId) : [...prev, driverId]
+    );
+  }
+
+  const isCustomCompound =
+    customDrivers.length >= 2 ||
+    (customDrivers.includes("glacier_melt") &&
+      (customDrivers.includes("persistent_rain") || customDrivers.includes("tributary_surge")));
 
   // Station Selector & Date Selector States
   const [selectedStation, setSelectedStation] = useState(STUDY_STATIONS[0]);
@@ -269,19 +284,37 @@ export default function DemoLabPage() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+    function handleClickOutside(event: Event) {
+      const target = event.target as Node;
+      if (dropdownRef.current && !dropdownRef.current.contains(target)) {
         setIsDropdownOpen(false);
       }
-      if (locationRef.current && !locationRef.current.contains(event.target as Node)) {
+      if (locationRef.current && !locationRef.current.contains(target)) {
         setIsLocationOpen(false);
       }
-      if (dateRef.current && !dateRef.current.contains(event.target as Node)) {
+      if (dateRef.current && !dateRef.current.contains(target)) {
         setIsDateOpen(false);
       }
     }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsDropdownOpen(false);
+        setIsLocationOpen(false);
+        setIsDateOpen(false);
+        setIsStudioOpen(false);
+        setIsForecastModalOpen(false);
+      }
+    }
+
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
   }, []);
 
   const formatDisplayDate = (dateStr: string) => {
@@ -453,7 +486,7 @@ export default function DemoLabPage() {
       initialSnowmeltIndex: customSnowmelt,
       initialSoilSaturation: customSoil,
       initialTributaryInflow: customTributary,
-      eventPattern: customPattern,
+      activeDrivers: customDrivers,
       embankmentBreachRisk: customBreachRisk,
     };
 
@@ -551,13 +584,13 @@ export default function DemoLabPage() {
               <div>
                 <div className="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
                   <Sparkles className="w-3.5 h-3.5" />
-                  FLOOD SCENARIO SIMULATION LABORATORY 2.0
+                  BCA PROJECT DEMONSTRATION · GANDHI GHAT, PATNA
                 </div>
-                <h1 className="text-3xl sm:text-4xl font-heading font-extrabold tracking-tight text-[var(--foreground)] mt-1">
-                  Flood Scenario Simulation Laboratory
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-extrabold tracking-tight text-[var(--foreground)] mt-1">
+                  SURAKSHA — Flood Scenario Simulation Laboratory
                 </h1>
                 <p className="text-xs sm:text-sm text-[var(--muted-foreground)] mt-1.5 max-w-2xl leading-relaxed">
-                  Interactive multi-driver compound flood scenario engine. Configure environmental variables, run benchmark scenarios or custom events, scrub through the 21-day timeline, and assess predictive intelligence with post-flood disaster impacts.
+                  An AI-Assisted, Multi-Variable Flood Forecasting and Risk Assessment System for the Ganga Region. Demonstrating multi-driver environmental forcing, BiLSTM-ARIMA predictions, and actionable disaster impact assessment.
                 </p>
               </div>
 
@@ -574,13 +607,15 @@ export default function DemoLabPage() {
                 </button>
 
                 {/* Location Selector Dropdown */}
-                <div ref={locationRef} className="relative">
+                <div ref={locationRef} className={`relative ${isLocationOpen ? "z-50" : "z-20"}`}>
                   <button
                     type="button"
                     onClick={() => {
                       setIsLocationOpen((prev) => !prev);
                       setIsDateOpen(false);
                     }}
+                    aria-expanded={isLocationOpen}
+                    aria-label="Select hydrometric gauging station"
                     className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs text-[var(--foreground)] transition-all cursor-pointer shadow-xs select-none ${
                       isLocationOpen
                         ? "border-emerald-500 bg-[var(--surface-elevated)] ring-2 ring-emerald-500/20"
@@ -594,7 +629,10 @@ export default function DemoLabPage() {
 
                   {/* Location Popup Menu */}
                   {isLocationOpen && (
-                    <div className="absolute right-0 top-full mt-2 z-50 w-80 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl backdrop-blur-2xl p-2 space-y-1 animate-in fade-in slide-in-from-top-2 duration-150">
+                    <div
+                      onClick={(e) => e.stopPropagation()}
+                      className="absolute left-0 sm:left-auto sm:right-0 top-full mt-2 z-50 w-80 max-w-[calc(100vw-2rem)] rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl backdrop-blur-2xl p-2 space-y-1 animate-in fade-in slide-in-from-top-2 duration-150"
+                    >
                       <div className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--muted-foreground)] flex items-center justify-between border-b border-[var(--border)] pb-2">
                         <span>Hydrometric Gauging Stations</span>
                         <span>{STUDY_STATIONS.length}</span>
@@ -603,13 +641,14 @@ export default function DemoLabPage() {
                         {STUDY_STATIONS.map((stn) => {
                           const isSelected = stn.id === selectedStation.id;
                           return (
-                            <div
+                            <button
+                              type="button"
                               key={stn.id}
                               onClick={() => {
                                 setSelectedStation(stn);
                                 setIsLocationOpen(false);
                               }}
-                              className={`p-2.5 rounded-xl cursor-pointer transition-all flex items-center justify-between gap-2.5 ${
+                              className={`w-full text-left p-2.5 rounded-xl cursor-pointer transition-all flex items-center justify-between gap-2.5 ${
                                 isSelected
                                   ? "bg-emerald-500/15 border border-emerald-500/40 text-[var(--foreground)]"
                                   : "hover:bg-[var(--surface)] text-[var(--foreground)]/90 hover:text-[var(--foreground)] border border-transparent"
@@ -629,7 +668,7 @@ export default function DemoLabPage() {
                                 </div>
                               </div>
                               {isSelected && <Check className="w-4 h-4 text-emerald-500 stroke-[3] shrink-0" />}
-                            </div>
+                            </button>
                           );
                         })}
                       </div>
@@ -638,13 +677,15 @@ export default function DemoLabPage() {
                 </div>
 
                 {/* Date Selector Dropdown */}
-                <div ref={dateRef} className="relative">
+                <div ref={dateRef} className={`relative ${isDateOpen ? "z-50" : "z-20"}`}>
                   <button
                     type="button"
                     onClick={() => {
                       setIsDateOpen((prev) => !prev);
                       setIsLocationOpen(false);
                     }}
+                    aria-expanded={isDateOpen}
+                    aria-label="Select simulation calibration date"
                     className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs text-[var(--foreground)] font-mono transition-all cursor-pointer shadow-xs select-none ${
                       isDateOpen
                         ? "border-emerald-500 bg-[var(--surface-elevated)] ring-2 ring-emerald-500/20"
@@ -658,7 +699,10 @@ export default function DemoLabPage() {
 
                   {/* Date Popup Menu */}
                   {isDateOpen && (
-                    <div className="absolute right-0 top-full mt-2 z-50 w-72 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl backdrop-blur-2xl p-2.5 space-y-2.5 animate-in fade-in slide-in-from-top-2 duration-150">
+                    <div
+                      onClick={(e) => e.stopPropagation()}
+                      className="absolute left-0 sm:left-auto sm:right-0 top-full mt-2 z-50 w-72 max-w-[calc(100vw-2rem)] rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl backdrop-blur-2xl p-2.5 space-y-2.5 animate-in fade-in slide-in-from-top-2 duration-150"
+                    >
                       <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--muted-foreground)] border-b border-[var(--border)] pb-1.5">
                         Simulation Date Calibration
                       </div>
@@ -668,13 +712,14 @@ export default function DemoLabPage() {
                         {PRESET_DATES.map((pd) => {
                           const isSelected = selectedDate === pd.value;
                           return (
-                            <div
+                            <button
+                              type="button"
                               key={pd.value}
                               onClick={() => {
                                 setSelectedDate(pd.value);
                                 setIsDateOpen(false);
                               }}
-                              className={`p-2 rounded-xl cursor-pointer transition-all flex items-center justify-between text-xs ${
+                              className={`w-full text-left p-2 rounded-xl cursor-pointer transition-all flex items-center justify-between text-xs ${
                                 isSelected
                                   ? "bg-emerald-500/15 border border-emerald-500/40 text-[var(--foreground)] font-bold"
                                   : "hover:bg-[var(--surface)] text-[var(--foreground)]/80 hover:text-[var(--foreground)] border border-transparent"
@@ -685,7 +730,7 @@ export default function DemoLabPage() {
                                 <div className="text-[9px] text-[var(--muted-foreground)] font-normal">{pd.desc}</div>
                               </div>
                               {isSelected && <Check className="w-3.5 h-3.5 text-emerald-500 stroke-[3]" />}
-                            </div>
+                            </button>
                           );
                         })}
                       </div>
@@ -1177,7 +1222,7 @@ export default function DemoLabPage() {
                 </div>
 
                 {/* Custom Scenario Dropdown Menu */}
-                <div ref={dropdownRef} className="space-y-1.5 relative">
+                <div ref={dropdownRef} className={`space-y-1.5 relative ${isDropdownOpen ? "z-40" : "z-20"}`}>
                   <label className="text-xs font-semibold text-[var(--muted-foreground)] flex items-center justify-between">
                     <span>Select Scenario from Library</span>
                     <span className="text-[10px] font-mono text-emerald-500">
@@ -1189,6 +1234,9 @@ export default function DemoLabPage() {
                   <button
                     type="button"
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    aria-haspopup="listbox"
+                    aria-expanded={isDropdownOpen}
+                    aria-label="Select flood simulation scenario"
                     className={`w-full px-3.5 py-2.5 rounded-xl border text-xs text-left flex items-center justify-between transition-all cursor-pointer select-none ${
                       isDropdownOpen
                         ? "border-emerald-500 bg-[var(--surface-elevated)] ring-2 ring-emerald-500/20"
@@ -1211,7 +1259,10 @@ export default function DemoLabPage() {
 
                   {/* Dropdown Menu Popup Panel */}
                   {isDropdownOpen && (
-                    <div className="absolute top-full left-0 right-0 mt-1.5 z-50 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl backdrop-blur-2xl p-1.5 space-y-1 max-h-96 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-150">
+                    <div 
+                      role="listbox"
+                      className="absolute top-full left-0 right-0 mt-1.5 z-50 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl backdrop-blur-2xl p-1.5 space-y-1 max-h-96 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-150"
+                    >
                       {/* Group 1: User Custom Scenarios (if any exist) */}
                       {customScenarios.length > 0 && (
                         <div>
@@ -1223,13 +1274,16 @@ export default function DemoLabPage() {
                             {customScenarios.map((scen) => {
                               const isSelected = scen.id === selectedScenarioId;
                               return (
-                                <div
+                                <button
+                                  type="button"
+                                  role="option"
+                                  aria-selected={isSelected}
                                   key={scen.id}
                                   onClick={() => {
                                     handleSelectScenario(scen.id);
                                     setIsDropdownOpen(false);
                                   }}
-                                  className={`p-2.5 rounded-xl cursor-pointer transition-all flex items-center justify-between gap-3 ${
+                                  className={`w-full text-left p-2.5 rounded-xl cursor-pointer transition-all flex items-center justify-between gap-3 ${
                                     isSelected
                                       ? "bg-emerald-500/15 border border-emerald-500/40 text-[var(--foreground)]"
                                       : "hover:bg-[var(--surface)] text-[var(--foreground)]/90 hover:text-[var(--foreground)] border border-transparent"
@@ -1258,7 +1312,7 @@ export default function DemoLabPage() {
                                     </span>
                                     {isSelected && <Check className="w-4 h-4 text-emerald-500 stroke-[3]" />}
                                   </div>
-                                </div>
+                                </button>
                               );
                             })}
                           </div>
@@ -1275,13 +1329,16 @@ export default function DemoLabPage() {
                           {SIMULATION_SCENARIOS.map((scen) => {
                             const isSelected = scen.id === selectedScenarioId;
                             return (
-                              <div
+                              <button
+                                type="button"
+                                role="option"
+                                aria-selected={isSelected}
                                 key={scen.id}
                                 onClick={() => {
                                   handleSelectScenario(scen.id);
                                   setIsDropdownOpen(false);
                                 }}
-                                className={`p-2.5 rounded-xl cursor-pointer transition-all flex items-center justify-between gap-3 ${
+                                className={`w-full text-left p-2.5 rounded-xl cursor-pointer transition-all flex items-center justify-between gap-3 ${
                                   isSelected
                                     ? "bg-emerald-500/15 border border-emerald-500/40 text-[var(--foreground)]"
                                     : "hover:bg-[var(--surface)] text-[var(--foreground)]/90 hover:text-[var(--foreground)] border border-transparent"
@@ -1307,7 +1364,7 @@ export default function DemoLabPage() {
                                   </span>
                                   {isSelected && <Check className="w-4 h-4 text-emerald-500 stroke-[3]" />}
                                 </div>
-                              </div>
+                              </button>
                             );
                           })}
                         </div>
@@ -1865,6 +1922,67 @@ export default function DemoLabPage() {
             </div>
           </section>
 
+          {/* TECHNICAL DEFENSE: System Architecture & Methodology Breakdown */}
+          <section className="p-5 sm:p-6 rounded-2xl border border-emerald-500/30 bg-[var(--surface-elevated)] backdrop-blur-xl shadow-xs space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[var(--border)]">
+              <div>
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block">
+                  TECHNICAL PANEL DEFENSE ARCHITECTURE
+                </span>
+                <h3 className="text-base font-bold text-[var(--foreground)] flex items-center gap-2 font-heading">
+                  <ShieldCheck className="w-4 h-4 text-emerald-500" /> Model Pipeline & Scientific Methodology
+                </h3>
+              </div>
+              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-mono font-bold">
+                BCA Technical Defense Reference
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+              {/* Component 1: Trained Machine Learning Pipeline */}
+              <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-2">
+                <div className="flex items-center gap-2 font-bold text-[var(--foreground)]">
+                  <Radio className="w-4 h-4 text-sky-500" />
+                  <span>1. Trained Machine Learning Models</span>
+                </div>
+                <p className="text-[11px] text-[var(--muted-foreground)] leading-relaxed">
+                  <strong>BiLSTM-ARIMA Deep Sequence Model:</strong> Trained on historical CWC Gandhi Ghat hydrometric records and IMD 0.25° gridded precipitation. Generates multi-lead stage trajectories (+6h, +12h, +24h, +48h, +72h) with 90% confidence bands.
+                </p>
+                <div className="text-[10px] font-mono text-sky-600 dark:text-sky-400 font-semibold pt-1 border-t border-[var(--border)]">
+                  • NSE: 0.962 · MAE: 0.28m · RMSE: 0.34m
+                </div>
+              </div>
+
+              {/* Component 2: Deterministic Physical Hydraulics */}
+              <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-2">
+                <div className="flex items-center gap-2 font-bold text-[var(--foreground)]">
+                  <Activity className="w-4 h-4 text-teal-500" />
+                  <span>2. Deterministic Physical Calculations</span>
+                </div>
+                <p className="text-[11px] text-[var(--muted-foreground)] leading-relaxed">
+                  <strong>Hydraulic Rating & Inundation Geometry:</strong> Manning's stage-discharge rating curves, Antecedent Soil Saturation Runoff (API index), and Height Above Nearest Drainage (HAND) digital terrain surface modeling.
+                </p>
+                <div className="text-[10px] font-mono text-teal-600 dark:text-teal-400 font-semibold pt-1 border-t border-[var(--border)]">
+                  • Mass balance water continuity preserved
+                </div>
+              </div>
+
+              {/* Component 3: AI Diagnostic Reasoning & Controlled Validation */}
+              <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-2">
+                <div className="flex items-center gap-2 font-bold text-[var(--foreground)]">
+                  <Sparkles className="w-4 h-4 text-amber-500" />
+                  <span>3. AI Diagnostic Reasoning & Ethics</span>
+                </div>
+                <p className="text-[11px] text-[var(--muted-foreground)] leading-relaxed">
+                  <strong>Causal Diagnostic Engine:</strong> Generates explainable natural-language assessments of physical interactions. Operates under controlled synthetic scenarios to safely evaluate multi-driver extremes without issuing false public alarms.
+                </p>
+                <div className="text-[10px] font-mono text-amber-600 dark:text-amber-400 font-semibold pt-1 border-t border-[var(--border)]">
+                  • Controlled synthetic evaluation mode
+                </div>
+              </div>
+            </div>
+          </section>
+
           {/* BOTTOM ROW: Analytics, Scenarios Comparison & Diagnostics */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
             {/* Bottom 1: Risk & Impact Analytics (lg:col-span-4) */}
@@ -2036,7 +2154,15 @@ export default function DemoLabPage() {
 
       {/* Custom Scenario Creator Studio Modal */}
       {isStudioOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-200">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="studio-modal-title"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-200"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsStudioOpen(false);
+          }}
+        >
           <div className="relative w-full max-w-2xl rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl p-6 space-y-6 max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="flex items-center justify-between pb-4 border-b border-[var(--border)]">
@@ -2045,13 +2171,14 @@ export default function DemoLabPage() {
                   <Sliders className="w-3.5 h-3.5" />
                   CUSTOM SCENARIO STUDIO
                 </div>
-                <h2 className="text-xl font-heading font-extrabold text-[var(--foreground)] mt-0.5">
+                <h2 id="studio-modal-title" className="text-xl font-heading font-extrabold text-[var(--foreground)] mt-0.5">
                   Design Custom Flood Event
                 </h2>
               </div>
               <button
                 type="button"
                 onClick={() => setIsStudioOpen(false)}
+                aria-label="Close custom studio"
                 className="w-8 h-8 rounded-full border border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-elevated)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] grid place-items-center transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
@@ -2075,68 +2202,70 @@ export default function DemoLabPage() {
                 />
               </div>
 
-              {/* Pattern Selector */}
+              {/* Multi-Select Event Driver System */}
               <div className="space-y-2">
-                <label className="text-xs font-bold text-[var(--foreground)]">
-                  Hydrological Event Pattern
-                </label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setCustomPattern("compound_surge")}
-                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${
-                      customPattern === "compound_surge"
-                        ? "border-emerald-500 bg-emerald-500/10 text-[var(--foreground)] shadow-xs"
-                        : "border-[var(--border)] bg-[var(--surface)] text-[var(--muted-foreground)] hover:border-emerald-500/40"
-                    }`}
-                  >
-                    <Waves className="w-4 h-4 text-emerald-500" />
-                    <span className="text-[11px] font-bold">Compound Surge</span>
-                    <span className="text-[9px] text-[var(--muted-foreground)]">Glacier + Rain</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setCustomPattern("flash_cloudburst")}
-                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${
-                      customPattern === "flash_cloudburst"
-                        ? "border-emerald-500 bg-emerald-500/10 text-[var(--foreground)] shadow-xs"
-                        : "border-[var(--border)] bg-[var(--surface)] text-[var(--muted-foreground)] hover:border-emerald-500/40"
-                    }`}
-                  >
-                    <Zap className="w-4 h-4 text-amber-500" />
-                    <span className="text-[11px] font-bold">Cloudburst</span>
-                    <span className="text-[9px] text-[var(--muted-foreground)]">Intense Spike</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setCustomPattern("glacier_wave")}
-                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${
-                      customPattern === "glacier_wave"
-                        ? "border-emerald-500 bg-emerald-500/10 text-[var(--foreground)] shadow-xs"
-                        : "border-[var(--border)] bg-[var(--surface)] text-[var(--muted-foreground)] hover:border-emerald-500/40"
-                    }`}
-                  >
-                    <Mountain className="w-4 h-4 text-sky-500" />
-                    <span className="text-[11px] font-bold">Glacial Wave</span>
-                    <span className="text-[9px] text-[var(--muted-foreground)]">Cryosphere Thaw</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setCustomPattern("steady_recession")}
-                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${
-                      customPattern === "steady_recession"
-                        ? "border-emerald-500 bg-emerald-500/10 text-[var(--foreground)] shadow-xs"
-                        : "border-[var(--border)] bg-[var(--surface)] text-[var(--muted-foreground)] hover:border-emerald-500/40"
-                    }`}
-                  >
-                    <TrendingUp className="w-4 h-4 text-teal-500 rotate-180" />
-                    <span className="text-[11px] font-bold">Drawdown</span>
-                    <span className="text-[9px] text-[var(--muted-foreground)]">Recession</span>
-                  </button>
+                <div className="flex items-center justify-between text-xs font-bold text-[var(--foreground)]">
+                  <span className="flex items-center gap-1.5">
+                    <Layers className="w-3.5 h-3.5 text-emerald-500" />
+                    Configure Environmental Event Drivers
+                  </span>
+                  <span className="text-[10px] font-mono text-[var(--muted-foreground)] font-normal">
+                    Multi-select ({customDrivers.length} active)
+                  </span>
                 </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {SIMULATION_EVENT_DRIVERS.map((driver) => {
+                    const isSelected = customDrivers.includes(driver.id);
+                    return (
+                      <button
+                        key={driver.id}
+                        type="button"
+                        onClick={() => toggleCustomDriver(driver.id)}
+                        className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1 select-none ${
+                          isSelected
+                            ? "bg-emerald-500/15 border-emerald-500/50 text-[var(--foreground)] shadow-xs"
+                            : "bg-[var(--surface)] border-[var(--border)] text-[var(--muted-foreground)] hover:border-emerald-500/30 hover:text-[var(--foreground)]"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className={isSelected ? "text-emerald-500" : "text-[var(--muted-foreground)]"}>
+                            {renderDriverIcon(driver.id)}
+                          </span>
+                          <span
+                            className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-bold ${
+                              isSelected
+                                ? "bg-emerald-500 text-white"
+                                : "bg-[var(--surface-elevated)] border border-[var(--border)] text-[var(--muted-foreground)]"
+                            }`}
+                          >
+                            {isSelected ? "ON" : "OFF"}
+                          </span>
+                        </div>
+                        <div className="text-[10px] font-bold leading-tight truncate mt-1">
+                          {driver.name}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Auto-derived Compound Surge Badge */}
+                {isCustomCompound && (
+                  <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between text-xs font-mono">
+                    <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-bold">
+                      <Waves className="w-4 h-4 shrink-0" />
+                      <span>COMPOUND SURGE EVENT (AUTOMATICALLY DERIVED)</span>
+                    </div>
+                    <span className="text-[10px] text-[var(--muted-foreground)]">
+                      Multiple Interacting Drivers
+                    </span>
+                  </div>
+                )}
+
+                <p className="text-[10px] text-[var(--muted-foreground)] italic pt-0.5">
+                  * Note: Drawdown represents the natural post-flood recession phase (Days 19–21 after the peak), not a flood-generating event driver.
+                </p>
               </div>
 
               {/* Multi-variable Parameters Grid */}
@@ -2298,7 +2427,15 @@ export default function DemoLabPage() {
 
       {/* Detailed Forecast Horizon Inspector Modal */}
       {isForecastModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-200">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="forecast-modal-title"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-200"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsForecastModalOpen(false);
+          }}
+        >
           <div className="relative w-full max-w-3xl rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl p-6 space-y-6 max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="flex items-center justify-between pb-4 border-b border-[var(--border)]">
@@ -2307,7 +2444,7 @@ export default function DemoLabPage() {
                   <Clock className="w-3.5 h-3.5" />
                   DETAILED HYDROLOGICAL FORECAST HORIZON
                 </div>
-                <h2 className="text-xl font-heading font-extrabold text-[var(--foreground)] mt-0.5">
+                <h2 id="forecast-modal-title" className="text-xl font-heading font-extrabold text-[var(--foreground)] mt-0.5">
                   Reach Inundation & Multi-Lead Forecast Analysis
                 </h2>
                 <div className="flex items-center gap-2 text-xs text-[var(--muted-foreground)] mt-1 font-mono">
@@ -2321,6 +2458,7 @@ export default function DemoLabPage() {
               <button
                 type="button"
                 onClick={() => setIsForecastModalOpen(false)}
+                aria-label="Close detailed forecast"
                 className="w-8 h-8 rounded-full border border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-elevated)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] grid place-items-center transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />

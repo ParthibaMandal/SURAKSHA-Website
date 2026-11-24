@@ -476,24 +476,29 @@ export const RiverStageForecastChart: React.FC<RiverStageForecastChartProps> = (
             </div>
           </>
         ) : (
-          <>
-            <div className="flex items-center gap-1.5">
-              <span className="w-3 h-0.5 bg-emerald-500" />
-              <span>Optimistic Outcome</span>
+          <div className="w-full space-y-1.5">
+            <div className="flex flex-wrap items-center justify-between text-[10px] text-[var(--muted-foreground)] font-mono">
+              <div className="flex items-center gap-1.5">
+                <span className="w-3 h-0.5 bg-emerald-500" />
+                <span>Optimistic Scenario</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-3 h-0.5 bg-sky-600" />
+                <span>Reference Case</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-3 h-0.5 border-b-2 border-dashed border-red-500" />
+                <span>Severe Outcome</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-3 h-0.5 border-b-2 border-dashed border-purple-500" />
+                <span>HFL (50.52m)</span>
+              </div>
             </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-3 h-0.5 bg-sky-600" />
-              <span>Reference Case</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-3 h-0.5 border-b-2 border-dashed border-red-500" />
-              <span>Severe Outcome</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-3 h-0.5 border-b-2 border-dashed border-purple-500" />
-              <span>HFL (50.52m)</span>
-            </div>
-          </>
+            <p className="text-[9px] text-[var(--muted-foreground)] italic border-t border-[var(--border)] pt-1">
+              * Scientific distinction: These 3 trajectories represent scenario assumption presets (lower rain vs. sustained deluge vs. saturated catchment), not statistically calculated probability distributions.
+            </p>
+          </div>
         )}
       </div>
     </div>
