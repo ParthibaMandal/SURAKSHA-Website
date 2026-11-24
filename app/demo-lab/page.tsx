@@ -153,6 +153,33 @@ export default function DemoLabPage() {
   const [customTributary, setCustomTributary] = useState<number>(6800);
   const [customBreachRisk, setCustomBreachRisk] = useState<boolean>(false);
 
+  // Custom Dropdown Menu State & Outside Click Listener
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const getCategoryBadge = (category: string) => {
+    switch (category) {
+      case "Extreme-Event":
+        return "bg-purple-500/15 border border-purple-500/30 text-purple-600 dark:text-purple-400";
+      case "High-Risk":
+        return "bg-rose-500/15 border border-rose-500/30 text-rose-600 dark:text-rose-400";
+      case "Moderate-Risk":
+        return "bg-amber-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-400";
+      default:
+        return "bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400";
+    }
+  };
+
   // Active scenario
   const activeScenario: SimulationScenario =
     allScenarios.find((s) => s.id === selectedScenarioId) ?? SIMULATION_SCENARIOS[0];
@@ -819,26 +846,159 @@ export default function DemoLabPage() {
                   </div>
                 </div>
 
-                {/* Scenario Catalog Dropdown */}
-                <div className="space-y-1.5">
-                  <label htmlFor="scenarioSelect" className="text-xs font-semibold text-[var(--muted-foreground)]">
-                    Select Scenario from Library
+                {/* Custom Scenario Dropdown Menu */}
+                <div ref={dropdownRef} className="space-y-1.5 relative">
+                  <label className="text-xs font-semibold text-[var(--muted-foreground)] flex items-center justify-between">
+                    <span>Select Scenario from Library</span>
+                    <span className="text-[10px] font-mono text-emerald-500">
+                      Active: {activeScenario.code}
+                    </span>
                   </label>
-                  <div className="relative">
-                    <select
-                      id="scenarioSelect"
-                      value={selectedScenarioId}
-                      onChange={(e) => handleSelectScenario(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-xs text-[var(--foreground)] font-semibold appearance-none cursor-pointer focus:outline-none focus:border-emerald-500"
-                    >
-                      {allScenarios.map((scen) => (
-                        <option key={scen.id} value={scen.id}>
-                          {scen.code} — {scen.title} ({scen.category})
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronDown className="absolute right-3 top-3 w-4 h-4 text-[var(--muted-foreground)] pointer-events-none" />
-                  </div>
+
+                  {/* Dropdown Trigger Button */}
+                  <button
+                    type="button"
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className={`w-full px-3.5 py-2.5 rounded-xl border text-xs text-left flex items-center justify-between transition-all cursor-pointer select-none ${
+                      isDropdownOpen
+                        ? "border-emerald-500 bg-[var(--surface-elevated)] ring-2 ring-emerald-500/20"
+                        : "border-[var(--border)] bg-[var(--surface)] hover:border-emerald-500/50 hover:bg-[var(--surface-elevated)]"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                      <span className="px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-mono font-bold text-[11px] shrink-0 border border-emerald-500/30">
+                        {activeScenario.code}
+                      </span>
+                      <span className="font-semibold text-[var(--foreground)] truncate text-xs">
+                        {activeScenario.title}
+                      </span>
+                      <span className={`hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-mono shrink-0 ${getCategoryBadge(activeScenario.category)}`}>
+                        {activeScenario.category}
+                      </span>
+                    </div>
+                    <ChevronDown className={`w-4 h-4 text-[var(--muted-foreground)] transition-transform duration-200 shrink-0 ${isDropdownOpen ? "rotate-180 text-emerald-500" : ""}`} />
+                  </button>
+
+                  {/* Dropdown Menu Popup Panel */}
+                  {isDropdownOpen && (
+                    <div className="absolute top-full left-0 right-0 mt-1.5 z-50 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl backdrop-blur-2xl p-1.5 space-y-1 max-h-96 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-150">
+                      {/* Group 1: User Custom Scenarios (if any exist) */}
+                      {customScenarios.length > 0 && (
+                        <div>
+                          <div className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center justify-between">
+                            <span>User Custom Scenarios</span>
+                            <span className="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">{customScenarios.length}</span>
+                          </div>
+                          <div className="space-y-1">
+                            {customScenarios.map((scen) => {
+                              const isSelected = scen.id === selectedScenarioId;
+                              return (
+                                <div
+                                  key={scen.id}
+                                  onClick={() => {
+                                    handleSelectScenario(scen.id);
+                                    setIsDropdownOpen(false);
+                                  }}
+                                  className={`p-2.5 rounded-xl cursor-pointer transition-all flex items-center justify-between gap-3 ${
+                                    isSelected
+                                      ? "bg-emerald-500/15 border border-emerald-500/40 text-[var(--foreground)]"
+                                      : "hover:bg-[var(--surface)] text-[var(--foreground)]/90 hover:text-[var(--foreground)] border border-transparent"
+                                  }`}
+                                >
+                                  <div className="flex items-center gap-2.5 min-w-0">
+                                    <span className="px-2 py-0.5 rounded-md bg-emerald-500 text-black font-mono font-bold text-[10px] shrink-0">
+                                      {scen.code}
+                                    </span>
+                                    <div className="min-w-0">
+                                      <div className="font-semibold text-xs truncate flex items-center gap-1.5">
+                                        <span>{scen.title}</span>
+                                        <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-mono">
+                                          CUSTOM
+                                        </span>
+                                      </div>
+                                      <div className="text-[10px] text-[var(--muted-foreground)] line-clamp-1 mt-0.5">
+                                        {scen.shortDescription}
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div className="flex items-center gap-2 shrink-0">
+                                    <span className={`px-2 py-0.5 rounded text-[10px] font-mono ${getCategoryBadge(scen.category)}`}>
+                                      {scen.category}
+                                    </span>
+                                    {isSelected && <Check className="w-4 h-4 text-emerald-500 stroke-[3]" />}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Group 2: Library Scenarios */}
+                      <div>
+                        <div className={`px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--muted-foreground)] flex items-center justify-between ${customScenarios.length > 0 ? "border-t border-[var(--border)] pt-2 mt-1" : ""}`}>
+                          <span>Benchmark Scenario Library</span>
+                          <span className="px-1.5 py-0.5 rounded bg-[var(--surface)] text-[var(--muted-foreground)]">{SIMULATION_SCENARIOS.length}</span>
+                        </div>
+                        <div className="space-y-1">
+                          {SIMULATION_SCENARIOS.map((scen) => {
+                            const isSelected = scen.id === selectedScenarioId;
+                            return (
+                              <div
+                                key={scen.id}
+                                onClick={() => {
+                                  handleSelectScenario(scen.id);
+                                  setIsDropdownOpen(false);
+                                }}
+                                className={`p-2.5 rounded-xl cursor-pointer transition-all flex items-center justify-between gap-3 ${
+                                  isSelected
+                                    ? "bg-emerald-500/15 border border-emerald-500/40 text-[var(--foreground)]"
+                                    : "hover:bg-[var(--surface)] text-[var(--foreground)]/90 hover:text-[var(--foreground)] border border-transparent"
+                                }`}
+                              >
+                                <div className="flex items-center gap-2.5 min-w-0">
+                                  <span className="px-2 py-0.5 rounded-md bg-[var(--surface)] border border-[var(--border)] text-emerald-600 dark:text-emerald-400 font-mono font-bold text-[10px] shrink-0">
+                                    {scen.code}
+                                  </span>
+                                  <div className="min-w-0">
+                                    <div className="font-semibold text-xs truncate">
+                                      {scen.title}
+                                    </div>
+                                    <div className="text-[10px] text-[var(--muted-foreground)] line-clamp-1 mt-0.5">
+                                      {scen.shortDescription}
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div className="flex items-center gap-2 shrink-0">
+                                  <span className={`px-2 py-0.5 rounded text-[10px] font-mono ${getCategoryBadge(scen.category)}`}>
+                                    {scen.category}
+                                  </span>
+                                  {isSelected && <Check className="w-4 h-4 text-emerald-500 stroke-[3]" />}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Dropdown Footer: Quick Action to create new custom scenario */}
+                      <div className="pt-2 border-t border-[var(--border)] mt-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsDropdownOpen(false);
+                            setIsStudioOpen(true);
+                          }}
+                          className="w-full p-2.5 rounded-xl border border-dashed border-emerald-500/40 bg-emerald-500/5 hover:bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer"
+                        >
+                          <PlusCircle className="w-3.5 h-3.5" />
+                          <span>Create New Custom Scenario</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Scenario Quick Presets */}
