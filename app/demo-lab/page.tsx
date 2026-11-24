@@ -426,9 +426,9 @@ export default function DemoLabPage() {
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans transition-colors duration-200">
       <main className="w-full">
         {/* Top Panoramic Mountain Header Banner */}
-        <header className="relative w-full border-b border-[var(--border)] overflow-hidden bg-[var(--surface)]">
+        <header className="relative z-30 w-full border-b border-[var(--border)] bg-[var(--surface)]">
           {/* Panoramic Mountain Backdrop with Atmospheric Gradient */}
-          <div className="absolute inset-0 z-0 opacity-40 dark:opacity-25 select-none pointer-events-none">
+          <div className="absolute inset-0 z-0 overflow-hidden opacity-40 dark:opacity-25 select-none pointer-events-none">
             <Image
               src="/images/hero-himalayas-ganga.jpg"
               alt="Snow-capped Himalayan Panorama"
@@ -493,7 +493,7 @@ export default function DemoLabPage() {
                   <button
                     type="button"
                     onClick={() => {
-                      setIsLocationOpen(!isLocationOpen);
+                      setIsLocationOpen((prev) => !prev);
                       setIsDateOpen(false);
                     }}
                     className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs text-[var(--foreground)] transition-all cursor-pointer shadow-xs select-none ${
@@ -509,7 +509,7 @@ export default function DemoLabPage() {
 
                   {/* Location Popup Menu */}
                   {isLocationOpen && (
-                    <div className="absolute right-0 top-full mt-1.5 z-50 w-72 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl backdrop-blur-2xl p-1.5 space-y-1 animate-in fade-in slide-in-from-top-2 duration-150">
+                    <div className="absolute right-0 top-full mt-2 z-50 w-80 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl backdrop-blur-2xl p-2 space-y-1 animate-in fade-in slide-in-from-top-2 duration-150">
                       <div className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--muted-foreground)] flex items-center justify-between border-b border-[var(--border)] pb-2">
                         <span>Hydrometric Gauging Stations</span>
                         <span>{STUDY_STATIONS.length}</span>
@@ -557,7 +557,7 @@ export default function DemoLabPage() {
                   <button
                     type="button"
                     onClick={() => {
-                      setIsDateOpen(!isDateOpen);
+                      setIsDateOpen((prev) => !prev);
                       setIsLocationOpen(false);
                     }}
                     className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs text-[var(--foreground)] font-mono transition-all cursor-pointer shadow-xs select-none ${
@@ -573,7 +573,7 @@ export default function DemoLabPage() {
 
                   {/* Date Popup Menu */}
                   {isDateOpen && (
-                    <div className="absolute right-0 top-full mt-1.5 z-50 w-64 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl backdrop-blur-2xl p-2.5 space-y-2.5 animate-in fade-in slide-in-from-top-2 duration-150">
+                    <div className="absolute right-0 top-full mt-2 z-50 w-72 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl backdrop-blur-2xl p-2.5 space-y-2.5 animate-in fade-in slide-in-from-top-2 duration-150">
                       <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--muted-foreground)] border-b border-[var(--border)] pb-1.5">
                         Simulation Date Calibration
                       </div>
