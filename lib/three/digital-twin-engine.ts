@@ -15,7 +15,7 @@ export class DigitalTwinEngine {
   private waterGeo!: THREE.PlaneGeometry;
   private particles!: THREE.Points;
   private markers: { group: THREE.Group; ring: THREE.Mesh }[] = [];
-  
+
   private animId: number | null = null;
   private isSurge = false;
   private rotZ = -0.25;
@@ -25,7 +25,6 @@ export class DigitalTwinEngine {
   private clock = 0;
   private callbacks: DigitalTwinCallbacks;
 
-  // Cleanup listeners
   private cleanupFns: (() => void)[] = [];
 
   constructor(container: HTMLElement, callbacks: DigitalTwinCallbacks = {}) {
@@ -38,9 +37,9 @@ export class DigitalTwinEngine {
     const width = this.container.clientWidth || 600;
     const height = this.container.clientHeight || 340;
 
-    // Scene & Fog
+    // Scene & Burnt Sienna Fog (#110805)
     this.scene = new THREE.Scene();
-    this.scene.fog = new THREE.FogExp2(0x1e1e1c, 0.02);
+    this.scene.fog = new THREE.FogExp2(0x110805, 0.02);
 
     // Camera
     this.camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
@@ -55,19 +54,19 @@ export class DigitalTwinEngine {
     this.renderer.domElement.style.height = "100%";
     this.container.appendChild(this.renderer.domElement);
 
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0x33332e, 1.8);
+    // Burnt Sienna Lighting (#A0522D, #F5F5DC, #E35336)
+    const ambientLight = new THREE.AmbientLight(0xa0522d, 1.8);
     this.scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0xd8cbb3, 2.0);
+    const dirLight = new THREE.DirectionalLight(0xf5f5dc, 2.0);
     dirLight.position.set(20, -20, 30);
     this.scene.add(dirLight);
 
-    const pointLight = new THREE.PointLight(0x2f6bff, 2.8, 60);
+    const pointLight = new THREE.PointLight(0xe35336, 2.8, 60);
     pointLight.position.set(0, 0, 12);
     this.scene.add(pointLight);
 
-    // River Canyon Terrain
+    // River Canyon Terrain (#A0522D Deep Sienna Wireframe)
     const gridX = 44;
     const gridY = 28;
     const terrainGeo = new THREE.PlaneGeometry(54, 34, gridX, gridY);
@@ -82,20 +81,20 @@ export class DigitalTwinEngine {
     terrainGeo.computeVertexNormals();
 
     const terrainMat = new THREE.MeshStandardMaterial({
-      color: 0x6b6355,
+      color: 0xa0522d,
       wireframe: true,
-      emissive: 0x292925,
+      emissive: 0x24120c,
       roughness: 0.85,
     });
     this.terrain = new THREE.Mesh(terrainGeo, terrainMat);
     this.terrain.rotation.z = this.rotZ;
     this.scene.add(this.terrain);
 
-    // Flowing Water Mesh
+    // Flowing Water Mesh (#F4A460 Sandy Brown nominal, #E35336 Burnt Sienna surge)
     this.waterGeo = new THREE.PlaneGeometry(54, 13, 44, 16);
     const waterMat = new THREE.MeshStandardMaterial({
-      color: 0x2f6bff,
-      emissive: 0x1d4ed8,
+      color: 0xf4a460,
+      emissive: 0xe35336,
       emissiveIntensity: 0.55,
       transparent: true,
       opacity: 0.88,
@@ -125,30 +124,27 @@ export class DigitalTwinEngine {
 
   private createMarkers() {
     const stations = [
-      { x: -15, y: -0.4, color: 0xd8cbb3, label: "Upstream Gauge (Son)" },
-      { x: 2, y: 0.6, color: 0x2f6bff, label: "Patna Sector Confluence" },
-      { x: 17, y: -0.8, color: 0xf59e0b, label: "Downstream Station (Gandak)" },
+      { x: -15, y: -0.4, color: 0xf5f5dc, label: "Upstream Gauge (Son)" },
+      { x: 2, y: 0.6, color: 0xe35336, label: "Patna Sector Confluence" },
+      { x: 17, y: -0.8, color: 0xf4a460, label: "Downstream Station (Gandak)" },
     ];
 
     stations.forEach((st) => {
       const group = new THREE.Group();
       group.position.set(st.x, st.y, -1.5);
 
-      // Pole
       const poleGeo = new THREE.CylinderGeometry(0.12, 0.12, 3.2, 8);
       const poleMat = new THREE.MeshBasicMaterial({ color: st.color });
       const pole = new THREE.Mesh(poleGeo, poleMat);
       pole.rotation.x = Math.PI / 2;
       group.add(pole);
 
-      // Spherical Beacon
       const beaconGeo = new THREE.SphereGeometry(0.65, 16, 16);
-      const beaconMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      const beaconMat = new THREE.MeshBasicMaterial({ color: 0xf5f5dc });
       const beacon = new THREE.Mesh(beaconGeo, beaconMat);
       beacon.position.z = 1.8;
       group.add(beacon);
 
-      // Pulsing Radar Ring
       const ringGeo = new THREE.RingGeometry(0.8, 1.3, 24);
       const ringMat = new THREE.MeshBasicMaterial({
         color: st.color,
@@ -176,10 +172,10 @@ export class DigitalTwinEngine {
     }
     pGeo.setAttribute("position", new THREE.BufferAttribute(pPos, 3));
     const pMat = new THREE.PointsMaterial({
-      color: 0xd8cbb3,
+      color: 0xf4a460,
       size: 0.32,
       transparent: true,
-      opacity: 0.5,
+      opacity: 0.55,
     });
     this.particles = new THREE.Points(pGeo, pMat);
     this.scene.add(this.particles);
@@ -222,7 +218,6 @@ export class DigitalTwinEngine {
     const onTouchMove = (e: TouchEvent) => {
       if (this.isDragging && e.touches.length === 1) {
         const deltaX = e.touches[0].clientX - this.prevMouse.x;
-        const deltaY = e.touches[0].clientY - this.prevMouse.y;
         this.rotZ += deltaX * 0.008;
         if (this.terrain) this.terrain.rotation.z = this.rotZ;
         if (this.water) this.water.rotation.z = this.rotZ;
@@ -291,7 +286,6 @@ export class DigitalTwinEngine {
     this.animId = requestAnimationFrame(this.animate);
     this.clock += 0.024;
 
-    // Dynamic wave calculations
     if (this.waterGeo) {
       const wPos = this.waterGeo.attributes.position;
       for (let i = 0; i < wPos.count; i++) {
@@ -303,7 +297,6 @@ export class DigitalTwinEngine {
       wPos.needsUpdate = true;
     }
 
-    // Telemetry radar ring animations
     this.markers.forEach((m) => {
       const s = 1 + (Math.sin(this.clock * 3) + 1) * 0.55;
       m.ring.scale.set(s, s, 1);
@@ -311,21 +304,19 @@ export class DigitalTwinEngine {
       mat.opacity = Math.max(0.1, 1 - (s - 1) * 0.7);
     });
 
-    // Surge water level rise & color switch
     if (this.water) {
       const targetZ = this.isSurge ? -0.8 : -2.6;
       this.water.position.z += (targetZ - this.water.position.z) * 0.08;
       const wMat = this.water.material as THREE.MeshStandardMaterial;
       if (this.isSurge) {
-        wMat.color.setHex(0xf59e0b);
-        wMat.emissive.setHex(0xd97706);
+        wMat.color.setHex(0xe35336);
+        wMat.emissive.setHex(0xa0522d);
       } else {
-        wMat.color.setHex(0x2f6bff);
-        wMat.emissive.setHex(0x1d4ed8);
+        wMat.color.setHex(0xf4a460);
+        wMat.emissive.setHex(0xe35336);
       }
     }
 
-    // Passive ambient slow orbit when not user-dragging
     if (!this.isDragging) {
       this.rotZ += 0.0018;
       if (this.terrain) this.terrain.rotation.z = this.rotZ;
@@ -349,4 +340,3 @@ export class DigitalTwinEngine {
     }
   }
 }
-

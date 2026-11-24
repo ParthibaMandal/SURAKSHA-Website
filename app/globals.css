@@ -6,45 +6,45 @@
 
 @layer base {
   :root {
-    /* Brand Tinted Light Theme */
-    --background: #F8FAF9;
-    --foreground: #0C0F0D;
+    /* Burnt Sienna Warm Beige Light Theme (#F5F5DC, #E35336, #F4A460, #A0522D) */
+    --background: #F5F5DC;
+    --foreground: #1A0D09;
 
-    --surface: #FFFFFF;
-    --surface-elevated: #F0F4F2;
-    --surface-glass: rgba(255, 255, 255, 0.95);
+    --surface: #FAF8E8;
+    --surface-elevated: #EFEBD2;
+    --surface-glass: rgba(245, 245, 220, 0.92);
 
-    --border: #D8DFDB;
-    --border-hover: rgba(16, 185, 129, 0.45);
-    --border-focus: rgba(16, 185, 129, 0.65);
+    --border: rgba(160, 82, 45, 0.28);
+    --border-hover: rgba(227, 83, 54, 0.55);
+    --border-focus: #E35336;
 
-    --muted: #EEF2F0;
-    --muted-foreground: #526059;
+    --muted: #EFEBD2;
+    --muted-foreground: #6E391F;
 
-    --card: #FFFFFF;
-    --card-foreground: #0C0F0D;
-    --popover: #FFFFFF;
-    --popover-foreground: #0C0F0D;
+    --card: #FAF8E8;
+    --card-foreground: #1A0D09;
+    --popover: #FAF8E8;
+    --popover-foreground: #1A0D09;
 
-    --primary: #059669;
-    --primary-foreground: #FFFFFF;
-    --secondary: #E8EFEA;
-    --secondary-foreground: #0C0F0D;
+    --primary: #E35336;
+    --primary-foreground: #F5F5DC;
+    --secondary: #F4A460;
+    --secondary-foreground: #1A0D09;
 
-    --accent: rgba(5, 150, 105, 0.12);
-    --accent-foreground: #059669;
+    --accent: rgba(227, 83, 54, 0.14);
+    --accent-foreground: #A0522D;
 
-    --status-live: #059669;
-    --status-watch: #D97706;
-    --status-danger: #DC2626;
-    --destructive: #DC2626;
-    --destructive-foreground: #FFFFFF;
-    --warning: #D97706;
+    --status-live: #E35336;
+    --status-watch: #F4A460;
+    --status-danger: #E35336;
+    --destructive: #E35336;
+    --destructive-foreground: #F5F5DC;
+    --warning: #F4A460;
 
-    --ring: rgba(5, 150, 105, 0.35);
-    --radius-pill: 0.375rem;
-    --radius-card: 0.5rem;
-    --radius: 0.375rem;
+    --ring: rgba(227, 83, 54, 0.45);
+    --radius-pill: 9999px;
+    --radius-card: 0.75rem;
+    --radius: 0.5rem;
 
     --font-heading: 'IBM Plex Sans', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-sans: 'Inter', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -52,42 +52,42 @@
   }
 
   .dark {
-    /* High-End Obsidian Dark Theme */
-    --background: #000000;
-    --foreground: #FFFFFF;
+    /* Burnt Sienna Deep Espresso Dark Theme (#E35336, #F5F5DC, #F4A460, #A0522D) */
+    --background: #110805;
+    --foreground: #F5F5DC;
 
-    --surface: #09090B;
-    --surface-elevated: #121214;
-    --surface-glass: rgba(9, 9, 11, 0.95);
+    --surface: #1A0D09;
+    --surface-elevated: #24120C;
+    --surface-glass: rgba(26, 13, 9, 0.88);
 
-    --border: rgba(255, 255, 255, 0.10);
-    --border-hover: rgba(16, 185, 129, 0.35);
-    --border-focus: rgba(16, 185, 129, 0.55);
+    --border: rgba(160, 82, 45, 0.38);
+    --border-hover: rgba(244, 164, 96, 0.55);
+    --border-focus: #E35336;
 
-    --muted: #121214;
-    --muted-foreground: #A1A1AA;
+    --muted: #24120C;
+    --muted-foreground: #D9C3B0;
 
-    --card: #09090B;
-    --card-foreground: #FFFFFF;
-    --popover: #09090B;
-    --popover-foreground: #FFFFFF;
+    --card: #1A0D09;
+    --card-foreground: #F5F5DC;
+    --popover: #1A0D09;
+    --popover-foreground: #F5F5DC;
 
-    --primary: #10B981;
-    --primary-foreground: #000000;
-    --secondary: #121214;
-    --secondary-foreground: #FFFFFF;
+    --primary: #E35336;
+    --primary-foreground: #F5F5DC;
+    --secondary: #A0522D;
+    --secondary-foreground: #F5F5DC;
 
-    --accent: rgba(16, 185, 129, 0.12);
-    --accent-foreground: #FFFFFF;
+    --accent: rgba(244, 164, 96, 0.16);
+    --accent-foreground: #F4A460;
 
-    --status-live: #10B981;
-    --status-watch: #F59E0B;
-    --status-danger: #EF4444;
-    --destructive: #EF4444;
-    --destructive-foreground: #FFFFFF;
-    --warning: #F59E0B;
+    --status-live: #F4A460;
+    --status-watch: #F4A460;
+    --status-danger: #E35336;
+    --destructive: #E35336;
+    --destructive-foreground: #F5F5DC;
+    --warning: #F4A460;
 
-    --ring: rgba(16, 185, 129, 0.35);
+    --ring: rgba(227, 83, 54, 0.45);
   }
 }
 
@@ -100,155 +100,6 @@ body {
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-html.dark {
-  color-scheme: dark;
-}
-
-html.light {
-  color-scheme: light;
-}
-
-/* Theme bridge for existing Tailwind surfaces while the app migrates to tokens. */
-html.light body {
-  background-color: var(--background);
-  color: var(--foreground);
-}
-
-html.light main {
-  color: var(--foreground);
-}
-
-html.light main :is(.bg-black, [class~="bg-black/95"], [class~="bg-black/90"], [class~="bg-black/85"], [class~="bg-black/80"], [class~="bg-black/60"], [class~="bg-black/50"], [class*="bg-[#000000]"], [class*="bg-[#080B09]"], [class*="bg-[#0A0A0A]"], [class*="bg-[#0D100E]"], [class*="bg-[#141414]"], [class*="bg-[#141816]"]) {
-  background-color: var(--surface) !important;
-}
-
-html.light main :is([class*="bg-[#050708]"], [class*="bg-[#0b1012]"], [class*="bg-[#0B1012]"], [class*="bg-[#FFFFFF]/"], [class~="bg-white/5"], [class~="bg-white/10"], [class~="bg-white/15"], [class~="bg-white/20"]) {
-  background-color: var(--muted) !important;
-}
-
-html.light main :is(.hydrograph-chart, .command-chart) [fill="#FFFFFF"] {
-  fill: var(--foreground);
-}
-
-html.light main :is(.hydrograph-chart, .command-chart) [stroke="#FFFFFF"],
-html.light main :is(.hydrograph-chart, .command-chart) [stroke="#E4E4E7"] {
-  stroke: var(--foreground);
-}
-
-html.light main :is(.text-white, [class*="text-[#FFFFFF]"], [class*="text-zinc-200"], [class*="text-zinc-300"], [class*="text-zinc-400"], [class*="text-[#A1A1AA]"], [class*="text-[#A69B88]"], [class*="text-[#9BA5A0]"]) {
-  color: var(--foreground) !important;
-}
-
-/* The cinematic landing hero intentionally stays dark in both themes. */
-html.light main .himalayas-hero {
-  background-color: #000 !important;
-  color: #fff !important;
-}
-
-html.light main .himalayas-hero :is(.text-white, [class*="text-zinc-200"], [class*="text-zinc-300"], [class*="text-zinc-400"], [class*="text-[#FFFFFF]"], [class*="text-[#A1A1AA]"], [class*="text-[#A69B88]"], [class*="text-[#9BA5A0]"]) {
-  color: #fff !important;
-}
-
-html.light main .himalayas-hero :is([class*="text-zinc-300"], [class*="text-zinc-400"], [class*="text-[#A1A1AA]"], [class*="text-[#A69B88]"], [class*="text-[#9BA5A0]"]) {
-  color: #d1d5db !important;
-}
-
-html.light main :is([class*="border-white/"], [class*="border-[#1F2823]"], [class*="border-[#A1A1AA]"]) {
-  border-color: var(--border) !important;
-}
-
-html.light .workspace-shell {
-  background-color: var(--background);
-  color: var(--foreground);
-}
-
-html.light footer {
-  background-color: var(--surface) !important;
-  border-color: var(--border) !important;
-  color: var(--muted-foreground) !important;
-}
-
-html.light header {
-  color: var(--foreground);
-  border-color: var(--border);
-}
-
-html.light header .nav-glass-dock,
-html.light header .nav-glass-pill {
-  color: var(--foreground);
-  background: var(--surface-elevated);
-  border-color: var(--border);
-  box-shadow: none;
-}
-
-html.light header [class~="text-white"],
-html.light header [class*="text-white"] {
-  color: var(--foreground) !important;
-}
-
-html.light header[data-home-hero="true"] .brand-logo,
-html.light header[data-home-hero="true"] .brand-logo [class*="text-white"] {
-  color: #fff !important;
-}
-
-html.light header .icon-glass {
-  background: var(--accent);
-  border-color: var(--border);
-  box-shadow: none;
-}
-
-html.light header .icon-glass svg {
-  color: var(--primary);
-}
-
-html.light footer :is(.text-white, [class*="text-white"], [class*="text-[#9BA5A0]"]) {
-  color: var(--foreground) !important;
-}
-
-html.light footer :is([class*="bg-[#141816]"], [class*="border-[#1F2823]"]) {
-  background-color: var(--muted) !important;
-  border-color: var(--border) !important;
-}
-
-html.light .btn-glass-primary,
-html.light .btn.primary {
-  color: var(--foreground);
-  border-color: var(--border);
-  background: var(--primary);
-  animation: none;
-}
-
-html.light .btn-glass-secondary,
-html.light .btn.secondary {
-  color: var(--foreground);
-  border-color: var(--border);
-  background: var(--surface-elevated);
-  box-shadow: none;
-}
-
-html.light ::-webkit-scrollbar-track {
-  background: var(--background);
-}
-
-html.light ::-webkit-scrollbar-thumb {
-  background: rgba(12, 15, 13, 0.24);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html:focus-within {
-    scroll-behavior: auto;
-  }
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
-  }
 }
 
 h1,
@@ -267,23 +118,23 @@ pre,
   font-family: var(--font-mono);
 }
 
-/* Minimalist Antigravity Scrollbars */
+/* Burnt Sienna Scrollbars */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #000000;
+  background: #110805;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(160, 82, 45, 0.55);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.35);
+  background: #E35336;
 }
 
-/* Minimalist Eyebrow Labels */
+/* Burnt Sienna Eyebrow Labels */
 .eyebrow {
   display: inline-flex;
   align-items: center;
@@ -292,32 +143,33 @@ pre,
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #6A7771;
+  color: #F4A460;
   font-weight: 600;
   margin-bottom: 6px;
 }
 .eyebrow::before {
   content: "";
   display: inline-block;
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   border-radius: 2px;
-  background: #10B981;
+  background: #E35336;
+  box-shadow: 0 0 8px rgba(227, 83, 54, 0.65);
 }
 
-/* Minimalist Tag Utilities (Solid, crisp 4px radius) */
+/* Burnt Sienna Tag Utilities */
 .pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 3px 10px;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.02em;
-  border: 1px solid #1F2823;
-  background: #141816;
-  color: #9BA5A0;
+  border: 1px solid rgba(160, 82, 45, 0.45);
+  background: rgba(160, 82, 45, 0.16);
+  color: #F5F5DC;
 }
 
 .pill .dot {
@@ -326,42 +178,53 @@ pre,
   border-radius: 2px;
 }
 .pill .dot.green {
-  background: #10B981;
+  background: #F4A460;
 }
 .pill .dot.amber {
-  background: #F59E0B;
+  background: #F4A460;
 }
 .pill .dot.red {
-  background: #EF4444;
+  background: #E35336;
 }
 .pill .dot.neutral {
-  background: #6A7771;
+  background: #A0522D;
 }
 
-/* Sleek Dark Card (Solid, 8px radius, no blur) */
+/* Burnt Sienna Card Surface */
 .glass-panel {
-  background: #09090B;
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  border-radius: 0.5rem;
+  background: #1A0D09;
+  border: 1px solid rgba(160, 82, 45, 0.35);
+  border-radius: 0.75rem;
+}
+
+.notice {
+  padding: 0.875rem 1.125rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(244, 164, 96, 0.35);
+  background: rgba(160, 82, 45, 0.14);
+  color: #F5F5DC;
+  font-size: 0.75rem;
+  line-height: 1.6;
 }
 
 /* =========================================================================
-   ANIMATED GLASSMORPHISM BUTTON SYSTEM
+   ANIMATED BURNT SIENNA GLASSMORPHISM BUTTON SYSTEM
+   (#E35336, #F5F5DC, #F4A460, #A0522D)
    ========================================================================= */
 @keyframes glassPulseGlow {
   0%, 100% {
     box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.35),
-      inset 0 -1px 0 0 rgba(255, 255, 255, 0.08),
-      0 8px 28px -4px rgba(0, 0, 0, 0.55),
-      0 0 18px 0 rgba(255, 255, 255, 0.06);
+      inset 0 1px 0 0 rgba(245, 245, 220, 0.42),
+      inset 0 -1px 0 0 rgba(160, 82, 45, 0.25),
+      0 8px 28px -4px rgba(17, 8, 5, 0.65),
+      0 0 18px 0 rgba(227, 83, 54, 0.22);
   }
   50% {
     box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.5),
-      inset 0 -1px 0 0 rgba(255, 255, 255, 0.14),
-      0 12px 34px -4px rgba(0, 0, 0, 0.65),
-      0 0 26px 2px rgba(255, 255, 255, 0.14);
+      inset 0 1px 0 0 rgba(245, 245, 220, 0.62),
+      inset 0 -1px 0 0 rgba(244, 164, 96, 0.3),
+      0 12px 34px -4px rgba(17, 8, 5, 0.75),
+      0 0 28px 3px rgba(227, 83, 54, 0.38);
   }
 }
 
@@ -376,9 +239,8 @@ pre,
   justify-content: center;
   gap: 0.5rem;
   border-radius: 9999px;
-  white-space: nowrap;
-  backdrop-filter: blur(18px) saturate(160%);
-  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(165%);
+  -webkit-backdrop-filter: blur(18px) saturate(165%);
   transition:
     transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
     background 0.32s cubic-bezier(0.22, 1, 0.36, 1),
@@ -387,7 +249,7 @@ pre,
   will-change: transform, box-shadow;
 }
 
-/* Specular Shimmer Sweep Overlay */
+/* Warm Beige (#F5F5DC) & Sandy Brown (#F4A460) Specular Shimmer Sweep */
 .btn-glass::after,
 .btn-glass-primary::after,
 .btn-glass-secondary::after,
@@ -400,9 +262,9 @@ pre,
   height: 200%;
   background: linear-gradient(
     90deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.26) 50%,
-    rgba(255, 255, 255, 0) 100%
+    rgba(245, 245, 220, 0) 0%,
+    rgba(245, 245, 220, 0.34) 50%,
+    rgba(244, 164, 96, 0) 100%
   );
   transform: translateX(-180%) rotate(22deg);
   transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
@@ -430,17 +292,17 @@ pre,
   transform: translateY(0) scale(0.98);
 }
 
-/* Primary Luminous Frosted Glass Button */
+/* Primary Burnt Sienna (#E35336) & Sandy Brown (#F4A460) Luminous Glass Button */
 .btn-glass-primary,
 .btn.primary {
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.22) 0%,
-    rgba(255, 255, 255, 0.10) 50%,
-    rgba(255, 255, 255, 0.16) 100%
+    rgba(227, 83, 54, 0.62) 0%,
+    rgba(160, 82, 45, 0.48) 55%,
+    rgba(244, 164, 96, 0.42) 100%
   );
-  color: #FFFFFF;
-  border: 1px solid rgba(255, 255, 255, 0.32);
+  color: #F5F5DC;
+  border: 1px solid rgba(244, 164, 96, 0.55);
   animation: glassPulseGlow 4s ease-in-out infinite;
 }
 
@@ -448,58 +310,44 @@ pre,
 .btn.primary:hover {
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.32) 0%,
-    rgba(255, 255, 255, 0.16) 50%,
-    rgba(255, 255, 255, 0.24) 100%
+    rgba(227, 83, 54, 0.82) 0%,
+    rgba(160, 82, 45, 0.62) 55%,
+    rgba(244, 164, 96, 0.58) 100%
   );
-  border-color: rgba(255, 255, 255, 0.55);
+  border-color: #F5F5DC;
   box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.6),
-    0 14px 36px -6px rgba(0, 0, 0, 0.7),
-    0 0 28px 2px rgba(255, 255, 255, 0.22);
+    inset 0 1px 0 0 rgba(245, 245, 220, 0.75),
+    0 14px 36px -6px rgba(17, 8, 5, 0.8),
+    0 0 30px 3px rgba(227, 83, 54, 0.45);
 }
 
-/* Secondary Smoked Obsidian Glass Button */
+/* Secondary Deep Sienna (#A0522D) Smoked Glass Button */
 .btn-glass-secondary,
 .btn.secondary {
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.11) 0%,
-    rgba(255, 255, 255, 0.04) 100%
+    rgba(160, 82, 45, 0.28) 0%,
+    rgba(26, 13, 9, 0.65) 100%
   );
-  color: #FFFFFF;
-  border: 1px solid rgba(255, 255, 255, 0.20);
+  color: #F5F5DC;
+  border: 1px solid rgba(160, 82, 45, 0.55);
   box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.22),
-    0 8px 24px -4px rgba(0, 0, 0, 0.5);
+    inset 0 1px 0 0 rgba(244, 164, 96, 0.28),
+    0 8px 24px -4px rgba(17, 8, 5, 0.6);
 }
 
 .btn-glass-secondary:hover,
 .btn.secondary:hover {
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.20) 0%,
-    rgba(255, 255, 255, 0.09) 100%
+    rgba(227, 83, 54, 0.35) 0%,
+    rgba(160, 82, 45, 0.42) 100%
   );
-  border-color: rgba(255, 255, 255, 0.42);
+  border-color: #F4A460;
   box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.4),
-    0 12px 32px -4px rgba(0, 0, 0, 0.65),
-    0 0 20px 0 rgba(255, 255, 255, 0.14);
-}
-
-.himalayas-hero .hero-cta-transparent,
-.himalayas-hero .hero-cta-transparent:hover {
-  background: transparent !important;
-  border: 1px solid rgba(255, 255, 255, 0.72);
-  box-shadow: none;
-  animation: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-.himalayas-hero .hero-cta-transparent::after {
-  display: none;
+    inset 0 1px 0 0 rgba(245, 245, 220, 0.5),
+    0 12px 32px -4px rgba(17, 8, 5, 0.75),
+    0 0 22px 0 rgba(244, 164, 96, 0.25);
 }
 
 .btn.small {
@@ -508,24 +356,24 @@ pre,
 }
 
 /* =========================================================================
-   ANIMATED GLASSMORPHISM ICONS & NAVBAR PILL SYSTEM
+   ANIMATED BURNT SIENNA GLASSMORPHISM ICONS & NAVBAR PILL SYSTEM
    ========================================================================= */
 @keyframes iconGlassFloat {
   0%, 100% {
     transform: translateY(0);
     box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.35),
-      inset 0 -1px 0 0 rgba(255, 255, 255, 0.08),
-      0 6px 20px -4px rgba(0, 0, 0, 0.55),
-      0 0 14px 0 rgba(255, 255, 255, 0.05);
+      inset 0 1px 0 0 rgba(245, 245, 220, 0.38),
+      inset 0 -1px 0 0 rgba(160, 82, 45, 0.18),
+      0 6px 20px -4px rgba(17, 8, 5, 0.65),
+      0 0 14px 0 rgba(227, 83, 54, 0.16);
   }
   50% {
     transform: translateY(-2px);
     box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.52),
-      inset 0 -1px 0 0 rgba(255, 255, 255, 0.14),
-      0 10px 26px -4px rgba(0, 0, 0, 0.65),
-      0 0 20px 1px rgba(255, 255, 255, 0.14);
+      inset 0 1px 0 0 rgba(245, 245, 220, 0.58),
+      inset 0 -1px 0 0 rgba(244, 164, 96, 0.28),
+      0 10px 26px -4px rgba(17, 8, 5, 0.75),
+      0 0 22px 2px rgba(227, 83, 54, 0.32);
   }
 }
 
@@ -537,22 +385,23 @@ pre,
   justify-content: center;
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.20) 0%,
-    rgba(255, 255, 255, 0.06) 55%,
-    rgba(255, 255, 255, 0.14) 100%
+    rgba(227, 83, 54, 0.38) 0%,
+    rgba(160, 82, 45, 0.22) 55%,
+    rgba(244, 164, 96, 0.28) 100%
   );
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(244, 164, 96, 0.45);
+  backdrop-filter: blur(16px) saturate(165%);
+  -webkit-backdrop-filter: blur(16px) saturate(165%);
   box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.38),
-    inset 0 -1px 0 0 rgba(255, 255, 255, 0.08),
-    0 6px 20px -4px rgba(0, 0, 0, 0.55);
+    inset 0 1px 0 0 rgba(245, 245, 220, 0.42),
+    inset 0 -1px 0 0 rgba(160, 82, 45, 0.18),
+    0 6px 20px -4px rgba(17, 8, 5, 0.65);
   transition:
-    transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
-    background 0.2s cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 0.2s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+    transform 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+  animation: iconGlassFloat 4.2s ease-in-out infinite;
 }
 
 .icon-glass::after {
@@ -564,9 +413,9 @@ pre,
   height: 200%;
   background: linear-gradient(
     90deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.32) 50%,
-    rgba(255, 255, 255, 0) 100%
+    rgba(245, 245, 220, 0) 0%,
+    rgba(245, 245, 220, 0.38) 50%,
+    rgba(244, 164, 96, 0) 100%
   );
   transform: translateX(-180%) rotate(22deg);
   transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
@@ -583,30 +432,30 @@ pre,
   transform: translateY(-3px) scale(1.08);
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.30) 0%,
-    rgba(255, 255, 255, 0.12) 55%,
-    rgba(255, 255, 255, 0.22) 100%
+    rgba(227, 83, 54, 0.62) 0%,
+    rgba(160, 82, 45, 0.38) 55%,
+    rgba(244, 164, 96, 0.46) 100%
   );
-  border-color: rgba(255, 255, 255, 0.52);
+  border-color: #F5F5DC;
   box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.65),
-    0 10px 28px -4px rgba(0, 0, 0, 0.7),
-    0 0 22px 2px rgba(255, 255, 255, 0.22);
+    inset 0 1px 0 0 rgba(245, 245, 220, 0.72),
+    0 10px 28px -4px rgba(17, 8, 5, 0.8),
+    0 0 24px 3px rgba(227, 83, 54, 0.38);
 }
 
-/* Navbar Frosted Glass Dock & Nav Item Pills */
+/* Navbar Burnt Sienna Frosted Glass Dock & Nav Item Pills */
 .nav-glass-dock {
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.08) 0%,
-    rgba(255, 255, 255, 0.03) 100%
+    rgba(160, 82, 45, 0.24) 0%,
+    rgba(26, 13, 9, 0.62) 100%
   );
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  backdrop-filter: blur(18px) saturate(160%);
-  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(244, 164, 96, 0.32);
+  backdrop-filter: blur(18px) saturate(165%);
+  -webkit-backdrop-filter: blur(18px) saturate(165%);
   box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.22),
-    0 10px 30px -6px rgba(0, 0, 0, 0.55);
+    inset 0 1px 0 0 rgba(245, 245, 220, 0.25),
+    0 10px 30px -6px rgba(17, 8, 5, 0.65);
 }
 
 .nav-glass-pill {
@@ -617,15 +466,15 @@ pre,
   gap: 0.5rem;
   padding: 0.4rem 0.9rem;
   border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(160, 82, 45, 0.38);
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.10) 0%,
-    rgba(255, 255, 255, 0.03) 100%
+    rgba(160, 82, 45, 0.22) 0%,
+    rgba(26, 13, 9, 0.45) 100%
   );
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.20);
+  box-shadow: inset 0 1px 0 0 rgba(245, 245, 220, 0.22);
   transition:
     transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
     background 0.3s cubic-bezier(0.22, 1, 0.36, 1),
@@ -642,9 +491,9 @@ pre,
   height: 200%;
   background: linear-gradient(
     90deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.28) 50%,
-    rgba(255, 255, 255, 0) 100%
+    rgba(245, 245, 220, 0) 0%,
+    rgba(245, 245, 220, 0.32) 50%,
+    rgba(244, 164, 96, 0) 100%
   );
   transform: translateX(-180%) rotate(22deg);
   transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
@@ -660,50 +509,14 @@ pre,
   transform: translateY(-1.5px) scale(1.03);
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.22) 0%,
-    rgba(255, 255, 255, 0.09) 100%
+    rgba(227, 83, 54, 0.45) 0%,
+    rgba(160, 82, 45, 0.35) 100%
   );
-  border-color: rgba(255, 255, 255, 0.38);
+  border-color: #F4A460;
   box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.45),
-    0 8px 22px -4px rgba(0, 0, 0, 0.55),
-    0 0 16px 0 rgba(255, 255, 255, 0.14);
-}
-
-/* =========================================================================
-   MODERN WEB GUIDANCE: VISUAL EFFECTS, CONTRAST & ACCESSIBILITY
-   ========================================================================= */
-
-/* Tactile atmospheric dot-matrix pattern */
-.bg-grid-dot {
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.06) 1px, transparent 0);
-  background-size: 24px 24px;
-}
-
-/* Layered soft depth for high-end cards */
-.depth-card {
-  box-shadow:
-    0 1px 2px 0 rgba(0, 0, 0, 0.4),
-    0 12px 28px -4px rgba(0, 0, 0, 0.65),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
-}
-
-/* Range sliders brand accent-color */
-input[type="range"] {
-  accent-color: #10B981;
-}
-
-/* Forced Colors Mode Support */
-@media (forced-colors: active) {
-  .btn-glass,
-  .btn-glass-primary,
-  .btn-glass-secondary,
-  .nav-glass-dock,
-  .nav-glass-pill,
-  .glass-panel {
-    border: 1px solid ButtonText !important;
-    forced-color-adjust: auto;
-  }
+    inset 0 1px 0 0 rgba(245, 245, 220, 0.55),
+    0 8px 22px -4px rgba(17, 8, 5, 0.65),
+    0 0 18px 0 rgba(227, 83, 54, 0.28);
 }
 
 /* =========================================================================
@@ -729,12 +542,12 @@ input[type="range"] {
 
 @keyframes riverSwellPulse {
   0%, 100% {
-    opacity: 0.22;
-    filter: drop-shadow(0 0 10px rgba(14, 165, 233, 0.35));
+    opacity: 0.26;
+    filter: drop-shadow(0 0 12px rgba(227, 83, 54, 0.4));
   }
   50% {
-    opacity: 0.38;
-    filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.65));
+    opacity: 0.44;
+    filter: drop-shadow(0 0 22px rgba(244, 164, 96, 0.7));
   }
 }
 

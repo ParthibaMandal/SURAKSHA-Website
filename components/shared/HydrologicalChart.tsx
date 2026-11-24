@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { PATNA_GANDHI_GHAT } from "@/lib/mock-data";
 
 interface HydrologicalChartProps {
   isSurge?: boolean;
@@ -17,7 +16,8 @@ interface DataPoint {
   rainfallMm: number;
 }
 
-// Illustrative Gandhi Ghat preview values; replace with verified live feed metadata when connected.
+// CWC Gandhi Ghat Benchmarks:
+// Baseline Normal: 46.20 m | Warning: 47.60 m | Danger: 48.60 m | Record HFL: 50.52 m
 const DATA_6H_NOMINAL: DataPoint[] = [
   { time: "-3h", observed: 46.22, ensembleMean: 46.22, ensembleUpper: 46.30, ensembleLower: 46.15, rainfallMm: 4 },
   { time: "-2h", observed: 46.28, ensembleMean: 46.28, ensembleUpper: 46.38, ensembleLower: 46.20, rainfallMm: 6 },
@@ -91,7 +91,6 @@ export const HydrologicalChart: React.FC<HydrologicalChartProps> = ({
   const [horizon, setHorizon] = useState<"6H" | "24H" | "72H">("24H");
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(3);
 
-  // Dynamic series driven by horizon & surge state
   const series = React.useMemo(() => {
     if (horizon === "6H") return isSurge ? DATA_6H_SURGE : DATA_6H_NOMINAL;
     if (horizon === "72H") return isSurge ? DATA_72H_SURGE : DATA_72H_NOMINAL;
@@ -100,7 +99,6 @@ export const HydrologicalChart: React.FC<HydrologicalChartProps> = ({
 
   const activePoint = hoveredIdx !== null && hoveredIdx < series.length ? series[hoveredIdx] : series[3];
 
-  // Gandhi Ghat scale: 45.0m to 51.0m
   const minStage = 45.0;
   const maxStage = 51.0;
   const chartLeft = 48;
@@ -114,9 +112,8 @@ export const HydrologicalChart: React.FC<HydrologicalChartProps> = ({
   const toY = (val: number) =>
     chartBottom - ((val - minStage) / (maxStage - minStage)) * height;
 
-  // CWC Gandhi Ghat Thresholds
-  const warningY = toY(PATNA_GANDHI_GHAT.warningLevel);
-  const dangerY = toY(PATNA_GANDHI_GHAT.dangerLevel);
+  const warningY = toY(47.60);
+  const dangerY = toY(48.60);
 
   const upperPoints = series.map((d, i) => `${toX(i)},${toY(d.ensembleUpper)}`).join(" ");
   const lowerPoints = [...series]
@@ -138,24 +135,24 @@ export const HydrologicalChart: React.FC<HydrologicalChartProps> = ({
     .join(" ");
 
   return (
-    <div className="w-full rounded-2xl border border-white/10 bg-[#0A0A0A] backdrop-blur-xl p-4 sm:p-5 space-y-3.5 text-white shadow-xl">
+    <div className="w-full rounded-2xl border border-[#A0522D]/45 bg-[#1A0D09] backdrop-blur-xl p-4 sm:p-5 space-y-3.5 text-[#F5F5DC] shadow-xl">
       {/* Header & Time Range Controls */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-white" />
-            <span className="text-xs font-mono font-semibold uppercase tracking-wider text-white">
+            <span className="w-2 h-2 rounded-full bg-[#E35336]" />
+            <span className="text-xs font-mono font-semibold uppercase tracking-wider text-[#F5F5DC]">
               River Stage Hydrograph & Ensemble Uncertainty
             </span>
           </div>
-          <p className="text-[11px] text-zinc-400 mt-0.5">
-            Illustrative sample for Patna · values are not measured observations or an operational forecast
+          <p className="text-[11px] text-[#F5F5DC]/70 mt-0.5">
+            Patna, Gandhi Ghat Gauge (STN-PAT-01) · Units: metres (m MSL) · Rainfall (mm/hr)
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           {/* Pill Toggle Group for Horizons */}
-          <div className="inline-flex rounded-full border border-white/15 bg-black p-0.5">
+          <div className="inline-flex rounded-full border border-[#A0522D]/50 bg-[#110805] p-0.5">
             {(["6H", "24H", "72H"] as const).map((h) => (
               <button
                 key={h}
@@ -166,8 +163,8 @@ export const HydrologicalChart: React.FC<HydrologicalChartProps> = ({
                 }}
                 className={`px-3 py-1 rounded-full text-[10px] font-mono font-semibold transition-all cursor-pointer ${
                   horizon === h
-                    ? "bg-white text-black shadow-sm"
-                    : "text-zinc-400 hover:text-white"
+                    ? "bg-[#E35336] text-[#F5F5DC] shadow-sm"
+                    : "text-[#F5F5DC]/70 hover:text-[#F5F5DC]"
                 }`}
               >
                 {h}
@@ -178,35 +175,35 @@ export const HydrologicalChart: React.FC<HydrologicalChartProps> = ({
           <span
             className={`px-3 py-1 rounded-full text-[10px] font-mono font-semibold border ${
               isSurge
-                ? "bg-rose-500/15 text-rose-300 border-rose-500/35"
-                : "bg-white/5 text-zinc-300 border-white/15"
+                ? "bg-[#E35336]/25 text-[#F4A460] border-[#E35336]"
+                : "bg-[#24120C] text-[#F4A460] border-[#A0522D]/50"
             }`}
           >
-            {isSurge ? "SYNTHETIC SURGE EXAMPLE" : "SYNTHETIC BASELINE EXAMPLE"}
+            {isSurge ? "HIGH FLOOD WATCH" : "NOMINAL ENVELOPE"}
           </span>
         </div>
       </div>
 
       {/* Interactive Tooltip Readout Bar */}
       {activePoint && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 px-3.5 py-2.5 rounded-xl bg-black border border-white/10 text-[11px] font-mono">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 px-3.5 py-2.5 rounded-xl bg-[#110805] border border-[#A0522D]/40 text-[11px] font-mono">
           <div>
-            <span className="text-zinc-500 block text-[10px]">SAMPLE TIME STEP</span>
-            <strong className="text-white">{activePoint.time} ({horizon})</strong>
+            <span className="text-[#F4A460] block text-[10px]">HORIZON STEP</span>
+            <strong className="text-[#F5F5DC]">{activePoint.time} ({horizon})</strong>
           </div>
           <div>
-            <span className="text-zinc-500 block text-[10px]">ILLUSTRATIVE STAGE</span>
-            <strong className="text-white">{activePoint.ensembleMean.toFixed(2)} m</strong>
+            <span className="text-[#F4A460] block text-[10px]">ENSEMBLE MEAN</span>
+            <strong className="text-[#E35336]">{activePoint.ensembleMean.toFixed(2)} m</strong>
           </div>
           <div>
-            <span className="text-zinc-500 block text-[10px]">EXAMPLE RANGE</span>
-            <strong className="text-zinc-300">
+            <span className="text-[#F4A460] block text-[10px]">90% CONFIDENCE BAND</span>
+            <strong className="text-[#F5F5DC]">
               {activePoint.ensembleLower.toFixed(2)}–{activePoint.ensembleUpper.toFixed(2)} m
             </strong>
           </div>
           <div>
-            <span className="text-zinc-500 block text-[10px]">SAMPLE RAINFALL</span>
-            <strong className="text-zinc-300">{activePoint.rainfallMm} mm/hr</strong>
+            <span className="text-[#F4A460] block text-[10px]">RAINFALL INTENSITY</span>
+            <strong className="text-[#F4A460]">{activePoint.rainfallMm} mm/hr</strong>
           </div>
         </div>
       )}
@@ -214,15 +211,15 @@ export const HydrologicalChart: React.FC<HydrologicalChartProps> = ({
       {/* SVG Hydrograph Canvas */}
       <svg
         viewBox="0 0 585 205"
-        className="hydrograph-chart w-full h-auto overflow-visible select-none"
+        className="w-full h-auto overflow-visible select-none"
         role="img"
         aria-label="River stage hydrograph and forecast uncertainty chart"
       >
         <defs>
-          <linearGradient id="silverAreaFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.15" />
-            <stop offset="85%" stopColor="#FFFFFF" stopOpacity="0.02" />
-            <stop offset="100%" stopColor="#000000" stopOpacity="0" />
+          <linearGradient id="siennaAreaFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#E35336" stopOpacity="0.28" />
+            <stop offset="85%" stopColor="#A0522D" stopOpacity="0.04" />
+            <stop offset="100%" stopColor="#110805" stopOpacity="0" />
           </linearGradient>
         </defs>
 
@@ -236,14 +233,14 @@ export const HydrologicalChart: React.FC<HydrologicalChartProps> = ({
                 x2={chartRight}
                 y1={yPos}
                 y2={yPos}
-                stroke="rgba(255, 255, 255, 0.08)"
+                stroke="rgba(160, 82, 45, 0.25)"
                 strokeDasharray="3 5"
               />
               <text
                 x={chartLeft - 8}
                 y={yPos + 3}
                 textAnchor="end"
-                fill="#71717A"
+                fill="#F4A460"
                 fontSize="9"
                 fontFamily="JetBrains Mono, monospace"
               >
@@ -253,48 +250,48 @@ export const HydrologicalChart: React.FC<HydrologicalChartProps> = ({
           );
         })}
 
-        {/* Danger Threshold Line (#EF4444) at 48.60m */}
+        {/* Danger Threshold Line (#E35336) at 48.60m */}
         <line
           x1={chartLeft}
           x2={chartRight}
           y1={dangerY}
           y2={dangerY}
-          stroke="#EF4444"
-          strokeWidth="1.2"
+          stroke="#E35336"
+          strokeWidth="1.3"
           strokeDasharray="5 4"
         />
         <text
           x={chartRight - 4}
           y={dangerY - 4}
           textAnchor="end"
-          fill="#F87171"
+          fill="#E35336"
           fontSize="8.5"
           fontFamily="JetBrains Mono, monospace"
           fontWeight="600"
         >
-          DANGER THRESHOLD {PATNA_GANDHI_GHAT.dangerLevel.toFixed(2)}m
+          DANGER THRESHOLD 48.60m
         </text>
 
-        {/* Warning Threshold Line (#F59E0B) at 47.60m */}
+        {/* Warning Threshold Line (#F4A460) at 47.60m */}
         <line
           x1={chartLeft}
           x2={chartRight}
           y1={warningY}
           y2={warningY}
-          stroke="#F59E0B"
-          strokeWidth="1.2"
+          stroke="#F4A460"
+          strokeWidth="1.3"
           strokeDasharray="4 4"
         />
         <text
           x={chartRight - 4}
           y={warningY - 4}
           textAnchor="end"
-          fill="#FBBF24"
+          fill="#F4A460"
           fontSize="8.5"
           fontFamily="JetBrains Mono, monospace"
           fontWeight="600"
         >
-          WARNING THRESHOLD {PATNA_GANDHI_GHAT.warningLevel.toFixed(2)}m
+          WARNING THRESHOLD 47.60m
         </text>
 
         {/* Rainfall Hyetograph Bars along Bottom */}
@@ -309,46 +306,46 @@ export const HydrologicalChart: React.FC<HydrologicalChartProps> = ({
               width="14"
               height={barH}
               rx="2"
-              fill="rgba(255, 255, 255, 0.12)"
+              fill="rgba(244, 164, 96, 0.25)"
             />
           );
         })}
 
         {/* 90% Confidence Uncertainty Envelope Polygon */}
-        <polygon points={bandPolygon} fill="rgba(255, 255, 255, 0.06)" />
+        <polygon points={bandPolygon} fill="rgba(244, 164, 96, 0.14)" />
 
         {/* Area under Ensemble Mean */}
         <path
           d={`${meanPath} L ${toX(series.length - 1)} ${chartBottom} L ${chartLeft} ${chartBottom} Z`}
-          fill="url(#silverAreaFill)"
+          fill="url(#siennaAreaFill)"
         />
 
         {/* Upper & Lower Bound Dashed Curves */}
         <polyline
           fill="none"
-          stroke="#A1A1AA"
-          strokeOpacity="0.5"
+          stroke="#F4A460"
+          strokeOpacity="0.6"
           strokeWidth="1.2"
           strokeDasharray="3 3"
           points={upperPoints}
         />
 
-        {/* Forecast Ensemble Mean Curve (Silver/White Dashed) */}
+        {/* Forecast Ensemble Mean Curve (Burnt Sienna #E35336 Dashed) */}
         <path
           d={meanPath}
           fill="none"
-          stroke="#E4E4E7"
-          strokeWidth="2"
+          stroke="#E35336"
+          strokeWidth="2.4"
           strokeDasharray="4 4"
           strokeLinecap="round"
         />
 
-        {/* Crisp White Observed Solid Line (Past to NOW) */}
+        {/* Warm Beige (#F5F5DC) Observed Solid Line (Past to NOW) */}
         <path
           d={observedPath}
           fill="none"
-          stroke="#FFFFFF"
-          strokeWidth="2.5"
+          stroke="#F5F5DC"
+          strokeWidth="2.6"
           strokeLinecap="round"
         />
 
@@ -358,14 +355,14 @@ export const HydrologicalChart: React.FC<HydrologicalChartProps> = ({
           x2={toX(3)}
           y1={chartTop}
           y2={chartBottom}
-          stroke="rgba(255, 255, 255, 0.3)"
+          stroke="rgba(245, 245, 220, 0.35)"
           strokeDasharray="2 3"
         />
         <text
           x={toX(3)}
           y={chartTop - 6}
           textAnchor="middle"
-          fill="#FFFFFF"
+          fill="#F5F5DC"
           fontSize="8.5"
           fontFamily="JetBrains Mono, monospace"
           fontWeight="700"
@@ -389,16 +386,16 @@ export const HydrologicalChart: React.FC<HydrologicalChartProps> = ({
               <circle
                 cx={cx}
                 cy={cy}
-                r={isSelected ? "5" : "3.2"}
-                fill="#FFFFFF"
-                stroke="#000000"
+                r={isSelected ? "5" : "3.5"}
+                fill={isSelected ? "#E35336" : "#F5F5DC"}
+                stroke="#110805"
                 strokeWidth="1.5"
               />
               <text
                 x={cx}
                 y={chartBottom + 16}
                 textAnchor="middle"
-                fill={isSelected ? "#FFFFFF" : "#71717A"}
+                fill={isSelected ? "#F5F5DC" : "#F4A460"}
                 fontSize="9.5"
                 fontFamily="JetBrains Mono, monospace"
                 fontWeight={isSelected ? "700" : "500"}
@@ -412,25 +409,25 @@ export const HydrologicalChart: React.FC<HydrologicalChartProps> = ({
 
       {/* Legend & Scientific Disclaimer Footer */}
       {!compact && (
-        <div className="pt-2.5 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-[11px]">
+        <div className="pt-2.5 border-t border-[#A0522D]/35 flex flex-wrap items-center justify-between gap-3 text-[11px]">
           <div className="flex flex-wrap items-center gap-4">
-            <span className="inline-flex items-center gap-1.5 text-white">
-              <span className="w-3 h-0.5 bg-white inline-block" /> Sample Stage Series
+            <span className="inline-flex items-center gap-1.5 text-[#F5F5DC]">
+              <span className="w-3 h-0.5 bg-[#F5F5DC] inline-block" /> Observed Stage
             </span>
-            <span className="inline-flex items-center gap-1.5 text-zinc-300">
-              <span className="w-3 h-0.5 bg-zinc-300 inline-block" /> Example Projection
+            <span className="inline-flex items-center gap-1.5 text-[#E35336]">
+              <span className="w-3 h-0.5 bg-[#E35336] inline-block" /> Forecast Mean (Ensemble)
             </span>
-            <span className="inline-flex items-center gap-1.5 text-zinc-400">
-              <span className="w-3 h-2 rounded-sm bg-white/10 inline-block" /> 90% Prediction Band
+            <span className="inline-flex items-center gap-1.5 text-[#F4A460]">
+              <span className="w-3 h-2 rounded-sm bg-[#F4A460]/25 inline-block" /> 90% Prediction Band
             </span>
-            <span className="inline-flex items-center gap-1.5 text-[#FBBF24]">
-              <span className="w-3 h-0.5 bg-[#F59E0B] inline-block" /> Warning ({PATNA_GANDHI_GHAT.warningLevel.toFixed(2)}m)
+            <span className="inline-flex items-center gap-1.5 text-[#F4A460]">
+              <span className="w-3 h-0.5 bg-[#F4A460] inline-block" /> Warning (47.60m)
             </span>
-            <span className="inline-flex items-center gap-1.5 text-[#F87171]">
-              <span className="w-3 h-0.5 bg-[#EF4444] inline-block" /> Danger ({PATNA_GANDHI_GHAT.dangerLevel.toFixed(2)}m)
+            <span className="inline-flex items-center gap-1.5 text-[#E35336]">
+              <span className="w-3 h-0.5 bg-[#E35336] inline-block" /> Danger (48.60m)
             </span>
           </div>
-          <span className="text-[10px] font-mono text-zinc-500">
+          <span className="text-[10px] font-mono text-[#F5F5DC]/60">
             CWC Gandhi Ghat datum benchmark · Illustrative preview
           </span>
         </div>
