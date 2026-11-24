@@ -5,7 +5,7 @@
     "backendBranch": "main",
     "lastSynchronized": "2026-11-21T08:28:23.599414Z",
     "totalDocuments": 84,
-    "totalWords": 70225,
+    "totalWords": 70328,
     "statusCounts": {
       "VERIFIED": 44,
       "IMPLEMENTED": 37,
@@ -15,9 +15,9 @@
     "operationalContext": {
       "primaryRiverBasin": "Ganga Basin",
       "primaryGeographicFocus": "Bihar · Patna Corridor",
-      "primaryGaugeStation": "Gandhi Ghat (STN-PAT-01)",
-      "warningThresholdMeters": 50.5,
-      "dangerThresholdMeters": 51.8,
+      "primaryGaugeStation": "Gandhi Ghat, Patna (GANGES_PATNA)",
+      "warningThresholdMeters": 49.5,
+      "dangerThresholdMeters": 50.5,
       "activeModule": "Module 01: Flood Intelligence",
       "physicalGateActuation": "SIMULATED / ADVISORY ONLY (No direct SCADA motor control)"
     }

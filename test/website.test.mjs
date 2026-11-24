@@ -126,3 +126,32 @@ test('API explorer documents verified engine routes rather than retired website 
   assert.doesNotMatch(explorer, /\/api\/v1\/flood\/(forecast|alerts\/cap|gates\/advisory)/);
   assert.match(scenarioProxy, /\/api\/v1\/flood\/demo\/scenarios/);
 });
+
+test('generated API documentation uses the website-owned verified contract override', async () => {
+  const [override, published, syncScript, rawDocs, manifestText] = await Promise.all([
+    read('content/docs-overrides/09_BACKEND_AND_API/api-reference.md'),
+    read('content/docs/09_BACKEND_AND_API/api-reference.md'),
+    read('scripts/sync-docs.py'),
+    read('lib/docs/docs-data.json'),
+    read('lib/docs/docs-manifest.json'),
+  ]);
+  const docs = JSON.parse(rawDocs);
+  const apiDoc = docs.find((doc) => doc.id === '09-backend-and-api--api-reference');
+  const manifest = JSON.parse(manifestText);
+  assert.equal(published.trim(), override.trim());
+  assert.ok(apiDoc, 'the API reference should be published under its stable docs ID');
+  assert.match(apiDoc.content, /\/api\/v1\/flood/);
+  assert.match(apiDoc.content, /\/demo\/scenarios/);
+  assert.match(apiDoc.content, /SURAKSHA_OPERATOR_API_KEY/);
+  assert.match(apiDoc.content, /There is no verified website or engine route for gate telemetry/);
+  assert.doesNotMatch(apiDoc.content, /\/alert\/generate|\/api\/v1\/flood\/sitrep|\/api\/v1\/flood\/advisory/);
+  assert.match(syncScript, /LOCAL_OVERRIDES_DIR/);
+  assert.match(syncScript, /primaryGaugeStation": "Gandhi Ghat, Patna \(GANGES_PATNA\)"/);
+  assert.match(syncScript, /"warningThresholdMeters": 49\.50/);
+  assert.match(apiDoc.githubUrl, /SURAKSHA-Website\/blob\/codex\/fix-ui-theme-routes\/content\/docs-overrides/);
+  assert.equal(apiDoc.wordCount, apiDoc.content.trim().split(/\s+/).length);
+  assert.equal(apiDoc.readingTime, Math.max(1, Math.ceil(apiDoc.wordCount / 200)));
+  assert.equal(apiDoc.lastVerified, '2026-11-24');
+  assert.equal(manifest.metadata.operationalContext.primaryGaugeStation, 'Gandhi Ghat, Patna (GANGES_PATNA)');
+  assert.equal(manifest.metadata.totalWords, docs.reduce((sum, doc) => sum + doc.wordCount, 0));
+});

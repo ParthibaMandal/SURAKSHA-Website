@@ -19,6 +19,7 @@ from datetime import datetime
 # Path resolution
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, ".."))
+LOCAL_OVERRIDES_DIR = os.path.join(PROJECT_ROOT, "content", "docs-overrides")
 BACKEND_REPO = os.environ.get(
     "SURAKSHA_BACKEND_REPO",
     r"C:\Users\PC\.gemini\antigravity\brain\e9ded12f-2267-4930-95a7-48e92a8e6ba3\scratch\suraksha-repo"
@@ -423,6 +424,16 @@ def main():
         with open(fpath, 'r', encoding='utf-8', errors='ignore') as fp:
             content = fp.read()
 
+        # Website-owned, evidence-checked corrections take precedence over the
+        # backend repository's broader documentation bundle. Keep the same
+        # relative path so generated IDs and cross-links remain stable.
+        override_path = os.path.join(LOCAL_OVERRIDES_DIR, rel_path.replace('/', os.sep))
+        has_local_override = os.path.isfile(override_path)
+        if has_local_override:
+            with open(override_path, 'r', encoding='utf-8') as fp:
+                content = fp.read()
+            print(f"Applied local documentation override: {rel_path}")
+
         # Extract title
         title = os.path.basename(rel_path).replace('.md', '').replace('-', ' ').title()
         for line in content.split('\n'):
@@ -449,6 +460,7 @@ def main():
             "title": title,
             "cat_id": cat_id,
             "unique_slug": unique_slug,
+            "has_local_override": has_local_override,
             "content": content
         })
 
@@ -461,6 +473,7 @@ def main():
         title = item["title"]
         cat_id = item["cat_id"]
         unique_slug = item["unique_slug"]
+        has_local_override = item["has_local_override"]
         content = item["content"]
 
         # Resolve internal links
@@ -496,7 +509,18 @@ def main():
 
         category_doc_counts[cat_id] = category_doc_counts.get(cat_id, 0) + 1
 
-        github_url = f"https://github.com/shouri123/SURAKSHA/blob/{backend_commit}/docs/{rel_path}"
+        if has_local_override:
+            try:
+                website_branch = subprocess.check_output(
+                    ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+                    cwd=PROJECT_ROOT,
+                    stderr=subprocess.DEVNULL
+                ).decode().strip()
+            except Exception:
+                website_branch = "main"
+            github_url = f"https://github.com/shouri123/SURAKSHA-Website/blob/{website_branch}/content/docs-overrides/{rel_path}"
+        else:
+            github_url = f"https://github.com/shouri123/SURAKSHA/blob/{backend_commit}/docs/{rel_path}"
 
         doc_item = {
             "id": unique_slug,
@@ -512,7 +536,7 @@ def main():
             "headings": headings,
             "tags": tags[:5],
             "githubUrl": github_url,
-            "lastVerified": "2026-11-21",
+            "lastVerified": datetime.utcnow().strftime("%Y-%m-%d") if has_local_override else "2026-11-21",
             "content": resolved_content
         }
         processed_docs.append(doc_item)
@@ -622,9 +646,9 @@ def main():
         "operationalContext": {
             "primaryRiverBasin": "Ganga Basin",
             "primaryGeographicFocus": "Bihar · Patna Corridor",
-            "primaryGaugeStation": "Gandhi Ghat (STN-PAT-01)",
-            "warningThresholdMeters": 50.50,
-            "dangerThresholdMeters": 51.80,
+            "primaryGaugeStation": "Gandhi Ghat, Patna (GANGES_PATNA)",
+            "warningThresholdMeters": 49.50,
+            "dangerThresholdMeters": 50.50,
             "activeModule": "Module 01: Flood Intelligence",
             "physicalGateActuation": "SIMULATED / ADVISORY ONLY (No direct SCADA motor control)"
         }

@@ -4189,39 +4189,34 @@
   {
     "id": "09-backend-and-api--api-reference",
     "path": "09_BACKEND_AND_API/api-reference.md",
-    "title": "SURAKSHA REST API Reference",
+    "title": "Website and Engine API Contracts",
     "category": "Backend and API",
     "categoryId": "09-backend-and-api",
     "order": 9,
     "status": "VERIFIED",
-    "summary": "Returns runtime status, loaded model checkpoints, and data provider configurations.",
-    "wordCount": 426,
+    "summary": "This reference describes the contracts verified in the website and the FastAPI engine source. The website proxy base is /api/flood; the engine base is /api/v1/flood. Exact response fields may evolve w...",
+    "wordCount": 529,
     "readingTime": 3,
     "headings": [
       {
         "level": 2,
-        "text": "1. Endpoint Overview",
-        "id": "1-endpoint-overview"
+        "text": "Website routes",
+        "id": "website-routes"
+      },
+      {
+        "level": 3,
+        "text": "SOS request",
+        "id": "sos-request"
       },
       {
         "level": 2,
-        "text": "2. Endpoint Details",
-        "id": "2-endpoint-details"
+        "text": "Verified engine routes",
+        "id": "verified-engine-routes"
       },
       {
-        "level": 3,
-        "text": "2.1 GET /api/v1/flood/health",
-        "id": "2-1-get-api-v1-flood-health"
-      },
-      {
-        "level": 3,
-        "text": "2.2 POST /api/v1/flood/pipeline/run",
-        "id": "2-2-post-api-v1-flood-pipeline-run"
-      },
-      {
-        "level": 3,
-        "text": "2.3 POST /api/v1/flood/citizen/sos",
-        "id": "2-3-post-api-v1-flood-citizen-sos"
+        "level": 2,
+        "text": "Not implemented as website APIs",
+        "id": "not-implemented-as-website-apis"
       }
     ],
     "tags": [
@@ -4229,11 +4224,12 @@
       "SAR",
       "Patna",
       "LSTM",
-      "SARIMA"
+      "SARIMA",
+      "CAP v1.2"
     ],
-    "githubUrl": "https://github.com/shouri123/SURAKSHA/blob/edc3a3bed30e8ed06f89b8cb6dccf244de03fdbd/docs/09_BACKEND_AND_API/api-reference.md",
-    "lastVerified": "2026-11-21",
-    "content": "# SURAKSHA REST API Reference\n\n| Field | Value |\n|---|---|\n| **Document ID** | API-09-002 |\n| **Version** | 1.0.0 |\n| **Status** | VERIFIED |\n| **Base URL** | `http://localhost:8000/api/v1/flood` |\n| **Source Implementation** | `src/suraksha/disasters/flood/api/routes.py` |\n\n---\n\n## 1. Endpoint Overview\n\n| Method | Endpoint | Summary | Auth |\n|---|---|---|---|\n| `GET` | `/health` | Subsystem health, model readiness, telemetry status | None |\n| `GET` | `/stations` | List configured hydrological gauge stations | None |\n| `GET` | `/stations/{station_id}` | Station metadata, warning/danger/HFL levels | None |\n| `GET` | `/stations/{station_id}/modelled-discharge` | 7-day GloFAS/Open-Meteo forward discharge | None |\n| `POST` | `/pipeline/run` | Execute 7-agent scientific pipeline (supervised/static) | Optional / Operator |\n| `POST` | `/alert/generate` | Generate OASIS CAP v1.2 XML & JSON alert payload | Operator |\n| `POST` | `/sitrep` | Generate disaster management Situation Report (SITREP) | Operator |\n| `POST` | `/advisory` | Generate persona-targeted flood advisory (farmers, public) | None |\n| `POST` | `/citizen/sos` | Ingest and NLP-triage citizen distress SOS report | None |\n| `GET` | `/demo/scenarios` | List verified synthetic stress-test scenarios | None |\n| `POST` | `/demo/scenarios/{id}/run` | Execute end-to-end pipeline against scenario | None |\n\n---\n\n## 2. Endpoint Details\n\n### 2.1 `GET /api/v1/flood/health`\nReturns runtime status, loaded model checkpoints, and data provider configurations.\n\n**Response Schema (`200 OK`)**:\n```json\n{\n  \"status\": \"HEALTHY\",\n  \"operational_readiness\": \"OPERATIONAL\",\n  \"subsystem\": \"SURAKSHA-MOD-01-FLOOD\",\n  \"supervisor\": {\n    \"mode\": \"Jev-Supervised Multi-Stage Scientific Architecture\",\n    \"three_gates\": [\"Pre-Run Gate\", \"Mid-Run Gate\", \"Post-Run Gate\"],\n    \"committee_models\": [\"SARIMA\", \"GRU\", \"Hybrid BiLSTM\"],\n    \"fast_fallbacks\": [\"ARIMA\", \"Persistence\"],\n    \"supported_modes\": [\"supervised\", \"static\"]\n  },\n  \"production_forecaster\": {\n    \"model_name\": \"SARIMA(1,1,1)x(1,0,1,24)\",\n    \"is_trained\": true,\n    \"execution_ready\": true,\n    \"lifecycle\": \"Pre-loaded in-memory (No runtime fitting delay)\"\n  },\n  \"production_risk_model\": {\n    \"engine\": \"CalibratedThresholdRiskEngine\",\n    \"is_trained\": true\n  },\n  \"station_catalog\": {\n    \"total_stations\": 2,\n    \"basins\": [\"Ganges\", \"Brahmaputra\"]\n  }\n}\n```\n\n### 2.2 `POST /api/v1/flood/pipeline/run`\nExecutes the scientific flood DAG.\n\n**Request Payload (`PipelineRunRequest`)**:\n```json\n{\n  \"station_id\": \"GANGES_PATNA\",\n  \"water_level_m\": 48.75,\n  \"rainfall_24h_mm\": 65.4,\n  \"soil_saturation\": 0.85,\n  \"river_discharge_m3s\": 38500.0,\n  \"execution_mode\": \"supervised\"\n}\n```\n\n**Response Payload (`200 OK`)**:\n```json\n{\n  \"run_id\": \"9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d\",\n  \"execution_mode\": \"supervised\",\n  \"data_regime\": \"RAPID_RISE\",\n  \"forecast\": {\n    \"horizon_hours\": 24,\n    \"predicted_stage_m\": 49.32,\n    \"lower_bound_m\": 48.85,\n    \"upper_bound_m\": 49.79,\n    \"champion_model\": \"SARIMA_111_101_24\"\n  },\n  \"geospatial\": {\n    \"inundated_area_km2\": 42.8,\n    \"permanent_water_km2\": 18.2,\n    \"sensor_status\": \"GEE_LIVE\"\n  },\n  \"risk\": {\n    \"score\": 0.82,\n    \"category\": \"HIGH\"\n  },\n  \"impact\": {\n    \"affected_population\": 85400,\n    \"critical_facilities_at_risk\": 12\n  },\n  \"supervisory_verdict\": {\n    \"is_authoritative\": true,\n    \"requires_human_escalation\": false,\n    \"jev_actions_invoked\": [\"RUN_CHALLENGER_MODEL\"]\n  }\n}\n```\n\n### 2.3 `POST /api/v1/flood/citizen/sos`\nTriage raw distress messages from citizens during an active flood.\n\n**Request**:\n```json\n{\n  \"message\": \"Water has entered our ground floor near Danapur station, 4 people stranded on roof.\",\n  \"contact_phone\": \"+91-9876543210\",\n  \"reported_location\": \"Danapur, Patna\",\n  \"latitude\": 25.63,\n  \"longitude\": 85.04\n}\n```\n"
+    "githubUrl": "https://github.com/shouri123/SURAKSHA-Website/blob/codex/fix-ui-theme-routes/content/docs-overrides/09_BACKEND_AND_API/api-reference.md",
+    "lastVerified": "2026-11-24",
+    "content": "# Website and Engine API Contracts\n\nThis reference describes the contracts verified in the website and the FastAPI engine source. The website proxy base is `/api/flood`; the engine base is `/api/v1/flood`. Exact response fields may evolve with the engine's Pydantic models, so consult its OpenAPI document for the deployed version.\n\n## Website routes\n\n| Method and path | Behavior |\n|---|---|\n| `GET /api/flood/health` | Proxies engine health. Returns unavailable if the engine URL is missing, the response is not JSON, or the service cannot be reached. |\n| `GET /api/flood/stations` | Proxies station metadata. Does not provide historical observations through this route. |\n| `GET /api/flood/scenarios` | Proxies the synthetic demo scenario catalog. The engine may reject this in production mode. |\n| `POST /api/flood/scenarios` | Validates scenario ID, inflow multiplier (`0.5`–`3`), and rainfall addition (`0`–`500` mm), applies them to catalog input and requests a static demo run. Synthetic; not an operational forecast. |\n| `GET /api/flood/sos` | Reads up to 200 SOS reports for signed-in `admin` or `operator` profiles. |\n| `POST /api/flood/sos` | Creates an SOS report for an authenticated `citizen`. Caller cannot choose `citizen_id`; the server binds it to the session. Returns `201` with the inserted report summary. |\n| `GET /api/flood/gates` | `501`: gate telemetry is not connected. |\n| `GET /api/flood/alerts` | `501`: no persisted public/draft alert list is connected. |\n\nThe website demo proxy defaults its engine origin to `http://127.0.0.1:8000` in local development. Health and station handlers instead require `SURAKSHA_BACKEND_URL`; set this variable consistently in deployments.\n\n### SOS request\n\n```json\n{\n  \"citizen_name\": \"Example Citizen\",\n  \"contact_phone\": \"+91 98765 43210\",\n  \"location_name\": \"Near the community centre, Patna\",\n  \"urgency\": \"HIGH\",\n  \"description\": \"Water is entering the ground floor.\"\n}\n```\n\nValidation: name 2–120 chars, phone 7–15 digits (accepted punctuation is limited), location 2–300 chars, description 2–2,000 chars, urgency `LOW`, `MEDIUM`, or `HIGH`. Responses include `401` when signed out, `403` for the wrong role, `400` for invalid input, and `503` when storage fails.\n\n## Verified engine routes\n\nThe FastAPI router under `/api/v1/flood` exposes:\n\n- `GET /health`\n- `GET /stations`\n- `GET /stations/{station_id}`\n- `GET /stations/{station_id}/modelled-discharge`\n- `POST /pipeline/run`\n- `GET /demo/scenarios`\n- `POST /demo/scenarios/{scenario_id}/run`\n- `GET /demo/reviews`\n- `POST /demo/reviews/{event_id}/decision`\n- `POST /alerts/cap-recommendation`\n- `POST /intelligence/sitrep`\n- `POST /intelligence/triage-sos`\n- `POST /intelligence/advisory`\n\nAll POST/PUT/PATCH/DELETE engine routes require `Authorization: Bearer <SURAKSHA_OPERATOR_API_KEY>` when an operator key is configured. Production requires a key of at least 32 characters. The website does not currently forward this credential, so state-changing engine calls are not integrated through the website. Demo routes call a demo-mode guard and are blocked in engine production mode.\n\n`PipelineRunRequest` accepts a station ID, optional water level, 24-hour rainfall, soil saturation, river discharge, and execution mode (`static` or `supervised`); unrecognized fields are rejected. The demo scenario run accepts `{ \"input\": { ... } }`. See the engine's OpenAPI schema for exact types, bounds, and response bodies.\n\n## Not implemented as website APIs\n\nThere is no verified website or engine route for gate telemetry/actuation, public alert listing, persisted draft approval, SOS dispatch/resolution, registration role selection, or historical station observations. Do not treat a CAP recommendation endpoint as an alert publication workflow. These capabilities require backend contracts and authorization design before UI integration.\n"
   },
   {
     "id": "10-website-and-application--readme",
