@@ -1,44 +1,34 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Lock, CheckCircle2, RefreshCw } from "lucide-react";
+import { Lock, RefreshCw } from "lucide-react";
 
 interface SOSItem {
   id: string;
   citizen_name: string;
-  phone_number: string;
-  emergency_type: string;
-  severity: string;
-  people_count: number;
-  latitude: number;
-  longitude: number;
-  landmark_address: string;
+  contact_phone: string;
+  urgency: string;
+  description: string;
+  location_name: string;
   status: string;
-  assigned_team?: string | null;
-  notes?: string | null;
   created_at: string;
 }
 
 export default function AdminSosQueuePage() {
-  const [toast, setToast] = useState<string | null>(null);
   const [queue, setQueue] = useState<SOSItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-
-  const showToast = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(null), 3000);
-  };
+  const [error, setError] = useState<string | null>(null);
 
   const fetchQueue = async () => {
     setLoading(true);
+    setError(null);
     try {
       const res = await fetch("/api/flood/sos", { cache: "no-store" });
-      if (res.ok) {
-        const data = await res.json();
-        setQueue(data);
-      }
-    } catch {
-      // Fallback
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.detail || "The assistance queue is unavailable.");
+      setQueue(data);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "The assistance queue is unavailable.");
     } finally {
       setLoading(false);
     }
@@ -48,33 +38,8 @@ export default function AdminSosQueuePage() {
     fetchQueue();
   }, []);
 
-  const handleDispatch = (id: string) => {
-    setQueue((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? { ...item, status: "DISPATCHED", assigned_team: "NDRF Fast-Response Boat 01" }
-          : item
-      )
-    );
-    showToast(`Rescue dispatch unit assigned to ticket ${id}.`);
-  };
-
-  const handleResolve = (id: string) => {
-    setQueue((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, status: "RESCUED" } : item
-      )
-    );
-    showToast(`Ticket ${id} marked as RESCUED.`);
-  };
-
   return (
     <div className="space-y-6">
-      {toast && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#0A0A0A] border border-[#FFFFFF]/40 text-xs font-mono text-[#A1A1AA] shadow-2xl flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-[#FFFFFF]" /> {toast}
-        </div>
-      )}
 
       {/* Heading */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#A1A1AA]/15">
@@ -100,9 +65,9 @@ export default function AdminSosQueuePage() {
       <div className="p-4 rounded-xl border border-[#A1A1AA]/20 bg-[#0A0A0A] text-[#A1A1AA] flex items-start gap-3.5">
         <Lock className="w-5 h-5 text-[#FFFFFF] shrink-0 mt-0.5" />
         <div className="text-xs space-y-0.5">
-          <strong className="text-[#FFFFFF] font-bold block">Restricted operational view · SAMPLE / SYNTHETIC QUEUE</strong>
+          <strong className="text-[#FFFFFF] font-bold block">Restricted view · Assistance records</strong>
           <p className="text-[#A69B88]">
-            Citizen location and contact data is strictly governed under emergency disaster management privacy policies.
+            Records shown here were saved by authenticated citizens. This prototype does not dispatch response teams.
           </p>
         </div>
       </div>
@@ -112,9 +77,12 @@ export default function AdminSosQueuePage() {
         <div className="flex items-center justify-between pb-3 border-b border-[#A1A1AA]/12">
           <h3 className="text-sm font-bold text-[#A1A1AA]">Assistance Queue</h3>
           <span className="text-xs font-mono text-[#FFFFFF]">
-            {queue.filter((q) => q.status === "PENDING").length} Pending Triage · {queue.length} Total
+            {queue.filter((q) => q.status === "OPEN").length} Open · {queue.length} Total
           </span>
         </div>
+
+        {error && <div role="alert" className="rounded-lg border border-red-400/30 bg-red-400/10 p-3 text-sm text-red-200">{error}</div>}
+        {!loading && !error && queue.length === 0 && <p className="py-8 text-center text-sm text-[#A69B88]">No assistance requests have been submitted.</p>}
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs font-mono">
@@ -122,12 +90,9 @@ export default function AdminSosQueuePage() {
               <tr className="border-b border-[#A1A1AA]/15 text-[#A69B88] uppercase text-[10px]">
                 <th className="py-2.5 px-3">Ticket ID</th>
                 <th className="py-2.5 px-3">Citizen & Phone</th>
-                <th className="py-2.5 px-3">Location Landmark</th>
-                <th className="py-2.5 px-3">Category</th>
-                <th className="py-2.5 px-3">People</th>
+                <th className="py-2.5 px-3">Location</th>
+                <th className="py-2.5 px-3">Urgency & details</th>
                 <th className="py-2.5 px-3">Status</th>
-                <th className="py-2.5 px-3">Assigned Unit</th>
-                <th className="py-2.5 px-3">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#A1A1AA]/10">
@@ -136,49 +101,27 @@ export default function AdminSosQueuePage() {
                   <td className="py-3 px-3 text-[#FFFFFF] font-bold">{item.id}</td>
                   <td className="py-3 px-3">
                     <div className="text-[#FFFFFF] font-semibold font-sans">{item.citizen_name}</div>
-                    <div className="text-[11px] text-[#A69B88]">{item.phone_number}</div>
+                    <div className="text-[11px] text-[#A69B88]">{item.contact_phone}</div>
                   </td>
-                  <td className="py-3 px-3 text-[#A1A1AA] max-w-xs truncate" title={item.landmark_address}>
-                    {item.landmark_address}
+                  <td className="py-3 px-3 text-[#A1A1AA] max-w-xs">
+                    {item.location_name}
                   </td>
-                  <td className="py-3 px-3 text-[#A69B88]">
-                    {item.emergency_type.replace("_", " ")}
+                  <td className="py-3 px-3 text-[#A1A1AA] max-w-xs">
+                    <div className="font-semibold">{item.urgency}</div>
+                    <div className="text-[11px] text-[#A69B88] whitespace-normal">{item.description}</div>
                   </td>
-                  <td className="py-3 px-3 text-[#FFFFFF] font-bold">{item.people_count}</td>
                   <td className="py-3 px-3">
                     <span
                       className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${
-                        item.status === "PENDING"
+                        item.status === "OPEN"
                           ? "bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/30"
-                          : item.status === "DISPATCHED"
+                          : item.status === "IN_REVIEW"
                           ? "bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30"
                           : "bg-[#FFFFFF]/15 text-[#FFFFFF] border-[#FFFFFF]/30"
                       }`}
                     >
-                      {item.status}
+                      {item.status.replaceAll("_", " ")}
                     </span>
-                  </td>
-                  <td className="py-3 px-3 text-xs text-[#A1A1AA]">
-                    {item.assigned_team || "Unassigned"}
-                  </td>
-                  <td className="py-3 px-3">
-                    {item.status === "PENDING" ? (
-                      <button
-                        onClick={() => handleDispatch(item.id)}
-                        className="px-2.5 py-1 rounded bg-[#FFFFFF] text-[11px] text-white font-semibold hover:bg-[#E4E4E7] transition-colors"
-                      >
-                        Dispatch
-                      </button>
-                    ) : item.status === "DISPATCHED" ? (
-                      <button
-                        onClick={() => handleResolve(item.id)}
-                        className="px-2.5 py-1 rounded bg-[#141414] border border-[#A1A1AA]/30 text-[11px] text-[#A1A1AA] hover:bg-[#000000] transition-colors"
-                      >
-                        Resolve
-                      </button>
-                    ) : (
-                      <span className="text-[11px] text-[#A69B88] font-sans">Resolved</span>
-                    )}
                   </td>
                 </tr>
               ))}

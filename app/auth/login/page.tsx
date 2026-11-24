@@ -4,13 +4,13 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { BrandLogo } from "@/components/shared/BrandLogo";
-import { ArrowRight, CheckCircle2, AlertCircle, Shield, User, Loader2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/supabase/auth-context";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { signIn, signInDemo, signInWithGoogle, user, profile } = useAuth();
+  const { signIn, signInWithGoogle, user, profile } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -46,9 +46,7 @@ export default function LoginPage() {
       const isOps =
         result.role === "admin" ||
         result.role === "operator" ||
-        result.role === "hydrologist" ||
-        email.includes("operator") ||
-        email.includes("admin");
+        result.role === "hydrologist";
 
       setTimeout(() => {
         router.push(isOps ? "/admin" : "/citizen");
@@ -79,33 +77,6 @@ export default function LoginPage() {
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Google sign in failed";
       setErrorMessage(msg);
-      setLoadingAction(null);
-    }
-  };
-
-  const handleDemoLogin = async (role: "admin" | "citizen") => {
-    setErrorMessage(null);
-    setLoadingAction(role);
-
-    try {
-      const res = await signInDemo(role);
-      if (res.error) {
-        setErrorMessage(res.error.message);
-        setLoadingAction(null);
-        return;
-      }
-
-      setToast(
-        role === "admin"
-          ? "Authenticated as Duty Commander. Redirecting to Operations Hub…"
-          : "Authenticated as Citizen Resident. Redirecting to Citizen Portal…"
-      );
-
-      setTimeout(() => {
-        router.push(role === "admin" ? "/admin" : "/citizen");
-      }, 500);
-    } catch {
-      setErrorMessage("Could not load demo session");
       setLoadingAction(null);
     }
   };
@@ -239,40 +210,6 @@ export default function LoginPage() {
           </Link>
         </div>
 
-        {/* Quick Demo Login Option */}
-        <div className="pt-4 border-t border-white/10 space-y-2.5">
-          <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest text-center">
-            ONE-CLICK INSTANT ACCESS
-          </div>
-
-          <button
-            type="button"
-            disabled={loadingAction !== null}
-            onClick={() => handleDemoLogin("admin")}
-            className="w-full h-10 rounded-full bg-white/10 border border-white/20 hover:bg-white/20 text-xs font-semibold text-white flex items-center justify-center gap-2 transition-all cursor-pointer"
-          >
-            {loadingAction === "admin" ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
-            ) : (
-              <Shield className="w-3.5 h-3.5 text-white" />
-            )}
-            <span>Sign In as Duty Commander (Operations)</span>
-          </button>
-
-          <button
-            type="button"
-            disabled={loadingAction !== null}
-            onClick={() => handleDemoLogin("citizen")}
-            className="w-full h-10 rounded-full bg-black border border-white/15 hover:bg-white/5 text-xs font-semibold text-zinc-300 hover:text-white flex items-center justify-center gap-2 transition-all cursor-pointer"
-          >
-            {loadingAction === "citizen" ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
-            ) : (
-              <User className="w-3.5 h-3.5 text-zinc-400" />
-            )}
-            <span>Sign In as Citizen Resident (Public Portal)</span>
-          </button>
-        </div>
       </div>
     </div>
   );

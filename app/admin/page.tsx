@@ -236,28 +236,6 @@ export default function AdminOverviewPage() {
     return matchesSearch && matchesRisk;
   });
 
-  const handleAdvanceAlert = async (id: string) => {
-    const item = alertItems.find((a) => a.id === id);
-    if (!item) return;
-    const nextState =
-      item.state === "DRAFT"
-        ? "PENDING_REVIEW"
-        : item.state === "PENDING_REVIEW"
-        ? "APPROVED"
-        : "DISPATCHED";
-
-    setAlertItems((prev) =>
-      prev.map((it) => (it.id === id ? { ...it, state: nextState } : it))
-    );
-
-    try {
-      const supabase = createClient();
-      await supabase.from("flood_alerts").update({ state: nextState }).eq("id", id);
-    } catch {
-      // offline fallback
-    }
-  };
-
   return (
     <div className="space-y-7 max-w-[1440px] mx-auto">
       {/* Command Header */}
@@ -727,22 +705,12 @@ export default function AdminOverviewPage() {
                 <span className="text-[11px] font-mono text-[#7D7465]">
                   ILLUSTRATIVE WORKFLOW RECORD
                 </span>
-                {item.state !== "DISPATCHED" ? (
-                  <button
-                    type="button"
-                    onClick={() => handleAdvanceAlert(item.id)}
-                    className="px-3 py-1 rounded-md text-xs font-semibold bg-[#FFFFFF] text-white hover:bg-[#E4E4E7] transition-colors"
-                  >
-                    {item.state === "DRAFT"
-                      ? "Submit for Review"
-                      : item.state === "PENDING_REVIEW"
-                      ? "Approve Advisory"
-                      : "Dispatch Bulletin"}
-                  </button>
-                ) : (
+                {item.state === "DISPATCHED" ? (
                   <span className="text-[11px] font-mono text-[#34D399] flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5" /> Published (Sample)
                   </span>
+                ) : (
+                  <span className="text-[11px] font-mono text-[#A69B88]">Read-only sample · Use approval console for authorized workflow</span>
                 )}
               </div>
             </div>

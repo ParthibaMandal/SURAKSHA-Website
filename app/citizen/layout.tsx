@@ -1,17 +1,20 @@
 import React from "react";
 import { AppSidebar } from "@/components/navigation/AppSidebar";
 import { CommandTopBar } from "@/components/navigation/CommandTopBar";
+import { requireWorkspaceRole } from "@/lib/supabase/authorization";
 
 export const metadata = {
   title: "Citizen Flood-Safety Dashboard | SURAKSHA",
   description: "Personalized river basin monitoring, human-approved flood advisories, and emergency preparedness.",
 };
 
-export default function CitizenLayout({
+export default async function CitizenLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  await requireWorkspaceRole(["citizen"], "/citizen");
+
   return (
     <div className="workspace-shell flex min-h-[calc(100vh-4rem)] bg-[var(--background)] text-[var(--foreground)]">
       <AppSidebar role="citizen" />
