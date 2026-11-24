@@ -14,27 +14,27 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({ className = "", size = "md
 
   return (
     <Link href="/" className={`inline-flex items-center gap-2.5 group select-none ${className}`}>
-      {/* Brand Mark - Animated Burnt Sienna Glass Shield with River Waves */}
-      <span className={`${markDimensions} icon-glass text-[#F5F5DC]`}>
+      {/* Brand Mark - Animated Hydrological Blue Glass Shield with River Waves */}
+      <span className={`${markDimensions} icon-glass text-[#F0F9FF]`}>
         <svg viewBox="0 0 24 24" fill="none" className={iconSize}>
           {/* Shield Outline */}
           <path
             d="M12 2.5L4.5 5.5v6c0 5 3.5 9.5 7.5 10.5 4-1 7.5-5.5 7.5-10.5v-6L12 2.5z"
-            stroke="#F5F5DC"
+            stroke="#F0F9FF"
             strokeWidth="1.8"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-          {/* River Waves inside Shield (#E35336 & #F4A460) */}
+          {/* River Waves inside Shield (#0EA5E9 & #38BDF8) */}
           <path
             d="M7.5 10c1.5-1 2.5-1 4.5 0s3 1 4.5 0"
-            stroke="#E35336"
+            stroke="#0EA5E9"
             strokeWidth="1.7"
             strokeLinecap="round"
           />
           <path
             d="M7.5 13.5c1.5-1 2.5-1 4.5 0s3 1 4.5 0"
-            stroke="#F4A460"
+            stroke="#38BDF8"
             strokeWidth="1.7"
             strokeLinecap="round"
           />
@@ -43,7 +43,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({ className = "", size = "md
 
       {/* Brand Typography */}
       <span
-        className={`font-heading font-bold tracking-[0.14em] text-[#F5F5DC] ${titleSize} leading-none`}
+        className={`font-heading font-bold tracking-[0.14em] text-[#F0F9FF] ${titleSize} leading-none`}
       >
         SURAKSHA
       </span>
