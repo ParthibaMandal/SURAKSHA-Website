@@ -1,4 +1,5 @@
 import React from "react";
+import { PATNA_GANDHI_GHAT } from "@/lib/mock-data";
 import Link from "next/link";
 import { FadeIn } from "@/components/motion/FadeIn";
 import { ArrowRight } from "lucide-react";
@@ -46,7 +47,7 @@ export default function AlertsSafetyPage() {
             </div>
             <h3 className="text-xl font-bold text-[#FFFFFF]">Watch</h3>
             <p className="text-xs text-[#A69B88] leading-relaxed">
-              River stage is approaching the 50.50 m warning mark. The interface explains why the status is shown and what forecast uncertainty remains.
+              River stage is approaching the {PATNA_GANDHI_GHAT.warningLevel.toFixed(2)} m warning reference. The interface explains why the status is shown and what forecast uncertainty remains.
             </p>
           </article>
 

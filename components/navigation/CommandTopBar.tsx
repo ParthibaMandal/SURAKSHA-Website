@@ -11,7 +11,6 @@ interface CommandTopBarProps {
 
 export const CommandTopBar: React.FC<CommandTopBarProps> = ({ workspace = "COMMAND" }) => {
   const pathname = usePathname();
-  const [studyArea, setStudyArea] = useState("patna");
   const [notifOpen, setNotifOpen] = useState(false);
 
   const segmentLabel = (() => {
@@ -37,31 +36,11 @@ export const CommandTopBar: React.FC<CommandTopBarProps> = ({ workspace = "COMMA
 
       {/* Right Top-Bar Controls */}
       <div className="flex flex-wrap items-center gap-3">
-        {/* Study-Area Selector */}
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 text-xs text-white">
+        {/* This workspace currently has one configured synthetic study area. */}
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 text-xs text-white" aria-label="Current study area">
           <Globe className="w-3.5 h-3.5 text-zinc-400" />
-          <label htmlFor="study-area-select" className="sr-only">
-            Select Study Area
-          </label>
-          <select
-            id="study-area-select"
-            value={studyArea}
-            onChange={(e) => setStudyArea(e.target.value)}
-            className="bg-transparent text-white font-medium focus:outline-none text-xs cursor-pointer"
-          >
-            <option value="patna" className="bg-[#0A0A0A] text-white">
-              Ganga Basin, Patna Study Area
-            </option>
-            <option value="gandak" className="bg-[#0A0A0A] text-white">
-              Gandak Tributary, Lalganj Sector
-            </option>
-            <option value="son" className="bg-[#0A0A0A] text-white">
-              Son Sub-basin, Koelwar Reach
-            </option>
-            <option value="kosi" className="bg-[#0A0A0A] text-white">
-              Kosi Basin, Birpur Barrage
-            </option>
-          </select>
+          <span className="font-medium">Ganga Basin · Patna</span>
+          <span className="text-[10px] font-mono text-zinc-400">SAMPLE</span>
         </div>
 
         {/* Data-Source Status Badge */}

@@ -33,14 +33,27 @@ export interface Scenario {
   confidence: number;
 }
 
+/** Shared illustrative values for the Gandhi Ghat preview gauge. */
+export const PATNA_GANDHI_GHAT = {
+  id: "STN-PAT-01",
+  name: "Patna · Gandhi Ghat",
+  baseline: 46.2,
+  currentStage: 46.85,
+  warningLevel: 47.6,
+  dangerLevel: 48.6,
+  highestFloodLevel: 50.52,
+  surgeStage: 48.85,
+  provenance: "SYNTHETIC PREVIEW",
+} as const;
+
 export const STATIONS: RiverStation[] = [
   {
     id: "STN-PAT-01",
-    name: "Patna - Digha Ghat",
+    name: PATNA_GANDHI_GHAT.name,
     basin: "Ganga Mainstream",
-    currentStage: 49.82,
-    warningLevel: 50.2,
-    dangerLevel: 51.5,
+    currentStage: PATNA_GANDHI_GHAT.currentStage,
+    warningLevel: PATNA_GANDHI_GHAT.warningLevel,
+    dangerLevel: PATNA_GANDHI_GHAT.dangerLevel,
     trend: "+0.42 m / 6h",
     status: "NORMAL",
     latitude: 25.652,
@@ -166,7 +179,7 @@ export const SYNTHETIC_SCENARIOS: Scenario[] = [
     id: "SCEN-01",
     title: "Monsoon Baseline Run (Normal Flow)",
     description: "Standard seasonal monsoon discharge across the middle Ganga basin. River channels maintain stable freeboard below advisory thresholds.",
-    projectedStage: 49.82,
+    projectedStage: 46.95,
     surgeLevel: "NORMAL",
     leadTimeHours: 72,
     peakHour: 48,

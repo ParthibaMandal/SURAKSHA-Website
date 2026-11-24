@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Radio, Cpu, Shield } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import { gsap } from "gsap";
+import { PATNA_GANDHI_GHAT } from "@/lib/mock-data";
 
 export default function HomePage() {
   const [isSurgeActive, setIsSurgeActive] = useState(false);
@@ -373,7 +374,7 @@ export default function HomePage() {
                 Patna study section, Middle Ganga basin.
               </h2>
               <p className="text-sm text-[#9BA5A0] leading-relaxed text-pretty">
-                Calibrated to Central Water Commission (CWC) hydrology records for the Patna urban reach at Gandhi Ghat: 46.20 m normal baseline, 47.60 m warning, 48.60 m danger, and 50.52 m record high flood level (HFL), integrating confluences with the Sone, Gandak, and Punpun rivers.
+                Illustrative Gandhi Ghat reference levels: {PATNA_GANDHI_GHAT.baseline.toFixed(2)} m baseline, {PATNA_GANDHI_GHAT.warningLevel.toFixed(2)} m warning, {PATNA_GANDHI_GHAT.dangerLevel.toFixed(2)} m danger, and {PATNA_GANDHI_GHAT.highestFloodLevel.toFixed(2)} m HFL. These sample thresholds and readings are shown for interface demonstration.
               </p>
 
               <div className="flex flex-wrap gap-2 pt-1">
@@ -381,8 +382,8 @@ export default function HomePage() {
                   "Ganga river system",
                   "Patna, Gandhi Ghat",
                   "Sone & Gandak confluences",
-                  "CWC Danger: 48.60 m",
-                  "CWC Warning: 47.60 m",
+                  `Danger: ${PATNA_GANDHI_GHAT.dangerLevel.toFixed(2)} m`,
+                  `Warning: ${PATNA_GANDHI_GHAT.warningLevel.toFixed(2)} m`,
                 ].map((tag) => (
                   <span
                     key={tag}

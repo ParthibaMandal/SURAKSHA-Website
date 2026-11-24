@@ -37,7 +37,7 @@ export default function CitizenAlertsPage() {
                 Advisory: Elevated River Stage Downstream (Patna Lowland Corridor)
               </strong>
               <small className="text-xs text-[#A69B88] block">
-                06 Nov 2026 · 14:20 UTC · Forecast stage 50.65 m (Warning threshold 50.50 m)
+                06 Nov 2026 · 14:20 UTC · Sample forecast stage 47.65 m (Warning reference 47.60 m)
               </small>
             </div>
             <span className="px-2.5 py-1 rounded text-[10px] font-mono font-bold uppercase bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/30 self-start sm:self-center">
@@ -54,7 +54,7 @@ export default function CitizenAlertsPage() {
                 Clearance: Gandhighat Reach Within Normal Stage Bounds
               </strong>
               <small className="text-xs text-[#A69B88] block">
-                05 Nov 2026 · 09:00 UTC · Observed stage 49.40 m
+                05 Nov 2026 · 09:00 UTC · Sample stage 46.40 m
               </small>
             </div>
             <span className="px-2.5 py-1 rounded text-[10px] font-mono font-bold uppercase bg-[#FFFFFF]/15 text-[#FFFFFF] border border-[#FFFFFF]/30 self-start sm:self-center">

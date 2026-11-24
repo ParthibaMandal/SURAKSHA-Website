@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BrandLogo } from "@/components/shared/BrandLogo";
@@ -29,6 +29,7 @@ export const PublicNavbar: React.FC = () => {
   const [platformDropdownOpen, setPlatformDropdownOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const platformMenuRef = useRef<HTMLDivElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
 
   const isHome = pathname === "/";
@@ -45,6 +46,26 @@ export const PublicNavbar: React.FC = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (!platformDropdownOpen) return;
+
+    const closeOnOutsidePointer = (event: PointerEvent) => {
+      if (!platformMenuRef.current?.contains(event.target as Node)) {
+        setPlatformDropdownOpen(false);
+      }
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setPlatformDropdownOpen(false);
+    };
+
+    document.addEventListener("pointerdown", closeOnOutsidePointer);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutsidePointer);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [platformDropdownOpen]);
 
   if (pathname?.startsWith("/horizon")) {
     return null;
@@ -66,23 +87,20 @@ export const PublicNavbar: React.FC = () => {
 
   const headerClass = isHome
     ? scrolled
-      ? "fixed top-0 inset-x-0 z-50 bg-black/95 backdrop-blur-md transition-all duration-300 border-b border-[#1F2823]"
+      ? "fixed top-0 inset-x-0 z-50 bg-[var(--surface-glass)] backdrop-blur-md transition-all duration-300 border-b border-[var(--border)]"
       : "fixed top-0 inset-x-0 z-50 bg-transparent border-none transition-all duration-300"
-    : "sticky top-0 z-50 w-full border-b border-[#1F2823] bg-black/95 backdrop-blur-md transition-colors";
+    : "sticky top-0 z-50 w-full border-b border-[var(--border)] bg-[var(--surface-glass)] backdrop-blur-md transition-colors";
 
   return (
     <motion.header
       className={headerClass}
+      data-home-hero={isHome && !scrolled ? "true" : undefined}
       initial={false}
-      animate={{
-        backgroundColor: isHome && !scrolled ? "rgba(0,0,0,0)" : "rgba(0,0,0,0.94)",
-        borderColor: isHome && !scrolled ? "rgba(31,40,35,0)" : "rgba(31,40,35,1)",
-      }}
       transition={{ duration: prefersReducedMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
     >
       <div className="w-full px-6 sm:px-10 lg:px-14 h-16 sm:h-20 flex items-center justify-between gap-6">
         {/* Brand Logo - Shield Mark + SURAKSHA on far left */}
-        <BrandLogo />
+        <BrandLogo className="brand-logo" />
 
         {/* Desktop Navigation Links - Animated Glassmorphic Pill Dock */}
         <nav
@@ -103,15 +121,18 @@ export const PublicNavbar: React.FC = () => {
                 <div
                   key={link.href}
                   className="relative"
-                  onMouseEnter={() => setPlatformDropdownOpen(true)}
-                  onMouseLeave={() => setPlatformDropdownOpen(false)}
+                  ref={platformMenuRef}
                 >
                   <button
                     type="button"
                     onClick={() => setPlatformDropdownOpen(!platformDropdownOpen)}
                     aria-expanded={platformDropdownOpen}
+                    aria-haspopup="menu"
+                    onKeyDown={(event) => {
+                      if (event.key === "Escape") setPlatformDropdownOpen(false);
+                    }}
                     className={`nav-glass-pill group text-xs font-semibold cursor-pointer ${
-                      isActive ? "active text-white" : "text-zinc-200 hover:text-white"
+                      isActive ? "active text-[var(--foreground)]" : "text-[var(--foreground)]"
                     }`}
                   >
                     <span className="icon-glass w-6 h-6 rounded-full">
@@ -129,6 +150,7 @@ export const PublicNavbar: React.FC = () => {
                   <AnimatePresence>
                     {platformDropdownOpen && (
                       <motion.div
+                        role="menu"
                         initial={{ opacity: 0, y: 8, scale: 0.96 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 6, scale: 0.96 }}
@@ -137,6 +159,7 @@ export const PublicNavbar: React.FC = () => {
                       >
                         <Link
                           href="/platform"
+                          role="menuitem"
                           onClick={() => setPlatformDropdownOpen(false)}
                           className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-[#223029] transition-colors text-xs group"
                         >
@@ -155,6 +178,7 @@ export const PublicNavbar: React.FC = () => {
 
                         <Link
                           href="/study-area"
+                          role="menuitem"
                           onClick={() => setPlatformDropdownOpen(false)}
                           className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-[#223029] transition-colors text-xs group"
                         >
@@ -173,6 +197,7 @@ export const PublicNavbar: React.FC = () => {
 
                         <Link
                           href="/demo-lab"
+                          role="menuitem"
                           onClick={() => setPlatformDropdownOpen(false)}
                           className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-[#223029] transition-colors text-xs group"
                         >
@@ -200,7 +225,7 @@ export const PublicNavbar: React.FC = () => {
                 key={link.href}
                 href={link.href}
                 className={`nav-glass-pill group text-xs font-semibold ${
-                  isActive ? "active text-white" : "text-zinc-200 hover:text-white"
+                  isActive ? "active text-[var(--foreground)]" : "text-[var(--foreground)]"
                 }`}
               >
                 <span className="icon-glass w-6 h-6 rounded-full">

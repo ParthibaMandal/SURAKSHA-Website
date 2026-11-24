@@ -46,7 +46,7 @@ export const HimalayasToPlainsHero: React.FC = () => {
 
   return (
     <>
-      <section className="relative h-screen min-h-[700px] w-full flex flex-col justify-between overflow-x-hidden overflow-y-hidden bg-black text-white">
+      <section className="himalayas-hero relative h-screen min-h-[700px] w-full flex flex-col justify-between overflow-x-hidden overflow-y-hidden bg-black text-white">
         {/* =========================================================================
             BACKGROUND HERO VIDEO (User Provided Asset)
            ========================================================================= */}

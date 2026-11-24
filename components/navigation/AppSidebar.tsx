@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutGrid,
-  Layers,
   Activity,
   Shield,
   CheckCircle2,
@@ -13,7 +12,6 @@ import {
   Bell,
   AlertTriangle,
   FileText,
-  Users,
   Settings,
   Home,
   LogOut,
@@ -56,23 +54,24 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ role }) => {
       label: "OPERATIONS",
       items: [
         { href: "/admin", label: "Command Overview", icon: LayoutGrid },
-        { href: "/admin/scenarios", label: "Model Scenarios", icon: Layers, badge: "3 Runs" },
-        { href: "/admin/verification", label: "Supervisory Gates", icon: Shield, badge: "3/3 OK" },
-        { href: "/admin/alerts", label: "CAP Protocol Dispatch", icon: Bell },
+        { href: "/admin/forecasts", label: "Forecasts & Risk", icon: Activity },
+        { href: "/admin/gates", label: "Supervisory Gates", icon: Shield, badge: "3 stages" },
+        { href: "/admin/approvals", label: "Alert Approvals", icon: Bell },
       ],
     },
     {
-      label: "TELEMETRY & BASIN",
+      label: "RESPONSE & REPORTING",
+      items: [
+        { href: "/admin/incidents", label: "Incidents", icon: AlertTriangle },
+        { href: "/admin/sos-queue", label: "Citizen SOS Queue", icon: MapPin },
+        { href: "/admin/sitrep", label: "SITREP Reports", icon: FileText },
+      ],
+    },
+    {
+      label: "TELEMETRY & ADMIN",
       items: [
         { href: "/admin/stations", label: "Station Registry", icon: MapPin },
-        { href: "/admin/verification/ensemble", label: "Gauge Ensembles", icon: Activity },
-      ],
-    },
-    {
-      label: "ADMINISTRATION",
-      items: [
         { href: "/admin/audit", label: "Operational Audit", icon: FileText },
-        { href: "/admin/users", label: "Operators & Personnel", icon: Users },
         { href: "/admin/settings", label: "Command Settings", icon: Settings },
       ],
     },
@@ -85,7 +84,10 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ role }) => {
         { href: "/citizen", label: "Flood Risk Status", icon: LayoutGrid },
         { href: "/citizen/alerts", label: "Local Flood Alerts", icon: AlertTriangle, badge: "Live" },
         { href: "/citizen/safety", label: "Emergency Checklist", icon: CheckCircle2 },
-        { href: "/citizen/contact", label: "Emergency Helplines", icon: Users },
+        { href: "/citizen/sos", label: "Emergency SOS", icon: AlertTriangle },
+        { href: "/citizen/locations", label: "Saved Locations", icon: MapPin },
+        { href: "/citizen/notifications", label: "Notification Settings", icon: Bell },
+        { href: "/citizen/profile", label: "My Profile", icon: Settings },
       ],
     },
     {
@@ -129,6 +131,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ role }) => {
                   <Link
                     key={item.href}
                     href={item.href}
+                    aria-current={pathname === item.href ? "page" : undefined}
                     onClick={() => setMobileOpen(false)}
                     className={`flex items-center justify-between px-3 py-2 rounded-full text-xs font-medium transition-all ${
                       isActive

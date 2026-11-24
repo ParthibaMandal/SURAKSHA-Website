@@ -1,0 +1,8 @@
+{
+  "planning": "deep",
+  "context_depth": "dependency",
+  "verification_depth": "impact",
+  "delegation": "none",
+  "reason_codes": ["multi-route", "shared-module", "theme-system", "navigation-integrity", "datum-consistency"],
+  "decision": "Use existing route implementations for all workspace navigation; make theme surfaces token-driven; centralize the Patna sample station values and visibly label them synthetic; avoid asserting or inventing operational data beyond the checked-out demo fixtures."
+}

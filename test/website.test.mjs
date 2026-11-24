@@ -1,55 +1,82 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile, stat } from 'node:fs/promises';
-import { spawn } from 'node:child_process';
+import { access, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+const read = (relativePath) => readFile(path.join(root, relativePath), 'utf8');
 
-test('Core website files exist and are valid', async () => {
-  const files = [
-    'index.html',
-    'server.mjs',
-    'favicon.svg',
-    'manifest.json',
-    'robots.txt',
-    'design-system/tokens.css',
-    'design-system/tokens.json',
-    'design-system/DESIGN_SYSTEM.md',
-    'README.md'
-  ];
+async function routeExists(route) {
+  const segments = route.split('/').filter(Boolean);
+  let cursor = path.join(root, 'app');
+  for (const segment of segments) {
+    const direct = path.join(cursor, segment);
+    try {
+      await access(direct);
+      cursor = direct;
+    } catch {
+      const dynamic = (await import('node:fs/promises')).readdir(cursor, { withFileTypes: true });
+      const match = (await dynamic).find((entry) => entry.isDirectory() && /^\[.+\]$/.test(entry.name));
+      if (!match) return false;
+      cursor = path.join(cursor, match.name);
+    }
+  }
+  try {
+    await access(path.join(cursor, 'page.tsx'));
+    return true;
+  } catch {
+    return false;
+  }
+}
 
-  for (const file of files) {
-    const s = await stat(path.join(root, file)).catch(() => null);
-    assert.ok(s && s.isFile(), `Required file ${file} must exist`);
+test('Next.js application entry points exist', async () => {
+  for (const file of ['app/layout.tsx', 'app/page.tsx', 'app/globals.css', 'components/theme/ThemeProvider.tsx']) {
+    await access(path.join(root, file));
   }
 });
 
-test('Tokens JSON parses and has required design tokens', async () => {
-  const raw = await readFile(path.join(root, 'design-system/tokens.json'), 'utf8');
-  const tokens = JSON.parse(raw);
-  assert.ok(tokens.color, 'tokens.json must define colors');
-  assert.ok(tokens.color.primitive, 'tokens.json must define primitive colors');
-  assert.ok(tokens.color.primitive.river, 'tokens.json must define river colors');
-  assert.ok(tokens.color.semantic, 'tokens.json must define semantic colors');
+test('all workspace sidebar links resolve to an app route', async () => {
+  const source = await read('components/navigation/AppSidebar.tsx');
+  const routes = [...source.matchAll(/href:\s*"(\/[^"]+)"/g)].map((match) => match[1]);
+  assert.ok(routes.length >= 15, 'expected the admin and citizen workspace routes to be represented');
+  for (const route of routes) assert.ok(await routeExists(route), `${route} must resolve to a page`);
 });
 
-test('Web App Manifest is valid JSON with required fields', async () => {
-  const raw = await readFile(path.join(root, 'manifest.json'), 'utf8');
-  const manifest = JSON.parse(raw);
-  assert.equal(manifest.short_name, 'SURAKSHA');
-  assert.ok(manifest.icons && manifest.icons.length > 0, 'manifest must specify icons');
+test('public Platform menu destinations resolve', async () => {
+  const source = await read('components/navigation/PublicNavbar.tsx');
+  for (const route of ['/platform', '/study-area', '/demo-lab']) {
+    assert.ok(source.includes(`href="${route}"`), `${route} should remain in the Platform menu`);
+    assert.ok(await routeExists(route), `${route} must resolve to a page`);
+  }
 });
 
-test('HTML file has valid structure, metadata, and script tags', async () => {
-  const html = await readFile(path.join(root, 'index.html'), 'utf8');
-  assert.ok(html.includes('<!doctype html>'), 'must have doctype');
-  assert.ok(html.includes('<title>SURAKSHA — Flood Intelligence Platform</title>'), 'must have title');
-  assert.ok(html.includes('favicon.svg'), 'must link to favicon.svg');
-  assert.ok(html.includes('manifest.json'), 'must link to manifest.json');
-  assert.ok(html.includes('<div id="root"></div>'), 'must have root container');
-  assert.ok(html.includes('<div id="toast"'), 'must have toast container');
-  assert.ok(html.includes('render()'), 'must call initial render()');
+test('theme preference is bootstrapped and theme controls expose state', async () => {
+  const layout = await read('app/layout.tsx');
+  const toggle = await read('components/theme/ThemeToggle.tsx');
+  const css = await read('app/globals.css');
+  assert.match(layout, /localStorage\.getItem\('suraksha-theme'\)/);
+  assert.match(toggle, /aria-pressed=\{theme === "dark"\}/);
+  assert.match(css, /html\.light main/);
+  assert.match(css, /html\.light \.workspace-shell/);
+  assert.match(css, /hydrograph-chart/);
 });
 
+test('Patna preview uses a single coherent station fixture', async () => {
+  const data = await read('lib/mock-data.ts');
+  const fixture = data.slice(data.indexOf('export const PATNA_GANDHI_GHAT'), data.indexOf('export const STATIONS'));
+  assert.match(fixture, /currentStage:\s*46\.85/);
+  assert.match(fixture, /warningLevel:\s*47\.6/);
+  assert.match(fixture, /dangerLevel:\s*48\.6/);
+  for (const file of ['app/citizen/page.tsx', 'app/admin/page.tsx', 'components/three/DigitalTwinScene.tsx', 'components/shared/HydrologicalChart.tsx']) {
+    assert.match(await read(file), /PATNA_GANDHI_GHAT/);
+  }
+});
+
+test('Platform menu supports explicit open, escape, and outside close without hover-toggle conflict', async () => {
+  const source = await read('components/navigation/PublicNavbar.tsx');
+  assert.match(source, /onClick=\{\(\) => setPlatformDropdownOpen\(!platformDropdownOpen\)\}/);
+  assert.match(source, /event\.key === "Escape"/);
+  assert.match(source, /closeOnOutsidePointer/);
+  assert.doesNotMatch(source, /onMouseEnter=\{\(\) => setPlatformDropdownOpen/);
+});

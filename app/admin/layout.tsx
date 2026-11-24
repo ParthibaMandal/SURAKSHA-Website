@@ -13,7 +13,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col lg:flex-row min-h-[calc(100vh-4rem)] bg-[#000000] text-[#FFFFFF]">
+    <div className="workspace-shell flex flex-col lg:flex-row min-h-[calc(100vh-4rem)] bg-[var(--background)] text-[var(--foreground)]">
       <AppSidebar role="admin" />
       <div className="flex-1 flex flex-col min-w-0">
         <CommandTopBar />

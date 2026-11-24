@@ -15,6 +15,7 @@ import {
   TrendingUp,
   Waves,
 } from "lucide-react";
+import { PATNA_GANDHI_GHAT } from "@/lib/mock-data";
 
 export const PatnaCommandWorkspacePreview: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"routing" | "sensors" | "gates">("routing");
@@ -38,7 +39,7 @@ export const PatnaCommandWorkspacePreview: React.FC = () => {
 
         <div className="flex items-center gap-3 text-[11px] font-mono text-zinc-400">
           <span className="hidden md:inline">
-            Datum: <span className="text-white">46.20 m</span> baseline · <span className="text-amber-400">47.60 m</span> warning · <span className="text-rose-400">48.60 m</span> danger · <span className="text-zinc-400">50.52 m</span> HFL
+            Reference levels: <span className="text-white">{PATNA_GANDHI_GHAT.baseline.toFixed(2)} m</span> baseline · <span className="text-amber-400">{PATNA_GANDHI_GHAT.warningLevel.toFixed(2)} m</span> warning · <span className="text-rose-400">{PATNA_GANDHI_GHAT.dangerLevel.toFixed(2)} m</span> danger · <span className="text-zinc-400">{PATNA_GANDHI_GHAT.highestFloodLevel.toFixed(2)} m</span> HFL
           </span>
           <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 text-[10px] font-semibold">
             SYSTEM NOMINAL
@@ -57,7 +58,7 @@ export const PatnaCommandWorkspacePreview: React.FC = () => {
                 <span className="text-[10px] font-mono uppercase tracking-wider">River Stage</span>
                 <Droplets className="w-3.5 h-3.5 text-zinc-300" />
               </div>
-              <div className="text-xl font-bold font-mono text-white">47.12 m</div>
+              <div className="text-xl font-bold font-mono text-white">{PATNA_GANDHI_GHAT.currentStage.toFixed(2)} m</div>
               <div className="text-[10px] text-emerald-400 font-mono mt-0.5 flex items-center gap-1">
                 <span>▲ +0.08 m/h</span>
               </div>
@@ -99,14 +100,14 @@ export const PatnaCommandWorkspacePreview: React.FC = () => {
                 <span className="font-semibold text-white">Reach Inundation Model · 24-Hour Horizon</span>
               </div>
               <div className="flex items-center gap-1.5 text-[10px] font-mono text-zinc-400">
-                <span>Warning: 47.60m</span>
+                <span>Warning: {PATNA_GANDHI_GHAT.warningLevel.toFixed(2)}m</span>
                 <span>·</span>
-                <span className="text-rose-400">Danger: 48.60m</span>
+                <span className="text-rose-400">Danger: {PATNA_GANDHI_GHAT.dangerLevel.toFixed(2)}m</span>
               </div>
             </div>
 
             {/* SVG Visualizer with Monochrome Curves */}
-            <svg viewBox="0 0 540 140" className="w-full h-auto overflow-visible select-none" fill="none">
+            <svg viewBox="0 0 540 140" className="command-chart w-full h-auto overflow-visible select-none" fill="none">
               <defs>
                 <linearGradient id="consoleSilverGlow" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.12" />
@@ -122,13 +123,13 @@ export const PatnaCommandWorkspacePreview: React.FC = () => {
               {/* Danger Threshold Line (48.60m) */}
               <line x1="20" y1="38" x2="520" y2="38" stroke="#EF4444" strokeWidth="1" strokeDasharray="4 3" opacity="0.7" />
               <text x="515" y="34" fill="#F87171" fontSize="8" fontFamily="JetBrains Mono, monospace" textAnchor="end">
-                DANGER MARK 48.60m
+                DANGER MARK {PATNA_GANDHI_GHAT.dangerLevel.toFixed(2)}m
               </text>
 
               {/* Warning Threshold Line (47.60m) */}
               <line x1="20" y1="72" x2="520" y2="72" stroke="#F59E0B" strokeWidth="1" strokeDasharray="4 3" opacity="0.7" />
               <text x="515" y="68" fill="#FBBF24" fontSize="8" fontFamily="JetBrains Mono, monospace" textAnchor="end">
-                WARNING MARK 47.60m
+                WARNING MARK {PATNA_GANDHI_GHAT.warningLevel.toFixed(2)}m
               </text>
 
               {/* Filled Forecast Envelope */}

@@ -13,7 +13,7 @@ export default function CitizenLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] bg-[#000000] text-[#FFFFFF]">
+    <div className="workspace-shell flex min-h-[calc(100vh-4rem)] bg-[var(--background)] text-[var(--foreground)]">
       <AppSidebar role="citizen" />
       <div className="flex-1 flex flex-col min-w-0">
         <CommandTopBar workspace="CITIZEN" />

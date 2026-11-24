@@ -14,6 +14,7 @@ import {
   PhoneCall,
 } from "lucide-react";
 import { useAuth } from "@/lib/supabase/auth-context";
+import { PATNA_GANDHI_GHAT } from "@/lib/mock-data";
 
 export default function CitizenDashboardPage() {
   const { profile } = useAuth();
@@ -123,8 +124,8 @@ export default function CitizenDashboardPage() {
             <span>Nearest station stage</span>
             <Activity className="w-4 h-4 text-[#FFFFFF]" />
           </div>
-          <div className="text-2xl font-extrabold font-mono text-[#FFFFFF]">49.82 m</div>
-          <div className="text-[11px] font-mono text-[#A69B88]">STN-PAT-01 · Nominal</div>
+          <div className="text-2xl font-extrabold font-mono text-[#FFFFFF]">{PATNA_GANDHI_GHAT.currentStage.toFixed(2)} m</div>
+          <div className="text-[11px] font-mono text-[#A69B88]">{PATNA_GANDHI_GHAT.id} · Synthetic preview</div>
         </div>
       </div>
 
@@ -151,7 +152,7 @@ export default function CitizenDashboardPage() {
             </div>
             <div className="p-2.5 rounded-lg bg-[#000000] border border-[#A1A1AA]/12">
               <span className="text-[10px] text-[#A69B88] block">STAGE / WARN</span>
-              <span className="text-[#FFFFFF] font-bold">49.82 / 50.5m</span>
+              <span className="text-[#FFFFFF] font-bold">{PATNA_GANDHI_GHAT.currentStage.toFixed(2)} / {PATNA_GANDHI_GHAT.warningLevel.toFixed(2)}m</span>
             </div>
             <div className="p-2.5 rounded-lg bg-[#000000] border border-[#A1A1AA]/12">
               <span className="text-[10px] text-[#A69B88] block">CORRIDOR RISK</span>
@@ -187,14 +188,14 @@ export default function CitizenDashboardPage() {
                   River Stage Watch · Patna Lowland Corridor (Wards 01–12)
                 </strong>
                 <p className="text-xs text-[#A69B88] leading-relaxed">
-                  Upstream Sone confluence inflow is raising river stage toward the 50.50 m warning mark over the next 24 hours. Keep ground-floor valuables elevated.
+                  Synthetic preview scenario: the sample stage is {PATNA_GANDHI_GHAT.currentStage.toFixed(2)} m against a {PATNA_GANDHI_GHAT.warningLevel.toFixed(2)} m warning threshold. Follow current official local guidance for real conditions.
                 </p>
               </div>
 
               <div className="py-3 flex items-center justify-between gap-3">
                 <div>
                   <strong className="text-xs text-[#FFFFFF] block">Gandhighat Sector · Baseline Bulletin</strong>
-                  <small className="text-[11px] text-[#A69B88] font-mono">05 Nov 2026 · Stage 49.40 m within normal bounds</small>
+                  <small className="text-[11px] text-[#A69B88] font-mono">05 Nov 2026 · Sample stage 46.40 m within configured preview bounds</small>
                 </div>
                 <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#FFFFFF]/15 text-[#FFFFFF] border border-[#FFFFFF]/30">
                   Cleared
@@ -229,7 +230,7 @@ export default function CitizenDashboardPage() {
             <div className="py-3.5 flex items-center justify-between gap-3">
               <div>
                 <strong className="text-xs text-[#FFFFFF] block">Patna · Primary Residence (Gandhighat Reach)</strong>
-                <small className="text-[11px] text-[#A69B88] font-mono">Station STN-PAT-01 · 49.82 m · Alert radius 5 km</small>
+                <small className="text-[11px] text-[#A69B88] font-mono">Station {PATNA_GANDHI_GHAT.id} · {PATNA_GANDHI_GHAT.currentStage.toFixed(2)} m · Alert radius 5 km · SAMPLE</small>
               </div>
               <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#FFFFFF]/15 text-[#FFFFFF] border border-[#FFFFFF]/30">
                 Primary

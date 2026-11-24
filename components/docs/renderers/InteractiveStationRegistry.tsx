@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { PATNA_GANDHI_GHAT } from "@/lib/mock-data";
 import { Waves, MapPin, AlertTriangle, ShieldCheck, Activity, ArrowRight } from "lucide-react";
 
 interface Station {
@@ -23,11 +24,11 @@ const STATIONS: Station[] = [
     name: "Gandhi Ghat Gauge",
     river: "Ganga",
     location: "Patna Urban Corridor, Bihar",
-    currentStage: 49.82,
-    zeroLevel: 45.0,
-    warningLevel: 50.5,
-    dangerLevel: 51.8,
-    hfl: 52.52,
+    currentStage: PATNA_GANDHI_GHAT.currentStage,
+    zeroLevel: PATNA_GANDHI_GHAT.baseline,
+    warningLevel: PATNA_GANDHI_GHAT.warningLevel,
+    dangerLevel: PATNA_GANDHI_GHAT.dangerLevel,
+    hfl: PATNA_GANDHI_GHAT.highestFloodLevel,
     hflDate: "2016-08-25",
     status: "ACTIVE_TELEMETRY",
   },

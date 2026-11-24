@@ -14,7 +14,6 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("dark");
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     try {
@@ -23,14 +22,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         setThemeState(savedTheme);
         applyTheme(savedTheme);
       } else {
-        // Default to dark mode for operational console aesthetic
         setThemeState("dark");
         applyTheme("dark");
       }
     } catch {
+      setThemeState("dark");
       applyTheme("dark");
     }
-    setMounted(true);
   }, []);
 
   const applyTheme = (t: Theme) => {
