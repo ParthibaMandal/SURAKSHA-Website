@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, Shield, Activity } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ArrowLeft, Shield, Activity } from "lucide-react";
 
 interface GateConfig {
   name: string;
@@ -18,12 +17,12 @@ const GATES_DATA: Record<string, GateConfig> = {
   "pre-run": {
     name: "Pre-Run Gate · Input Quality & Sensor Integrity",
     desc: "Validate input quality, sensor completeness and operating boundary conditions before numerical execution.",
-    state: "INPUT REVIEW · PASSED",
+    state: "REFERENCE CHECKLIST · NOT RUN",
     checks: [
-      ["Telemetry quality", "Missing values, units and timestamp continuity checks", "Pass"],
-      ["Sensor consistency", "Detect conflicting or implausible gauge readings", "Pass"],
-      ["Data regime", "Classify normal, rapid rise, heavy rainfall or degraded mode", "Classify"],
-      ["Fallback readiness", "Verify approved degraded-mode fallback strategies", "Ready"],
+      ["Telemetry quality", "Missing values, units and timestamp continuity checks", "Example"],
+      ["Sensor consistency", "Detect conflicting or implausible gauge readings", "Example"],
+      ["Data regime", "Classify normal, rapid rise, heavy rainfall or degraded mode", "Example"],
+      ["Fallback readiness", "Verify approved degraded-mode fallback strategies", "Example"],
     ],
     decision: "CONTINUE / APPROVED FALLBACK / HUMAN REVIEW",
     note: "Pre-Run Gate blocks execution when required evidence is missing or sensor readings conflict beyond tolerance.",
@@ -31,7 +30,7 @@ const GATES_DATA: Record<string, GateConfig> = {
   "mid-run": {
     name: "Mid-Run Gate · Forecast Committee & Physics Verification",
     desc: "Review forecast committee output, mass conservation, model disagreement and evidence support.",
-    state: "MODEL REVIEW · WATCH",
+    state: "REFERENCE CHECKLIST · NOT RUN",
     checks: [
       ["Forecast committee", "Compare approved model outputs across 6h, 24h and 72h horizons", "Review"],
       ["Model disagreement", "Inspect ensemble spread and conflicting predictions", "Review"],
@@ -44,7 +43,7 @@ const GATES_DATA: Record<string, GateConfig> = {
   "post-run": {
     name: "Post-Run Gate · Evidence Triangulation & Human Approval",
     desc: "Triangulate downstream outputs against available terrain and satellite evidence and record confidence.",
-    state: "EVIDENCE REVIEW · VERIFIED",
+    state: "REFERENCE CHECKLIST · NOT RUN",
     checks: [
       ["Satellite corroboration", "Compare available SAR observations and derived flood extent", "Review"],
       ["Forecast vs risk", "Check consistency between stage forecast, risk and impact claims", "Verify"],
@@ -52,17 +51,17 @@ const GATES_DATA: Record<string, GateConfig> = {
       ["Human approval", "Require commander sign-off for unresolved or high-impact claims", "Required"],
     ],
     decision: "ACCEPT WITH CONFIDENCE / DISCOUNT / HUMAN REVIEW",
-    note: "Post-Run Gate ensures every advisory claim is substantiated by physical evidence before reaching operators.",
+    note: "The reference policy calls for external evidence checks before an advisory reaches operators.",
   },
   "gate-1": {
     name: "Pre-Run Gate (Gate 01)",
     desc: "Validate input quality and operating conditions before analysis.",
-    state: "INPUT REVIEW",
+    state: "REFERENCE CHECKLIST · NOT RUN",
     checks: [
-      ["Telemetry quality", "Missing values, units and timestamp checks", "Pass"],
-      ["Sensor consistency", "Detect conflicting or implausible readings", "Pass"],
+      ["Telemetry quality", "Missing values, units and timestamp checks", "Example"],
+      ["Sensor consistency", "Detect conflicting or implausible readings", "Example"],
       ["Data regime", "Normal, rapid rise, heavy rainfall or degraded mode", "Classify"],
-      ["Fallback readiness", "Check approved degraded-mode strategies", "Ready"],
+      ["Fallback readiness", "Check approved degraded-mode strategies", "Example"],
     ],
     decision: "CONTINUE / APPROVED FALLBACK / HUMAN REVIEW",
     note: "This gate blocks execution when required evidence is missing or sensor readings conflict.",
@@ -70,7 +69,7 @@ const GATES_DATA: Record<string, GateConfig> = {
   "gate-2": {
     name: "Mid-Run Gate (Gate 02)",
     desc: "Review forecast committee output, model disagreement and evidence support.",
-    state: "MODEL REVIEW",
+    state: "REFERENCE CHECKLIST · NOT RUN",
     checks: [
       ["Forecast committee", "Compare approved model outputs and horizons", "Review"],
       ["Model disagreement", "Inspect spread and conflicting predictions", "Review"],
@@ -83,7 +82,7 @@ const GATES_DATA: Record<string, GateConfig> = {
   "gate-3": {
     name: "Post-Run Gate (Gate 03)",
     desc: "Triangulate outputs against available evidence and record confidence.",
-    state: "EVIDENCE REVIEW",
+    state: "REFERENCE CHECKLIST · NOT RUN",
     checks: [
       ["Satellite corroboration", "Compare available satellite observations and derived extent", "Review"],
       ["Forecast vs risk", "Check consistency between forecast, risk and impact claims", "Verify"],
@@ -91,7 +90,7 @@ const GATES_DATA: Record<string, GateConfig> = {
       ["Human approval", "Require review for unresolved or high-impact claims", "Required"],
     ],
     decision: "ACCEPT WITH CONFIDENCE / DISCOUNT / HUMAN REVIEW",
-    note: "Post-Run Gate guarantees that any external claim is substantiated by physical evidence.",
+    note: "The reference policy calls for checking supporting evidence before making an external claim.",
   },
 };
 
@@ -101,21 +100,8 @@ export default function GateDetailPage({
   params: { gateId: string };
 }) {
   const data = GATES_DATA[params.gateId] || GATES_DATA["pre-run"];
-  const [toast, setToast] = useState<string | null>(null);
-
-  const showToast = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(null), 2600);
-  };
-
   return (
     <div className="space-y-6 max-w-[1440px] mx-auto">
-      {toast && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#0A0A0A] border border-[#FFFFFF]/50 text-xs font-mono text-[#A1A1AA] shadow-2xl flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-[#FFFFFF]" /> {toast}
-        </div>
-      )}
-
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Link
           href="/admin"
@@ -149,7 +135,7 @@ export default function GateDetailPage({
       {/* Heading */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#A1A1AA]/14">
         <div>
-          <div className="eyebrow">SCIENTIFIC ANALYTICS GATES</div>
+          <div className="eyebrow">ILLUSTRATIVE VERIFICATION TEMPLATE</div>
           <h1 className="text-3xl font-extrabold text-[#A1A1AA]">{data.name}</h1>
           <p className="text-xs text-[#A69B88] mt-1">{data.desc}</p>
         </div>
@@ -165,8 +151,8 @@ export default function GateDetailPage({
             <span>Gate Execution</span>
             <Activity className="w-3.5 h-3.5 text-[#FFFFFF]" />
           </div>
-          <div className="text-2xl font-extrabold font-mono text-[#A1A1AA]">Active</div>
-          <div className="text-[11px] font-mono text-[#FFFFFF]">Automated pipeline check</div>
+          <div className="text-lg font-extrabold font-mono text-[#A1A1AA]">Not run</div>
+          <div className="text-[11px] font-mono text-[#A69B88]">No connected execution record</div>
         </div>
 
         <div className="p-4 rounded-xl border border-[#A1A1AA]/15 bg-[#0A0A0A] space-y-2">
@@ -174,8 +160,8 @@ export default function GateDetailPage({
             <span>Checks Performed</span>
             <Shield className="w-3.5 h-3.5 text-[#FFFFFF]" />
           </div>
-          <div className="text-2xl font-extrabold font-mono text-[#A1A1AA]">04 / 04</div>
-          <div className="text-[11px] font-mono text-[#A69B88]">Invariants evaluated</div>
+          <div className="text-lg font-extrabold font-mono text-[#A1A1AA]">Unavailable</div>
+          <div className="text-[11px] font-mono text-[#A69B88]">Checklist items are examples</div>
         </div>
 
         <div className="p-4 rounded-xl border border-[#A1A1AA]/15 bg-[#0A0A0A] space-y-2">
@@ -183,8 +169,8 @@ export default function GateDetailPage({
             <span>Supervisory State</span>
             <Activity className="w-3.5 h-3.5 text-[#FFFFFF]" />
           </div>
-          <div className="text-2xl font-extrabold font-mono text-[#FFFFFF]">Nominal</div>
-          <div className="text-[11px] font-mono text-[#A69B88]">Sample benchmark</div>
+          <div className="text-lg font-extrabold font-mono text-[#A1A1AA]">Not reported</div>
+          <div className="text-[11px] font-mono text-[#A69B88]">No supervisory result returned</div>
         </div>
 
         <div className="p-4 rounded-xl border border-[#A1A1AA]/15 bg-[#0A0A0A] space-y-2">
@@ -192,8 +178,8 @@ export default function GateDetailPage({
             <span>Evidence Score</span>
             <Shield className="w-3.5 h-3.5 text-[#FFFFFF]" />
           </div>
-          <div className="text-2xl font-extrabold font-mono text-[#A1A1AA]">0.94</div>
-          <div className="text-[11px] font-mono text-[#FFFFFF]">High confidence</div>
+          <div className="text-lg font-extrabold font-mono text-[#A1A1AA]">Unavailable</div>
+          <div className="text-[11px] font-mono text-[#A69B88]">No evidence score returned</div>
         </div>
       </div>
 
@@ -236,7 +222,7 @@ export default function GateDetailPage({
             </div>
 
             <div className="p-4 rounded-lg border border-[#A1A1AA]/15 bg-[#000000] text-xs text-[#A1A1AA] leading-relaxed">
-              {data.note}
+              {data.note} This page is an illustrative checklist, not an executed or verified gate result.
             </div>
 
             <div className="pt-2">
@@ -250,12 +236,9 @@ export default function GateDetailPage({
           </div>
 
           <div className="pt-4 border-t border-[#A1A1AA]/14">
-            <Button
-              onClick={() => showToast(`${data.name} verification check executed.`)}
-              className="w-full text-xs font-bold"
-            >
-              Execute Gate Verification Check
-            </Button>
+            <p className="rounded-lg border border-amber-300/20 bg-amber-300/[0.05] p-3 text-xs text-amber-100">
+              Gate execution is unavailable because no gate result endpoint is connected.
+            </p>
           </div>
         </div>
       </div>

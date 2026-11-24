@@ -120,7 +120,7 @@ To support empirical research and comparative evaluation, SURAKSHA supports dual
   * Zero false-alarm release policy on hardware sensor glitches.
 
 * **`static` (Research Baseline)**:
-  * Fixed, non-branching sequential 7-agent chain (`DataAgent` → `WeatherAgent` → `SatelliteAgent` → `ForecastAgent` → `RiskAgent` → `ImpactAgent` → `VerificationAgent`).
+  * Fixed, non-branching sequential 7-agent chain (`DataAgent` $\to$ `WeatherAgent` $\to$ `SatelliteAgent` $\to$ `ForecastAgent` $\to$ `RiskAgent` $\to$ `ImpactAgent` $\to$ `VerificationAgent`).
   * Single default model invoked regardless of regime.
   * No intermediate gates, fallback routing, or cross-agent consistency checks.
 

@@ -149,7 +149,7 @@ export const HydrologicalChart: React.FC<HydrologicalChartProps> = ({
             </span>
           </div>
           <p className="text-[11px] text-zinc-400 mt-0.5">
-            Patna, Gandhi Ghat Gauge (STN-PAT-01) · Units: metres (m MSL) · Rainfall (mm/hr)
+            Illustrative sample for Patna · values are not measured observations or an operational forecast
           </p>
         </div>
 
@@ -182,7 +182,7 @@ export const HydrologicalChart: React.FC<HydrologicalChartProps> = ({
                 : "bg-white/5 text-zinc-300 border-white/15"
             }`}
           >
-            {isSurge ? "HIGH FLOOD WATCH" : "NOMINAL ENVELOPE"}
+            {isSurge ? "SYNTHETIC SURGE EXAMPLE" : "SYNTHETIC BASELINE EXAMPLE"}
           </span>
         </div>
       </div>
@@ -191,21 +191,21 @@ export const HydrologicalChart: React.FC<HydrologicalChartProps> = ({
       {activePoint && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 px-3.5 py-2.5 rounded-xl bg-black border border-white/10 text-[11px] font-mono">
           <div>
-            <span className="text-zinc-500 block text-[10px]">HORIZON STEP</span>
+            <span className="text-zinc-500 block text-[10px]">SAMPLE TIME STEP</span>
             <strong className="text-white">{activePoint.time} ({horizon})</strong>
           </div>
           <div>
-            <span className="text-zinc-500 block text-[10px]">ENSEMBLE MEAN</span>
+            <span className="text-zinc-500 block text-[10px]">ILLUSTRATIVE STAGE</span>
             <strong className="text-white">{activePoint.ensembleMean.toFixed(2)} m</strong>
           </div>
           <div>
-            <span className="text-zinc-500 block text-[10px]">90% CONFIDENCE BAND</span>
+            <span className="text-zinc-500 block text-[10px]">EXAMPLE RANGE</span>
             <strong className="text-zinc-300">
               {activePoint.ensembleLower.toFixed(2)}–{activePoint.ensembleUpper.toFixed(2)} m
             </strong>
           </div>
           <div>
-            <span className="text-zinc-500 block text-[10px]">RAINFALL INTENSITY</span>
+            <span className="text-zinc-500 block text-[10px]">SAMPLE RAINFALL</span>
             <strong className="text-zinc-300">{activePoint.rainfallMm} mm/hr</strong>
           </div>
         </div>
@@ -415,10 +415,10 @@ export const HydrologicalChart: React.FC<HydrologicalChartProps> = ({
         <div className="pt-2.5 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-[11px]">
           <div className="flex flex-wrap items-center gap-4">
             <span className="inline-flex items-center gap-1.5 text-white">
-              <span className="w-3 h-0.5 bg-white inline-block" /> Observed Stage
+              <span className="w-3 h-0.5 bg-white inline-block" /> Sample Stage Series
             </span>
             <span className="inline-flex items-center gap-1.5 text-zinc-300">
-              <span className="w-3 h-0.5 bg-zinc-300 inline-block" /> Forecast Mean (Ensemble)
+              <span className="w-3 h-0.5 bg-zinc-300 inline-block" /> Example Projection
             </span>
             <span className="inline-flex items-center gap-1.5 text-zinc-400">
               <span className="w-3 h-2 rounded-sm bg-white/10 inline-block" /> 90% Prediction Band

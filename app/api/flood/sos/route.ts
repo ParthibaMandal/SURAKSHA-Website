@@ -1,106 +1,87 @@
 import { NextResponse } from "next/server";
+import { getAuthenticatedProfile } from "@/lib/supabase/authorization";
 
-export async function GET(request: Request) {
-  const backendUrl = process.env.SURAKSHA_BACKEND_URL || "http://127.0.0.1:8000";
-  const { searchParams } = new URL(request.url);
-  const statusFilter = searchParams.get("status");
+export const dynamic = "force-dynamic";
 
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
-
-    const query = statusFilter ? `?status=${statusFilter}` : "";
-    const res = await fetch(`${backendUrl}/api/v1/sos/queue${query}`, {
-      headers: { accept: "application/json" },
-      signal: controller.signal,
-      cache: "no-store",
-    });
-    clearTimeout(timeoutId);
-
-    if (res.ok) {
-      const data = await res.json();
-      return NextResponse.json(data);
-    }
-  } catch {
-    // Backend offline fallback
+export async function GET() {
+  const identity = await getAuthenticatedProfile();
+  if (!identity) return NextResponse.json({ detail: "Sign in required." }, { status: 401 });
+  if (!["admin", "operator"].includes(identity.profile.role)) {
+    return NextResponse.json({ detail: "You are not allowed to view the assistance queue." }, { status: 403 });
   }
 
-  // Fallback demo queue records
-  return NextResponse.json([
-    {
-      id: "SOS-1001",
-      citizen_name: "Ramesh Kumar Patel",
-      phone_number: "+91-9876543210",
-      emergency_type: "TRAPPED_WATER",
-      severity: "CRITICAL",
-      people_count: 4,
-      latitude: 25.6310,
-      longitude: 85.1120,
-      landmark_address: "Rooftop near community water tank, Ward 04, Kurji",
-      status: "DISPATCHED",
-      assigned_team: "NDRF Rescue Boat 02",
-      notes: "Water level at 1.8m on ground floor.",
-      created_at: new Date().toISOString(),
-    },
-    {
-      id: "SOS-1002",
-      citizen_name: "Priya Sahani",
-      phone_number: "+91-9876500112",
-      emergency_type: "MEDICAL",
-      severity: "CRITICAL",
-      people_count: 2,
-      latitude: 25.6450,
-      longitude: 85.0920,
-      landmark_address: "Green building adjacent to primary school, Digha Ghat",
-      status: "PENDING",
-      assigned_team: null,
-      notes: "Requires urgent medical relocation.",
-      created_at: new Date().toISOString(),
-    },
-  ]);
+  const { data, error } = await identity.supabase
+    .from("citizen_sos_reports")
+    .select("id,citizen_name,contact_phone,location_name,urgency,description,status,created_at")
+    .order("created_at", { ascending: false })
+    .limit(200);
+
+  if (error) {
+    return NextResponse.json({ detail: "The assistance queue is unavailable." }, { status: 503 });
+  }
+
+  return NextResponse.json(data ?? [], { headers: { "Cache-Control": "no-store" } });
 }
 
 export async function POST(request: Request) {
-  const backendUrl = process.env.SURAKSHA_BACKEND_URL || "http://127.0.0.1:8000";
-  const body = await request.json();
-
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
-
-    const res = await fetch(`${backendUrl}/api/v1/sos/submit`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-      signal: controller.signal,
-    });
-    clearTimeout(timeoutId);
-
-    if (res.ok) {
-      const data = await res.json();
-      return NextResponse.json(data, { status: 201 });
-    }
-  } catch {
-    // Backend offline fallback
+  const identity = await getAuthenticatedProfile();
+  if (!identity) return NextResponse.json({ detail: "Sign in required." }, { status: 401 });
+  if (identity.profile.role !== "citizen") {
+    return NextResponse.json({ detail: "Only citizen accounts may submit an assistance request." }, { status: 403 });
   }
 
-  // Fallback mock response with auto-generated ID
-  return NextResponse.json(
-    {
-      id: `SOS-${Math.floor(1000 + Math.random() * 9000)}`,
-      citizen_name: body.citizen_name || "Citizen Requester",
-      phone_number: body.phone_number || "+91-9876543210",
-      emergency_type: body.emergency_type || "TRAPPED_WATER",
-      severity: body.severity || "CRITICAL",
-      people_count: body.people_count || 1,
-      latitude: body.latitude || 25.6214,
-      longitude: body.longitude || 85.1432,
-      landmark_address: body.landmark_address || "Patna Urban",
-      status: "PENDING",
-      created_at: new Date().toISOString(),
-      message: "Rescue intake logged into queue (Simulation Fallback Mode).",
-    },
-    { status: 201 }
-  );
-}
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ detail: "Request body must be valid JSON." }, { status: 400 });
+  }
 
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return NextResponse.json({ detail: "Request body must be an assistance request." }, { status: 400 });
+  }
+
+  const input = body as Record<string, unknown>;
+  const citizenName = typeof input.citizen_name === "string" ? input.citizen_name.trim() : "";
+  const contactPhone = typeof input.contact_phone === "string" ? input.contact_phone.trim() : "";
+  const locationName = typeof input.location_name === "string" ? input.location_name.trim() : "";
+  const description = typeof input.description === "string" ? input.description.trim() : "";
+  const urgency = input.urgency;
+
+  if (citizenName.length < 2 || citizenName.length > 120) {
+    return NextResponse.json({ detail: "Enter a name between 2 and 120 characters." }, { status: 400 });
+  }
+  const phoneDigits = contactPhone.replace(/\D/g, "");
+  if (!/^\+?[0-9 ()-]{7,30}$/.test(contactPhone) || phoneDigits.length < 7 || phoneDigits.length > 15) {
+    return NextResponse.json({ detail: "Enter a valid contact number." }, { status: 400 });
+  }
+  if (locationName.length < 2 || locationName.length > 300) {
+    return NextResponse.json({ detail: "Enter a location between 2 and 300 characters." }, { status: 400 });
+  }
+  if (description.length < 2 || description.length > 2000) {
+    return NextResponse.json({ detail: "Describe the assistance needed in 2 to 2,000 characters." }, { status: 400 });
+  }
+  if (urgency !== "LOW" && urgency !== "MEDIUM" && urgency !== "HIGH") {
+    return NextResponse.json({ detail: "Choose a valid urgency level." }, { status: 400 });
+  }
+
+  const { data, error } = await identity.supabase
+    .from("citizen_sos_reports")
+    .insert({
+      citizen_id: identity.user.id,
+      citizen_name: citizenName,
+      contact_phone: contactPhone,
+      location_name: locationName,
+      urgency,
+      description,
+      status: "OPEN",
+    })
+    .select("id,status,created_at")
+    .single();
+
+  if (error || !data) {
+    return NextResponse.json({ detail: "The request could not be saved. Please try again or call emergency services." }, { status: 503 });
+  }
+
+  return NextResponse.json(data, { status: 201, headers: { "Cache-Control": "no-store" } });
+}

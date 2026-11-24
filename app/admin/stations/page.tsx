@@ -1,94 +1,82 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PATNA_GANDHI_GHAT } from "@/lib/mock-data";
-import { CheckCircle2, Radio, Activity, Layers, Search } from "lucide-react";
+import { Radio, Activity, Layers, Search, AlertCircle } from "lucide-react";
+import type { StationMetadata } from "@/types/contracts";
 
-const STATIONS_LIST = [
+interface StationDisplayItem {
+  id: string;
+  name: string;
+  type: string;
+  location: string;
+  stage: string;
+  warn: string;
+  danger: string;
+  freshness: string;
+  provenance: string;
+  status: string;
+}
+
+const FALLBACK_STATIONS: StationDisplayItem[] = [
   {
-    id: "STN-PAT-01",
-    name: "Gandhi Ghat · Patna Main",
+    id: "GANGES_PATNA",
+    name: PATNA_GANDHI_GHAT.name,
     type: "River Stage & Discharge",
-    location: "Patna Urban Reach",
+    location: "Gandhi Ghat, Patna",
     stage: `${PATNA_GANDHI_GHAT.currentStage.toFixed(2)} m`,
     warn: `${PATNA_GANDHI_GHAT.warningLevel.toFixed(2)} m`,
     danger: `${PATNA_GANDHI_GHAT.dangerLevel.toFixed(2)} m`,
-    freshness: "2 mins ago",
+    freshness: "No live telemetry feed",
     provenance: "SAMPLE",
-    status: "Connected",
-  },
-  {
-    id: "STN-PAT-02",
-    name: "Digha Ghat · Upstream",
-    type: "River Stage",
-    location: "Patna West Reach",
-    stage: "50.45 m",
-    warn: "50.40 m",
-    danger: "51.50 m",
-    freshness: "4 mins ago",
-    provenance: "SAMPLE",
-    status: "Warning",
-  },
-  {
-    id: "STN-SON-01",
-    name: "Maner · Sone Confluence",
-    type: "Confluence Gauge",
-    location: "Danapur West",
-    stage: "51.92 m",
-    warn: "51.00 m",
-    danger: "51.80 m",
-    freshness: "1 min ago",
-    provenance: "SYNTHETIC",
-    status: "Danger",
-  },
-  {
-    id: "STN-GAN-01",
-    name: "Hajipur · Gandak Bridge",
-    type: "Tributary Gauge",
-    location: "Vaishali Sector",
-    stage: "48.10 m",
-    warn: "49.20 m",
-    danger: "50.30 m",
-    freshness: "6 mins ago",
-    provenance: "SAMPLE",
-    status: "Connected",
-  },
-  {
-    id: "RAD-PAT-01",
-    name: "Doppler Weather Radar",
-    type: "Precipitation",
-    location: "Catchment West",
-    stage: "18.4 mm/hr",
-    warn: "35.0 mm/hr",
-    danger: "60.0 mm/hr",
-    freshness: "5 mins ago",
-    provenance: "SAMPLE",
-    status: "Connected",
-  },
-  {
-    id: "SAT-SEN-01",
-    name: "Sentinel-1 SAR Water Mask",
-    type: "Satellite Imagery",
-    location: "Ganga Corridor Footprint",
-    stage: "42.5 km²",
-    warn: "65.0 km²",
-    danger: "95.0 km²",
-    freshness: "2 hours ago",
-    provenance: "SAMPLE",
-    status: "Processed",
+    status: "Sample Reference",
   },
 ];
 
 export default function AdminStationsPage() {
-  const [toast, setToast] = useState<string | null>(null);
+  const [stations, setStations] = useState<StationDisplayItem[]>(FALLBACK_STATIONS);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLiveConnected, setIsLiveConnected] = useState(false);
   const [query, setQuery] = useState("");
 
-  const showToast = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(null), 2600);
-  };
+  useEffect(() => {
+    let active = true;
+    async function loadStations() {
+      try {
+        const response = await fetch("/api/flood/stations", { cache: "no-store" });
+        if (!response.ok) throw new Error("Station service unavailable");
+        const data: StationMetadata[] = await response.json();
+        if (active && Array.isArray(data) && data.length > 0) {
+          const mapped: StationDisplayItem[] = data.map((s) => ({
+            id: s.station_id,
+            name: s.station_name,
+            type: "CWC River Gauge",
+            location: `${s.district}, ${s.state} (${s.basin})`,
+            stage: "Stream offline",
+            warn: `${s.warning_level_m.toFixed(2)} m`,
+            danger: `${s.danger_level_m.toFixed(2)} m`,
+            freshness: "Catalog metadata only",
+            provenance: "CATALOG METADATA",
+            status: "Catalog Registered",
+          }));
+          setStations(mapped);
+          setIsLiveConnected(true);
+        }
+      } catch {
+        if (active) {
+          setIsLiveConnected(false);
+        }
+      } finally {
+        if (active) setIsLoading(false);
+      }
+    }
+    loadStations();
+    return () => {
+      active = false;
+    };
+  }, []);
 
-  const filtered = STATIONS_LIST.filter(
+  const filtered = stations.filter(
     (s) =>
       s.name.toLowerCase().includes(query.toLowerCase()) ||
       s.id.toLowerCase().includes(query.toLowerCase()) ||
@@ -97,12 +85,6 @@ export default function AdminStationsPage() {
 
   return (
     <div className="space-y-6">
-      {toast && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#0A0A0A] border border-[#FFFFFF]/40 text-xs font-mono text-[#A1A1AA] shadow-2xl flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-[#FFFFFF]" /> {toast}
-        </div>
-      )}
-
       {/* Heading */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#A1A1AA]/15">
         <div>
@@ -111,44 +93,70 @@ export default function AdminStationsPage() {
             Stations & Data Sources
           </h1>
           <p className="text-xs text-[#A69B88] mt-1">
-            Review station metadata, water-level telemetry feeds, thresholds, and source readiness.
+            Review station metadata, benchmark datums, warning/danger thresholds, and telemetry feed readiness.
           </p>
         </div>
         <button
-          onClick={() => showToast("Source configuration preview opened.")}
-          className="btn secondary small self-start sm:self-auto"
+          disabled
+          title="Telemetry source configuration is managed via engine environment variables (NWDP_LEVEL_CSV, IMD_API_TOKEN)"
+          className="btn secondary small self-start sm:self-auto opacity-60 cursor-not-allowed text-xs"
         >
-          Configure Source
+          Configure Source (Server-managed)
         </button>
+      </div>
+
+      {/* Operational Notice Banner */}
+      <div className="p-4 rounded-xl border border-[#A1A1AA]/20 bg-[#0A0A0A] text-[#A1A1AA] flex items-start gap-3.5">
+        <AlertCircle className="w-5 h-5 text-[#F59E0B] shrink-0 mt-0.5" />
+        <div className="text-xs space-y-0.5">
+          <strong className="text-[#FFFFFF] font-bold block">
+            {isLiveConnected
+              ? "CWC Station Catalogue Connected"
+              : "Station Catalogue Service Offline · Showing Sample Reference"}
+          </strong>
+          <p className="text-[#A69B88]">
+            {isLiveConnected
+              ? "Station benchmark datums and coordinates are synchronized with the SURAKSHA engine catalog. Continuous real-time gauge telemetry requires configured NWDP/CWC feeds."
+              : "The SURAKSHA backend station endpoint is currently unreachable. Displaying the validated Patna Gandhi Ghat baseline fixture for review."}
+          </p>
+        </div>
       </div>
 
       {/* 4 Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="p-5 rounded-xl border border-[#A1A1AA]/15 bg-[#0A0A0A] space-y-2">
           <div className="flex items-center justify-between text-xs text-[#A69B88]">
-            <span>Stations online</span>
+            <span>Catalog stations</span>
             <Radio className="w-4 h-4 text-[#FFFFFF]" />
           </div>
-          <div className="text-2xl font-extrabold font-mono text-[#FFFFFF]">08</div>
-          <div className="text-[11px] font-mono text-[#FFFFFF]">100% reporting · SAMPLE</div>
-        </div>
-
-        <div className="p-5 rounded-xl border border-[#A1A1AA]/15 bg-[#0A0A0A] space-y-2">
-          <div className="flex items-center justify-between text-xs text-[#A69B88]">
-            <span>Active telemetry</span>
-            <Activity className="w-4 h-4 text-[#FFFFFF]" />
+          <div className="text-2xl font-extrabold font-mono text-[#FFFFFF]">
+            {isLoading ? "—" : String(stations.length).padStart(2, "0")}
           </div>
-          <div className="text-2xl font-extrabold font-mono text-[#FFFFFF]">08</div>
-          <div className="text-[11px] font-mono text-[#A1A1AA]">Continuous stream</div>
+          <div className="text-[11px] font-mono text-[#A69B88]">
+            {isLiveConnected ? "Engine catalog synced" : "Offline sample record"}
+          </div>
         </div>
 
         <div className="p-5 rounded-xl border border-[#A1A1AA]/15 bg-[#0A0A0A] space-y-2">
           <div className="flex items-center justify-between text-xs text-[#A69B88]">
-            <span>Stale feeds</span>
+            <span>Live telemetry stream</span>
             <Activity className="w-4 h-4 text-[#A69B88]" />
           </div>
           <div className="text-2xl font-extrabold font-mono text-[#FFFFFF]">00</div>
-          <div className="text-[11px] font-mono text-[#A69B88]">Optimal health</div>
+          <div className="text-[11px] font-mono text-[#A69B88]">No active live stream</div>
+        </div>
+
+        <div className="p-5 rounded-xl border border-[#A1A1AA]/15 bg-[#0A0A0A] space-y-2">
+          <div className="flex items-center justify-between text-xs text-[#A69B88]">
+            <span>Telemetry polling</span>
+            <Activity className="w-4 h-4 text-[#A69B88]" />
+          </div>
+          <div className="text-2xl font-extrabold font-mono text-[#FFFFFF]">
+            {isLiveConnected ? "Hourly" : "Disabled"}
+          </div>
+          <div className="text-[11px] font-mono text-[#A69B88]">
+            {isLiveConnected ? "CWC/IMD provider feeds" : "No provider polling"}
+          </div>
         </div>
 
         <div className="p-5 rounded-xl border border-[#A1A1AA]/15 bg-[#0A0A0A] space-y-2">
@@ -156,8 +164,8 @@ export default function AdminStationsPage() {
             <span>Source families</span>
             <Layers className="w-4 h-4 text-[#FFFFFF]" />
           </div>
-          <div className="text-2xl font-extrabold font-mono text-[#FFFFFF]">06</div>
-          <div className="text-[11px] font-mono text-[#A69B88]">Gauges, Radar, SAR</div>
+          <div className="text-2xl font-extrabold font-mono text-[#FFFFFF]">03</div>
+          <div className="text-[11px] font-mono text-[#A69B88]">CWC Gauges, IMD, Sentinel-1</div>
         </div>
       </div>
 
@@ -167,7 +175,7 @@ export default function AdminStationsPage() {
           <div>
             <h3 className="text-sm font-bold text-[#A1A1AA]">Station Catalogue</h3>
             <p className="text-xs text-[#A69B88]">
-              Water level, warning threshold, danger threshold, data freshness, and provenance
+              River reach, benchmark datums, warning threshold, danger threshold, and provenance
             </p>
           </div>
           <div className="relative w-full sm:w-64">
@@ -185,11 +193,11 @@ export default function AdminStationsPage() {
           <table className="w-full text-left text-xs font-mono">
             <thead>
               <tr className="border-b border-[#A1A1AA]/15 text-[#A69B88] uppercase text-[10px]">
-                <th className="py-2.5 px-3">Station / Source</th>
+                <th className="py-2.5 px-3">Station / ID</th>
                 <th className="py-2.5 px-3">Type</th>
-                <th className="py-2.5 px-3">Current Reading</th>
-                <th className="py-2.5 px-3">Warn / Danger</th>
-                <th className="py-2.5 px-3">Freshness</th>
+                <th className="py-2.5 px-3">Current Stage</th>
+                <th className="py-2.5 px-3">Warn / Danger Thresholds</th>
+                <th className="py-2.5 px-3">Data Freshness</th>
                 <th className="py-2.5 px-3">Provenance</th>
                 <th className="py-2.5 px-3">Status</th>
               </tr>
@@ -213,15 +221,7 @@ export default function AdminStationsPage() {
                     </span>
                   </td>
                   <td className="py-3 px-3">
-                    <span
-                      className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${
-                        s.status === "Danger"
-                          ? "bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/30"
-                          : s.status === "Warning"
-                          ? "bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30"
-                          : "bg-[#FFFFFF]/15 text-[#FFFFFF] border-[#FFFFFF]/30"
-                      }`}
-                    >
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase border bg-[#FFFFFF]/10 text-[#FFFFFF] border-[#FFFFFF]/25">
                       {s.status}
                     </span>
                   </td>

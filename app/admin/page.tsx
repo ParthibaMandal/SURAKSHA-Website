@@ -43,7 +43,7 @@ const COMMAND_STATIONS: StationRow[] = [
     warning: PATNA_GANDHI_GHAT.warningLevel,
     danger: PATNA_GANDHI_GHAT.dangerLevel,
     trend: "+0.42 m / 6h",
-    lastObs: "12m ago",
+    lastObs: "No feed",
     dataState: "SAMPLE",
     risk: "NORMAL",
   },
@@ -55,7 +55,7 @@ const COMMAND_STATIONS: StationRow[] = [
     warning: 49.5,
     danger: 50.8,
     trend: "+0.28 m / 6h",
-    lastObs: "5m ago",
+    lastObs: "No feed",
     dataState: "SAMPLE",
     risk: "NORMAL",
   },
@@ -67,7 +67,7 @@ const COMMAND_STATIONS: StationRow[] = [
     warning: 52.0,
     danger: 53.2,
     trend: "+1.15 m / 6h",
-    lastObs: "2m ago",
+    lastObs: "No feed",
     dataState: "SYNTHETIC",
     risk: "WARNING",
   },
@@ -79,7 +79,7 @@ const COMMAND_STATIONS: StationRow[] = [
     warning: 53.5,
     danger: 54.8,
     trend: "+0.85 m / 6h",
-    lastObs: "8m ago",
+    lastObs: "No feed",
     dataState: "SAMPLE",
     risk: "ADVISORY",
   },
@@ -91,7 +91,7 @@ const COMMAND_STATIONS: StationRow[] = [
     warning: 51.0,
     danger: 52.0,
     trend: "+0.15 m / 6h",
-    lastObs: "18m ago",
+    lastObs: "No feed",
     dataState: "SAMPLE",
     risk: "NORMAL",
   },
@@ -103,7 +103,7 @@ const COMMAND_STATIONS: StationRow[] = [
     warning: 48.6,
     danger: 49.8,
     trend: "+0.19 m / 6h",
-    lastObs: "44m ago",
+    lastObs: "No feed",
     dataState: "STALE",
     risk: "NORMAL",
   },
@@ -114,39 +114,8 @@ interface AlertWorkflowItem {
   title: string;
   sector: string;
   timestamp: string;
-  state: "DRAFT" | "PENDING_REVIEW" | "APPROVED" | "DISPATCHED";
+  state: "DRAFT" | "PENDING_REVIEW" | "APPROVED" | "REJECTED" | "DISPATCHED";
 }
-
-const INITIAL_ALERTS: AlertWorkflowItem[] = [
-  {
-    id: "CAP-2026-204",
-    title: " Gandak Confluence Rapid Stage Rise Advisory",
-    sector: "Lalganj – Hajipur Sector",
-    timestamp: "14:20 UTC",
-    state: "PENDING_REVIEW",
-  },
-  {
-    id: "CAP-2026-203",
-    title: "Middle Ganga Lowland Watch Bulletin",
-    sector: "Patna Study Area (Digha to Gandhi Ghat)",
-    timestamp: "12:05 UTC",
-    state: "APPROVED",
-  },
-  {
-    id: "CAP-2026-202",
-    title: "Son Catchment Upstream Inflow Notice",
-    sector: "Koelwar Gauge Corridor",
-    timestamp: "09:40 UTC",
-    state: "DISPATCHED",
-  },
-  {
-    id: "CAP-2026-205",
-    title: "Punpun Embankment Preparedness Note",
-    sector: "Sripalpur Reach",
-    timestamp: "14:48 UTC",
-    state: "DRAFT",
-  },
-];
 
 export default function AdminOverviewPage() {
   const [backendStatus, setBackendStatus] = useState<{
@@ -154,18 +123,18 @@ export default function AdminOverviewPage() {
     title: string;
     detail: string;
   }>({
-    healthy: true,
-    title: "SURAKSHA Command Pipeline Operational (Sample & Synthetic Mode)",
+    healthy: false,
+    title: "Engine status unavailable",
     detail:
-      "Values displayed reflect example research telemetry and synthetic scenarios. Not connected to live government warning feeds.",
+      "The service status has not been confirmed. Station values on this page are sample records, not live observations.",
   });
 
-  const { user, profile } = useAuth();
+  const { profile } = useAuth();
   const [stations, setStations] = useState<StationRow[]>(COMMAND_STATIONS);
   const [stationSearch, setStationSearch] = useState("");
   const [riskFilter, setRiskFilter] = useState<"ALL" | "NORMAL" | "ADVISORY" | "WARNING">("ALL");
   const [surgePreview, setSurgePreview] = useState(false);
-  const [alertItems, setAlertItems] = useState<AlertWorkflowItem[]>(INITIAL_ALERTS);
+  const [alertItems, setAlertItems] = useState<AlertWorkflowItem[]>([]);
 
   useEffect(() => {
     async function loadSupabaseData() {
@@ -181,15 +150,22 @@ export default function AdminOverviewPage() {
             warning: s.warning_level,
             danger: s.danger_level,
             trend: s.trend,
-            lastObs: "live sync",
+            lastObs: "No observation feed",
             dataState: "SAMPLE",
             risk: s.status === "WARNING" ? "WARNING" : s.status === "ADVISORY" ? "ADVISORY" : "NORMAL",
           }));
           setStations(mapped);
         }
 
-        const { data: alertData } = await supabase.from("flood_alerts").select("*");
-        if (alertData && alertData.length > 0) {
+        const { data: alertData, error: alertError } = await supabase
+          .from("flood_alerts")
+          .select("id,headline,area_desc,created_at,state")
+          .order("created_at", { ascending: false })
+          .limit(12);
+        if (alertError) {
+          console.warn("Could not load alert records:", alertError.message);
+          setAlertItems([]);
+        } else if (alertData) {
           const mappedAlerts: AlertWorkflowItem[] = alertData.map((a) => ({
             id: a.id,
             title: a.headline,
@@ -210,18 +186,20 @@ export default function AdminOverviewPage() {
     async function checkHealth() {
       try {
         const res = await fetch("/api/flood/health", { cache: "no-store" });
-        if (res.ok) {
-          const data = await res.json();
-          const readiness = data.operational_readiness || "REPORTED";
-          const health = data.status || "HEALTHY";
-          setBackendStatus({
-            healthy: health === "HEALTHY",
-            title: `SURAKSHA API Reachable · System Status: ${health}`,
-            detail: `Operational readiness: ${readiness}. Displaying verified research fixtures and clearly labelled sample telemetry.`,
-          });
-        }
-      } catch {
-        // Retain clean fallback status
+        const data = await res.json();
+        const health = res.ok ? data.status || "UNKNOWN" : "UNAVAILABLE";
+        const readiness = data.operational_readiness || "UNKNOWN";
+        setBackendStatus({
+          healthy: health === "HEALTHY",
+          title: `Engine process status: ${health}`,
+          detail: `${data.notice || "Operational readiness"}: ${readiness}. Station catalogue rows are sample values; no live observation feed is connected.`,
+        });
+      } catch (cause) {
+        setBackendStatus({
+          healthy: false,
+          title: "Engine status unavailable",
+          detail: cause instanceof Error ? cause.message : "The service status could not be checked.",
+        });
       }
     }
     checkHealth();
@@ -235,28 +213,6 @@ export default function AdminOverviewPage() {
     const matchesRisk = riskFilter === "ALL" ? true : st.risk === riskFilter;
     return matchesSearch && matchesRisk;
   });
-
-  const handleAdvanceAlert = async (id: string) => {
-    const item = alertItems.find((a) => a.id === id);
-    if (!item) return;
-    const nextState =
-      item.state === "DRAFT"
-        ? "PENDING_REVIEW"
-        : item.state === "PENDING_REVIEW"
-        ? "APPROVED"
-        : "DISPATCHED";
-
-    setAlertItems((prev) =>
-      prev.map((it) => (it.id === id ? { ...it, state: nextState } : it))
-    );
-
-    try {
-      const supabase = createClient();
-      await supabase.from("flood_alerts").update({ state: nextState }).eq("id", id);
-    } catch {
-      // offline fallback
-    }
-  };
 
   return (
     <div className="space-y-7 max-w-[1440px] mx-auto">
@@ -295,7 +251,7 @@ export default function AdminOverviewPage() {
       {/* System Status Banner */}
       <div className="p-4 rounded-xl border border-[#A1A1AA]/16 bg-[#0A0A0A] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-start gap-3">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#FFFFFF] mt-1.5 shrink-0" />
+          <span className={`w-2.5 h-2.5 rounded-full ${backendStatus.healthy ? "bg-emerald-400" : "bg-amber-400"} mt-1.5 shrink-0`} />
           <div>
             <strong className="text-xs sm:text-sm font-bold text-[#A1A1AA] block">
               {backendStatus.title}
@@ -304,7 +260,7 @@ export default function AdminOverviewPage() {
           </div>
         </div>
         <span className="px-2.5 py-1 rounded text-[10px] font-mono font-semibold uppercase tracking-wider bg-[#141414] text-[#A1A1AA] border border-[#A1A1AA]/16 shrink-0 self-start sm:self-center">
-          HUMAN-IN-THE-LOOP ACTIVE
+          PROTOTYPE · NO DISPATCH CONNECTION
         </span>
       </div>
 
@@ -318,9 +274,9 @@ export default function AdminOverviewPage() {
             <span className="font-medium">Active Incidents</span>
             <Layers className="w-4 h-4 text-[#FFFFFF]" />
           </div>
-          <div className="text-3xl font-extrabold font-mono text-[#A1A1AA]">02</div>
+          <div className="text-xl font-extrabold font-mono text-[#A1A1AA]">Not connected</div>
           <div className="flex items-center justify-between text-[11px] font-mono text-[#A69B88]">
-            <span>Ganga & Gandak sectors</span>
+            <span>Incident feed unavailable</span>
             <span className="text-[#FFFFFF] group-hover:translate-x-0.5 transition-transform">
               Inspect →
             </span>
@@ -335,9 +291,9 @@ export default function AdminOverviewPage() {
             <span className="font-medium">Monitoring Stations</span>
             <MapPin className="w-4 h-4 text-[#FFFFFF]" />
           </div>
-          <div className="text-3xl font-extrabold font-mono text-[#A1A1AA]">08</div>
+          <div className="text-xl font-extrabold font-mono text-[#A1A1AA]">Sample catalogue</div>
           <div className="flex items-center justify-between text-[11px] font-mono text-[#A69B88]">
-            <span>Configured basin gauges</span>
+            <span>Live station count unavailable</span>
             <span className="text-[#FFFFFF] group-hover:translate-x-0.5 transition-transform">
               Stations →
             </span>
@@ -352,9 +308,9 @@ export default function AdminOverviewPage() {
             <span className="font-medium">Pipeline Runs</span>
             <Activity className="w-4 h-4 text-[#FFFFFF]" />
           </div>
-          <div className="text-3xl font-extrabold font-mono text-[#A1A1AA]">14</div>
+          <div className="text-xl font-extrabold font-mono text-[#A1A1AA]">Not connected</div>
           <div className="flex items-center justify-between text-[11px] font-mono text-[#A69B88]">
-            <span>24h ensemble cycles</span>
+            <span>No run history feed</span>
             <span className="text-[#FFFFFF] group-hover:translate-x-0.5 transition-transform">
               Forecasts →
             </span>
@@ -369,9 +325,9 @@ export default function AdminOverviewPage() {
             <span className="font-medium">Pending Reviews</span>
             <AlertTriangle className="w-4 h-4 text-[#F59E0B]" />
           </div>
-          <div className="text-3xl font-extrabold font-mono text-[#FBBF24]">03</div>
+          <div className="text-xl font-extrabold font-mono text-[#FBBF24]">Not connected</div>
           <div className="flex items-center justify-between text-[11px] font-mono text-[#FBBF24]">
-            <span>Commander sign-off required</span>
+            <span>No live review queue</span>
             <span className="group-hover:translate-x-0.5 transition-transform">Review →</span>
           </div>
         </Link>
@@ -463,7 +419,7 @@ export default function AdminOverviewPage() {
                 <th className="py-3 px-3">Current Stage</th>
                 <th className="py-3 px-3">Warning / Danger</th>
                 <th className="py-3 px-3">6h Trend</th>
-                <th className="py-3 px-3">Last Obs</th>
+                <th className="py-3 px-3">Observation Feed</th>
                 <th className="py-3 px-3">Data Source</th>
                 <th className="py-3 px-3 text-right">Status</th>
               </tr>
@@ -521,9 +477,9 @@ export default function AdminOverviewPage() {
         <div className="lg:col-span-5 rounded-xl border border-[#A1A1AA]/15 bg-[#0A0A0A] p-5 space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-[#A1A1AA]/12">
             <div>
-              <h2 className="text-sm font-bold text-[#A1A1AA]">Incident Lifecycle Timeline</h2>
+              <h2 className="text-sm font-bold text-[#A1A1AA]">Illustrative Incident Lifecycle</h2>
               <p className="text-[11px] text-[#A69B88]">
-                INC-2026-04 · Middle Ganga & Gandak Sector
+                Synthetic reference · no live incident feed
               </p>
             </div>
             <Link href="/admin/incidents" className="text-xs text-[#FFFFFF] hover:underline">
@@ -541,28 +497,28 @@ export default function AdminOverviewPage() {
                   Catchment Watch & Threshold Calibration
                 </div>
                 <p className="text-[11px] text-[#A69B88]">
-                  Baseline gauge polling at 15m intervals; ensemble scenarios initialized.
+                  Example: periodic gauge checks before a scenario run. No live polling is connected.
                 </p>
               </div>
               <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#141414] text-[#A1A1AA] border border-[#A1A1AA]/16">
-                COMPLETE
+                EXAMPLE
               </span>
             </div>
 
             <div className="p-3.5 rounded-lg border border-[#FFFFFF]/45 bg-[#FFFFFF]/10 flex items-start justify-between gap-3">
               <div className="space-y-1">
                 <div className="text-[10px] font-mono font-bold uppercase text-[#FFFFFF]">
-                  PHASE 02 · ACTIVE RESPONSE
+                  PHASE 02 · RESPONSE EXAMPLE
                 </div>
                 <div className="text-xs font-semibold text-[#FFFFFF]">
                   Supervisory Gate Review & Advisory Drafting
                 </div>
                 <p className="text-[11px] text-[#A1A1AA]">
-                  Lalganj tributary surge flagged; CAP v1.2 advisory queued for duty commander.
+                  Example: a simulated rise is reviewed. No real alert is queued or dispatched.
                 </p>
               </div>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#FFFFFF] text-white">
-                ACTIVE
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#141414] text-[#A69B88] border border-[#A1A1AA]/16">
+                EXAMPLE
               </span>
             </div>
 
@@ -575,11 +531,11 @@ export default function AdminOverviewPage() {
                   High-Water Mark Audit & SITREP Archival
                 </div>
                 <p className="text-[11px] text-[#A69B88]">
-                  Compares observed crest levels against forecast ensemble bounds.
+                  Example: compare a sample crest level with a scenario range.
                 </p>
               </div>
               <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#0A0A0A] text-[#A69B88] border border-[#A1A1AA]/14">
-                STANDBY
+                EXAMPLE
               </span>
             </div>
           </div>
@@ -593,7 +549,7 @@ export default function AdminOverviewPage() {
                 Scientific Verification Gates (Three-Stage Oversight)
               </h2>
               <p className="text-[11px] text-[#A69B88]">
-                Automated quality, physics, and plausibility checks prior to human sign-off
+                Reference checklist only · no connected gate execution results
               </p>
             </div>
             <Link href="/admin/gates" className="text-xs text-[#FFFFFF] hover:underline">
@@ -612,16 +568,16 @@ export default function AdminOverviewPage() {
                     GATE 01
                   </span>
                   <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#FFFFFF]/18 text-[#FFFFFF] border border-[#FFFFFF]/35">
-                    PASSED
+                    REFERENCE
                   </span>
                 </div>
                 <h3 className="text-sm font-bold text-[#A1A1AA]">Pre-Run Ingestion</h3>
                 <p className="text-xs text-[#A69B88] leading-relaxed">
-                  Sensor completeness, spike rejection, and boundary continuity verified across 8 gauges.
+                  Example checks for sensor completeness, spike rejection, and boundary continuity.
                 </p>
               </div>
               <div className="pt-2 border-t border-[#A1A1AA]/10 text-[11px] font-mono text-[#FFFFFF] flex items-center justify-between">
-                <span>Latency: 38s</span>
+                <span>No result data</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </div>
             </Link>
@@ -636,16 +592,16 @@ export default function AdminOverviewPage() {
                     GATE 02
                   </span>
                   <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#F59E0B]/18 text-[#FBBF24] border border-[#F59E0B]/40">
-                    REVIEW
+                    REFERENCE
                   </span>
                 </div>
                 <h3 className="text-sm font-bold text-[#A1A1AA]">Mid-Run Physics</h3>
                 <p className="text-xs text-[#A69B88] leading-relaxed">
-                  Mass conservation holds (C=0.82); ensemble spread in Gandak sector flagged for review.
+                  Example checklist for numerical stability and model disagreement.
                 </p>
               </div>
               <div className="pt-2 border-t border-[#A1A1AA]/10 text-[11px] font-mono text-[#FBBF24] flex items-center justify-between">
-                <span>Spread: ±0.42m</span>
+                <span>No result data</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </div>
             </Link>
@@ -660,16 +616,16 @@ export default function AdminOverviewPage() {
                     GATE 03
                   </span>
                   <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#FFFFFF]/18 text-[#FFFFFF] border border-[#FFFFFF]/35">
-                    VERIFIED
+                    REFERENCE
                   </span>
                 </div>
                 <h3 className="text-sm font-bold text-[#A1A1AA]">Post-Run Evidence</h3>
                 <p className="text-xs text-[#A69B88] leading-relaxed">
-                  Inundation claims cross-checked against DEM terrain constraints and SAR backscatter.
+                  Example checklist for impact plausibility and external evidence.
                 </p>
               </div>
               <div className="pt-2 border-t border-[#A1A1AA]/10 text-[11px] font-mono text-[#FFFFFF] flex items-center justify-between">
-                <span>NSE Score: 0.89</span>
+                <span>No result data</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </div>
             </Link>
@@ -682,10 +638,10 @@ export default function AdminOverviewPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#A1A1AA]/12">
           <div>
             <h2 className="text-base font-bold text-[#A1A1AA]">
-              Alerts & Supervisory Approvals (CAP v1.2 Workflow)
+              Stored Alert Records (Read-only)
             </h2>
             <p className="text-xs text-[#A69B88]">
-              Emergency advisories require explicit human authorization before dispatch.
+              Saved records are shown as stored. This dashboard cannot approve or dispatch alerts.
             </p>
           </div>
           <Link href="/admin/approvals" className="text-xs text-[#FFFFFF] hover:underline">
@@ -727,26 +683,21 @@ export default function AdminOverviewPage() {
                 <span className="text-[11px] font-mono text-[#7D7465]">
                   ILLUSTRATIVE WORKFLOW RECORD
                 </span>
-                {item.state !== "DISPATCHED" ? (
-                  <button
-                    type="button"
-                    onClick={() => handleAdvanceAlert(item.id)}
-                    className="px-3 py-1 rounded-md text-xs font-semibold bg-[#FFFFFF] text-white hover:bg-[#E4E4E7] transition-colors"
-                  >
-                    {item.state === "DRAFT"
-                      ? "Submit for Review"
-                      : item.state === "PENDING_REVIEW"
-                      ? "Approve Advisory"
-                      : "Dispatch Bulletin"}
-                  </button>
-                ) : (
+                {item.state === "DISPATCHED" ? (
                   <span className="text-[11px] font-mono text-[#34D399] flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5" /> Published (Sample)
                   </span>
+                ) : (
+                  <span className="text-[11px] font-mono text-[#A69B88]">Read-only sample · Use approval console for authorized workflow</span>
                 )}
               </div>
             </div>
           ))}
+          {alertItems.length === 0 && (
+            <p className="rounded-xl border border-dashed border-[#A1A1AA]/20 p-5 text-sm text-[#A69B88] md:col-span-2">
+              No alert records are available for this session. Approval actions are kept in the separate review console and require an integrated, secure write path.
+            </p>
+          )}
         </div>
       </div>
     </div>

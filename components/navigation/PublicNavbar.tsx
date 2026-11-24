@@ -81,7 +81,9 @@ export const PublicNavbar: React.FC = () => {
   const portalHref =
     role === "admin" || role === "hydrologist" || role === "operator" ? "/admin" : "/citizen";
   const portalLabel =
-    role === "admin" || role === "hydrologist" || role === "operator"
+    !profile
+      ? "Profile unavailable"
+      : role === "admin" || role === "hydrologist" || role === "operator"
       ? "Operations Command"
       : "Citizen Portal";
 
@@ -244,13 +246,19 @@ export const PublicNavbar: React.FC = () => {
 
           {user ? (
             <div className="flex items-center gap-3">
-              <Link
-                href={portalHref}
-                className="btn-glass-primary px-4 py-2 text-xs font-semibold text-white group"
-              >
-                <span className="relative z-10">{portalLabel}</span>
-                <ArrowRight className="relative z-10 w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" />
-              </Link>
+              {profile ? (
+                <Link
+                  href={portalHref}
+                  className="btn-glass-primary px-4 py-2 text-xs font-semibold text-white group"
+                >
+                  <span className="relative z-10">{portalLabel}</span>
+                  <ArrowRight className="relative z-10 w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+                </Link>
+              ) : (
+                <span role="status" className="px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
+                  Workspace unavailable
+                </span>
+              )}
 
               <div className="relative">
                 <button
@@ -281,17 +289,23 @@ export const PublicNavbar: React.FC = () => {
                           {profile?.full_name || user.email}
                         </div>
                         <div className="text-[10px] text-zinc-500 dark:text-[#9BA5A0] uppercase tracking-wider mt-0.5">
-                          ROLE: {profile?.role || "Citizen"}
+                          ROLE: {profile?.role || "Unavailable"}
                         </div>
                       </div>
-                      <Link
-                        href={portalHref}
-                        onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center gap-2 px-3 py-2 rounded text-xs text-zinc-700 dark:text-[#9BA5A0] hover:text-black dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-[#223029] transition-colors"
-                      >
-                        <User className="w-3.5 h-3.5" />
-                        <span>Open Workspace</span>
-                      </Link>
+                      {profile ? (
+                        <Link
+                          href={portalHref}
+                          onClick={() => setUserDropdownOpen(false)}
+                          className="flex items-center gap-2 px-3 py-2 rounded text-xs text-zinc-700 dark:text-[#9BA5A0] hover:text-black dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-[#223029] transition-colors"
+                        >
+                          <User className="w-3.5 h-3.5" />
+                          <span>Open Workspace</span>
+                        </Link>
+                      ) : (
+                        <p className="px-3 py-2 text-xs leading-relaxed text-amber-700 dark:text-amber-300">
+                          Account role could not be verified. Contact an administrator or sign out.
+                        </p>
+                      )}
                       <button
                         type="button"
                         onClick={() => {
@@ -323,12 +337,18 @@ export const PublicNavbar: React.FC = () => {
         <div className="md:hidden flex items-center gap-2">
           <ThemeToggle />
           {user ? (
-            <Link
-              href={portalHref}
-              className="btn-glass-primary px-3.5 py-1.5 text-xs font-medium text-white"
-            >
-              Workspace
-            </Link>
+            profile ? (
+              <Link
+                href={portalHref}
+                className="btn-glass-primary px-3.5 py-1.5 text-xs font-medium text-white"
+              >
+                Workspace
+              </Link>
+            ) : (
+              <span role="status" className="px-2 text-[10px] text-amber-700 dark:text-amber-300">
+                Profile unavailable
+              </span>
+            )
           ) : (
             <Link
               href="/auth/login"
@@ -390,14 +410,20 @@ export const PublicNavbar: React.FC = () => {
                     {profile?.full_name || user.email}
                   </div>
                   <div className="text-[10px] font-mono text-zinc-500 dark:text-zinc-400 uppercase">
-                    Role: {profile?.role || "Citizen"}
+                    Role: {profile?.role || "Unavailable"}
                   </div>
                 </div>
-                <Link href={portalHref} onClick={() => setMobileMenuOpen(false)}>
-                  <Button className="w-full text-xs justify-center font-semibold">
-                    {portalLabel} →
-                  </Button>
-                </Link>
+                {profile ? (
+                  <Link href={portalHref} onClick={() => setMobileMenuOpen(false)}>
+                    <Button className="w-full text-xs justify-center font-semibold">
+                      {portalLabel} →
+                    </Button>
+                  </Link>
+                ) : (
+                  <p role="status" className="px-3 py-2 text-xs leading-relaxed text-amber-700 dark:text-amber-300">
+                    Account role could not be verified. Contact an administrator or sign out.
+                  </p>
+                )}
                 <button
                   type="button"
                   onClick={() => {

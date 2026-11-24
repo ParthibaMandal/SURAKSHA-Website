@@ -1,17 +1,20 @@
 import React from "react";
 import { AppSidebar } from "@/components/navigation/AppSidebar";
 import { CommandTopBar } from "@/components/navigation/CommandTopBar";
+import { requireWorkspaceRole } from "@/lib/supabase/authorization";
 
 export const metadata = {
   title: "Operations Command Centre | SURAKSHA",
   description: "Hydrological early warning command centre, supervisory gate verification, and telemetry oversight.",
 };
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  await requireWorkspaceRole(["admin", "hydrologist", "operator"], "/admin");
+
   return (
     <div className="workspace-shell flex flex-col lg:flex-row min-h-[calc(100vh-4rem)] bg-[var(--background)] text-[var(--foreground)]">
       <AppSidebar role="admin" />

@@ -90,29 +90,64 @@ ALTER TABLE public.flood_alerts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.supervisory_gates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.citizen_sos_reports ENABLE ROW LEVEL SECURITY;
 
--- Profiles Policies
-CREATE POLICY "profiles_select_all" ON public.profiles FOR SELECT USING (true);
-CREATE POLICY "profiles_update_own" ON public.profiles FOR UPDATE USING (auth.uid() = id);
-CREATE POLICY "profiles_insert_own" ON public.profiles FOR INSERT WITH CHECK (auth.uid() = id);
+-- Roles are provisioned by a trusted operator; a user's editable auth metadata
+-- must never assign their own elevated role.
+CREATE SCHEMA IF NOT EXISTS app_private;
+REVOKE ALL ON SCHEMA app_private FROM PUBLIC, anon;
+GRANT USAGE ON SCHEMA app_private TO authenticated;
+
+CREATE OR REPLACE FUNCTION app_private.user_has_any_role(allowed_roles TEXT[])
+RETURNS BOOLEAN
+LANGUAGE SQL
+STABLE
+SECURITY DEFINER
+SET search_path = pg_catalog
+AS $$
+  SELECT EXISTS (
+    SELECT 1
+    FROM public.profiles AS profile
+    WHERE profile.id = (SELECT auth.uid())
+      AND profile.role = ANY (allowed_roles)
+  );
+$$;
+REVOKE ALL ON FUNCTION app_private.user_has_any_role(TEXT[]) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION app_private.user_has_any_role(TEXT[]) TO authenticated;
+
+-- Profiles are private to their owner. Writes to role/email are reserved for
+-- trusted server-side provisioning and the auth trigger.
+CREATE POLICY "profiles_select_own" ON public.profiles
+  FOR SELECT TO authenticated USING (id = (SELECT auth.uid()));
 
 -- Monitoring Stations Policies
-CREATE POLICY "stations_select_all" ON public.monitoring_stations FOR SELECT USING (true);
-CREATE POLICY "stations_write_auth" ON public.monitoring_stations FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "stations_select_public" ON public.monitoring_stations
+  FOR SELECT TO anon, authenticated USING (true);
 
 -- Stage Observations Policies
-CREATE POLICY "observations_select_all" ON public.stage_observations FOR SELECT USING (true);
+CREATE POLICY "observations_select_public" ON public.stage_observations
+  FOR SELECT TO anon, authenticated USING (true);
 
 -- Flood Alerts Policies
-CREATE POLICY "alerts_select_all" ON public.flood_alerts FOR SELECT USING (true);
-CREATE POLICY "alerts_write_auth" ON public.flood_alerts FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "alerts_select_published" ON public.flood_alerts
+  FOR SELECT TO anon, authenticated USING (state = 'DISPATCHED');
+CREATE POLICY "alerts_select_staff" ON public.flood_alerts
+  FOR SELECT TO authenticated USING (app_private.user_has_any_role(ARRAY['admin', 'hydrologist', 'operator']));
+CREATE POLICY "alerts_update_admin" ON public.flood_alerts
+  FOR UPDATE TO authenticated
+  USING (app_private.user_has_any_role(ARRAY['admin']) AND state = 'PENDING_REVIEW')
+  WITH CHECK (app_private.user_has_any_role(ARRAY['admin']) AND state IN ('APPROVED', 'REJECTED'));
 
 -- Supervisory Gates Policies
-CREATE POLICY "gates_select_all" ON public.supervisory_gates FOR SELECT USING (true);
+CREATE POLICY "gates_select_public" ON public.supervisory_gates
+  FOR SELECT TO anon, authenticated USING (true);
 
 -- Citizen SOS Reports Policies
-CREATE POLICY "sos_select_all" ON public.citizen_sos_reports FOR SELECT USING (true);
-CREATE POLICY "sos_insert_all" ON public.citizen_sos_reports FOR INSERT WITH CHECK (true);
-CREATE POLICY "sos_update_auth" ON public.citizen_sos_reports FOR UPDATE USING (auth.role() = 'authenticated');
+CREATE POLICY "sos_select_own" ON public.citizen_sos_reports
+  FOR SELECT TO authenticated USING (citizen_id = (SELECT auth.uid()));
+CREATE POLICY "sos_select_staff" ON public.citizen_sos_reports
+  FOR SELECT TO authenticated USING (app_private.user_has_any_role(ARRAY['admin', 'operator']));
+CREATE POLICY "sos_insert_own" ON public.citizen_sos_reports
+  FOR INSERT TO authenticated
+  WITH CHECK (citizen_id IS NOT NULL AND citizen_id = (SELECT auth.uid()));
 
 -- Function and Trigger for Automatic User Profile Creation
 CREATE OR REPLACE FUNCTION public.handle_new_user()
@@ -123,14 +158,16 @@ BEGIN
     new.id,
     new.email,
     COALESCE(new.raw_user_meta_data->>'full_name', split_part(new.email, '@', 1)),
-    COALESCE(new.raw_user_meta_data->>'role', 'citizen')
+    'citizen'
   )
   ON CONFLICT (id) DO UPDATE
   SET email = EXCLUDED.email,
       full_name = EXCLUDED.full_name;
   RETURN new;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = pg_catalog;
+
+REVOKE ALL ON FUNCTION public.handle_new_user() FROM PUBLIC, anon, authenticated;
 
 CREATE OR REPLACE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users

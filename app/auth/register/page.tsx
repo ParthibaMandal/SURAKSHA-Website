@@ -16,7 +16,6 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState<"citizen" | "hydrologist" | "admin">("citizen");
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -38,16 +37,16 @@ export default function RegisterPage() {
     setLoadingAction("register");
 
     try {
-      const result = await signUp(email, password, fullName, role);
+      const result = await signUp(email, password, fullName);
       if (result.error) {
         setErrorMessage(result.error.message || "Failed to create account.");
         setLoadingAction(null);
         return;
       }
 
-      setToast("Account created successfully! Redirecting…");
+      setToast("Account created. Sign in after verifying your email if prompted.");
       setTimeout(() => {
-        router.push(role === "citizen" ? "/citizen" : "/admin");
+        router.push("/auth/login?registered=1");
       }, 700);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Registration failed";
@@ -177,35 +176,9 @@ export default function RegisterPage() {
             />
           </div>
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">
-              Account Role
-            </label>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => setRole("citizen")}
-                className={`py-2 px-3 rounded-xl border text-xs font-medium transition-all cursor-pointer ${
-                  role === "citizen"
-                    ? "bg-white text-black border-white font-semibold"
-                    : "bg-black text-zinc-400 border-white/15 hover:border-white/30"
-                }`}
-              >
-                Citizen Resident
-              </button>
-              <button
-                type="button"
-                onClick={() => setRole("admin")}
-                className={`py-2 px-3 rounded-xl border text-xs font-medium transition-all cursor-pointer ${
-                  role === "admin"
-                    ? "bg-white text-black border-white font-semibold"
-                    : "bg-black text-zinc-400 border-white/15 hover:border-white/30"
-                }`}
-              >
-                Operations Admin
-              </button>
-            </div>
-          </div>
+          <p className="rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-3 text-xs leading-relaxed text-zinc-400">
+            New accounts receive citizen access. Operations access is assigned separately by an authorized administrator.
+          </p>
 
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">

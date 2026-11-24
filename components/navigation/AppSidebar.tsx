@@ -198,14 +198,16 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ role }) => {
         {/* User Chip */}
         <div className="p-2.5 rounded-2xl bg-[#0A0A0A] border border-white/10 flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-white/10 border border-white/20 grid place-items-center text-xs font-mono font-bold text-white shrink-0">
-            {profile?.role === "admin" || profile?.role === "hydrologist" || profile?.role === "operator" ? "OP" : "CZ"}
+            {profile
+              ? profile.role === "admin" || profile.role === "hydrologist" || profile.role === "operator" ? "OP" : "CZ"
+              : "?"}
           </div>
           <div className="overflow-hidden">
             <strong className="text-xs text-white block truncate whitespace-nowrap">
-              {profile?.full_name || (isAdmin ? "Duty Hydrologist" : "Citizen Account")}
+              {profile?.full_name || "Profile unavailable"}
             </strong>
             <small className="text-[10px] font-mono text-zinc-500 block truncate whitespace-nowrap">
-              {profile?.email || (isAdmin ? "Ganga Basin Command" : "Patna Reach (Preview)")}
+              {profile?.email || "Refresh the session or sign out"}
             </small>
           </div>
         </div>

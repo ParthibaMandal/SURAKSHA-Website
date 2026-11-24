@@ -41,210 +41,127 @@ const ENDPOINTS: ApiEndpoint[] = [
     id: "health",
     method: "GET",
     path: "/api/v1/flood/health",
-    summary: "System Health & Model Readiness",
-    description: "Returns sub-system telemetry ingestion status, model checkpoint integrity, GEE connectivity, and supervisor health.",
-    auth: "None (Public)",
+    summary: "Engine Health & Operational Readiness",
+    description: "Returns process health separately from provider configuration, runtime polling, model readiness, and outstanding operational blockers.",
+    auth: "Public read endpoint",
     parameters: [],
     responseCode: 200,
-    responseSample: `{
-  "status": "healthy",
-  "version": "0.2.0-beta",
-  "basin": "Ganga (Patna Corridor)",
-  "active_station": "Gandhi Ghat (STN-PAT-01)",
-  "subsystems": {
-    "cwc_telemetry": "CONNECTED",
-    "forecast_engine": "READY (Champion: SARIMA, Challenger: BiLSTM)",
-    "jev_supervisor": "ACTIVE (3/3 Gates Armed)",
-    "gee_client": "READY"
-  },
-  "timestamp": "2026-11-21T09:15:00Z"
-}`,
+    responseSample: "The response includes status, operational_readiness, readiness_blockers, provider configuration/runtime, model readiness, supervisor modes, and station-catalog metadata. Values vary with runtime configuration; no sample readiness status is implied here.",
   },
   {
     id: "stations",
     method: "GET",
-    path: "/api/v1/flood/stations",
-    summary: "List Configured Hydrological Stations",
-    description: "Retrieves metadata, zero levels, and warning/danger thresholds for all monitored CWC and state telemetry stations.",
-    auth: "None (Public)",
+    path: "/api/v1/flood/stations?basin=Ganges&state=Bihar",
+    summary: "List Station Metadata",
+    description: "Returns catalogue metadata and warning/danger references. It is not a live stage-observation feed.",
+    auth: "Public read endpoint",
     parameters: [
       {
         name: "basin",
         type: "string",
         required: false,
-        defaultVal: "ganga",
-        description: "Filter stations by river basin name (e.g. ganga, son, gandak)",
+        defaultVal: "Ganges",
+        description: "Filter by river basin name.",
       },
       {
-        name: "status",
+        name: "state",
         type: "string",
         required: false,
-        defaultVal: "active",
-        description: "Filter by station operational state (active, maintenance, offline)",
+        defaultVal: "Bihar",
+        description: "Filter by state name.",
       },
     ],
     responseCode: 200,
     responseSample: `[
   {
-    "station_id": "STN-PAT-01",
-    "name": "Gandhi Ghat, Patna",
-    "river": "Ganga",
+    "station_id": "GANGES_PATNA",
+    "station_name": "Gandhi Ghat, Patna",
+    "river": "Ganges",
+    "basin": "Ganges Basin",
     "state": "Bihar",
-    "zero_level_m": 45.00,
-    "warning_level_m": 47.60,
-    "danger_level_m": 48.60,
-    "hfl_m": 50.52,
-    "hfl_date": "2016-08-25",
-    "status": "active"
-  },
-  {
-    "station_id": "STN-PAT-02",
-    "name": "Digha Ghat, Patna",
-    "river": "Ganga",
-    "state": "Bihar",
-    "zero_level_m": 44.80,
-    "warning_level_m": 50.00,
-    "danger_level_m": 50.45,
-    "hfl_m": 51.80,
-    "status": "active"
+    "district": "Patna",
+    "latitude": 25.62,
+    "longitude": 85.176,
+    "zero_datum_m": 43.0,
+    "warning_level_m": 49.5,
+    "danger_level_m": 50.5,
+    "hfl_m": 52.52,
+    "hfl_date": "1994-08-16"
   }
 ]`,
   },
   {
-    id: "forecast",
+    id: "pipeline",
     method: "POST",
-    path: "/api/v1/flood/forecast",
-    summary: "Generate Multistep Hydrological Forecast",
-    description: "Executes the champion-challenger forecasting ensemble for the Patna Ganga basin across 24h, 48h, and 72h lead times.",
-    auth: "Bearer Token / API Key",
+    path: "/api/v1/flood/pipeline/run",
+    summary: "Run the Flood Analysis Pipeline",
+    description: "Runs the engine for a configured station. Omitted observations are loaded from configured providers where available; supplied observations are marked as operator-provided.",
+    auth: "Bearer operator API key may be required by deployment middleware; keep it server-side",
     parameters: [
       {
         name: "station_id",
         type: "string",
-        required: true,
-        description: "Target CWC telemetry gauge station code (e.g. STN-PAT-01)",
-      },
-      {
-        name: "horizon_hours",
-        type: "integer",
         required: false,
-        defaultVal: "72",
-        description: "Forecast prediction window in hours: 24, 48, or 72",
+        defaultVal: "GANGES_PATNA",
+        description: "Station ID from GET /api/v1/flood/stations.",
       },
       {
-        name: "model_preference",
+        name: "water_level_m",
+        type: "number",
+        required: false,
+        description: "Optional water level in metres.",
+      },
+      {
+        name: "rainfall_24h_mm",
+        type: "number",
+        required: false,
+        description: "Optional 24-hour rainfall in millimetres.",
+      },
+      {
+        name: "execution_mode",
         type: "string",
         required: false,
-        defaultVal: "champion",
-        description: "Model selector: 'champion' (SARIMA), 'challenger' (BiLSTM), or 'ensemble'",
+        defaultVal: "supervised",
+        description: "supervised or static.",
       },
     ],
     requestSample: `{
-  "station_id": "STN-PAT-01",
-  "horizon_hours": 72,
-  "model_preference": "ensemble",
-  "include_uncertainty_bounds": true
+  "station_id": "GANGES_PATNA",
+  "execution_mode": "static"
 }`,
     responseCode: 200,
-    responseSample: `{
-  "forecast_id": "FC-20261121-0915-PAT",
-  "station_id": "STN-PAT-01",
-  "station_name": "Gandhi Ghat, Patna",
-  "model_selected": "Ensemble (Champion: SARIMA 60%, Challenger: BiLSTM 40%)",
-  "current_stage_m": 46.85,
-  "danger_level_m": 48.60,
-  "peak_forecast_stage_m": 47.95,
-  "peak_time_utc": "2026-11-22T18:00:00Z",
-  "risk_classification": "ALERT_ELEVATED",
-  "lead_time_to_warning_hours": 16.5,
-  "trajectory": [
-    { "lead_hours": 6, "stage_m": 47.15, "p10_m": 46.95, "p90_m": 47.35 },
-    { "lead_hours": 12, "stage_m": 47.38, "p10_m": 47.05, "p90_m": 47.75 },
-    { "lead_hours": 24, "stage_m": 47.30, "p10_m": 46.95, "p90_m": 47.68 },
-    { "lead_hours": 48, "stage_m": 47.95, "p10_m": 47.60, "p90_m": 48.20 },
-    { "lead_hours": 72, "stage_m": 47.40, "p10_m": 46.95, "p90_m": 47.85 }
-  ],
-  "jev_supervisor_verdict": {
-    "pre_run_gate": "PASSED (Quality score: 0.98)",
-    "mid_run_gate": "PASSED (Bounds valid)",
-    "post_run_gate": "PASSED (No divergence detected)"
-  }
-}`,
+    responseSample: "Returns the assembled FloodState and pipeline outputs. Values and checks depend on configured telemetry, supplied inputs, model readiness, and execution mode; inspect the response and the engine OpenAPI schema.",
   },
   {
-    id: "alerts-cap",
+    id: "demo-catalog",
     method: "GET",
-    path: "/api/v1/flood/alerts/cap",
-    summary: "OASIS Common Alerting Protocol (CAP v1.2) XML/JSON",
-    description: "Generates standardized OASIS CAP v1.2 compliant emergency messages for broadcast to state NDMA/SDMA conduits.",
-    auth: "None (Public)",
-    parameters: [
-      {
-        name: "status",
-        type: "string",
-        required: false,
-        defaultVal: "Actual",
-        description: "CAP status flag: 'Actual', 'Exercise', 'System', 'Test'",
-      },
-      {
-        name: "format",
-        type: "string",
-        required: false,
-        defaultVal: "json",
-        description: "Output serialization: 'json' or 'xml'",
-      },
-    ],
+    path: "/api/v1/flood/demo/scenarios",
+    summary: "List Synthetic Demo Scenarios",
+    description: "Returns the engine's synthetic scenario suite, including preset inputs, limitations, and evaluation references. This endpoint is disabled in production.",
+    auth: "Synthetic demo only · unavailable when SURAKSHA_ENV or ENVIRONMENT is production",
+    parameters: [],
     responseCode: 200,
-    responseSample: `{
-  "identifier": "SRK-CAP-20261121-0012",
-  "sender": "suraksha.ganga.bihar@gov.in",
-  "sent": "2026-11-21T09:15:30Z",
-  "status": "Actual",
-  "msgType": "Alert",
-  "scope": "Public",
-  "info": {
-    "category": "Met",
-    "event": "Riverine Flood Watch",
-    "urgency": "Expected",
-    "severity": "Moderate",
-    "certainty": "Likely",
-    "headline": "Ganga River Stage Approaching Warning Level at Gandhi Ghat, Patna",
-    "description": "Synthetic sample forecast approaches the 47.60m warning reference within 16 hours.",
-    "area": {
-      "areaDesc": "Patna Urban Corridor, Bihar",
-      "circle": "25.6120,85.1780,15.0"
-    }
-  }
-}`,
+    responseSample: "The response contains suite_id, suite_name, synthetic_data_only, limitations, and scenarios from the configured synthetic scenario catalog. The exact scenarios are environment-dependent; this endpoint is unavailable in production.",
   },
   {
-    id: "gate-advisory",
-    method: "GET",
-    path: "/api/v1/flood/gates/advisory",
-    summary: "Hydraulic Sluice Gate Advisory (Simulation)",
-    description: "Computes optimal supervisory gate discharge recommendations for municipal sluice engineers. Note: Advisory only, no direct motor actuation.",
-    auth: "Bearer Token (Operator)",
+    id: "demo-run",
+    method: "POST",
+    path: "/api/v1/flood/demo/scenarios/BEST_01_CALM_BASELINE/run?mode=static",
+    summary: "Run a Synthetic Demo Scenario",
+    description: "Executes the named catalogue scenario with synthetic provenance. Omit the body to use its preset input, or send { input: <full FloodState> }. This endpoint is disabled in production.",
+    auth: "Synthetic demo only · unavailable when SURAKSHA_ENV or ENVIRONMENT is production",
     parameters: [
       {
-        name: "drainage_basin",
+        name: "mode",
         type: "string",
         required: false,
-        defaultVal: "patna_urban",
-        description: "Basin code for municipal outfall regulators",
+        defaultVal: "supervised",
+        description: "Query parameter: static or supervised.",
       },
     ],
+    requestSample: `{}`,
     responseCode: 200,
-    responseSample: `{
-  "advisory_id": "ADV-GATE-20261121-09",
-  "regulator_name": "Patna Main Sluice Complex",
-  "operational_mode": "SUPERVISORY_ADVISORY_ONLY",
-  "physical_actuation_enabled": false,
-  "current_tailwater_elevation_m": 49.82,
-  "internal_drainage_level_m": 48.90,
-  "recommended_action": "REMAIN_CLOSED_COUNTER_SURGE",
-  "rationale": "Ganga tailwater is 0.92m higher than urban internal sump. Opening sluices would cause backflow flooding into low-lying urban sectors.",
-  "timestamp": "2026-11-21T09:15:00Z"
-}`,
+    responseSample: "Returns the engine's generated event ID, scenario metadata, FloodState result, provenance, and review information. Result fields depend on the selected scenario and execution mode.",
   },
 ];
 
@@ -253,6 +170,7 @@ export function InteractiveApiExplorer() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTabByEndpoint, setActiveTabByEndpoint] = useState<Record<string, "curl" | "response" | "python">>({});
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [copyErrorId, setCopyErrorId] = useState<string | null>(null);
 
   const filtered = ENDPOINTS.filter((ep) => {
     if (selectedMethod !== "ALL" && ep.method !== selectedMethod) return false;
@@ -271,11 +189,15 @@ export function InteractiveApiExplorer() {
     setActiveTabByEndpoint((prev) => ({ ...prev, [epId]: tab }));
   };
 
-  const handleCopy = (id: string, text: string) => {
-    if (typeof window !== "undefined") {
-      navigator.clipboard.writeText(text);
+  const handleCopy = async (id: string, text: string) => {
+    setCopyErrorId(null);
+    try {
+      await navigator.clipboard.writeText(text);
       setCopiedId(id);
-      setTimeout(() => setCopiedId(null), 2000);
+      window.setTimeout(() => setCopiedId(null), 2000);
+    } catch {
+      setCopiedId(null);
+      setCopyErrorId(id);
     }
   };
 
@@ -313,13 +235,14 @@ print(response.json())`;
       <div className="p-5 rounded-2xl border border-[#A1A1AA]/20 bg-[#242421] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-pulse" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#A69B88]" />
             <span className="font-mono text-xs uppercase tracking-wider text-[#FFFFFF] font-semibold">
-              SURAKSHA REST API Gateway · FastAPI Engine
+              Verified Engine API Examples · FastAPI
             </span>
           </div>
+          <p className="text-[11px] leading-relaxed text-[#A69B88]">A subset confirmed against the engine source. This explorer does not check current service reachability; runtime responses vary. The engine OpenAPI document is the full contract.</p>
           <div className="flex items-center gap-2 text-xs font-mono text-[#A69B88]">
-            <span>Base URL:</span>
+            <span>Local development base URL:</span>
             <code className="text-[#E4E4E7] bg-[#000000] px-2 py-0.5 rounded border border-[#A1A1AA]/15">
               http://localhost:8000/api/v1/flood
             </code>
@@ -327,10 +250,13 @@ print(response.json())`;
         </div>
 
         <button
+          type="button"
           onClick={() => handleCopy("base-url", "http://localhost:8000/api/v1/flood")}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#000000] hover:bg-[#2D2D29] border border-[#A1A1AA]/20 text-xs text-[#FFFFFF] transition-colors shrink-0"
         >
-          {copiedId === "base-url" ? (
+          {copyErrorId === "base-url" ? (
+            <span role="status" className="text-amber-200">Copy unavailable</span>
+          ) : copiedId === "base-url" ? (
             <>
               <Check className="w-3.5 h-3.5 text-[#10B981]" />
               <span className="text-[#10B981]">Copied</span>
@@ -347,11 +273,13 @@ print(response.json())`;
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         {/* Method filter pills */}
-        <div className="flex items-center gap-1.5 bg-[#242421] p-1 rounded-xl border border-[#A1A1AA]/15 text-xs">
+        <div role="group" aria-label="Filter API examples by method" className="flex items-center gap-1.5 bg-[#242421] p-1 rounded-xl border border-[#A1A1AA]/15 text-xs">
           {["ALL", "GET", "POST"].map((method) => (
             <button
               key={method}
+              type="button"
               onClick={() => setSelectedMethod(method)}
+              aria-pressed={selectedMethod === method}
               className={`px-3 py-1 rounded-lg font-mono text-[11px] transition-colors ${
                 selectedMethod === method
                   ? "bg-[#FFFFFF] text-white font-semibold shadow"
@@ -366,7 +294,9 @@ print(response.json())`;
         {/* Search Input */}
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#A69B88]" />
+          <label className="sr-only" htmlFor="api-search">Search API endpoints</label>
           <input
+            id="api-search"
             type="text"
             placeholder="Search API endpoints..."
             value={searchQuery}
@@ -478,7 +408,9 @@ print(response.json())`;
                   <div className="flex items-center justify-between border-b border-[#A1A1AA]/10 pb-1">
                     <div className="flex items-center gap-2">
                       <button
+                        type="button"
                         onClick={() => setTab(ep.id, "response")}
+                        aria-pressed={tab === "response"}
                         className={`px-2.5 py-1 rounded-md text-[11px] font-mono transition-colors ${
                           tab === "response"
                             ? "bg-[#0A0A0A] text-[#FFFFFF] font-semibold border border-[#A1A1AA]/20"
@@ -488,7 +420,9 @@ print(response.json())`;
                         Response (JSON)
                       </button>
                       <button
+                        type="button"
                         onClick={() => setTab(ep.id, "curl")}
+                        aria-pressed={tab === "curl"}
                         className={`px-2.5 py-1 rounded-md text-[11px] font-mono transition-colors ${
                           tab === "curl"
                             ? "bg-[#0A0A0A] text-[#FFFFFF] font-semibold border border-[#A1A1AA]/20"
@@ -498,7 +432,9 @@ print(response.json())`;
                         cURL Request
                       </button>
                       <button
+                        type="button"
                         onClick={() => setTab(ep.id, "python")}
+                        aria-pressed={tab === "python"}
                         className={`px-2.5 py-1 rounded-md text-[11px] font-mono transition-colors ${
                           tab === "python"
                             ? "bg-[#0A0A0A] text-[#FFFFFF] font-semibold border border-[#A1A1AA]/20"
@@ -510,6 +446,7 @@ print(response.json())`;
                     </div>
 
                     <button
+                      type="button"
                       onClick={() =>
                         handleCopy(
                           ep.id,
@@ -522,7 +459,9 @@ print(response.json())`;
                       }
                       className="flex items-center gap-1 text-[11px] font-mono text-[#A69B88] hover:text-[#FFFFFF] transition-colors"
                     >
-                      {copiedId === ep.id ? (
+                      {copyErrorId === ep.id ? (
+                        <span role="status" className="text-amber-200">Copy unavailable</span>
+                      ) : copiedId === ep.id ? (
                         <>
                           <Check className="w-3 h-3 text-[#10B981]" />
                           <span className="text-[#10B981]">Copied</span>

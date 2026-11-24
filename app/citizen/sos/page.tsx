@@ -4,17 +4,18 @@ import React, { useState, useEffect } from "react";
 import { AlertTriangle, Send, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/supabase/auth-context";
-import { createClient } from "@/lib/supabase/client";
 
 export default function CitizenSosPage() {
-  const { user, profile } = useAuth();
+  const { profile } = useAuth();
   const [toast, setToast] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [citizenName, setCitizenName] = useState<string>("Ramesh Patel");
-  const [phoneNumber, setPhoneNumber] = useState<string>("+91-9876543210");
+  const [citizenName, setCitizenName] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [location, setLocation] = useState<string>("");
   const [details, setDetails] = useState<string>("");
+  const [urgency, setUrgency] = useState<"LOW" | "MEDIUM" | "HIGH">("HIGH");
   const [assistanceType, setAssistanceType] = useState<string>("Rescue / evacuation support");
   const [people, setPeople] = useState<string>("1 person");
   const [registeredTicket, setRegisteredTicket] = useState<{ id: string; status: string } | null>(null);
@@ -28,36 +29,29 @@ export default function CitizenSosPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setErrorMessage(null);
 
     try {
-      // 1. Log to Supabase citizen_sos_reports table
-      const supabase = createClient();
-      const { data: sosEntry } = await supabase
-        .from("citizen_sos_reports")
-        .insert({
-          citizen_id: user?.id || null,
+      const response = await fetch("/api/flood/sos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
           citizen_name: citizenName,
           contact_phone: phoneNumber,
           location_name: location,
-          urgency: "HIGH",
+          urgency,
           description: `${assistanceType} (${people}): ${details}`,
-          status: "OPEN",
-        })
-        .select()
-        .single();
+        }),
+        cache: "no-store",
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result?.detail || "The request could not be saved.");
 
-      if (sosEntry) {
-        setRegisteredTicket({ id: sosEntry.id.slice(0, 8).toUpperCase(), status: sosEntry.status });
-        setSubmitted(true);
-        setToast(`Emergency request ${sosEntry.id.slice(0, 8).toUpperCase()} synced to Supabase rescue queue.`);
-      } else {
-        // Fallback to local dispatch
-        setSubmitted(true);
-        setToast("Emergency ticket registered in local dispatch queue.");
-      }
-    } catch {
+      setRegisteredTicket({ id: result.id.slice(0, 8).toUpperCase(), status: result.status });
       setSubmitted(true);
-      setToast("Emergency request registered in offline fallback mode.");
+      setToast(`Request ${result.id.slice(0, 8).toUpperCase()} was saved. This does not confirm a rescue dispatch.`);
+    } catch (cause) {
+      setErrorMessage(cause instanceof Error ? cause.message : "The request could not be saved. Please call emergency services if immediate help is needed.");
     } finally {
       setIsSubmitting(false);
       setTimeout(() => setToast(null), 4000);
@@ -69,6 +63,11 @@ export default function CitizenSosPage() {
       {toast && (
         <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#0A0A0A] border border-[#FFFFFF]/40 text-xs font-mono text-[#A1A1AA] shadow-2xl flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4 text-[#FFFFFF]" /> {toast}
+        </div>
+      )}
+      {errorMessage && (
+        <div role="alert" className="rounded-xl border border-red-400/30 bg-red-400/10 p-3 text-sm text-red-100">
+          {errorMessage}
         </div>
       )}
 
@@ -103,7 +102,7 @@ export default function CitizenSosPage() {
           <div className="flex items-center justify-between pb-3 border-b border-[#A1A1AA]/12">
             <h3 className="text-sm font-bold text-[#A1A1AA]">New Assistance Request</h3>
             <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/30">
-              DEMO DESK
+              RESEARCH PROTOTYPE
             </span>
           </div>
 
@@ -131,6 +130,21 @@ export default function CitizenSosPage() {
                   className="w-full px-3.5 py-2.5 rounded-xl border border-[#A1A1AA]/20 bg-[#000000] text-xs text-[#A1A1AA] focus:outline-none focus:border-[#FFFFFF]"
                 />
               </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-[#A1A1AA] uppercase tracking-wider">
+                Urgency
+              </label>
+              <select
+                value={urgency}
+                onChange={(e) => setUrgency(e.target.value as "LOW" | "MEDIUM" | "HIGH")}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#A1A1AA]/20 bg-[#000000] text-xs text-[#A1A1AA] focus:outline-none focus:border-[#FFFFFF]"
+              >
+                <option value="LOW">Low · Supplies or non-urgent support</option>
+                <option value="MEDIUM">Medium · Assistance needed soon</option>
+                <option value="HIGH">High · Urgent danger or evacuation</option>
+              </select>
             </div>
 
             <div className="space-y-1.5">
@@ -226,7 +240,7 @@ export default function CitizenSosPage() {
                 <div className="text-[#A1A1AA]">Location: {location || "Patna Lowland"}</div>
                 <div className="text-[#A1A1AA]">Affected: {people}</div>
                 <div className="text-[11px] text-[#A69B88] pt-2 border-t border-[#A1A1AA]/12 flex items-center justify-between">
-                  <span>Status: Queued in Operations Triage</span>
+                  <span>Status: Saved · Awaiting review</span>
                   <span className="text-[#F59E0B] font-semibold">{registeredTicket?.status || "PENDING"}</span>
                 </div>
               </div>
@@ -234,7 +248,7 @@ export default function CitizenSosPage() {
               <div className="py-12 text-center space-y-2">
                 <strong className="text-sm text-[#FFFFFF] block">No active SOS requests</strong>
                 <p className="text-xs text-[#A69B88]">
-                  Submitted requests appear here with live triage status from the Operations Command Centre.
+                  After submission, this page confirms the saved request. It does not provide live dispatch tracking.
                 </p>
               </div>
             )}

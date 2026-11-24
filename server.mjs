@@ -9,10 +9,13 @@ try {
   for (const rawLine of envFile.split(/\r?\n/)) {
     const line = rawLine.trim();
     if (!line || line.startsWith('#')) continue;
-    const match = line.match(/^([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$/);
-    if (!match || Object.hasOwn(process.env, match[1])) continue;
-    const value = match[2].replace(/^(['"])(.*)\1$/, '$2');
-    process.env[match[1]] = value;
+    const eqIdx = line.indexOf('=');
+    if (eqIdx === -1) continue;
+    const key = line.slice(0, eqIdx).trim();
+    if (!/^[A-Za-z_]\w*$/.test(key) || Object.hasOwn(process.env, key)) continue;
+    const rawVal = line.slice(eqIdx + 1).trim();
+    const value = rawVal.replace(/^(['"])(.*)\1$/, '$2');
+    process.env[key] = value;
   }
 } catch {
   // A local .env file is optional; process environment variables take precedence.
@@ -53,69 +56,76 @@ const json = (response, status, body) => {
   response.end(JSON.stringify(body));
 };
 
-async function proxyBackendAllowlist(request, response, pathname, searchParams) {
-  if (!backendOrigin) {
-    json(response, 503, { detail: 'SURAKSHA_BACKEND_URL is not configured.', backend_configured: false });
-    return;
+function checkScenarioRunRoute(pathname, searchParams, method, requestHeaders) {
+  const match = pathname.match(/^\/api\/flood\/demo\/scenarios\/([A-Za-z0-9_-]{1,100})\/run$/);
+  if (!match) return null;
+  if (method !== 'POST') return { errorStatus: 405, errorDetail: 'Method not allowed.' };
+  if (!demoBridgeEnabled) {
+    return { errorStatus: 403, errorDetail: 'Backend scenario execution is available only in explicit local demo mode.' };
   }
+  if (!allowedLocalOrigins.has(requestHeaders?.origin || '')) {
+    return { errorStatus: 403, errorDetail: 'The local demo route accepts requests only from the website origin.' };
+  }
+  if (operatorApiKey.length < 32) {
+    return { errorStatus: 503, errorDetail: 'Configure the backend operator credential on the local website server to enable scenario execution.' };
+  }
+  const mode = searchParams.get('mode') || 'supervised';
+  if (!['supervised', 'static'].includes(mode)) {
+    return { errorStatus: 400, errorDetail: 'Unsupported execution mode.' };
+  }
+  return {
+    backendPath: `/api/v1/flood/demo/scenarios/${encodeURIComponent(match[1])}/run?mode=${mode}`,
+    method: 'POST',
+    headers: { authorization: `Bearer ${operatorApiKey}` },
+  };
+}
 
-  let backendPath;
-  let method = 'GET';
-  const headers = { accept: 'application/json' };
+function checkStationDetailRoute(pathname, method) {
+  const match = pathname.match(/^\/api\/flood\/stations\/([A-Za-z0-9_-]{1,80})$/);
+  if (!match) return null;
+  if (method !== 'GET') return { errorStatus: 405, errorDetail: 'Method not allowed.' };
+  return { backendPath: `/api/v1/flood/stations/${encodeURIComponent(match[1])}`, method: 'GET' };
+}
+
+function resolveBackendTarget(request, pathname, searchParams) {
   if (pathname === '/api/flood/health') {
-    if (request.method !== 'GET') return json(response, 405, { detail: 'Method not allowed.' });
-    backendPath = '/api/v1/flood/health';
-  } else if (pathname === '/api/flood/stations') {
-    if (request.method !== 'GET') return json(response, 405, { detail: 'Method not allowed.' });
-    backendPath = '/api/v1/flood/stations';
-    const allowedFilters = new URLSearchParams();
-    for (const key of ['basin', 'state']) {
-      const value = searchParams.get(key);
-      if (value) allowedFilters.set(key, value.slice(0, 80));
-    }
-    const query = allowedFilters.toString();
-    if (query) backendPath += `?${query}`;
-  } else {
-    if (request.method === 'GET' && pathname === '/api/flood/demo/scenarios') {
-      backendPath = '/api/v1/flood/demo/scenarios';
-    } else if (request.method === 'POST' && pathname.match(/^\/api\/flood\/demo\/scenarios\/[A-Za-z0-9_-]{1,100}\/run$/)) {
-      if (!demoBridgeEnabled) {
-        json(response, 403, { detail: 'Backend scenario execution is available only in explicit local demo mode.' });
-        return;
-      }
-      if (!allowedLocalOrigins.has(request.headers.origin || '')) {
-        json(response, 403, { detail: 'The local demo route accepts requests only from the website origin.' });
-        return;
-      }
-      if (operatorApiKey.length < 32) {
-        json(response, 503, { detail: 'Configure the backend operator credential on the local website server to enable scenario execution.' });
-        return;
-      }
-      const mode = searchParams.get('mode') || 'supervised';
-      if (!['supervised', 'static'].includes(mode)) {
-        json(response, 400, { detail: 'Unsupported execution mode.' });
-        return;
-      }
-      const match = pathname.match(/^\/api\/flood\/demo\/scenarios\/([A-Za-z0-9_-]{1,100})\/run$/);
-      backendPath = `/api/v1/flood/demo/scenarios/${encodeURIComponent(match[1])}/run?mode=${mode}`;
-      method = 'POST';
-      headers.authorization = `Bearer ${operatorApiKey}`;
-    }
-    if (!backendPath) {
-      const stationMatch = pathname.match(/^\/api\/flood\/stations\/([A-Za-z0-9_-]{1,80})$/);
-      if (!stationMatch || request.method !== 'GET') {
-        json(response, 404, { detail: 'This backend path is not available through the website bridge.' });
-        return;
-      }
-      backendPath = `/api/v1/flood/stations/${encodeURIComponent(stationMatch[1])}`;
-    }
+    if (request.method !== 'GET') return { errorStatus: 405, errorDetail: 'Method not allowed.' };
+    return { backendPath: '/api/v1/flood/health', method: 'GET' };
   }
 
+  if (pathname === '/api/flood/stations') {
+    if (request.method !== 'GET') return { errorStatus: 405, errorDetail: 'Method not allowed.' };
+    const allowed = new URLSearchParams();
+    for (const key of ['basin', 'state']) {
+      const val = searchParams.get(key);
+      if (val) allowed.set(key, val.slice(0, 80));
+    }
+    const q = allowed.toString();
+    return { backendPath: q ? `/api/v1/flood/stations?${q}` : '/api/v1/flood/stations', method: 'GET' };
+  }
+
+  if (pathname === '/api/flood/demo/scenarios') {
+    if (request.method !== 'GET') return { errorStatus: 405, errorDetail: 'Method not allowed.' };
+    return { backendPath: '/api/v1/flood/demo/scenarios', method: 'GET' };
+  }
+
+  const scenarioRun = checkScenarioRunRoute(pathname, searchParams, request.method, request.headers);
+  if (scenarioRun) return scenarioRun;
+
+  const stationDetail = checkStationDetailRoute(pathname, request.method);
+  if (stationDetail) return stationDetail;
+
+  return { errorStatus: 404, errorDetail: 'This backend path is not available through the website bridge.' };
+}
+
+async function fetchAndStreamUpstream(response, target) {
   const abort = new AbortController();
   const timer = setTimeout(() => abort.abort(), backendTimeoutMs);
+  const headers = { accept: 'application/json', ...(target.headers || {}) };
+
   try {
-    const upstream = await fetch(`${backendOrigin}${backendPath}`, {
-      method,
+    const upstream = await fetch(`${backendOrigin}${target.backendPath}`, {
+      method: target.method || 'GET',
       headers,
       signal: abort.signal,
       redirect: 'error',
@@ -143,6 +153,21 @@ async function proxyBackendAllowlist(request, response, pathname, searchParams) 
   }
 }
 
+async function proxyBackendAllowlist(request, response, pathname, searchParams) {
+  if (!backendOrigin) {
+    json(response, 503, { detail: 'SURAKSHA_BACKEND_URL is not configured.', backend_configured: false });
+    return;
+  }
+
+  const target = resolveBackendTarget(request, pathname, searchParams);
+  if (target.errorStatus) {
+    json(response, target.errorStatus, { detail: target.errorDetail });
+    return;
+  }
+
+  await fetchAndStreamUpstream(response, target);
+}
+
 const server = createServer(async (request, response) => {
   const url = new URL(request.url || '/', `http://${request.headers.host || 'localhost'}`);
   if (url.pathname === '/api/site/health') {
@@ -168,7 +193,7 @@ const server = createServer(async (request, response) => {
     requestedPath = '/index.html';
   }
 
-  const normalizedSafePath = path.normalize(requestedPath).replace(/^(\.\.[\/\\])+/, '');
+  const normalizedSafePath = path.normalize(requestedPath).replace(/^(\.\.[/\\])+/, '');
   let filePath = path.join(root, normalizedSafePath);
 
   // Security guard against path traversal outside the root directory
@@ -180,7 +205,7 @@ const server = createServer(async (request, response) => {
 
   try {
     const fileStat = await stat(filePath).catch(() => null);
-    if (!fileStat || !fileStat.isFile()) {
+    if (!fileStat?.isFile()) {
       // If an extension-less route or client route is requested, fallback to index.html
       if (!path.extname(filePath)) {
         filePath = path.join(root, 'index.html');

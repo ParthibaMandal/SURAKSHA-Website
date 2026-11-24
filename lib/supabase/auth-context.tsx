@@ -19,13 +19,7 @@ interface AuthContextType {
   role: "admin" | "hydrologist" | "operator" | "citizen" | "guest";
   isLoading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null; role?: string }>;
-  signUp: (
-    email: string,
-    password: string,
-    fullName: string,
-    role?: "citizen" | "admin" | "operator" | "hydrologist"
-  ) => Promise<{ error: Error | null; user?: User | null }>;
-  signInDemo: (targetRole: "admin" | "citizen") => Promise<{ error: Error | null; role: string }>;
+  signUp: (email: string, password: string, fullName: string) => Promise<{ error: Error | null; user?: User | null }>;
   signInWithGoogle: (redirectTo?: string) => Promise<{ error: Error | null; url?: string | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -40,51 +34,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch or create profile for authenticated user
-  const fetchProfile = async (currentUser: User) => {
+  // Roles come only from the protected profiles row; user-editable auth metadata is display-only.
+  const fetchProfile = async (currentUser: User): Promise<UserProfile | null> => {
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .select("*")
+        .select("id,email,full_name,role,jurisdiction_sector")
         .eq("id", currentUser.id)
         .maybeSingle();
 
       if (error) {
         console.warn("Could not load user profile:", error.message);
+        setProfile(null);
+        return null;
       }
 
       if (data) {
-        setProfile(data as UserProfile);
-      } else {
-        // Fallback or upsert if trigger did not execute
-        const defaultRole =
-          (currentUser.user_metadata?.role as UserProfile["role"]) ||
-          (currentUser.email?.includes("admin") || currentUser.email?.includes("operator")
-            ? "admin"
-            : "citizen");
+        const allowedRoles = ["admin", "hydrologist", "operator", "citizen"];
+        if (!allowedRoles.includes(data.role)) {
+          console.warn("The account profile has an unsupported role.");
+          setProfile(null);
+          return null;
+        }
 
-        const fallbackProfile: UserProfile = {
-          id: currentUser.id,
-          email: currentUser.email || null,
-          full_name:
-            currentUser.user_metadata?.full_name ||
-            currentUser.email?.split("@")[0] ||
-            "Authorized User",
-          role: defaultRole,
-          jurisdiction_sector: defaultRole === "admin" ? "Ganga Basin Command" : "Patna Reach",
-        };
-
-        const { data: upserted } = await supabase
-          .from("profiles")
-          .upsert(fallbackProfile)
-          .select()
-          .single();
-
-        setProfile((upserted as UserProfile) || fallbackProfile);
+        const trustedProfile = data as UserProfile;
+        setProfile(trustedProfile);
+        return trustedProfile;
       }
     } catch (err) {
       console.warn("Profile fetch error:", err);
     }
+
+    setProfile(null);
+    return null;
   };
 
   useEffect(() => {
@@ -135,22 +117,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     if (data.user) {
-      await fetchProfile(data.user);
-      const userRole = (data.user.user_metadata?.role as string) || "citizen";
+      const userProfile = await fetchProfile(data.user);
       setIsLoading(false);
-      return { error: null, role: userRole };
+      if (!userProfile) {
+        return {
+          error: new Error("Your account was authenticated, but its SURAKSHA profile could not be verified. Please contact an administrator."),
+        };
+      }
+      return { error: null, role: userProfile.role };
     }
 
     setIsLoading(false);
-    return { error: null };
+    return { error: new Error("Authentication did not return an account that SURAKSHA could verify.") };
   };
 
-  const signUp = async (
-    email: string,
-    password: string,
-    fullName: string,
-    targetRole: "citizen" | "admin" | "operator" | "hydrologist" = "citizen"
-  ) => {
+  const signUp = async (email: string, password: string, fullName: string) => {
     setIsLoading(true);
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -158,7 +139,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       options: {
         data: {
           full_name: fullName,
-          role: targetRole,
         },
       },
     });
@@ -174,61 +154,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     setIsLoading(false);
     return { error: null, user: data.user };
-  };
-
-  // Demo Sign In: allows immediate one-click testing for duty hydrologist / admin or verified citizen
-  const signInDemo = async (targetRole: "admin" | "citizen") => {
-    setIsLoading(true);
-    const demoEmail =
-      targetRole === "admin" ? "duty.commander@suraksha.in" : "citizen.patna@suraksha.in";
-    const demoPassword = "SurakshaSecure2026!";
-    const demoName = targetRole === "admin" ? "Duty Commander (Dr. A. Verma)" : "Patna Citizen Resident";
-
-    let authUser: User | null = null;
-
-    // Try signing in first
-    const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-      email: demoEmail,
-      password: demoPassword,
-    });
-
-    if (!signInError && signInData?.user) {
-      authUser = signInData.user;
-    } else {
-      // If account doesn't exist yet, auto sign up
-      const signUpRes = await supabase.auth.signUp({
-        email: demoEmail,
-        password: demoPassword,
-        options: {
-          data: {
-            full_name: demoName,
-            role: targetRole,
-          },
-        },
-      });
-
-      if (!signUpRes.error && signUpRes.data?.user) {
-        authUser = signUpRes.data.user;
-      }
-    }
-
-    if (!authUser) {
-      // If Supabase requires email verification or rate limits, simulate active profile fallback
-      const mockProfile: UserProfile = {
-        id: `demo-${targetRole}-id`,
-        email: demoEmail,
-        full_name: demoName,
-        role: targetRole,
-        jurisdiction_sector: targetRole === "admin" ? "Ganga Basin Command" : "Patna Reach",
-      };
-      setProfile(mockProfile);
-      setIsLoading(false);
-      return { error: null, role: targetRole };
-    }
-
-    await fetchProfile(authUser);
-    setIsLoading(false);
-    return { error: null, role: targetRole };
   };
 
   const signInWithGoogle = async (redirectTo?: string) => {
@@ -276,7 +201,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const computedRole = profile?.role || (user ? "citizen" : "guest");
+  const computedRole = profile?.role || "guest";
 
   return (
     <AuthContext.Provider
@@ -288,7 +213,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isLoading,
         signIn,
         signUp,
-        signInDemo,
         signInWithGoogle,
         signOut,
         refreshProfile,

@@ -9,10 +9,17 @@ function backendUrl() {
 async function proxy(path: string, init?: RequestInit) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
+  const operatorKey = process.env.SURAKSHA_OPERATOR_API_KEY?.trim();
+  const authHeaders: Record<string, string> = operatorKey ? { authorization: `Bearer ${operatorKey}` } : {};
+
   try {
     const response = await fetch(`${backendUrl()}${path}`, {
       ...init,
-      headers: { accept: "application/json", ...(init?.headers as Record<string, string> | undefined) },
+      headers: {
+        accept: "application/json",
+        ...authHeaders,
+        ...(init?.headers as Record<string, string> | undefined),
+      },
       signal: controller.signal,
       cache: "no-store",
       redirect: "error",
@@ -51,13 +58,17 @@ export async function POST(request: Request) {
   }
 
   const data = payload as Record<string, unknown>;
+  const allowedKeys = new Set(["scenario_id", "river_discharge_multiplier", "precipitation_anomaly_mm"]);
+  if (Object.keys(data).some((key) => !allowedKeys.has(key))) {
+    return NextResponse.json({ detail: "Request contains unsupported scenario options." }, { status: 400 });
+  }
   if (typeof data.scenario_id !== "string" || !/^[A-Z0-9_-]{1,100}$/.test(data.scenario_id)) {
     return NextResponse.json({ detail: "Choose a valid scenario." }, { status: 400 });
   }
-  if (typeof data.upstream_inflow_multiplier !== "number" || data.upstream_inflow_multiplier < 0.5 || data.upstream_inflow_multiplier > 3) {
-    return NextResponse.json({ detail: "Upstream flow must be between 0.5× and 3.0×." }, { status: 400 });
+  if (typeof data.river_discharge_multiplier !== "number" || !Number.isFinite(data.river_discharge_multiplier) || data.river_discharge_multiplier < 0.5 || data.river_discharge_multiplier > 3) {
+    return NextResponse.json({ detail: "Starting river discharge must be scaled between 0.5× and 3.0×." }, { status: 400 });
   }
-  if (typeof data.precipitation_anomaly_mm !== "number" || data.precipitation_anomaly_mm < 0 || data.precipitation_anomaly_mm > 500) {
+  if (typeof data.precipitation_anomaly_mm !== "number" || !Number.isFinite(data.precipitation_anomaly_mm) || data.precipitation_anomaly_mm < 0 || data.precipitation_anomaly_mm > 500) {
     return NextResponse.json({ detail: "Added rainfall must be between 0 and 500 mm." }, { status: 400 });
   }
 
@@ -65,25 +76,30 @@ export async function POST(request: Request) {
   if (!catalogResponse.ok) return catalogResponse;
 
   const catalog = await catalogResponse.json();
+  if (catalog?.synthetic_data_only !== true || !Array.isArray(catalog?.scenarios)) {
+    return NextResponse.json({ detail: "The SURAKSHA service returned an invalid synthetic scenario catalog." }, { status: 502 });
+  }
   const scenario = catalog?.scenarios?.find((entry: { id?: string }) => entry.id === data.scenario_id);
-  if (!scenario?.input || typeof scenario.input !== "object") {
+  if (!scenario?.input || typeof scenario.input !== "object" || Array.isArray(scenario.input)) {
     return NextResponse.json({ detail: "That scenario is not available from the SURAKSHA service." }, { status: 400 });
   }
 
   const input = JSON.parse(JSON.stringify(scenario.input)) as {
-    current_condition?: { river_discharge_m3s?: number; rainfall_24h_mm?: number };
+    current_condition?: { river_discharge_m3s?: unknown; rainfall_24h_mm?: unknown };
   };
   const conditions = input.current_condition;
   if (!conditions || typeof conditions !== "object") {
     return NextResponse.json({ detail: "The selected scenario is missing its starting conditions." }, { status: 502 });
   }
+  if (typeof conditions.river_discharge_m3s !== "number" || !Number.isFinite(conditions.river_discharge_m3s)) {
+    return NextResponse.json({ detail: "The selected scenario does not provide a usable starting river discharge." }, { status: 502 });
+  }
+  if (typeof conditions.rainfall_24h_mm !== "number" || !Number.isFinite(conditions.rainfall_24h_mm)) {
+    return NextResponse.json({ detail: "The selected scenario does not provide usable 24-hour rainfall." }, { status: 502 });
+  }
 
-  if (typeof conditions.river_discharge_m3s === "number") {
-    conditions.river_discharge_m3s = Number((conditions.river_discharge_m3s * data.upstream_inflow_multiplier).toFixed(2));
-  }
-  if (typeof conditions.rainfall_24h_mm === "number") {
-    conditions.rainfall_24h_mm = Number((conditions.rainfall_24h_mm + data.precipitation_anomaly_mm).toFixed(2));
-  }
+  conditions.river_discharge_m3s = Number((conditions.river_discharge_m3s * data.river_discharge_multiplier).toFixed(2));
+  conditions.rainfall_24h_mm = Number((conditions.rainfall_24h_mm + data.precipitation_anomaly_mm).toFixed(2));
 
   return proxy(`/api/v1/flood/demo/scenarios/${encodeURIComponent(data.scenario_id)}/run?mode=static`, {
     method: "POST",
