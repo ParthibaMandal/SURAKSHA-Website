@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { Code2, Eye, AlertCircle } from "lucide-react";
+import DOMPurify from "isomorphic-dompurify";
 
 interface MermaidRendererProps {
   chart: string;
@@ -53,11 +54,11 @@ export function MermaidRenderer({ chart, id }: MermaidRendererProps) {
           Math.random() * 10000
         )}`;
 
-        // Render diagram
+        // Render diagram and sanitize SVG output
         const { svg } = await mermaid.render(cleanId, chart);
 
         if (isMounted) {
-          setSvgHtml(svg);
+          setSvgHtml(DOMPurify.sanitize(svg));
           setLoading(false);
         }
       } catch (err: any) {
