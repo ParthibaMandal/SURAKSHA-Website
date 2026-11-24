@@ -116,3 +116,13 @@ test('dashboard example telemetry is visibly distinguished from observed operati
   assert.match(dashboard, /Synthetic reference · no live incident feed/);
   assert.doesNotMatch(dashboard, /Lalganj tributary surge flagged|NSE Score: 0\.89|HUMAN-IN-THE-LOOP ACTIVE/);
 });
+
+test('API explorer documents verified engine routes rather than retired website routes', async () => {
+  const explorer = await read('components/docs/renderers/InteractiveApiExplorer.tsx');
+  const scenarioProxy = await read('app/api/flood/scenarios/route.ts');
+  assert.match(explorer, /\/api\/v1\/flood\/pipeline\/run/);
+  assert.match(explorer, /\/api\/v1\/flood\/demo\/scenarios/);
+  assert.match(explorer, /\/api\/v1\/flood\/stations/);
+  assert.doesNotMatch(explorer, /\/api\/v1\/flood\/(forecast|alerts\/cap|gates\/advisory)/);
+  assert.match(scenarioProxy, /\/api\/v1\/flood\/demo\/scenarios/);
+});
