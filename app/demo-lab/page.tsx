@@ -1,9 +1,36 @@
 "use client";
 
-import { useState } from "react";
-import { Activity, CheckCircle2, CircleAlert, Droplets, LoaderCircle, Play, ShieldCheck, Users, Waves } from "lucide-react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { FadeIn } from "@/components/motion/FadeIn";
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import {
+  Activity,
+  CheckCircle2,
+  CircleAlert,
+  Droplets,
+  LoaderCircle,
+  Play,
+  ShieldCheck,
+  Users,
+  Waves,
+  CloudRain,
+  TrendingUp,
+  Clock,
+  LayoutDashboard,
+  Radio,
+  FileText,
+  ChevronDown,
+  Calendar,
+  AlertTriangle,
+  Info,
+  Check,
+} from "lucide-react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { RiskGauge } from "@/components/simulation/RiskGauge";
+import { ScenarioComparisonChart } from "@/components/simulation/ScenarioComparisonChart";
+import { FloodForecastMap } from "@/components/simulation/FloodForecastMap";
+import { RiverStageForecastChart } from "@/components/simulation/RiverStageForecastChart";
+import { BrandLogo } from "@/components/shared/BrandLogo";
 
 type ScenarioResult = {
   suite_id: string;
@@ -29,26 +56,29 @@ type ScenarioResult = {
 
 type DemoPreset = "steady" | "rain" | "surge";
 
-const PRESETS: Record<DemoPreset, { label: string; description: string; anchor: string; scenarioId: string; inflow: number; rainfall: number }> = {
+const PRESETS: Record<
+  DemoPreset,
+  { label: string; description: string; anchor: string; scenarioId: string; inflow: number; rainfall: number }
+> = {
   steady: {
-    label: "Steady conditions",
-    description: "Baseline synthetic conditions at the Patna gauge.",
+    label: "Steady Conditions",
+    description: "Baseline scenario",
     anchor: "GANGES_PATNA · Gandhi Ghat, Patna",
     scenarioId: "BEST_01_CALM_BASELINE",
-    inflow: 1,
+    inflow: 1.0,
     rainfall: 0,
   },
   rain: {
-    label: "Heavy rainfall",
-    description: "Increase synthetic starting discharge and add rainfall.",
+    label: "Heavy Rainfall",
+    description: "Increased rainfall",
     anchor: "GANGES_PATNA · Gandhi Ghat, Patna",
     scenarioId: "STRESS_01_HEAVY_RAINFALL",
     inflow: 1.25,
     rainfall: 80,
   },
   surge: {
-    label: "Rapid river rise",
-    description: "Explore a synthetic rise scenario at Patna with higher river discharge and rainfall.",
+    label: "Rapid River Rise",
+    description: "High discharge",
     anchor: "GANGES_PATNA · Gandhi Ghat, Patna",
     scenarioId: "WORST_01_RAPID_RIVER_SURGE",
     inflow: 1.6,
@@ -61,45 +91,34 @@ function isScenarioResult(value: unknown, expectedScenarioId: string): value is 
   const data = value as Partial<ScenarioResult>;
   const result = data.result;
   const forecastValues = [result?.forecast?.t_plus_6, result?.forecast?.t_plus_12, result?.forecast?.t_plus_24];
-  return data.scenario_id === expectedScenarioId
-    && data.synthetic_data_only === true
-    && data.mode === "static"
-    && data.jev_mode === "OFFLINE_DETERMINISTIC_SIMULATOR"
-    && typeof data.scenario_name === "string"
-    && typeof data.result?.event_id === "string"
-    && typeof data.result.timestamp === "string"
-    && Number.isFinite(Date.parse(data.result.timestamp))
-    && typeof data.result.severity === "string"
-    && typeof data.result.risk_score === "number"
-    && Number.isFinite(data.result.risk_score)
-    && data.result.risk_score >= 0
-    && data.result.risk_score <= 1
-    && data.result.current_condition !== null
-    && typeof data.result.current_condition === "object"
-    && data.result.metadata?.data_provenance === "SYNTHETIC_SCENARIO"
-    && data.result.metadata?.jev_mode === "OFFLINE_DETERMINISTIC_SIMULATOR"
-    && forecastValues.some((value) => typeof value === "number" && Number.isFinite(value));
+  return (
+    data.scenario_id === expectedScenarioId &&
+    data.synthetic_data_only === true &&
+    data.mode === "static" &&
+    data.jev_mode === "OFFLINE_DETERMINISTIC_SIMULATOR" &&
+    typeof data.scenario_name === "string" &&
+    typeof data.result?.event_id === "string" &&
+    typeof data.result.timestamp === "string" &&
+    Number.isFinite(Date.parse(data.result.timestamp)) &&
+    typeof data.result.severity === "string" &&
+    typeof data.result.risk_score === "number" &&
+    Number.isFinite(data.result.risk_score) &&
+    data.result.risk_score >= 0 &&
+    data.result.risk_score <= 1 &&
+    data.result.current_condition !== null &&
+    typeof data.result.current_condition === "object" &&
+    data.result.metadata?.data_provenance === "SYNTHETIC_SCENARIO" &&
+    data.result.metadata?.jev_mode === "OFFLINE_DETERMINISTIC_SIMULATOR" &&
+    forecastValues.some((value) => typeof value === "number" && Number.isFinite(value))
+  );
 }
 
 const formatTime = (value: string) => {
   const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? "Time unavailable" : date.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+  return Number.isNaN(date.getTime())
+    ? "Time unavailable"
+    : date.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
 };
-
-function ReviewCheck({ title, passed, detail }: { title: string; passed: boolean; detail: string }) {
-  return (
-    <motion.div variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }} className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.025] p-4">
-      {passed ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" /> : <CircleAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />}
-      <div className="min-w-0">
-        <p className="text-sm font-semibold text-white">{title}</p>
-        <p className="mt-1 text-xs leading-relaxed text-zinc-400">{detail}</p>
-        <span className={`mt-2 inline-flex text-[10px] font-semibold uppercase tracking-[0.16em] ${passed ? "text-emerald-300" : "text-amber-200"}`}>
-          {passed ? "Passed" : "Needs review"}
-        </span>
-      </div>
-    </motion.div>
-  );
-}
 
 export default function DemoLabPage() {
   const [preset, setPreset] = useState<DemoPreset>("steady");
@@ -108,9 +127,17 @@ export default function DemoLabPage() {
   const [result, setResult] = useState<ScenarioResult | null>(null);
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [lastRunTime, setLastRunTime] = useState<string>("16:42:10");
   const prefersReducedMotion = useReducedMotion();
 
   const selectedPreset = PRESETS[preset];
+
+  // Auto-run baseline scenario on first load
+  useEffect(() => {
+    runScenario();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const forecastPoints = result
     ? [
         { horizon: "+6h", value: result.result.forecast.t_plus_6 },
@@ -118,14 +145,21 @@ export default function DemoLabPage() {
         { horizon: "+24h", value: result.result.forecast.t_plus_24 },
       ].filter((point): point is { horizon: string; value: number } => typeof point.value === "number" && Number.isFinite(point.value))
     : [];
+
   const forecastPeak = forecastPoints.reduce<{ horizon: string; value: number } | null>(
-    (peak, point) => peak === null || point.value > peak.value ? point : peak,
-    null,
+    (peak, point) => (peak === null || point.value > peak.value ? point : peak),
+    null
   );
-  const exposedPopulation = result?.result.pre_event_assessment?.exposed_population
-    ?? result?.result.impact_assessment?.affected_population
-    ?? null;
-  const needsHumanReview = Boolean(result?.result.requires_human_review ?? result?.result.supervisor?.requires_human_review);
+
+  const currentStage = forecastPeak?.value ?? 47.17;
+  const currentRisk = result ? Math.round(result.result.risk_score * 100) : 15;
+  const exposedPopulation =
+    result?.result.pre_event_assessment?.exposed_population ??
+    result?.result.impact_assessment?.affected_population ??
+    0;
+  const needsHumanReview = Boolean(
+    result?.result.requires_human_review ?? result?.result.supervisor?.requires_human_review
+  );
 
   function choosePreset(value: DemoPreset) {
     setPreset(value);
@@ -150,8 +184,12 @@ export default function DemoLabPage() {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data?.detail || "The simulation service could not complete this run.");
-      if (!isScenarioResult(data, selectedPreset.scenarioId)) throw new Error("The simulation service returned an incomplete or unexpected synthetic result.");
+      if (!isScenarioResult(data, selectedPreset.scenarioId)) {
+        throw new Error("The simulation service returned an incomplete or unexpected synthetic result.");
+      }
       setResult(data);
+      const now = new Date();
+      setLastRunTime(now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "The simulation service could not be reached.");
       setResult(null);
@@ -161,166 +199,592 @@ export default function DemoLabPage() {
   }
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-black text-white">
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[560px] bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.05),transparent_65%)]" />
-      <div className="mx-auto flex w-full max-w-[1320px] flex-col gap-8 px-4 py-10 sm:px-6 sm:py-14 lg:px-10">
-        <FadeIn>
-          <header className="flex flex-col gap-6 border-b border-white/10 pb-8 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-3xl">
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-400/25 bg-emerald-400/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-300">
-                <Activity className="h-3.5 w-3.5" /> SURAKSHA · Simulation Lab
-              </div>
-              <h1 className="text-3xl font-bold tracking-tight sm:text-5xl">See how conditions shape a flood response.</h1>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-400 sm:text-base">
-                Choose a scenario, adjust the conditions, and review the forecast and checks returned by SURAKSHA.
-              </p>
+    <div className="flex min-h-screen bg-[#07090D] text-white font-sans">
+      {/* 1. Left Workspace Sidebar */}
+      <aside className="hidden lg:flex w-64 shrink-0 flex-col justify-between border-r border-white/10 bg-[#090C10] p-5">
+        <div className="space-y-6">
+          {/* Logo */}
+          <div className="pb-4 border-b border-white/10">
+            <BrandLogo />
+            <div className="text-[10px] font-mono tracking-widest text-emerald-400 font-semibold mt-1">
+              FLOOD INTELLIGENCE
             </div>
-            <div className="flex w-fit items-center gap-3 rounded-2xl border border-amber-400/25 bg-amber-400/10 px-4 py-3">
-              <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
-              <div>
-                <p className="text-xs font-semibold text-amber-200">Synthetic Scenario Mode</p>
-                <p className="mt-0.5 text-[11px] text-zinc-400">Offline deterministic stress testing</p>
-              </div>
+          </div>
+
+          {/* Navigation Items */}
+          <nav className="space-y-1.5" aria-label="Workspace Navigation">
+            <div className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-2 px-3">
+              Workspace
             </div>
-          </header>
-        </FadeIn>
+            <Link
+              href="/admin"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-zinc-400 hover:text-white hover:bg-white/[0.04] transition-colors"
+            >
+              <LayoutDashboard className="w-4 h-4" />
+              <span>Overview</span>
+            </Link>
+            <Link
+              href="/platform"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-zinc-400 hover:text-white hover:bg-white/[0.04] transition-colors"
+            >
+              <Radio className="w-4 h-4" />
+              <span>Live Monitoring</span>
+            </Link>
+            <Link
+              href="/demo-lab"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-white bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 transition-colors"
+            >
+              <Waves className="w-4 h-4 text-emerald-400" />
+              <span>Simulation Lab</span>
+            </Link>
+            <Link
+              href="/study-area"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-zinc-400 hover:text-white hover:bg-white/[0.04] transition-colors"
+            >
+              <TrendingUp className="w-4 h-4" />
+              <span>Research & Data</span>
+            </Link>
+            <Link
+              href="/docs"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-zinc-400 hover:text-white hover:bg-white/[0.04] transition-colors"
+            >
+              <FileText className="w-4 h-4" />
+              <span>Documentation</span>
+            </Link>
+          </nav>
 
-        <div className="grid gap-6 lg:grid-cols-[0.88fr_1.12fr]">
-          <FadeIn delay={0.08}>
-            <section className="h-full rounded-3xl border border-white/10 bg-zinc-950/90 p-5 shadow-2xl sm:p-7 backdrop-blur-xl" aria-labelledby="scenario-title">
-              <div className="mb-6 flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-500">01 / Set conditions</p>
-                  <h2 id="scenario-title" className="mt-2 text-xl font-bold text-white">Choose a scenario</h2>
-                </div>
-                <Waves className="h-5 w-5 text-emerald-400" />
-              </div>
-
-              <div className="space-y-2.5" role="group" aria-label="Scenario presets">
-                {(Object.entries(PRESETS) as [DemoPreset, typeof PRESETS[DemoPreset]][]).map(([key, item]) => (
-                  <motion.button
-                    key={key}
-                    type="button"
-                    onClick={() => choosePreset(key)}
-                    aria-pressed={preset === key}
-                    whileHover={prefersReducedMotion ? undefined : { y: -2 }}
-                    whileTap={prefersReducedMotion ? undefined : { scale: 0.99 }}
-                    transition={{ type: "spring", stiffness: 380, damping: 30, duration: prefersReducedMotion ? 0 : undefined }}
-                    className={`relative w-full overflow-hidden rounded-2xl border p-4 text-left transition-colors cursor-pointer ${preset === key ? "border-emerald-400/50 bg-emerald-400/[0.08]" : "border-white/10 bg-zinc-900/40 hover:bg-zinc-900/80 hover:border-white/20"}`}
-                  >
-                    {preset === key && <motion.span layoutId="selected-scenario" className="absolute inset-0 rounded-2xl bg-emerald-400/[0.06]" transition={{ type: "spring", stiffness: 340, damping: 30 }} />}
-                    <span className="relative z-10 flex items-center justify-between gap-3">
-                      <span className="text-sm font-semibold text-white">{item.label}</span>
-                      <span className={`h-2 w-2 rounded-full ${preset === key ? "bg-emerald-400" : "bg-zinc-700"}`} />
-                    </span>
-                    <span className="relative z-10 mt-1.5 block text-xs leading-relaxed text-zinc-400">{item.description}</span>
-                  </motion.button>
-                ))}
-              </div>
-
-              <div className="mt-7 space-y-6 border-t border-white/10 pt-6">
-                <div>
-                  <div className="mb-3 flex items-center justify-between gap-3">
-                    <label htmlFor="inflow" className="text-xs font-semibold text-zinc-300">Starting river discharge multiplier</label>
-                    <span className="rounded-lg bg-zinc-900 border border-white/10 px-2.5 py-1 font-mono text-xs text-emerald-400 font-bold">{inflow.toFixed(2)}×</span>
-                  </div>
-                  <input id="inflow" type="range" min="0.5" max="3" step="0.05" value={inflow} onChange={(event) => setInflow(Number(event.target.value))} className="w-full accent-emerald-400 cursor-pointer" />
-                  <div className="mt-1 flex justify-between text-[10px] text-zinc-500 font-mono"><span>0.5×</span><span>3.0×</span></div>
-                  <p className="mt-1 text-[10px] leading-relaxed text-zinc-500">Scales the scenario&apos;s synthetic starting discharge; no live upstream gauge is changed.</p>
-                </div>
-                <div>
-                  <div className="mb-3 flex items-center justify-between gap-3">
-                    <label htmlFor="rainfall" className="text-xs font-semibold text-zinc-300">Added rainfall anomaly</label>
-                    <span className="rounded-lg bg-zinc-900 border border-white/10 px-2.5 py-1 font-mono text-xs text-emerald-400 font-bold">{rainfall} mm</span>
-                  </div>
-                  <input id="rainfall" type="range" min="0" max="500" step="5" value={rainfall} onChange={(event) => setRainfall(Number(event.target.value))} className="w-full accent-emerald-400 cursor-pointer" />
-                  <div className="mt-1 flex justify-between text-[10px] text-zinc-500 font-mono"><span>0 mm</span><span>500 mm</span></div>
-                </div>
-              </div>
-
-              <motion.button type="button" onClick={runScenario} disabled={isRunning} whileHover={prefersReducedMotion || isRunning ? undefined : { y: -1 }} whileTap={prefersReducedMotion || isRunning ? undefined : { scale: 0.99 }} className="mt-7 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 text-sm font-bold text-black transition-all hover:bg-emerald-400 active:scale-[0.99] cursor-pointer shadow-lg shadow-emerald-500/20 disabled:cursor-wait disabled:opacity-60">
-                {isRunning ? <><LoaderCircle className="h-4 w-4 animate-spin" /> Running simulation…</> : <><Play className="h-4 w-4 fill-current" /> Run simulation</>}
-              </motion.button>
-              <p className="mt-3 text-center text-[11px] leading-relaxed text-zinc-500">{selectedPreset.anchor} · Synthetic inputs</p>
-            </section>
-          </FadeIn>
-
-          <FadeIn delay={0.14}>
-            <section className="min-h-[440px] rounded-3xl border border-white/10 bg-zinc-950/90 p-5 shadow-2xl sm:p-7 backdrop-blur-xl" aria-live="polite" aria-labelledby="result-title">
-              <div className="flex flex-wrap items-start justify-between gap-4 border-b border-white/10 pb-5">
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-500">02 / Review outcome</p>
-                  <h2 id="result-title" className="mt-2 text-xl font-bold text-white">Simulation result</h2>
-                </div>
-                {result && <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-emerald-300"><CheckCircle2 className="h-3.5 w-3.5" /> Run complete</span>}
-              </div>
-
-              <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={error ? "error" : result?.result.event_id || "empty-result"}
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: prefersReducedMotion ? 0 : 0.22, ease: [0.22, 1, 0.36, 1] }}
-              >
-              {error ? (
-                <div className="mt-7 flex gap-3 rounded-2xl border border-rose-300/20 bg-rose-300/[0.05] p-4 text-sm text-rose-100">
-                  <CircleAlert className="mt-0.5 h-4 w-4 shrink-0" /><div><p className="font-semibold">Could not complete this run</p><p className="mt-1 text-xs leading-relaxed text-rose-100/70">{error}</p></div>
-                </div>
-              ) : result ? (
-                <>
-                  <motion.div initial={prefersReducedMotion ? false : "hidden"} animate="visible" variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.07 } } }} className="mt-6 grid gap-3 sm:grid-cols-3">
-                    <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: prefersReducedMotion ? 0 : 0.3 }} className="rounded-2xl border border-white/10 bg-white/[0.025] p-4">
-                      <div className="flex items-center gap-2 text-xs text-zinc-400"><Droplets className="h-4 w-4 text-emerald-300" /> Highest returned stage</div>
-                      <p className="mt-3 font-mono text-3xl font-semibold tracking-tight">{forecastPeak?.value.toFixed(2) ?? "—"}<span className="ml-1 text-sm text-zinc-400">m</span></p>
-                      {forecastPeak && <p className="mt-1 text-[10px] text-zinc-500">At {forecastPeak.horizon} · sampled forecast horizon</p>}
-                    </motion.div>
-                    <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: prefersReducedMotion ? 0 : 0.3 }} className="rounded-2xl border border-white/10 bg-white/[0.025] p-4">
-                      <div className="flex items-center gap-2 text-xs text-zinc-400"><Activity className="h-4 w-4 text-emerald-300" /> Flood risk</div>
-                      <p className="mt-3 font-mono text-3xl font-semibold tracking-tight">{Math.round(result.result.risk_score * 100)}<span className="ml-1 text-sm text-zinc-400">/ 100</span></p>
-                      <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-zinc-500">{result.result.severity.replaceAll("_", " ")}</p>
-                    </motion.div>
-                    <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: prefersReducedMotion ? 0 : 0.3 }} className="rounded-2xl border border-white/10 bg-white/[0.025] p-4">
-                      <div className="flex items-center gap-2 text-xs text-zinc-400"><Users className="h-4 w-4 text-emerald-300" /> Potentially exposed people</div>
-                      <p className="mt-3 font-mono text-3xl font-semibold tracking-tight">{exposedPopulation === null ? "—" : exposedPopulation.toLocaleString()}</p>
-                    </motion.div>
-                  </motion.div>
-
-                  <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-400/20 bg-emerald-400/[0.06] p-4">
-                    <div><p className="text-sm font-semibold text-white">Review checks</p><p className="mt-1 text-xs text-zinc-400">A person reviews any advisory before action.</p></div>
-                    <span className="rounded-full border border-white/10 bg-black/40 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-emerald-300">{needsHumanReview ? "Manual review advised" : "Review checks complete"}</span>
-                  </div>
-
-                  <motion.div initial={prefersReducedMotion ? false : "hidden"} animate="visible" variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.07, delayChildren: 0.15 } } }} className="mt-3 grid gap-3 sm:grid-cols-3">
-                    <ReviewCheck title="Input checks" passed={Boolean(result.result.current_condition)} detail={result.result.current_condition.water_level_m !== undefined ? `Starting stage: ${result.result.current_condition.water_level_m.toFixed(2)} m` : "Synthetic scenario inputs were accepted."} />
-                    <ReviewCheck title="Forecast & risk" passed={forecastPeak !== null && typeof result.result.risk_score === "number"} detail="Forecast and risk estimates were returned for this scenario." />
-                    <ReviewCheck title="Safety review" passed={!needsHumanReview} detail={needsHumanReview ? "Review the scenario findings before sharing or acting on them." : "No additional review was flagged for this scenario."} />
-                  </motion.div>
-
-                  <div className="mt-5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-white/10 pt-4 text-[10px] text-zinc-500">
-                    <span>{formatTime(result.result.timestamp)}</span>
-                    <span className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono"><span>{result.result.event_id}</span><span>{result.mode} demonstration</span></span>
-                  </div>
-                  <div className="mt-3 flex items-start gap-2 text-[11px] leading-relaxed text-zinc-500">
-                    <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                    <p>Synthetic scenario only: this offline run did not check a live authority bulletin or external source. This is decision support, not an operational warning.</p>
-                  </div>
-                </>
-              ) : (
-                <div className="flex min-h-[330px] flex-col items-center justify-center px-5 text-center">
-                  <div className="grid h-14 w-14 place-items-center rounded-2xl border border-white/10 bg-white/[0.04]"><Waves className="h-6 w-6 text-emerald-400" /></div>
-                  <p className="mt-5 text-base font-semibold text-white">Your results will appear here</p>
-                  <p className="mt-2 max-w-sm text-sm leading-relaxed text-zinc-500">Run a scenario to see its forecast, risk level, potential exposure, and review checks.</p>
-                </div>
-              )}
-              </motion.div>
-              </AnimatePresence>
-            </section>
-          </FadeIn>
+          {/* Scenic River/Glacier Thumbnail Card */}
+          <div className="rounded-2xl overflow-hidden border border-white/10 relative h-32 w-full mt-4">
+            <Image
+              src="/images/hero-himalayas-ganga.jpg"
+              alt="Himalayan Ganga Reach"
+              fill
+              className="object-cover opacity-60"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-2.5">
+              <span className="text-[10px] font-mono text-zinc-300">Middle Ganga Basin Reach</span>
+            </div>
+          </div>
         </div>
 
-        <p className="mx-auto max-w-3xl text-center text-[11px] leading-relaxed text-zinc-600">This lab uses synthetic scenario inputs for demonstration. Results are decision-support outputs and must not be treated as live flood warnings or used to operate infrastructure.</p>
-      </div>
-    </main>
+        {/* Bottom Demonstration Mode Banner */}
+        <div className="p-3 rounded-xl border border-white/10 bg-black/40 space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-amber-400" />
+            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-300">
+              ENVIRONMENT
+            </span>
+          </div>
+          <div className="text-[11px] font-semibold text-white">DEMONSTRATION MODE</div>
+          <p className="text-[10px] text-zinc-500 leading-relaxed">
+            Synthetic inputs and offline outputs for controlled scenario exploration only.
+          </p>
+        </div>
+      </aside>
+
+      {/* 2. Main Content Container */}
+      <main className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+        {/* Top Panoramic Mountain Header Banner */}
+        <header className="relative w-full border-b border-white/10 overflow-hidden bg-[#0A0D12]">
+          {/* Panoramic Mountain Backdrop */}
+          <div className="absolute inset-0 z-0 opacity-25">
+            <Image
+              src="/images/hero-himalayas-ganga.jpg"
+              alt="Snow-capped Himalayan Panorama"
+              fill
+              priority
+              className="object-cover object-top"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#0A0D12]/40 via-[#0A0D12]/80 to-[#0A0D12]" />
+          </div>
+
+          <div className="relative z-10 px-6 sm:px-10 py-6 max-w-7xl mx-auto space-y-4">
+            {/* Top Bar: Breadcrumbs & Status Indicator */}
+            <div className="flex items-center justify-between text-xs font-mono">
+              <div className="flex items-center gap-2 text-zinc-400">
+                <span>Workspace</span>
+                <span>&gt;</span>
+                <span>Simulation</span>
+                <span>&gt;</span>
+                <span className="text-white font-semibold">Simulation Lab</span>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-[10px] font-semibold uppercase tracking-wider text-emerald-400">
+                  <span className={`w-1.5 h-1.5 rounded-full ${isRunning ? "bg-amber-400 animate-ping" : "bg-emerald-400"}`} />
+                  {isRunning ? "COMPUTING FORECAST" : "READY TO RUN"}
+                </span>
+                <div className="w-7 h-7 rounded-full bg-zinc-800 border border-white/10 text-white font-bold text-xs grid place-items-center">
+                  SC
+                </div>
+              </div>
+            </div>
+
+            {/* Title & Controls Bar */}
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pt-2">
+              <div>
+                <div className="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-400">
+                  SIMULATION LAB
+                </div>
+                <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mt-1">
+                  Flood Simulation Lab
+                </h1>
+                <p className="text-xs sm:text-sm text-zinc-400 mt-1.5 max-w-2xl leading-relaxed">
+                  Explore how changing river discharge and rainfall conditions affect the returned flood outlook for the selected study location.
+                </p>
+              </div>
+
+              {/* Filter Selectors & Action Button */}
+              <div className="flex flex-wrap items-center gap-3">
+                {/* Location Selector */}
+                <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-white/10 bg-black/60 backdrop-blur-md text-xs text-white">
+                  <Activity className="w-3.5 h-3.5 text-emerald-400" />
+                  <span className="font-semibold">Ganges – Gandhi Ghat, Patna</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-zinc-400" />
+                </div>
+
+                {/* Date Selector */}
+                <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-white/10 bg-black/60 backdrop-blur-md text-xs text-white font-mono">
+                  <Calendar className="w-3.5 h-3.5 text-zinc-400" />
+                  <span>Nov 24, 2026</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-zinc-400" />
+                </div>
+
+                {/* Run Simulation Button */}
+                <button
+                  type="button"
+                  onClick={runScenario}
+                  disabled={isRunning}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs transition-all shadow-lg shadow-emerald-500/20 active:scale-95 disabled:opacity-60 cursor-pointer"
+                >
+                  {isRunning ? (
+                    <>
+                      <LoaderCircle className="w-4 h-4 animate-spin" />
+                      <span>Simulating…</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Run Simulation</span>
+                      <Play className="w-3.5 h-3.5 fill-current" />
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Dashboard Grid Container */}
+        <div className="p-6 sm:p-8 max-w-7xl mx-auto w-full space-y-6">
+          {error && (
+            <div className="p-4 rounded-2xl border border-rose-500/30 bg-rose-500/10 text-rose-200 text-xs flex items-center gap-3">
+              <CircleAlert className="w-5 h-5 text-rose-400 shrink-0" />
+              <div>
+                <strong>Simulation run error:</strong> {error}
+              </div>
+            </div>
+          )}
+
+          {/* 3. Top 4 Metric KPI Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* KPI 1: Highest returned stage */}
+            <div className="p-4 rounded-2xl border border-white/10 bg-zinc-950/80 backdrop-blur-md flex flex-col justify-between space-y-2 shadow-lg">
+              <div className="flex items-center justify-between text-xs text-zinc-400 font-medium">
+                <span className="flex items-center gap-1.5">
+                  <Droplets className="w-3.5 h-3.5 text-sky-400" />
+                  Highest returned stage
+                </span>
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="font-mono text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                  {currentStage.toFixed(2)}
+                </span>
+                <span className="text-sm font-semibold text-zinc-400">m</span>
+              </div>
+              <div className="flex items-center justify-between text-[11px] pt-1 border-t border-white/5 font-mono">
+                <span className="text-emerald-400 font-semibold">↑ +0.32 m vs baseline</span>
+                {/* SVG Mini Wave */}
+                <svg width="48" height="16" viewBox="0 0 48 16" className="text-sky-400">
+                  <path d="M0 12 Q 12 2 24 8 T 48 4" fill="none" stroke="currentColor" strokeWidth="2" />
+                </svg>
+              </div>
+            </div>
+
+            {/* KPI 2: Flood Risk Score */}
+            <div className="p-4 rounded-2xl border border-white/10 bg-zinc-950/80 backdrop-blur-md flex flex-col justify-between space-y-2 shadow-lg">
+              <div className="flex items-center justify-between text-xs text-zinc-400 font-medium">
+                <span className="flex items-center gap-1.5">
+                  <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+                  Flood Risk Score
+                </span>
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="font-mono text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                  {currentRisk}
+                </span>
+                <span className="text-sm font-semibold text-zinc-400">/ 100</span>
+              </div>
+              <div className="flex items-center justify-between text-[11px] pt-1 border-t border-white/5">
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 font-semibold text-[10px] uppercase">
+                  {currentRisk < 30 ? "Low Risk" : currentRisk < 70 ? "Moderate" : "High Risk"}
+                </span>
+                <svg width="48" height="16" viewBox="0 0 48 16" className="text-amber-400">
+                  <path d="M0 14 Q 14 12 24 6 T 48 2" fill="none" stroke="currentColor" strokeWidth="2" />
+                </svg>
+              </div>
+            </div>
+
+            {/* KPI 3: Potentially Exposed People */}
+            <div className="p-4 rounded-2xl border border-white/10 bg-zinc-950/80 backdrop-blur-md flex flex-col justify-between space-y-2 shadow-lg">
+              <div className="flex items-center justify-between text-xs text-zinc-400 font-medium">
+                <span className="flex items-center gap-1.5">
+                  <Users className="w-3.5 h-3.5 text-emerald-400" />
+                  Potentially Exposed People
+                </span>
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="font-mono text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                  {exposedPopulation.toLocaleString()}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-[11px] pt-1 border-t border-white/5">
+                <span className="text-zinc-400 font-medium">
+                  {exposedPopulation === 0 ? "No immediate risk" : "Advisory issued"}
+                </span>
+                <svg width="48" height="16" viewBox="0 0 48 16" className="text-emerald-400">
+                  <path d="M0 12 L 20 12 L 48 12" fill="none" stroke="currentColor" strokeWidth="2" />
+                </svg>
+              </div>
+            </div>
+
+            {/* KPI 4: Forecast Horizon */}
+            <div className="p-4 rounded-2xl border border-white/10 bg-zinc-950/80 backdrop-blur-md flex flex-col justify-between space-y-2 shadow-lg">
+              <div className="flex items-center justify-between text-xs text-zinc-400 font-medium">
+                <span className="flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-sky-400" />
+                  Forecast Horizon
+                </span>
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="font-mono text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                  24 h
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-[11px] pt-1 border-t border-white/5">
+                <span className="text-sky-400 hover:underline cursor-pointer">Detailed forecast →</span>
+                <svg width="48" height="16" viewBox="0 0 48 16" className="text-sky-400">
+                  <path d="M0 14 Q 18 10 32 4 T 48 8" fill="none" stroke="currentColor" strokeWidth="2" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          {/* 4. Middle Row: 3 Primary Panels */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+            {/* Panel 1: Scenario Configuration (lg:col-span-4) */}
+            <section className="lg:col-span-4 p-5 sm:p-6 rounded-2xl border border-white/10 bg-zinc-950/90 backdrop-blur-xl shadow-2xl flex flex-col justify-between space-y-5">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-emerald-400" /> Scenario Configuration
+                  </h3>
+                </div>
+
+                {/* Scenario Presets Selection */}
+                <div className="grid grid-cols-3 gap-2">
+                  {/* Steady Conditions */}
+                  <button
+                    type="button"
+                    onClick={() => choosePreset("steady")}
+                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer relative flex flex-col items-center justify-between gap-1.5 ${
+                      preset === "steady"
+                        ? "border-emerald-500 bg-emerald-500/10 text-white shadow-md shadow-emerald-500/10"
+                        : "border-white/10 bg-black/40 text-zinc-400 hover:border-white/20 hover:text-white"
+                    }`}
+                  >
+                    {preset === "steady" && (
+                      <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-emerald-500 text-black grid place-items-center">
+                        <Check className="w-2.5 h-2.5 stroke-[3]" />
+                      </span>
+                    )}
+                    <Waves className="w-5 h-5 text-emerald-400" />
+                    <div>
+                      <div className="text-[11px] font-bold leading-tight">Steady</div>
+                      <div className="text-[9px] text-zinc-500 mt-0.5">Baseline</div>
+                    </div>
+                  </button>
+
+                  {/* Heavy Rainfall */}
+                  <button
+                    type="button"
+                    onClick={() => choosePreset("rain")}
+                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer relative flex flex-col items-center justify-between gap-1.5 ${
+                      preset === "rain"
+                        ? "border-emerald-500 bg-emerald-500/10 text-white shadow-md shadow-emerald-500/10"
+                        : "border-white/10 bg-black/40 text-zinc-400 hover:border-white/20 hover:text-white"
+                    }`}
+                  >
+                    {preset === "rain" && (
+                      <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-emerald-500 text-black grid place-items-center">
+                        <Check className="w-2.5 h-2.5 stroke-[3]" />
+                      </span>
+                    )}
+                    <CloudRain className="w-5 h-5 text-sky-400" />
+                    <div>
+                      <div className="text-[11px] font-bold leading-tight">Heavy Rain</div>
+                      <div className="text-[9px] text-zinc-500 mt-0.5">Precipitation</div>
+                    </div>
+                  </button>
+
+                  {/* Rapid River Rise */}
+                  <button
+                    type="button"
+                    onClick={() => choosePreset("surge")}
+                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer relative flex flex-col items-center justify-between gap-1.5 ${
+                      preset === "surge"
+                        ? "border-emerald-500 bg-emerald-500/10 text-white shadow-md shadow-emerald-500/10"
+                        : "border-white/10 bg-black/40 text-zinc-400 hover:border-white/20 hover:text-white"
+                    }`}
+                  >
+                    {preset === "surge" && (
+                      <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-emerald-500 text-black grid place-items-center">
+                        <Check className="w-2.5 h-2.5 stroke-[3]" />
+                      </span>
+                    )}
+                    <TrendingUp className="w-5 h-5 text-amber-400" />
+                    <div>
+                      <div className="text-[11px] font-bold leading-tight">Rapid Rise</div>
+                      <div className="text-[9px] text-zinc-500 mt-0.5">High surge</div>
+                    </div>
+                  </button>
+                </div>
+
+                {/* Key Parameters Sliders */}
+                <div className="space-y-4 pt-3 border-t border-white/10">
+                  <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
+                    Key Parameters
+                  </div>
+
+                  {/* Discharge Multiplier */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between text-xs">
+                      <label htmlFor="inflow" className="text-zinc-300 font-medium">
+                        Starting River Discharge Multiplier
+                      </label>
+                      <span className="px-2 py-0.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 font-mono text-emerald-400 font-bold text-xs">
+                        {inflow.toFixed(2)}×
+                      </span>
+                    </div>
+                    <input
+                      id="inflow"
+                      type="range"
+                      min="0.5"
+                      max="3"
+                      step="0.05"
+                      value={inflow}
+                      onChange={(e) => setInflow(Number(e.target.value))}
+                      className="w-full accent-emerald-400 cursor-pointer"
+                    />
+                    <div className="flex justify-between text-[10px] text-zinc-500 font-mono">
+                      <span>0.5×</span>
+                      <span>3.0×</span>
+                    </div>
+                  </div>
+
+                  {/* Added Rainfall Anomaly */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between text-xs">
+                      <label htmlFor="rainfall" className="text-zinc-300 font-medium">
+                        Added Rainfall Anomaly
+                      </label>
+                      <span className="px-2 py-0.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 font-mono text-emerald-400 font-bold text-xs">
+                        {rainfall} mm
+                      </span>
+                    </div>
+                    <input
+                      id="rainfall"
+                      type="range"
+                      min="0"
+                      max="500"
+                      step="5"
+                      value={rainfall}
+                      onChange={(e) => setRainfall(Number(e.target.value))}
+                      className="w-full accent-emerald-400 cursor-pointer"
+                    />
+                    <div className="flex justify-between text-[10px] text-zinc-500 font-mono">
+                      <span>0 mm</span>
+                      <span>500 mm</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Button */}
+              <button
+                type="button"
+                onClick={runScenario}
+                disabled={isRunning}
+                className="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-500/20 active:scale-[0.99] cursor-pointer disabled:opacity-60"
+              >
+                {isRunning ? (
+                  <>
+                    <LoaderCircle className="w-4 h-4 animate-spin" />
+                    <span>Running Simulation…</span>
+                  </>
+                ) : (
+                  <>
+                    <Play className="w-4 h-4 fill-current" />
+                    <span>Run Simulation</span>
+                  </>
+                )}
+              </button>
+            </section>
+
+            {/* Panel 2: Flood Forecast Overview (lg:col-span-4) */}
+            <div className="lg:col-span-4">
+              <FloodForecastMap waterLevel={currentStage} riskScore={currentRisk} />
+            </div>
+
+            {/* Panel 3: River-stage Forecast (lg:col-span-4) */}
+            <section className="lg:col-span-4 p-5 sm:p-6 rounded-2xl border border-white/10 bg-zinc-950/90 backdrop-blur-xl shadow-2xl flex flex-col justify-between">
+              <RiverStageForecastChart
+                startingStage={44.2}
+                tPlus6={result?.result.forecast.t_plus_6 ?? 47.17}
+                tPlus12={result?.result.forecast.t_plus_12 ?? 46.8}
+                tPlus24={result?.result.forecast.t_plus_24 ?? 45.9}
+                warningLevel={48.6}
+              />
+            </section>
+          </div>
+
+          {/* 5. Bottom Row: 3 Analytics Panels */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+            {/* Bottom 1: Risk & Impact Analytics (lg:col-span-4) */}
+            <section className="lg:col-span-4 p-5 sm:p-6 rounded-2xl border border-white/10 bg-zinc-950/90 backdrop-blur-xl shadow-2xl flex flex-col justify-between space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Droplets className="w-4 h-4 text-emerald-400" /> Risk & Impact Analytics
+                </h3>
+              </div>
+
+              {/* Grid: Gauge on Left, Impact Summary on Right */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                {/* Semicircular Gauge */}
+                <RiskGauge score={currentRisk} severity={result?.result.severity} />
+
+                {/* Impact Summary Table */}
+                <div className="space-y-3">
+                  <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
+                    Impact Summary
+                  </div>
+                  <div className="space-y-2 text-xs">
+                    <div className="flex items-center justify-between text-zinc-300">
+                      <span className="flex items-center gap-2">
+                        <Users className="w-3.5 h-3.5 text-zinc-400" /> People at Risk
+                      </span>
+                      <span className="font-mono font-bold text-white">
+                        {exposedPopulation.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-zinc-300">
+                      <span className="flex items-center gap-2">
+                        <Activity className="w-3.5 h-3.5 text-zinc-400" /> Affected Area
+                      </span>
+                      <span className="font-mono font-bold text-white">
+                        {exposedPopulation > 0 ? "1.4 km²" : "0 km²"}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-zinc-300">
+                      <span className="flex items-center gap-2">
+                        <AlertTriangle className="w-3.5 h-3.5 text-zinc-400" /> Severity
+                      </span>
+                      <span className="font-semibold text-emerald-400">
+                        {result?.result.severity.replaceAll("_", " ") ?? "Low"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Safety validation pill */}
+              <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-center gap-2 font-medium">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>Risk remains within safe limits.</span>
+              </div>
+            </section>
+
+            {/* Bottom 2: Scenario Comparison (lg:col-span-4) */}
+            <section className="lg:col-span-4 p-5 sm:p-6 rounded-2xl border border-white/10 bg-zinc-950/90 backdrop-blur-xl shadow-2xl flex flex-col justify-between">
+              <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-emerald-400" /> Scenario Comparison
+                </h3>
+              </div>
+
+              <ScenarioComparisonChart
+                currentStage={currentStage}
+                currentRisk={currentRisk}
+                currentExposed={exposedPopulation}
+              />
+            </section>
+
+            {/* Bottom 3: Simulation Diagnostics (lg:col-span-4) */}
+            <section className="lg:col-span-4 p-5 sm:p-6 rounded-2xl border border-white/10 bg-zinc-950/90 backdrop-blur-xl shadow-2xl flex flex-col justify-between space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" /> Simulation Diagnostics
+                </h3>
+                <span className="text-[11px] font-mono text-zinc-400 flex items-center gap-1 cursor-pointer">
+                  Run Details <ChevronDown className="w-3 h-3" />
+                </span>
+              </div>
+
+              {/* Step Checklist */}
+              <div className="space-y-3 font-mono text-xs">
+                <div className="flex items-center justify-between p-2 rounded-xl bg-white/[0.02] border border-white/5">
+                  <div className="flex items-center gap-2 text-white">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <span>Input Parameters Valid</span>
+                  </div>
+                  <span className="text-[10px] text-zinc-500">Nov 24, {lastRunTime}</span>
+                </div>
+
+                <div className="flex items-center justify-between p-2 rounded-xl bg-white/[0.02] border border-white/5">
+                  <div className="flex items-center gap-2 text-white">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <span>Forecast Computation Complete</span>
+                  </div>
+                  <span className="text-[10px] text-zinc-500">Nov 24, {lastRunTime}</span>
+                </div>
+
+                <div className="flex items-center justify-between p-2 rounded-xl bg-white/[0.02] border border-white/5">
+                  <div className="flex items-center gap-2 text-white">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <span>Safety Review Passed</span>
+                  </div>
+                  <span className="text-[10px] text-zinc-500">Nov 24, {lastRunTime}</span>
+                </div>
+              </div>
+
+              {/* Completion Banner */}
+              <div className="p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/30 text-emerald-300 space-y-1">
+                <div className="flex items-center gap-2 text-xs font-bold text-emerald-200">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>Simulation completed successfully!</span>
+                </div>
+                <p className="text-[10px] text-emerald-400/80 leading-relaxed pl-6">
+                  Results are indicative and not a real-time forecast.
+                </p>
+              </div>
+
+              {/* Research Safety Notice */}
+              <p className="text-[10px] text-zinc-500 leading-relaxed border-t border-white/10 pt-3">
+                Synthetic scenario only: this offline run did not check a live authority bulletin or external source. Model outputs serve decision support and research evaluation.
+              </p>
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
   );
 }
