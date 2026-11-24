@@ -52,29 +52,29 @@
   }
 
   .dark {
-    /* Brand Tinted Dark Theme */
+    /* High-End Obsidian Dark Theme */
     --background: #000000;
     --foreground: #FFFFFF;
 
-    --surface: #0D100E;
-    --surface-elevated: #141816;
-    --surface-glass: #0D100E;
+    --surface: #09090B;
+    --surface-elevated: #121214;
+    --surface-glass: rgba(9, 9, 11, 0.95);
 
-    --border: #1F2823;
+    --border: rgba(255, 255, 255, 0.10);
     --border-hover: rgba(16, 185, 129, 0.35);
     --border-focus: rgba(16, 185, 129, 0.55);
 
-    --muted: #141816;
-    --muted-foreground: #9BA5A0;
+    --muted: #121214;
+    --muted-foreground: #A1A1AA;
 
-    --card: #0D100E;
+    --card: #09090B;
     --card-foreground: #FFFFFF;
-    --popover: #0D100E;
+    --popover: #09090B;
     --popover-foreground: #FFFFFF;
 
     --primary: #10B981;
     --primary-foreground: #000000;
-    --secondary: #141816;
+    --secondary: #121214;
     --secondary-foreground: #FFFFFF;
 
     --accent: rgba(16, 185, 129, 0.12);
@@ -340,8 +340,8 @@ pre,
 
 /* Sleek Dark Card (Solid, 8px radius, no blur) */
 .glass-panel {
-  background: #0D100E;
-  border: 1px solid #1F2823;
+  background: #09090B;
+  border: 1px solid rgba(255, 255, 255, 0.10);
   border-radius: 0.5rem;
 }
 
@@ -376,6 +376,7 @@ pre,
   justify-content: center;
   gap: 0.5rem;
   border-radius: 9999px;
+  white-space: nowrap;
   backdrop-filter: blur(18px) saturate(160%);
   -webkit-backdrop-filter: blur(18px) saturate(160%);
   transition:
@@ -548,11 +549,10 @@ pre,
     inset 0 -1px 0 0 rgba(255, 255, 255, 0.08),
     0 6px 20px -4px rgba(0, 0, 0, 0.55);
   transition:
-    transform 0.34s cubic-bezier(0.22, 1, 0.36, 1),
-    background 0.34s cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 0.34s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.34s cubic-bezier(0.22, 1, 0.36, 1);
-  animation: iconGlassFloat 4.2s ease-in-out infinite;
+    transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .icon-glass::after {
