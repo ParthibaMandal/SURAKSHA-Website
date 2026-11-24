@@ -487,6 +487,20 @@ pre,
     0 0 20px 0 rgba(255, 255, 255, 0.14);
 }
 
+.himalayas-hero .hero-cta-transparent,
+.himalayas-hero .hero-cta-transparent:hover {
+  background: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow: none;
+  animation: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.himalayas-hero .hero-cta-transparent::after {
+  display: none;
+}
+
 .btn.small {
   padding: 0.45rem 1rem;
   font-size: 0.75rem;
