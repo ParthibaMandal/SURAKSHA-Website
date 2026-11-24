@@ -32,6 +32,30 @@ DECLARE
     'stage_observations.observations_select_public',
     'supervisory_gates.gates_select_public'
   ];
+  expected_mixed text[] := ARRAY[
+    'citizen_sos_reports.sos_insert_all',
+    'citizen_sos_reports.sos_insert_own',
+    'citizen_sos_reports.sos_select_all',
+    'citizen_sos_reports.sos_select_own',
+    'citizen_sos_reports.sos_select_staff',
+    'citizen_sos_reports.sos_update_auth',
+    'flood_alerts.alerts_select_all',
+    'flood_alerts.alerts_select_published',
+    'flood_alerts.alerts_select_staff',
+    'flood_alerts.alerts_update_admin',
+    'flood_alerts.alerts_write_auth',
+    'monitoring_stations.stations_select_all',
+    'monitoring_stations.stations_select_public',
+    'monitoring_stations.stations_write_auth',
+    'profiles.profiles_insert_own',
+    'profiles.profiles_select_all',
+    'profiles.profiles_select_own',
+    'profiles.profiles_update_own',
+    'stage_observations.observations_select_all',
+    'stage_observations.observations_select_public',
+    'supervisory_gates.gates_select_all',
+    'supervisory_gates.gates_select_public'
+  ];
 BEGIN
   IF to_regclass('public.profiles') IS NULL
      OR to_regclass('public.monitoring_stations') IS NULL
@@ -52,7 +76,8 @@ BEGIN
      ]);
 
   IF actual_policies IS DISTINCT FROM expected_legacy
-     AND actual_policies IS DISTINCT FROM expected_final THEN
+     AND actual_policies IS DISTINCT FROM expected_final
+     AND actual_policies IS DISTINCT FROM expected_mixed THEN
     RAISE EXCEPTION 'SURAKSHA RLS policy drift detected. Expected the audited policy set or this migration''s final policy set; found: %', actual_policies;
   END IF;
 END
@@ -65,6 +90,7 @@ DROP POLICY IF EXISTS sos_select_all ON public.citizen_sos_reports;
 DROP POLICY IF EXISTS sos_update_auth ON public.citizen_sos_reports;
 DROP POLICY IF EXISTS alerts_select_all ON public.flood_alerts;
 DROP POLICY IF EXISTS alerts_write_auth ON public.flood_alerts;
+DROP POLICY IF EXISTS alerts_update_admin ON public.flood_alerts;
 DROP POLICY IF EXISTS stations_select_all ON public.monitoring_stations;
 DROP POLICY IF EXISTS stations_write_auth ON public.monitoring_stations;
 DROP POLICY IF EXISTS profiles_insert_own ON public.profiles;
