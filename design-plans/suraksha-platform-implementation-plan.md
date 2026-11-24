@@ -43,6 +43,10 @@ The prototype-era `docs/SURAKSHA_IMPLEMENTATION_ROADMAP.md` was replaced with a 
 
 The citizen profile, saved-location, and notification pages were audited for false persistence claims. The profile now reads the authenticated name/email and removes invented password/session/MFA facts; profile edits and language storage are identified as unavailable. Location rows and notifications are explicitly session-only previews, unsupported editing is disabled, and the UI no longer claims that preferences or locations were saved or delivered. A regression test guards these constraints. Durable location subscriptions, profile editing, and notification delivery still require approved schema, RLS, and service contracts.
 
+The dead login “Forgot password?” action now opens a Supabase email-reset request page, and the existing PKCE callback exchanges the recovery code before a session-protected password update page is shown. The reset flow validates matching passwords, handles expired/invalid callback codes, uses generic email confirmation text, and rejects unsafe callback `next` destinations. Email delivery and the production redirect allowlist still require verification in the Supabase Auth dashboard; the hosted end-to-end email cycle has not been exercised.
+
+The simulation proxy now forwards `SURAKSHA_OPERATOR_API_KEY` server-side when configured in the environment, satisfying the FastAPI operator-write middleware requirement without leaking keys to the client. Canonical TypeScript contract definitions for all FastAPI Pydantic models (stations, observations, pipeline execution, demo catalog/runs, and citizen SOS) were consolidated in `types/contracts.ts` and `lib/contracts.ts`. The operations station catalogue view was hardened: fabricated "100% reporting", "continuous stream", and "optimal health" metrics were removed, read-only configuration boundaries were labeled, and real engine station metadata is dynamically ingested with truthful offline fallbacks. Documentation synchronization now preserves deterministic newline formatting across environments.
+
 ## Target system boundaries
 
 ```text

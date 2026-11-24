@@ -61,7 +61,7 @@ The FastAPI router under `/api/v1/flood` exposes:
 - `POST /intelligence/triage-sos`
 - `POST /intelligence/advisory`
 
-All POST/PUT/PATCH/DELETE engine routes require `Authorization: Bearer <SURAKSHA_OPERATOR_API_KEY>` when an operator key is configured. Production requires a key of at least 32 characters. The website does not currently forward this credential, so state-changing engine calls are not integrated through the website. Demo routes call a demo-mode guard and are blocked in engine production mode.
+All POST/PUT/PATCH/DELETE engine routes require `Authorization: Bearer <SURAKSHA_OPERATOR_API_KEY>` when an operator key is configured. Production requires a key of at least 32 characters. The website server proxy forwards this credential when configured server-side (`SURAKSHA_OPERATOR_API_KEY`), ensuring secrets never reach browser clients. Demo routes call a demo-mode guard and are blocked in engine production mode.
 
 `PipelineRunRequest` accepts a station ID, optional water level, 24-hour rainfall, soil saturation, river discharge, and execution mode (`static` or `supervised`); unrecognized fields are rejected. The demo scenario run accepts `{ "input": { ... } }`. See the engine's OpenAPI schema for exact types, bounds, and response bodies.
 

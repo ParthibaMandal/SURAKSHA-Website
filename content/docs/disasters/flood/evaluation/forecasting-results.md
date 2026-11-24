@@ -33,6 +33,6 @@ Evaluated across the held-out test split of the authentic Copernicus hourly hydr
 1. **Diurnal Seasonality Importance**:
    - In low-gradient river plains like the lower Ganges basin during non-monsoon periods, river levels exhibit marked diurnal variations due to upstream dam releases and evapotranspiration. SARIMA's 24-hour seasonal lag enables it to achieve an extraordinary **MAE of 0.092m** and **NSE of 0.981**.
 2. **Multi-Feature Exogenous Power (Hybrid BiLSTM)**:
-   - While statistical models track immediate rate-of-rise autocorrelation, **Hybrid BiLSTM** explicitly ingests catchment precipitation, GloFAS discharge, and root-zone soil moisture ($0 → 7\text{cm}$), making it the premier architecture for anticipating sudden upstream storm surges prior to physical arrival at the gauge.
+   - While statistical models track immediate rate-of-rise autocorrelation, **Hybrid BiLSTM** explicitly ingests catchment precipitation, GloFAS discharge, and root-zone soil moisture ($0 \to 7\text{cm}$), making it the premier architecture for anticipating sudden upstream storm surges prior to physical arrival at the gauge.
 3. **Decoupled Risk Layer**:
    - As designed, physical forecasting is strictly insulated from risk calculation. Regardless of which forecaster is chosen by the ladder benchmark, its multi-horizon stage estimates ($t+6, t+12, t+24\text{h}$) feed directly into the calibrated **Risk Model (XGBoost / Gradient Boosting)** and the **TypeSafe Jev System One** verification layer.

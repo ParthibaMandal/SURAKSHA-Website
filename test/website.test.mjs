@@ -155,7 +155,7 @@ test('generated API documentation uses the website-owned verified contract overr
   const docs = JSON.parse(rawDocs);
   const apiDoc = docs.find((doc) => doc.id === '09-backend-and-api--api-reference');
   const manifest = JSON.parse(manifestText);
-  assert.equal(published.trim(), override.trim());
+  assert.equal(published.trim().replace(/\r\n/g, '\n'), override.trim().replace(/\r\n/g, '\n'));
   assert.ok(apiDoc, 'the API reference should be published under its stable docs ID');
   assert.match(apiDoc.content, /\/api\/v1\/flood/);
   assert.match(apiDoc.content, /\/demo\/scenarios/);
@@ -306,4 +306,98 @@ test('citizen account previews do not claim unsaved data or invented security fa
   assert.match(notifications, /No notifications will be sent/);
   assert.match(notifications, /Apply to Preview/);
   assert.doesNotMatch(notifications, /Notification preferences saved/);
+});
+
+test('password recovery sends a reset link and requires an authenticated update session', async () => {
+  const login = await read('app/auth/login/page.tsx');
+  const request = await read('app/auth/forgot-password/page.tsx');
+  const reset = await read('app/auth/reset-password/page.tsx');
+  const callback = await read('app/auth/callback/route.ts');
+
+  assert.ok(await routeExists('/auth/forgot-password'));
+  assert.ok(await routeExists('/auth/reset-password'));
+  assert.match(login, /href="\/auth\/forgot-password"/);
+  assert.match(login, /oauth_exchange_failed/);
+  assert.match(request, /resetPasswordForEmail\(email\.trim\(\), \{ redirectTo \}\)/);
+  assert.match(request, /auth\/callback\?next=/);
+  assert.match(reset, /supabase\.auth\.getUser\(\)/);
+  assert.match(reset, /supabase\.auth\.updateUser\(\{ password \}\)/);
+  assert.match(callback, /next\.startsWith\("\/\/"\)/);
+  assert.match(callback, /next\.includes\("\\\\"\)/);
+  assert.match(callback, /auth\/forgot-password\?error=reset_link_invalid/);
+  assert.match(request, /reset_link_invalid/);
+});
+
+test('canonical engine contracts and TypeScript models exist and cover core flood subsystem', async () => {
+  const contracts = await read('types/contracts.ts');
+  const libContracts = await read('lib/contracts.ts');
+
+  assert.match(contracts, /export type DataProvenance/);
+  assert.match(contracts, /export interface StationMetadata/);
+  assert.match(contracts, /export interface CurrentConditionState/);
+  assert.match(contracts, /export interface PipelineRunRequest/);
+  assert.match(contracts, /export interface PipelineRunResponse/);
+  assert.match(contracts, /export interface DemoCatalogResponse/);
+  assert.match(contracts, /export interface DemoScenarioRunResponse/);
+  assert.match(contracts, /export interface CitizenSosRequest/);
+  assert.match(contracts, /export interface EngineHealthResponse/);
+  assert.match(libContracts, /export \* from "@\/types\/contracts"/);
+});
+
+test('scenario proxy forwards operator api key when configured', async () => {
+  const route = await loadTypeScriptRoute('app/api/flood/scenarios/route.ts');
+  const previousFetch = globalThis.fetch;
+  const previousBackendUrl = process.env.SURAKSHA_BACKEND_URL;
+  const previousOperatorKey = process.env.SURAKSHA_OPERATOR_API_KEY;
+  process.env.SURAKSHA_BACKEND_URL = 'https://engine.test';
+  process.env.SURAKSHA_OPERATOR_API_KEY = 'test-operator-api-key-32-chars-long!';
+
+  const capturedHeaders = [];
+  globalThis.fetch = async (url, init = {}) => {
+    capturedHeaders.push({ url: String(url), headers: init.headers });
+    if (String(url).endsWith('/api/v1/flood/demo/scenarios')) {
+      return new Response(JSON.stringify({
+        synthetic_data_only: true,
+        scenarios: [{ id: 'TEST_01', input: { current_condition: { river_discharge_m3s: 100, rainfall_24h_mm: 10 } } }],
+      }), { status: 200, headers: { 'content-type': 'application/json' } });
+    }
+    return new Response(JSON.stringify({ accepted: true }), {
+      status: 200,
+      headers: { 'content-type': 'application/json' },
+    });
+  };
+
+  try {
+    const res = await route.POST(new Request('https://website.test/api/flood/scenarios', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        scenario_id: 'TEST_01',
+        river_discharge_multiplier: 1.0,
+        precipitation_anomaly_mm: 0,
+      }),
+    }));
+    assert.equal(res.status, 200);
+    assert.ok(capturedHeaders.length >= 2);
+    for (const call of capturedHeaders) {
+      assert.equal(call.headers.authorization, 'Bearer test-operator-api-key-32-chars-long!');
+    }
+  } finally {
+    globalThis.fetch = previousFetch;
+    if (previousBackendUrl === undefined) delete process.env.SURAKSHA_BACKEND_URL;
+    else process.env.SURAKSHA_BACKEND_URL = previousBackendUrl;
+    if (previousOperatorKey === undefined) delete process.env.SURAKSHA_OPERATOR_API_KEY;
+    else process.env.SURAKSHA_OPERATOR_API_KEY = previousOperatorKey;
+  }
+});
+
+test('admin stations catalogue does not claim false telemetry streams or continuous health', async () => {
+  const stationsPage = await read('app/admin/stations/page.tsx');
+
+  assert.match(stationsPage, /fetch\("\/api\/flood\/stations"/);
+  assert.doesNotMatch(stationsPage, /100% reporting/);
+  assert.doesNotMatch(stationsPage, /Continuous stream/);
+  assert.doesNotMatch(stationsPage, /Optimal health/);
+  assert.match(stationsPage, /No active live stream/);
+  assert.match(stationsPage, /Configure Source \(Server-managed\)/);
 });

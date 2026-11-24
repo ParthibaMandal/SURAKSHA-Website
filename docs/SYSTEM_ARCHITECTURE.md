@@ -21,7 +21,7 @@ Citizen SOS creation is submitted to the Next.js `/api/flood/sos` route. The ser
 
 `SURAKSHA_BACKEND_URL` configures the engine origin. Server-side routes call its `/api/v1/flood/...` endpoints with timeouts, no-store caching, and JSON response checks. An unreachable or misconfigured engine is returned as unavailable; it is not a healthy-state signal.
 
-The engine has an operator-key guard for state-changing API methods when configured. Production requires a sufficiently long operator key. The current website integration does not inject that key, so protected engine mutations are not considered integrated. Synthetic demo routes are explicitly unavailable when the engine runs in production mode.
+The engine has an operator-key guard for state-changing API methods when configured. Production requires a sufficiently long operator key (32+ characters). The website server proxy forwards this credential when configured server-side (`SURAKSHA_OPERATOR_API_KEY`), ensuring secrets never reach browser clients. Synthetic demo routes are explicitly unavailable when the engine runs in production mode.
 
 Verified route details and the subset proxied by the site are documented in [API_DOCUMENTATION.md](API_DOCUMENTATION.md).
 

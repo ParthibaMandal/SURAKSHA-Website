@@ -677,7 +677,7 @@ def main():
     for doc in processed_docs:
         local_md_path = os.path.join(content_docs_dir, doc["path"])
         os.makedirs(os.path.dirname(local_md_path), exist_ok=True)
-        with open(local_md_path, 'w', encoding='utf-8') as f:
+        with open(local_md_path, 'w', encoding='utf-8', newline='\n') as f:
             f.write(doc["content"])
     print(f"Synchronized {len(processed_docs)} markdown files to {content_docs_dir}")
 

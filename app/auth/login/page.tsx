@@ -18,6 +18,13 @@ export default function LoginPage() {
   const [toast, setToast] = useState<string | null>(null);
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
 
+  React.useEffect(() => {
+    const error = new URLSearchParams(window.location.search).get("error");
+    if (error === "oauth_exchange_failed") {
+      setErrorMessage("We couldn't complete sign-in. Please try again or use your email and password.");
+    }
+  }, []);
+
   // If already logged in, redirect
   React.useEffect(() => {
     if (user && profile) {
@@ -199,12 +206,9 @@ export default function LoginPage() {
         </form>
 
         <div className="flex justify-between items-center text-xs text-zinc-400">
-          <span
-            className="hover:text-white cursor-pointer transition-colors"
-            onClick={() => setToast("Contact system administrator to reset command credentials.")}
-          >
+          <Link href="/auth/forgot-password" className="hover:text-white transition-colors">
             Forgot password?
-          </span>
+          </Link>
           <Link href="/auth/register" className="text-white hover:underline font-semibold">
             Create account
           </Link>
