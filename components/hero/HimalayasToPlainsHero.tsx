@@ -131,7 +131,7 @@ export const HimalayasToPlainsHero: React.FC = () => {
               initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.65, delay: prefersReducedMotion ? 0 : 0.15, ease: [0.16, 1, 0.3, 1] }}
-              className="text-base sm:text-lg text-[#9BA5A0] max-w-xl font-normal leading-relaxed mb-6 text-pretty"
+              className="text-base sm:text-lg text-zinc-300 max-w-xl font-normal leading-relaxed mb-6 text-pretty"
             >
               Satellite observations, river-stage sensors, and physics-guided modeling across the Middle Ganga corridor.
             </motion.p>
@@ -209,10 +209,10 @@ export const HimalayasToPlainsHero: React.FC = () => {
 
             {/* Scroll to Explore Bar */}
             <div className="flex items-center gap-4 w-full">
-              <span className="text-[11px] font-medium text-[#6A7771] tracking-wider uppercase">
+              <span className="text-[11px] font-medium text-zinc-500 tracking-wider uppercase font-mono">
                 Scroll to explore
               </span>
-              <div className="flex-1 h-[1px] bg-[#1F2823]" />
+              <div className="flex-1 h-[1px] bg-white/10" />
             </div>
           </div>
         </div>

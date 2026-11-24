@@ -671,6 +671,42 @@ pre,
 }
 
 /* =========================================================================
+   MODERN WEB GUIDANCE: VISUAL EFFECTS, CONTRAST & ACCESSIBILITY
+   ========================================================================= */
+
+/* Tactile atmospheric dot-matrix pattern */
+.bg-grid-dot {
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.06) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+/* Layered soft depth for high-end cards */
+.depth-card {
+  box-shadow:
+    0 1px 2px 0 rgba(0, 0, 0, 0.4),
+    0 12px 28px -4px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Range sliders brand accent-color */
+input[type="range"] {
+  accent-color: #10B981;
+}
+
+/* Forced Colors Mode Support */
+@media (forced-colors: active) {
+  .btn-glass,
+  .btn-glass-primary,
+  .btn-glass-secondary,
+  .nav-glass-dock,
+  .nav-glass-pill,
+  .glass-panel {
+    border: 1px solid ButtonText !important;
+    forced-color-adjust: auto;
+  }
+}
+
+/* =========================================================================
    3D HYDRODYNAMIC RIVER FLOW & SWELL ANIMATIONS
    ========================================================================= */
 @keyframes flowStream {
