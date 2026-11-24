@@ -35,15 +35,14 @@ import {
   HeartPulse,
   Radio,
   LifeBuoy,
-  MapPin,
-  FileText,
   Layers,
-  HelpCircle,
   Info,
+  Maximize2,
 } from "lucide-react";
 import { RiskGauge } from "@/components/simulation/RiskGauge";
-import { ScenarioComparisonChart } from "@/components/simulation/ScenarioComparisonChart";
 import { RiverStageForecastChart } from "@/components/simulation/RiverStageForecastChart";
+import { HydrometricStageStaffGauge } from "@/components/simulation/HydrometricStageStaffGauge";
+import { CompoundHazardFlowInfographic } from "@/components/simulation/CompoundHazardFlowInfographic";
 import {
   SIMULATION_SCENARIOS,
   SIMULATION_EVENT_DRIVERS,
@@ -210,7 +209,7 @@ export default function DemoLabPage() {
   const [selectedScenarioId, setSelectedScenarioId] = useState<string>("WORST_01_RAPID_RIVER_SURGE");
   const [preset, setPreset] = useState<DemoPreset>("surge");
 
-  // Environmental Controls State (Section A)
+  // Environmental Controls State
   const [inflow, setInflow] = useState<number>(PRESETS.surge.inflow);
   const [rainfall, setRainfall] = useState<number>(PRESETS.surge.rainfall);
   const [snowmeltIndex, setSnowmeltIndex] = useState<number>(2.1);
@@ -218,7 +217,6 @@ export default function DemoLabPage() {
   const [tributaryInflow, setTributaryInflow] = useState<number>(6200);
   const [startStage, setStartStage] = useState<number>(44.2);
   const [embankmentStatus, setEmbankmentStatus] = useState<"Stable" | "Under Stress" | "Structural Seepage" | "Breach">("Stable");
-  const [durationDays, setDurationDays] = useState<number>(21);
 
   // Multi-selectable Event Drivers
   const [selectedDrivers, setSelectedDrivers] = useState<string[]>([
@@ -239,9 +237,12 @@ export default function DemoLabPage() {
   const [error, setError] = useState<string | null>(null);
   const [lastRunTime, setLastRunTime] = useState<string>("16:42:10");
 
-  // 21-Day Progressive Timeline Player States (Section B)
+  // 21-Day Progressive Timeline Player States
   const [currentDayIndex, setCurrentDayIndex] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+
+  // Tabbed Infographics Switcher State
+  const [activeTab, setActiveTab] = useState<"impact" | "diagnostic" | "defense">("impact");
 
   // Custom Scenario Creator Studio Modal State
   const [isStudioOpen, setIsStudioOpen] = useState<boolean>(false);
@@ -257,17 +258,6 @@ export default function DemoLabPage() {
   const [customSoil, setCustomSoil] = useState<number>(75);
   const [customTributary, setCustomTributary] = useState<number>(6800);
   const [customBreachRisk, setCustomBreachRisk] = useState<boolean>(false);
-
-  function toggleCustomDriver(driverId: string) {
-    setCustomDrivers((prev) =>
-      prev.includes(driverId) ? prev.filter((d) => d !== driverId) : [...prev, driverId]
-    );
-  }
-
-  const isCustomCompound =
-    customDrivers.length >= 2 ||
-    (customDrivers.includes("glacier_melt") &&
-      (customDrivers.includes("persistent_rain") || customDrivers.includes("tributary_surge")));
 
   // Station Selector & Date Selector States
   const [selectedStation, setSelectedStation] = useState(STUDY_STATIONS[0]);
@@ -383,7 +373,7 @@ export default function DemoLabPage() {
   const currentStage = currentDayState ? currentDayState.stage : (forecastPeak?.value ?? 47.17);
   const currentRisk = currentDayState ? currentDayState.aiRiskScore : (result ? Math.round(result.result.risk_score * 100) : 15);
 
-  // Disaster Impact Assessment Model (Section D)
+  // Disaster Impact Assessment Model
   const impactAssessment: FloodImpactAssessment = computeImpactAssessment(
     currentStage,
     currentDayState.embankmentStatus
@@ -395,7 +385,6 @@ export default function DemoLabPage() {
     setSelectedDrivers((prev) => {
       const isSelected = prev.includes(driverId);
       const next = isSelected ? prev.filter((d) => d !== driverId) : [...prev, driverId];
-      // Automatically adjust environmental inputs based on driver toggles
       if (!isSelected) {
         if (driverId === "glacier_melt") setSnowmeltIndex(2.2);
         if (driverId === "cloudburst") setRainfall((r) => Math.max(r, 220));
@@ -429,7 +418,6 @@ export default function DemoLabPage() {
     setIsPlaying(false);
     setError(null);
 
-    // Sync quick preset pill state if matching
     if (scen.id === PRESETS.steady.scenarioId) setPreset("steady");
     else if (scen.id === PRESETS.rain.scenarioId) setPreset("rain");
     else if (scen.id === PRESETS.surge.scenarioId) setPreset("surge");
@@ -450,12 +438,19 @@ export default function DemoLabPage() {
     setIsRunning(true);
     setError(null);
     const target = scenarioToRun ?? activeScenario;
+    const backendScenarioId =
+      target.id === "BEST_01_CALM_BASELINE"
+        ? "BEST_01_CALM_BASELINE"
+        : target.id === "STRESS_01_HEAVY_RAINFALL"
+        ? "STRESS_01_HEAVY_RAINFALL"
+        : "WORST_01_RAPID_RIVER_SURGE";
+
     try {
       const response = await fetch("/api/flood/scenarios", {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
-          scenario_id: target.id.startsWith("CUSTOM_") ? PRESETS.surge.scenarioId : target.id,
+          scenario_id: backendScenarioId,
           river_discharge_multiplier: inflow,
           precipitation_anomaly_mm: rainfall,
         }),
@@ -463,8 +458,7 @@ export default function DemoLabPage() {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data?.detail || "The simulation service could not complete this run.");
-      const expectedId = target.id.startsWith("CUSTOM_") ? PRESETS.surge.scenarioId : target.id;
-      if (!isScenarioResult(data, expectedId)) {
+      if (!isScenarioResult(data, backendScenarioId)) {
         throw new Error("The simulation service returned an incomplete or unexpected synthetic result.");
       }
       setResult(data);
@@ -497,7 +491,7 @@ export default function DemoLabPage() {
     setRainfall(newScenario.initialRainfallAnomaly);
     setCurrentDayIndex(0);
     setIsStudioOpen(false);
-    setIsPlaying(true); // Automatically play live simulation
+    setIsPlaying(true);
     runScenario(newScenario);
   }
 
@@ -520,1639 +514,893 @@ export default function DemoLabPage() {
 
   const phaseInfo = getPhaseInfo(currentStage, currentDayState.day);
 
-  // Render Driver Icon
-  const renderDriverIcon = (id: string, className = "w-3.5 h-3.5") => {
-    switch (id) {
-      case "glacier_melt":
-        return <Mountain className={className} />;
-      case "cloudburst":
-        return <Zap className={className} />;
-      case "persistent_rain":
-        return <CloudRain className={className} />;
-      case "tributary_surge":
-        return <Waves className={className} />;
-      case "glof":
-        return <Flame className={className} />;
-      case "reservoir_release":
-        return <Sliders className={className} />;
-      default:
-        return <Activity className={className} />;
-    }
-  };
-
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans transition-colors duration-200">
       <main className="w-full">
-        {/* Top Panoramic Mountain Header Banner */}
+        {/* COMPACT TOP PANORAMIC COMMAND STRIP */}
         <header className="relative z-30 w-full border-b border-[var(--border)] bg-[var(--surface)] overflow-visible">
-          {/* Panoramic Mountain Backdrop with Atmospheric Gradient */}
-          <div className="absolute inset-0 z-0 overflow-hidden opacity-40 dark:opacity-25 select-none pointer-events-none">
+          <div className="absolute inset-0 z-0 overflow-hidden opacity-30 dark:opacity-20 select-none pointer-events-none">
             <Image
               src="/images/hero-himalayas-ganga.jpg"
-              alt="Snow-capped Himalayan Panorama"
+              alt="Himalayan Panorama"
               fill
               priority
               className="object-cover object-top"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--surface)]/70 to-[var(--surface)]" />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--surface)]/80 to-[var(--surface)]" />
           </div>
 
-          <div className="relative z-10 px-4 sm:px-8 lg:px-12 py-6 max-w-[1600px] mx-auto space-y-4">
-            {/* Top Bar: Breadcrumbs & Status Indicator */}
-            <div className="flex items-center justify-between text-xs font-mono">
-              <div className="flex items-center gap-2 text-[var(--muted-foreground)]">
-                <span>Workspace</span>
-                <span>&gt;</span>
-                <span>Simulation</span>
-                <span>&gt;</span>
-                <span className="text-[var(--foreground)] font-semibold">Simulation Lab</span>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-[11px] font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-                  <span className={`w-1.5 h-1.5 rounded-full ${isRunning || isPlaying ? "bg-amber-400 animate-ping" : "bg-emerald-500"}`} />
-                  {isRunning ? "COMPUTING FORECAST" : isPlaying ? "LIVE SIMULATION RUNNING" : "READY TO RUN"}
+          <div className="relative z-10 px-4 sm:px-6 lg:px-8 py-3.5 max-w-[1700px] mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
+            {/* Title & Identity */}
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                  <Sparkles className="w-3 h-3" /> BCA MINOR PROJECT
                 </span>
-                <div className="w-7 h-7 rounded-full bg-[var(--surface-elevated)] border border-[var(--border)] text-[var(--foreground)] font-bold text-xs grid place-items-center">
-                  SC
-                </div>
+                <span className="text-[10px] font-mono text-[var(--muted-foreground)]">STN-PAT-01 · Gandhi Ghat, Patna</span>
               </div>
+              <h1 className="text-xl sm:text-2xl font-heading font-extrabold tracking-tight text-[var(--foreground)] mt-0.5">
+                SURAKSHA — Flood Scenario Simulation Laboratory
+              </h1>
             </div>
 
-            {/* Title & Controls Bar */}
-            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pt-2">
-              <div>
-                <div className="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
-                  <Sparkles className="w-3.5 h-3.5" />
-                  BCA PROJECT DEMONSTRATION · GANDHI GHAT, PATNA
-                </div>
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-extrabold tracking-tight text-[var(--foreground)] mt-1">
-                  SURAKSHA — Flood Scenario Simulation Laboratory
-                </h1>
-                <p className="text-xs sm:text-sm text-[var(--muted-foreground)] mt-1.5 max-w-2xl leading-relaxed">
-                  An AI-Assisted, Multi-Variable Flood Forecasting and Risk Assessment System for the Ganga Region. Demonstrating multi-driver environmental forcing, BiLSTM-ARIMA predictions, and actionable disaster impact assessment.
-                </p>
-              </div>
-
-              {/* Action Buttons & Selectors */}
-              <div className="flex flex-wrap items-center gap-3">
-                {/* Create Custom Scenario Button */}
+            {/* Quick Command Toolbar */}
+            <div className="flex flex-wrap items-center gap-2">
+              {/* Location Dropdown */}
+              <div ref={locationRef} className={`relative ${isLocationOpen ? "z-50" : "z-20"}`}>
                 <button
                   type="button"
-                  onClick={() => setIsStudioOpen(true)}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold text-xs transition-all shadow-xs active:scale-95 cursor-pointer"
+                  onClick={() => {
+                    setIsLocationOpen((prev) => !prev);
+                    setIsDateOpen(false);
+                  }}
+                  aria-expanded={isLocationOpen}
+                  aria-label="Select hydrometric station"
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs text-[var(--foreground)] transition-all cursor-pointer shadow-xs ${
+                    isLocationOpen
+                      ? "border-emerald-500 bg-[var(--surface-elevated)] ring-2 ring-emerald-500/20"
+                      : "border-[var(--border)] bg-[var(--surface-elevated)] hover:border-emerald-500/40"
+                  }`}
                 >
-                  <PlusCircle className="w-4 h-4" />
-                  <span>Create Custom Scenario</span>
+                  <Activity className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                  <span className="font-semibold truncate max-w-[160px]">{selectedStation.shortName}</span>
+                  <ChevronDown className={`w-3.5 h-3.5 text-[var(--muted-foreground)] transition-transform duration-200 ${isLocationOpen ? "rotate-180 text-emerald-500" : ""}`} />
                 </button>
 
-                {/* Location Selector Dropdown */}
-                <div ref={locationRef} className={`relative ${isLocationOpen ? "z-50" : "z-20"}`}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsLocationOpen((prev) => !prev);
-                      setIsDateOpen(false);
-                    }}
-                    aria-expanded={isLocationOpen}
-                    aria-label="Select hydrometric gauging station"
-                    className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs text-[var(--foreground)] transition-all cursor-pointer shadow-xs select-none ${
-                      isLocationOpen
-                        ? "border-emerald-500 bg-[var(--surface-elevated)] ring-2 ring-emerald-500/20"
-                        : "border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-md hover:border-emerald-500/40"
-                    }`}
+                {isLocationOpen && (
+                  <div
+                    onClick={(e) => e.stopPropagation()}
+                    className="absolute left-0 sm:left-auto sm:right-0 top-full mt-1.5 z-50 w-72 max-w-[calc(100vw-2rem)] rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl backdrop-blur-2xl p-1.5 space-y-1 animate-in fade-in slide-in-from-top-2 duration-150"
                   >
-                    <Activity className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                    <span className="font-semibold truncate max-w-[190px]">{selectedStation.name}</span>
-                    <ChevronDown className={`w-3.5 h-3.5 text-[var(--muted-foreground)] transition-transform duration-200 shrink-0 ${isLocationOpen ? "rotate-180 text-emerald-500" : ""}`} />
-                  </button>
-
-                  {/* Location Popup Menu */}
-                  {isLocationOpen && (
-                    <div
-                      onClick={(e) => e.stopPropagation()}
-                      className="absolute left-0 sm:left-auto sm:right-0 top-full mt-2 z-50 w-80 max-w-[calc(100vw-2rem)] rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl backdrop-blur-2xl p-2 space-y-1 animate-in fade-in slide-in-from-top-2 duration-150"
-                    >
-                      <div className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--muted-foreground)] flex items-center justify-between border-b border-[var(--border)] pb-2">
-                        <span>Hydrometric Gauging Stations</span>
-                        <span>{STUDY_STATIONS.length}</span>
-                      </div>
-                      <div className="space-y-1 pt-1 max-h-72 overflow-y-auto">
-                        {STUDY_STATIONS.map((stn) => {
-                          const isSelected = stn.id === selectedStation.id;
-                          return (
-                            <button
-                              type="button"
-                              key={stn.id}
-                              onClick={() => {
-                                setSelectedStation(stn);
-                                setIsLocationOpen(false);
-                              }}
-                              className={`w-full text-left p-2.5 rounded-xl cursor-pointer transition-all flex items-center justify-between gap-2.5 ${
-                                isSelected
-                                  ? "bg-emerald-500/15 border border-emerald-500/40 text-[var(--foreground)]"
-                                  : "hover:bg-[var(--surface)] text-[var(--foreground)]/90 hover:text-[var(--foreground)] border border-transparent"
-                              }`}
-                            >
-                              <div className="min-w-0">
-                                <div className="flex items-center gap-1.5">
-                                  <span className="font-mono text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
-                                    {stn.id}
-                                  </span>
-                                  <span className="font-semibold text-xs truncate">
-                                    {stn.shortName}
-                                  </span>
-                                </div>
-                                <div className="text-[10px] text-[var(--muted-foreground)] mt-0.5 truncate">
-                                  {stn.corridor} · Warning: {stn.warningLevel}m / Danger: {stn.dangerLevel}m
-                                </div>
-                              </div>
-                              {isSelected && <Check className="w-4 h-4 text-emerald-500 stroke-[3] shrink-0" />}
-                            </button>
-                          );
-                        })}
-                      </div>
+                    <div className="px-2.5 py-1 text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--muted-foreground)] border-b border-[var(--border)] pb-1">
+                      Hydrometric Gauging Stations
                     </div>
-                  )}
-                </div>
+                    <div className="space-y-1 max-h-64 overflow-y-auto">
+                      {STUDY_STATIONS.map((stn) => {
+                        const isSelected = stn.id === selectedStation.id;
+                        return (
+                          <button
+                            type="button"
+                            key={stn.id}
+                            onClick={() => {
+                              setSelectedStation(stn);
+                              setIsLocationOpen(false);
+                            }}
+                            className={`w-full text-left p-2 rounded-xl cursor-pointer transition-all flex items-center justify-between text-xs ${
+                              isSelected
+                                ? "bg-emerald-500/15 border border-emerald-500/40 text-[var(--foreground)]"
+                                : "hover:bg-[var(--surface)] text-[var(--foreground)]/90 border border-transparent"
+                            }`}
+                          >
+                            <div className="min-w-0">
+                              <div className="font-semibold text-xs truncate">{stn.shortName}</div>
+                              <div className="text-[10px] text-[var(--muted-foreground)]">{stn.id} · Warn: {stn.warningLevel}m / Danger: {stn.dangerLevel}m</div>
+                            </div>
+                            {isSelected && <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
 
-                {/* Date Selector Dropdown */}
-                <div ref={dateRef} className={`relative ${isDateOpen ? "z-50" : "z-20"}`}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsDateOpen((prev) => !prev);
-                      setIsLocationOpen(false);
-                    }}
-                    aria-expanded={isDateOpen}
-                    aria-label="Select simulation calibration date"
-                    className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs text-[var(--foreground)] font-mono transition-all cursor-pointer shadow-xs select-none ${
-                      isDateOpen
-                        ? "border-emerald-500 bg-[var(--surface-elevated)] ring-2 ring-emerald-500/20"
-                        : "border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-md hover:border-emerald-500/40"
-                    }`}
+              {/* Date Calibration Dropdown */}
+              <div ref={dateRef} className={`relative ${isDateOpen ? "z-50" : "z-20"}`}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsDateOpen((prev) => !prev);
+                    setIsLocationOpen(false);
+                  }}
+                  aria-expanded={isDateOpen}
+                  aria-label="Select simulation calibration date"
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs text-[var(--foreground)] font-mono transition-all cursor-pointer shadow-xs ${
+                    isDateOpen
+                      ? "border-emerald-500 bg-[var(--surface-elevated)] ring-2 ring-emerald-500/20"
+                      : "border-[var(--border)] bg-[var(--surface-elevated)] hover:border-emerald-500/40"
+                  }`}
+                >
+                  <Calendar className="w-3.5 h-3.5 text-[var(--muted-foreground)] shrink-0" />
+                  <span>{formatDisplayDate(selectedDate)}</span>
+                  <ChevronDown className={`w-3.5 h-3.5 text-[var(--muted-foreground)] transition-transform duration-200 ${isDateOpen ? "rotate-180 text-emerald-500" : ""}`} />
+                </button>
+
+                {isDateOpen && (
+                  <div
+                    onClick={(e) => e.stopPropagation()}
+                    className="absolute left-0 sm:left-auto sm:right-0 top-full mt-1.5 z-50 w-64 max-w-[calc(100vw-2rem)] rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl backdrop-blur-2xl p-2 space-y-2 animate-in fade-in slide-in-from-top-2 duration-150"
                   >
-                    <Calendar className="w-3.5 h-3.5 text-[var(--muted-foreground)] shrink-0" />
-                    <span>{formatDisplayDate(selectedDate)}</span>
-                    <ChevronDown className={`w-3.5 h-3.5 text-[var(--muted-foreground)] transition-transform duration-200 shrink-0 ${isDateOpen ? "rotate-180 text-emerald-500" : ""}`} />
-                  </button>
-
-                  {/* Date Popup Menu */}
-                  {isDateOpen && (
-                    <div
-                      onClick={(e) => e.stopPropagation()}
-                      className="absolute left-0 sm:left-auto sm:right-0 top-full mt-2 z-50 w-72 max-w-[calc(100vw-2rem)] rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl backdrop-blur-2xl p-2.5 space-y-2.5 animate-in fade-in slide-in-from-top-2 duration-150"
-                    >
-                      <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--muted-foreground)] border-b border-[var(--border)] pb-1.5">
-                        Simulation Date Calibration
-                      </div>
-
-                      {/* Presets */}
-                      <div className="space-y-1">
-                        {PRESET_DATES.map((pd) => {
-                          const isSelected = selectedDate === pd.value;
-                          return (
-                            <button
-                              type="button"
-                              key={pd.value}
-                              onClick={() => {
-                                setSelectedDate(pd.value);
-                                setIsDateOpen(false);
-                              }}
-                              className={`w-full text-left p-2 rounded-xl cursor-pointer transition-all flex items-center justify-between text-xs ${
-                                isSelected
-                                  ? "bg-emerald-500/15 border border-emerald-500/40 text-[var(--foreground)] font-bold"
-                                  : "hover:bg-[var(--surface)] text-[var(--foreground)]/80 hover:text-[var(--foreground)] border border-transparent"
-                              }`}
-                            >
-                              <div>
-                                <div className="font-mono">{pd.label}</div>
-                                <div className="text-[9px] text-[var(--muted-foreground)] font-normal">{pd.desc}</div>
-                              </div>
-                              {isSelected && <Check className="w-3.5 h-3.5 text-emerald-500 stroke-[3]" />}
-                            </button>
-                          );
-                        })}
-                      </div>
-
-                      {/* Custom Date Input */}
-                      <div className="pt-2 border-t border-[var(--border)] space-y-1">
-                        <label htmlFor="customDatePicker" className="text-[10px] font-semibold text-[var(--muted-foreground)] block">
-                          Pick Specific Calendar Date:
-                        </label>
-                        <input
-                          id="customDatePicker"
-                          type="date"
-                          value={selectedDate}
-                          onChange={(e) => {
-                            if (e.target.value) {
-                              setSelectedDate(e.target.value);
+                    <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--muted-foreground)] border-b border-[var(--border)] pb-1">
+                      Calibration Date Preset
+                    </div>
+                    <div className="space-y-1">
+                      {PRESET_DATES.map((pd) => {
+                        const isSelected = selectedDate === pd.value;
+                        return (
+                          <button
+                            type="button"
+                            key={pd.value}
+                            onClick={() => {
+                              setSelectedDate(pd.value);
                               setIsDateOpen(false);
-                            }
-                          }}
-                          className="w-full px-2.5 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-xs text-[var(--foreground)] font-mono cursor-pointer focus:outline-none focus:border-emerald-500"
-                        />
-                      </div>
+                            }}
+                            className={`w-full text-left p-1.5 rounded-lg cursor-pointer transition-all flex items-center justify-between text-xs ${
+                              isSelected
+                                ? "bg-emerald-500/15 border border-emerald-500/40 text-[var(--foreground)] font-bold"
+                                : "hover:bg-[var(--surface)] text-[var(--foreground)]/80 border border-transparent"
+                            }`}
+                          >
+                            <span className="font-mono text-xs">{pd.label}</span>
+                            {isSelected && <Check className="w-3.5 h-3.5 text-emerald-500" />}
+                          </button>
+                        );
+                      })}
                     </div>
-                  )}
-                </div>
-
-                {/* Run Simulation Button */}
-                <button
-                  type="button"
-                  onClick={() => runScenario()}
-                  disabled={isRunning}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white dark:text-black font-bold text-xs transition-all shadow-md shadow-emerald-500/25 active:scale-95 disabled:opacity-60 cursor-pointer"
-                >
-                  {isRunning ? (
-                    <>
-                      <LoaderCircle className="w-4 h-4 animate-spin" />
-                      <span>Simulating…</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>Run Simulation</span>
-                      <Play className="w-3.5 h-3.5 fill-current" />
-                    </>
-                  )}
-                </button>
+                    <div className="pt-1.5 border-t border-[var(--border)]">
+                      <input
+                        type="date"
+                        value={selectedDate}
+                        onChange={(e) => {
+                          if (e.target.value) {
+                            setSelectedDate(e.target.value);
+                            setIsDateOpen(false);
+                          }
+                        }}
+                        className="w-full px-2 py-1 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-xs font-mono"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
+
+              {/* Create Custom Scenario Button */}
+              <button
+                type="button"
+                onClick={() => setIsStudioOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold text-xs transition-all shadow-xs cursor-pointer active:scale-95"
+              >
+                <PlusCircle className="w-3.5 h-3.5" />
+                <span>+ Custom Studio</span>
+              </button>
+
+              {/* Run Simulation Button */}
+              <button
+                type="button"
+                onClick={() => runScenario()}
+                disabled={isRunning}
+                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white dark:text-black font-extrabold text-xs transition-all shadow-md shadow-emerald-500/25 active:scale-95 disabled:opacity-60 cursor-pointer"
+              >
+                {isRunning ? (
+                  <>
+                    <LoaderCircle className="w-3.5 h-3.5 animate-spin" />
+                    <span>Simulating…</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Run Simulation</span>
+                    <Play className="w-3 h-3 fill-current" />
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </header>
 
-        {/* Dashboard Container */}
-        <div className="p-4 sm:p-8 max-w-[1600px] mx-auto w-full space-y-8">
+        {/* UNIFIED SINGLE-PAGE INFOGRAPHICS DASHBOARD CONTAINER */}
+        <div className="p-3 sm:p-5 max-w-[1700px] mx-auto w-full space-y-4">
           {error && (
-            <div className="p-4 rounded-2xl border border-rose-500/30 bg-rose-500/10 text-rose-800 dark:text-rose-200 text-xs flex items-center gap-3">
-              <CircleAlert className="w-5 h-5 text-rose-500 shrink-0" />
-              <div>
-                <strong>Simulation run error:</strong> {error}
-              </div>
+            <div className="p-3 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-800 dark:text-rose-200 text-xs flex items-center gap-2">
+              <CircleAlert className="w-4 h-4 text-rose-500 shrink-0" />
+              <div><strong>Simulation run error:</strong> {error}</div>
             </div>
           )}
 
-          {/* High Water / Danger Mark Exceedance Banner */}
+          {/* DANGER EXCEEDANCE BANNER (WHEN ACTIVE) */}
           {currentStage >= CWC_GANDHI_GHAT_BENCHMARKS.dangerLevel && (
-            <div className="p-4 rounded-2xl border border-rose-500/40 bg-rose-500/15 text-rose-900 dark:text-rose-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-pulse shadow-lg shadow-rose-500/10">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-rose-500 text-white grid place-items-center shrink-0 shadow-md">
-                  <AlertTriangle className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-xs font-bold uppercase tracking-wider text-rose-700 dark:text-rose-300 font-mono">
-                    CWC DANGER MARK EXCEEDED · {currentStage.toFixed(2)} m (THRESHOLD: {CWC_GANDHI_GHAT_BENCHMARKS.dangerLevel.toFixed(2)} m)
-                  </div>
-                  <div className="text-sm font-semibold mt-0.5">
-                    Substantial inundation risk detected. Approximately {exposedPopulation.toLocaleString()} people in low-lying Digha, Danapur, and Gandhi Ghat floodplains exposed.
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <span className="px-3 py-1.5 rounded-lg bg-rose-500 text-white text-xs font-mono font-bold">
-                  STAGE +{(currentStage - CWC_GANDHI_GHAT_BENCHMARKS.dangerLevel).toFixed(2)}m OVER DANGER
+            <div className="px-3.5 py-2.5 rounded-xl border border-rose-500/40 bg-rose-500/15 text-rose-900 dark:text-rose-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-md shadow-rose-500/10 animate-pulse">
+              <div className="flex items-center gap-2.5">
+                <AlertTriangle className="w-4 h-4 text-rose-500 shrink-0" />
+                <span className="text-xs font-bold font-mono">
+                  DANGER MARK EXCEEDED: {currentStage.toFixed(2)}m (Threshold: {CWC_GANDHI_GHAT_BENCHMARKS.dangerLevel.toFixed(2)}m) · ~{exposedPopulation.toLocaleString()} people exposed
                 </span>
               </div>
+              <span className="px-2 py-0.5 rounded bg-rose-500 text-white text-[10px] font-mono font-bold self-start sm:self-auto">
+                +{(currentStage - CWC_GANDHI_GHAT_BENCHMARKS.dangerLevel).toFixed(2)}m CRITICAL
+              </span>
             </div>
           )}
 
-          {/* Top 4 Metric KPI Cards with Wave Sparklines */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* KPI 1: Highest returned stage */}
-            <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-md flex flex-col justify-between space-y-2 shadow-xs">
-              <div className="flex items-center justify-between text-xs text-[var(--muted-foreground)] font-medium">
+          {/* TOP INFOGRAPHIC ROW: 4 COHESIVE METRIC & GAUGE CARDS */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+            {/* Card 1: River Stage Elevation Cross-Section Staff Gauge */}
+            <HydrometricStageStaffGauge
+              stage={currentStage}
+              warningLevel={selectedStation.warningLevel}
+              dangerLevel={selectedStation.dangerLevel}
+              hfl={selectedStation.hfl}
+              stationName={selectedStation.shortName}
+              embankmentStatus={currentDayState.embankmentStatus}
+            />
+
+            {/* Card 2: AI Flood Risk Gauge */}
+            <div className="p-3.5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-md shadow-xs flex flex-col justify-between space-y-2">
+              <div className="flex items-center justify-between border-b border-[var(--border)] pb-2 text-xs font-semibold text-[var(--foreground)]">
                 <span className="flex items-center gap-1.5">
-                  <Droplets className="w-3.5 h-3.5 text-sky-500" />
-                  Highest returned stage
+                  <ShieldCheck className="w-4 h-4 text-amber-500" />
+                  <span>AI Flood Risk Score</span>
                 </span>
-                <span className="text-[10px] font-mono text-emerald-500">Live Telemetry</span>
+                <span className="text-[10px] font-mono text-[var(--muted-foreground)]">SURAKSHA Neural</span>
               </div>
-              <div className="flex items-baseline gap-2">
-                <span className="font-mono text-2xl sm:text-3xl font-extrabold text-[var(--foreground)] tracking-tight">
-                  {currentStage.toFixed(2)}
-                </span>
-                <span className="text-sm font-semibold text-[var(--muted-foreground)]">m</span>
-              </div>
-              <div className="flex items-center justify-between text-[11px] pt-1 border-t border-[var(--border)] font-mono">
-                <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
-                  ↑ +{(currentStage - CWC_GANDHI_GHAT_BENCHMARKS.datumLevel - 1.2).toFixed(2)} m vs baseline
-                </span>
-                <svg width="48" height="16" viewBox="0 0 48 16" className="text-sky-500">
-                  <path d="M0 12 Q 12 2 24 8 T 48 4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                </svg>
+              <RiskGauge score={currentRisk} severity={result?.result.severity} />
+              <div className="flex items-center justify-between text-[10px] font-mono border-t border-[var(--border)] pt-1 text-[var(--muted-foreground)]">
+                <span>Highest returned stage:</span>
+                <span className="font-bold text-[var(--foreground)]">{currentStage.toFixed(2)} m</span>
               </div>
             </div>
 
-            {/* KPI 2: Flood Risk Score */}
-            <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-md flex flex-col justify-between space-y-2 shadow-xs">
-              <div className="flex items-center justify-between text-xs text-[var(--muted-foreground)] font-medium">
+            {/* Card 3: Inundation & Exposed Population Infographic */}
+            <div className="p-3.5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-md shadow-xs flex flex-col justify-between space-y-2">
+              <div className="flex items-center justify-between border-b border-[var(--border)] pb-2 text-xs font-semibold text-[var(--foreground)]">
                 <span className="flex items-center gap-1.5">
-                  <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
-                  Flood Risk Score
+                  <Users className="w-4 h-4 text-emerald-500" />
+                  <span>Exposed Population</span>
                 </span>
-                <span className="text-[10px] font-mono text-[var(--muted-foreground)]">SURAKSHA AI</span>
+                <span className="text-[10px] font-mono text-emerald-500">HAND Surface Depth</span>
               </div>
-              <div className="flex items-baseline gap-2">
-                <span className="font-mono text-2xl sm:text-3xl font-extrabold text-[var(--foreground)] tracking-tight">
-                  {currentRisk}
-                </span>
-                <span className="text-sm font-semibold text-[var(--muted-foreground)]">/ 100</span>
-              </div>
-              <div className="flex items-center justify-between text-[11px] pt-1 border-t border-[var(--border)]">
-                <span
-                  className={`px-2 py-0.5 rounded-full font-semibold text-[10px] uppercase ${
-                    currentRisk < 30
-                      ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
-                      : currentRisk < 70
-                      ? "bg-amber-500/15 text-amber-600 dark:text-amber-400"
-                      : "bg-rose-500/15 text-rose-600 dark:text-rose-400"
-                  }`}
-                >
-                  {currentRisk < 30 ? "Low Risk" : currentRisk < 70 ? "Moderate" : "High Risk"}
-                </span>
-                <svg width="48" height="16" viewBox="0 0 48 16" className="text-amber-500">
-                  <path d="M0 14 Q 14 12 24 6 T 48 2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                </svg>
-              </div>
-            </div>
-
-            {/* KPI 3: Potentially Exposed People */}
-            <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-md flex flex-col justify-between space-y-2 shadow-xs">
-              <div className="flex items-center justify-between text-xs text-[var(--muted-foreground)] font-medium">
-                <span className="flex items-center gap-1.5">
-                  <Users className="w-3.5 h-3.5 text-emerald-500" />
-                  Potentially Exposed People
-                </span>
-                <span className="text-[10px] font-mono text-[var(--muted-foreground)]">HAND Surface</span>
-              </div>
-              <div className="flex items-baseline gap-2">
-                <span className="font-mono text-2xl sm:text-3xl font-extrabold text-[var(--foreground)] tracking-tight">
+              <div className="space-y-1 my-auto">
+                <div className="font-mono text-2xl sm:text-3xl font-extrabold text-[var(--foreground)] tracking-tight">
                   {exposedPopulation.toLocaleString()}
-                </span>
+                </div>
+                <div className="text-[11px] font-mono text-[var(--muted-foreground)]">
+                  Active Inundation Area: <strong className="text-[var(--foreground)]">{impactAssessment.inundationAreaKm2} km²</strong>
+                </div>
+                <div className="text-[10px] text-[var(--muted-foreground)]">
+                  Crest Water Depth: <span className="font-mono font-bold text-rose-500">{impactAssessment.waterDepthM.max}m</span> (Avg: {impactAssessment.waterDepthM.avg}m)
+                </div>
               </div>
-              <div className="flex items-center justify-between text-[11px] pt-1 border-t border-[var(--border)]">
-                <span
-                  className={`font-medium ${
-                    exposedPopulation === 0
-                      ? "text-[var(--muted-foreground)]"
-                      : exposedPopulation > 10000
-                      ? "text-rose-600 dark:text-rose-400 font-bold"
-                      : "text-amber-600 dark:text-amber-400 font-semibold"
-                  }`}
-                >
-                  {exposedPopulation === 0 ? "No immediate risk" : exposedPopulation > 10000 ? "Critical Evacuation Advisory" : "Advisory issued"}
+              <div className="p-1.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[10px] font-mono flex items-center justify-between">
+                <span className="text-[var(--muted-foreground)]">Evacuation Priority:</span>
+                <span className={`font-bold ${exposedPopulation > 10000 ? "text-rose-500" : exposedPopulation > 0 ? "text-amber-500" : "text-emerald-500"}`}>
+                  {exposedPopulation > 10000 ? "Level 3 Emergency" : exposedPopulation > 0 ? "Standby Alert" : "Safe Nominal"}
                 </span>
-                <svg width="48" height="16" viewBox="0 0 48 16" className="text-emerald-500">
-                  <path d="M0 12 L 20 12 L 48 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                </svg>
               </div>
             </div>
 
-            {/* KPI 4: Forecast Horizon */}
-            <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-md flex flex-col justify-between space-y-2 shadow-xs">
-              <div className="flex items-center justify-between text-xs text-[var(--muted-foreground)] font-medium">
+            {/* Card 4: Forecast Horizon & Detailed Inspector */}
+            <div className="p-3.5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-md shadow-xs flex flex-col justify-between space-y-2">
+              <div className="flex items-center justify-between border-b border-[var(--border)] pb-2 text-xs font-semibold text-[var(--foreground)]">
                 <span className="flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-sky-500" />
-                  Forecast Horizon
+                  <Clock className="w-4 h-4 text-sky-500" />
+                  <span>Forecast Horizon</span>
                 </span>
-                <span className="text-[10px] font-mono text-[var(--muted-foreground)]">21-Day Multi-Phase</span>
+                <span className="text-[10px] font-mono text-sky-500">BiLSTM-ARIMA Lead</span>
               </div>
-              <div className="flex items-baseline gap-2">
-                <span className="font-mono text-2xl sm:text-3xl font-extrabold text-[var(--foreground)] tracking-tight">
-                  24 h
-                </span>
-                <span className="text-xs font-mono text-[var(--muted-foreground)]">/ 21d total</span>
+              <div className="space-y-1 my-auto">
+                <div className="flex items-baseline gap-2">
+                  <span className="font-mono text-2xl sm:text-3xl font-extrabold text-[var(--foreground)] tracking-tight">
+                    24 h
+                  </span>
+                  <span className="text-xs font-mono text-[var(--muted-foreground)]">/ 21d timeline</span>
+                </div>
+                <div className="text-[11px] font-mono text-[var(--muted-foreground)]">
+                  Model Lead: <strong className="text-[var(--foreground)]">72-Hour Causal Sequence</strong>
+                </div>
+                <div className="text-[10px] text-[var(--muted-foreground)] font-mono">
+                  NSE Score: <span className="text-emerald-500 font-bold">0.962</span> · MAE: 0.28m
+                </div>
               </div>
-              <div className="flex items-center justify-between text-[11px] pt-1 border-t border-[var(--border)]">
+              <div className="border-t border-[var(--border)] pt-2 flex items-center justify-between">
                 <button
                   type="button"
                   onClick={() => setIsForecastModalOpen(true)}
-                  className="text-emerald-600 dark:text-emerald-400 font-medium hover:underline cursor-pointer flex items-center gap-1 focus:outline-none"
+                  aria-haspopup="dialog"
+                  aria-expanded={isForecastModalOpen}
+                  className="text-emerald-600 dark:text-emerald-400 font-semibold text-xs hover:underline cursor-pointer flex items-center gap-1 focus:outline-none"
                 >
                   Detailed forecast →
                 </button>
-                <svg width="48" height="16" viewBox="0 0 48 16" className="text-sky-500">
-                  <path d="M0 14 Q 18 10 32 4 T 48 8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                </svg>
+                <span className="text-[9px] font-mono text-[var(--muted-foreground)]">+6h/+12h/+24h</span>
               </div>
             </div>
           </div>
 
-          {/* SECTION B: Simulation Timeline (Flagship GANGA-01) */}
-          <section className="p-5 sm:p-6 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-xl shadow-xs space-y-5">
-            <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider font-mono text-emerald-600 dark:text-emerald-400">
-                  SECTION B
-                </span>
-                <span className="text-sm font-bold text-[var(--foreground)] font-heading">
-                  Simulation Timeline · 21-Day Dynamic Hydrological Progression
-                </span>
-              </div>
-              <span className="text-[11px] font-mono text-[var(--muted-foreground)] hidden sm:inline-block">
-                Flagship GANGA-01 Engine
-              </span>
-            </div>
-
-            {/* Timeline Header Bar */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="px-2.5 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 font-mono text-xs font-bold">
-                    {activeScenario.code}
-                  </span>
-                  <span className="text-xs sm:text-sm font-bold text-[var(--foreground)] uppercase tracking-wider font-heading">
-                    {activeScenario.title}
-                  </span>
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-[var(--surface)] border border-[var(--border)] text-[var(--muted-foreground)]">
-                    {activeScenario.category}
-                  </span>
-                  {activeScenario.isCompound && (
-                    <span className="px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-400 text-[10px] font-mono font-bold">
-                      COMPOUND EVENT
+          {/* MAIN WORKSPACE: 2-COLUMN UNIFIED COMMAND CANVAS */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+            {/* LEFT COLUMN: SIMULATION TIMELINE & CONTROL STUDIO (lg:col-span-5) */}
+            <div className="lg:col-span-5 space-y-3.5">
+              {/* Card 1: 21-Day Dynamic Hydrological Progression Player */}
+              <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-xl shadow-xs space-y-3">
+                <div className="flex items-center justify-between border-b border-[var(--border)] pb-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="px-2 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 font-mono text-[10px] font-bold shrink-0">
+                      {activeScenario.code}
                     </span>
-                  )}
-                  {activeScenario.id.startsWith("CUSTOM_") && (
-                    <span className="px-2 py-0.5 rounded bg-emerald-500 text-black text-[9px] font-bold font-mono uppercase tracking-wider">
-                      User Created
+                    <span className="text-xs font-bold text-[var(--foreground)] truncate font-heading">
+                      {activeScenario.title}
                     </span>
-                  )}
+                  </div>
+                  <span className={`px-2 py-0.5 rounded-full border text-[9px] font-mono font-bold shrink-0 ${phaseInfo.color}`}>
+                    DAY {currentDayState.day.toString().padStart(2, "0")} / 21
+                  </span>
                 </div>
-                <p className="text-xs text-[var(--muted-foreground)] line-clamp-1">
-                  {activeScenario.shortDescription}
-                </p>
-              </div>
 
-              {/* Day Badge & Phase Indicator */}
-              <div className="flex items-center gap-2.5 shrink-0">
-                <span className={`px-3 py-1 rounded-full border text-[11px] font-mono font-bold ${phaseInfo.color}`}>
-                  {phaseInfo.label}
-                </span>
-                <div className="px-3 py-1 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-xs font-mono font-bold text-[var(--foreground)]">
-                  DAY {currentDayState.day.toString().padStart(2, "0")} / 21
+                {/* Progress Track & Step Nodes */}
+                <div className="space-y-2">
+                  <div className="relative w-full py-1">
+                    <div className="absolute top-1/2 left-0 right-0 h-1.5 -translate-y-1/2 bg-[var(--surface)] rounded-full border border-[var(--border)]" />
+                    <div
+                      className="absolute top-1/2 left-0 h-1.5 -translate-y-1/2 bg-emerald-500 rounded-full transition-all duration-300"
+                      style={{ width: `${(currentDayIndex / Math.max(1, timeline.length - 1)) * 100}%` }}
+                    />
+                    <div className="relative flex justify-between items-center w-full">
+                      {timeline.map((step, idx) => {
+                        const isCurrent = idx === currentDayIndex;
+                        const isPassed = idx <= currentDayIndex;
+                        const isDanger = step.stage >= CWC_GANDHI_GHAT_BENCHMARKS.dangerLevel;
+                        return (
+                          <button
+                            key={step.day}
+                            type="button"
+                            onClick={() => {
+                              setCurrentDayIndex(idx);
+                              setIsPlaying(false);
+                            }}
+                            aria-label={`Jump to Day ${step.day}`}
+                            className={`w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-mono font-bold transition-all cursor-pointer ${
+                              isCurrent
+                                ? "scale-125 z-10 bg-emerald-500 text-white shadow-md shadow-emerald-500/50"
+                                : isPassed
+                                ? isDanger
+                                  ? "bg-rose-500 text-white"
+                                  : "bg-emerald-500/80 text-white"
+                                : "bg-[var(--surface)] text-[var(--muted-foreground)] border border-[var(--border)] hover:border-emerald-500"
+                            }`}
+                          >
+                            {step.day}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Range Slider for Scrubbing */}
+                  <input
+                    type="range"
+                    min="0"
+                    max={timeline.length - 1}
+                    step="1"
+                    value={currentDayIndex}
+                    onChange={(e) => {
+                      setCurrentDayIndex(Number(e.target.value));
+                      setIsPlaying(false);
+                    }}
+                    className="w-full accent-emerald-500 cursor-pointer h-1.5 bg-transparent"
+                  />
                 </div>
-              </div>
-            </div>
 
-            {/* Timeline Scrubber & Navigation Track */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between text-xs text-[var(--muted-foreground)] font-mono">
-                <span>01 June (Baseline)</span>
-                <span className="text-emerald-500 font-bold">Active Simulation Step: {currentDayState.label}</span>
-                <span>21 June (Recession)</span>
-              </div>
-
-              {/* Progress Track with Discrete Step Nodes */}
-              <div className="relative w-full py-2">
-                {/* Horizontal Background Rail */}
-                <div className="absolute top-1/2 left-0 right-0 h-1.5 -translate-y-1/2 bg-[var(--surface)] rounded-full border border-[var(--border)]" />
-
-                {/* Active Colored Progress Fill */}
-                <div
-                  className="absolute top-1/2 left-0 h-1.5 -translate-y-1/2 bg-emerald-500 rounded-full transition-all duration-300"
-                  style={{
-                    width: `${(currentDayIndex / Math.max(1, timeline.length - 1)) * 100}%`,
-                  }}
-                />
-
-                {/* Step Circles */}
-                <div className="relative flex justify-between items-center w-full">
-                  {timeline.map((step, idx) => {
-                    const isPassed = idx <= currentDayIndex;
-                    const isCurrent = idx === currentDayIndex;
-                    const isDanger = step.stage >= CWC_GANDHI_GHAT_BENCHMARKS.dangerLevel;
-                    const isWarning = step.stage >= CWC_GANDHI_GHAT_BENCHMARKS.warningLevel;
-
-                    return (
-                      <button
-                        key={step.day}
-                        type="button"
-                        onClick={() => {
-                          setCurrentDayIndex(idx);
-                          setIsPlaying(false);
-                        }}
-                        className="group relative flex flex-col items-center cursor-pointer select-none focus:outline-none"
-                      >
-                        <div
-                          className={`w-6 h-6 rounded-full flex items-center justify-center transition-all text-[10px] font-mono font-bold border-2 ${
-                            isCurrent
-                              ? "scale-125 z-10 bg-emerald-500 text-white border-white dark:border-black shadow-md shadow-emerald-500/50"
-                              : isPassed
-                              ? isDanger
-                                ? "bg-rose-500 text-white border-rose-300"
-                                : isWarning
-                                ? "bg-amber-500 text-white border-amber-300"
-                                : "bg-emerald-500/80 text-white border-emerald-400"
-                              : "bg-[var(--surface-elevated)] text-[var(--muted-foreground)] border-[var(--border)] hover:border-emerald-500/50"
-                          }`}
-                        >
-                          {step.day}
-                        </div>
-
-                        {isCurrent && (
-                          <div className="absolute -top-7 whitespace-nowrap px-2 py-0.5 rounded bg-[var(--surface-elevated)] border border-[var(--border)] text-[10px] font-mono font-bold text-emerald-600 dark:text-emerald-400 shadow-xs">
-                            {step.stage.toFixed(2)}m
-                          </div>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Slider for smooth dragging */}
-              <input
-                type="range"
-                min="0"
-                max={timeline.length - 1}
-                step="1"
-                value={currentDayIndex}
-                onChange={(e) => {
-                  setCurrentDayIndex(Number(e.target.value));
-                  setIsPlaying(false);
-                }}
-                className="w-full accent-emerald-500 cursor-pointer h-2 bg-transparent"
-              />
-            </div>
-
-            {/* Playback Controls & Multi-Variable Diagnostic Summary */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center pt-2 border-t border-[var(--border)]">
-              {/* Transport Controls (lg:col-span-4) */}
-              <div className="lg:col-span-4 flex items-center gap-2">
-                {/* Reset to Day 1 */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCurrentDayIndex(0);
-                    setIsPlaying(false);
-                  }}
-                  title="Reset to Day 1"
-                  className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-elevated)] text-[var(--foreground)] transition-colors cursor-pointer"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                </button>
-
-                {/* Previous Day */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCurrentDayIndex((prev) => Math.max(0, prev - 1));
-                    setIsPlaying(false);
-                  }}
-                  disabled={currentDayIndex === 0}
-                  title="Previous Day"
-                  className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-elevated)] text-[var(--foreground)] transition-colors cursor-pointer disabled:opacity-40"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-
-                {/* Play / Pause Toggle */}
-                <button
-                  type="button"
-                  onClick={() => setIsPlaying(!isPlaying)}
-                  className={`flex-1 py-2.5 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm ${
-                    isPlaying
-                      ? "bg-amber-500 hover:bg-amber-400 text-black shadow-amber-500/25"
-                      : "bg-emerald-500 hover:bg-emerald-400 text-white dark:text-black shadow-emerald-500/25"
-                  }`}
-                >
-                  {isPlaying ? (
-                    <>
-                      <Pause className="w-4 h-4 fill-current" />
-                      <span>Pause Simulation</span>
-                    </>
-                  ) : (
-                    <>
-                      <Play className="w-4 h-4 fill-current" />
-                      <span>Play 21-Day Evolution</span>
-                    </>
-                  )}
-                </button>
-
-                {/* Next Day */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCurrentDayIndex((prev) => Math.min(timeline.length - 1, prev + 1));
-                    setIsPlaying(false);
-                  }}
-                  disabled={currentDayIndex === timeline.length - 1}
-                  title="Next Day"
-                  className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-elevated)] text-[var(--foreground)] transition-colors cursor-pointer disabled:opacity-40"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Real-time Physical Indicators Bar (lg:col-span-8) */}
-              <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
-                <div className="p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
-                  <div className="text-[10px] text-[var(--muted-foreground)]">GLACIER THAW</div>
-                  <div className="font-bold text-[var(--foreground)] mt-0.5">{currentDayState.snowmeltIndex.toFixed(1)}× Anomaly</div>
-                </div>
-                <div className="p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
-                  <div className="text-[10px] text-[var(--muted-foreground)]">SOIL SATURATION</div>
-                  <div className="font-bold text-[var(--foreground)] mt-0.5">{currentDayState.soilSaturation}% Saturated</div>
-                </div>
-                <div className="p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
-                  <div className="text-[10px] text-[var(--muted-foreground)]">TRIBUTARY FLOW</div>
-                  <div className="font-bold text-[var(--foreground)] mt-0.5">{currentDayState.tributaryInflow.toLocaleString()} m³/s</div>
-                </div>
-                <div className="p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
-                  <div className="text-[10px] text-[var(--muted-foreground)]">EMBANKMENT</div>
-                  <div
-                    className={`font-bold mt-0.5 ${
-                      currentDayState.embankmentStatus === "Breach"
-                        ? "text-rose-500"
-                        : currentDayState.embankmentStatus === "Under Stress"
-                        ? "text-amber-500"
-                        : "text-emerald-500"
+                {/* Transport Controls Bar */}
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCurrentDayIndex(0);
+                      setIsPlaying(false);
+                    }}
+                    title="Reset to Day 1"
+                    className="p-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-elevated)] text-[var(--foreground)] transition-colors cursor-pointer"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCurrentDayIndex((prev) => Math.max(0, prev - 1));
+                      setIsPlaying(false);
+                    }}
+                    disabled={currentDayIndex === 0}
+                    title="Previous Day"
+                    className="p-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-elevated)] text-[var(--foreground)] transition-colors cursor-pointer disabled:opacity-40"
+                  >
+                    <ChevronLeft className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsPlaying(!isPlaying)}
+                    className={`flex-1 py-2 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs ${
+                      isPlaying
+                        ? "bg-amber-500 hover:bg-amber-400 text-black shadow-amber-500/25"
+                        : "bg-emerald-500 hover:bg-emerald-400 text-white dark:text-black shadow-emerald-500/25"
                     }`}
                   >
-                    {currentDayState.embankmentStatus}
+                    {isPlaying ? (
+                      <>
+                        <Pause className="w-3.5 h-3.5 fill-current" />
+                        <span>Pause 21-Day Evolution</span>
+                      </>
+                    ) : (
+                      <>
+                        <Play className="w-3.5 h-3.5 fill-current" />
+                        <span>Play 21-Day Progression</span>
+                      </>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCurrentDayIndex((prev) => Math.min(timeline.length - 1, prev + 1));
+                      setIsPlaying(false);
+                    }}
+                    disabled={currentDayIndex === timeline.length - 1}
+                    title="Next Day"
+                    className="p-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-elevated)] text-[var(--foreground)] transition-colors cursor-pointer disabled:opacity-40"
+                  >
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                {/* Day Telemetry Indicators */}
+                <div className="grid grid-cols-4 gap-1.5 text-center font-mono text-[9px] pt-1">
+                  <div className="p-1.5 rounded-lg bg-[var(--surface)] border border-[var(--border)]">
+                    <span className="text-[var(--muted-foreground)] block">GLACIER</span>
+                    <strong className="text-[var(--foreground)]">{currentDayState.snowmeltIndex.toFixed(1)}×</strong>
+                  </div>
+                  <div className="p-1.5 rounded-lg bg-[var(--surface)] border border-[var(--border)]">
+                    <span className="text-[var(--muted-foreground)] block">SOIL SAT</span>
+                    <strong className="text-[var(--foreground)]">{currentDayState.soilSaturation}%</strong>
+                  </div>
+                  <div className="p-1.5 rounded-lg bg-[var(--surface)] border border-[var(--border)]">
+                    <span className="text-[var(--muted-foreground)] block">TRIBUTARY</span>
+                    <strong className="text-[var(--foreground)]">{(currentDayState.tributaryInflow / 1000).toFixed(1)}k</strong>
+                  </div>
+                  <div className="p-1.5 rounded-lg bg-[var(--surface)] border border-[var(--border)]">
+                    <span className="text-[var(--muted-foreground)] block">LEVEE</span>
+                    <strong className={currentDayState.embankmentStatus === "Breach" ? "text-rose-500 font-extrabold" : "text-emerald-500"}>
+                      {currentDayState.embankmentStatus}
+                    </strong>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* AI Diagnostic Commentary on Current Simulation Day */}
-            <div className="p-3.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] flex items-start gap-3">
-              <Activity className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-              <div className="space-y-1">
-                <div className="text-[11px] font-bold text-[var(--foreground)] uppercase font-mono tracking-wider flex items-center gap-2">
-                  <span>SURAKSHA Reasoning · {currentDayState.label} Diagnostic Analysis</span>
-                  <span className="text-[10px] text-[var(--muted-foreground)]">
-                    (Predicted: {currentDayState.aiForecastStage.toFixed(2)}m · Error: {Math.abs(currentDayState.stage - currentDayState.aiForecastStage).toFixed(2)}m)
-                  </span>
-                </div>
-                <p className="text-xs text-[var(--foreground)]/80 leading-relaxed">
-                  {currentDayState.diagnostic}
-                </p>
-              </div>
-            </div>
-          </section>
-
-          {/* MIDDLE ROW: SECTION A (Scenario Studio) & SECTION C (Prediction Intelligence) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-            {/* SECTION A: Scenario Studio (lg:col-span-5) */}
-            <section className="lg:col-span-5 p-5 sm:p-6 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-xl shadow-xs flex flex-col justify-between space-y-5">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
-                  <div>
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block">
-                      SECTION A
-                    </span>
-                    <h3 className="text-sm font-bold text-[var(--foreground)] flex items-center gap-2 font-heading">
-                      <Sliders className="w-4 h-4 text-emerald-500" /> Scenario Studio Workspace
-                    </h3>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setIsStudioOpen(true)}
-                      className="px-2.5 py-1 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold hover:bg-emerald-500/25 transition-all cursor-pointer flex items-center gap-1"
-                    >
-                      <PlusCircle className="w-3 h-3" />
-                      <span>+ Custom</span>
-                    </button>
-                    <span className="text-[10px] font-mono text-[var(--muted-foreground)]">
-                      {allScenarios.length} Total
-                    </span>
-                  </div>
-                </div>
-
-                {/* Custom Scenario Dropdown Menu */}
+              {/* Card 2: Scenario Studio & Multi-Driver Console */}
+              <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-xl shadow-xs space-y-3.5">
+                {/* Scenario Selection Header & Custom Dropdown */}
                 <div ref={dropdownRef} className={`space-y-1.5 relative ${isDropdownOpen ? "z-40" : "z-20"}`}>
                   <label className="text-xs font-semibold text-[var(--muted-foreground)] flex items-center justify-between">
                     <span>Select Scenario from Library</span>
-                    <span className="text-[10px] font-mono text-emerald-500">
-                      Active: {activeScenario.code}
-                    </span>
+                    <span className="text-[10px] font-mono text-emerald-500">Active: {activeScenario.code}</span>
                   </label>
 
-                  {/* Dropdown Trigger Button */}
                   <button
                     type="button"
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                     aria-haspopup="listbox"
                     aria-expanded={isDropdownOpen}
-                    aria-label="Select flood simulation scenario"
-                    className={`w-full px-3.5 py-2.5 rounded-xl border text-xs text-left flex items-center justify-between transition-all cursor-pointer select-none ${
+                    className={`w-full px-3 py-2 rounded-xl border text-xs text-left flex items-center justify-between transition-all cursor-pointer select-none ${
                       isDropdownOpen
                         ? "border-emerald-500 bg-[var(--surface-elevated)] ring-2 ring-emerald-500/20"
-                        : "border-[var(--border)] bg-[var(--surface)] hover:border-emerald-500/50 hover:bg-[var(--surface-elevated)]"
+                        : "border-[var(--border)] bg-[var(--surface)] hover:border-emerald-500/50"
                     }`}
                   >
-                    <div className="flex items-center gap-2.5 min-w-0 pr-2">
-                      <span className="px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-mono font-bold text-[11px] shrink-0 border border-emerald-500/30">
+                    <div className="flex items-center gap-2 min-w-0 pr-2">
+                      <span className="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-mono font-bold text-[10px] shrink-0 border border-emerald-500/30">
                         {activeScenario.code}
                       </span>
                       <span className="font-semibold text-[var(--foreground)] truncate text-xs">
                         {activeScenario.title}
                       </span>
-                      <span className={`hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-mono shrink-0 ${getCategoryBadge(activeScenario.category)}`}>
-                        {activeScenario.category}
-                      </span>
                     </div>
-                    <ChevronDown className={`w-4 h-4 text-[var(--muted-foreground)] transition-transform duration-200 shrink-0 ${isDropdownOpen ? "rotate-180 text-emerald-500" : ""}`} />
+                    <ChevronDown className={`w-3.5 h-3.5 text-[var(--muted-foreground)] transition-transform duration-200 shrink-0 ${isDropdownOpen ? "rotate-180 text-emerald-500" : ""}`} />
                   </button>
 
-                  {/* Dropdown Menu Popup Panel */}
+                  {/* Dropdown Popup List */}
                   {isDropdownOpen && (
-                    <div 
+                    <div
                       role="listbox"
-                      className="absolute top-full left-0 right-0 mt-1.5 z-50 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl backdrop-blur-2xl p-1.5 space-y-1 max-h-96 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-150"
+                      className="absolute top-full left-0 right-0 mt-1 z-50 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl backdrop-blur-2xl p-1.5 space-y-1 max-h-80 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-150"
                     >
-                      {/* Group 1: User Custom Scenarios (if any exist) */}
+                      {/* User Custom Scenarios */}
                       {customScenarios.length > 0 && (
                         <div>
-                          <div className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center justify-between">
-                            <span>User Custom Scenarios</span>
-                            <span className="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">{customScenarios.length}</span>
+                          <div className="px-2.5 py-1 text-[9px] font-mono font-bold uppercase text-emerald-600 dark:text-emerald-400 flex justify-between">
+                            <span>User Custom Scenarios ({customScenarios.length})</span>
                           </div>
-                          <div className="space-y-1">
-                            {customScenarios.map((scen) => {
-                              const isSelected = scen.id === selectedScenarioId;
-                              return (
-                                <button
-                                  type="button"
-                                  role="option"
-                                  aria-selected={isSelected}
-                                  key={scen.id}
-                                  onClick={() => {
-                                    handleSelectScenario(scen.id);
-                                    setIsDropdownOpen(false);
-                                  }}
-                                  className={`w-full text-left p-2.5 rounded-xl cursor-pointer transition-all flex items-center justify-between gap-3 ${
-                                    isSelected
-                                      ? "bg-emerald-500/15 border border-emerald-500/40 text-[var(--foreground)]"
-                                      : "hover:bg-[var(--surface)] text-[var(--foreground)]/90 hover:text-[var(--foreground)] border border-transparent"
-                                  }`}
-                                >
-                                  <div className="flex items-center gap-2.5 min-w-0">
-                                    <span className="px-2 py-0.5 rounded-md bg-emerald-500 text-black font-mono font-bold text-[10px] shrink-0">
-                                      {scen.code}
-                                    </span>
-                                    <div className="min-w-0">
-                                      <div className="font-semibold text-xs truncate flex items-center gap-1.5">
-                                        <span>{scen.title}</span>
-                                        <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-mono">
-                                          CUSTOM
-                                        </span>
-                                      </div>
-                                      <div className="text-[10px] text-[var(--muted-foreground)] line-clamp-1 mt-0.5">
-                                        {scen.shortDescription}
-                                      </div>
-                                    </div>
-                                  </div>
-
-                                  <div className="flex items-center gap-2 shrink-0">
-                                    <span className={`px-2 py-0.5 rounded text-[10px] font-mono ${getCategoryBadge(scen.category)}`}>
-                                      {scen.category}
-                                    </span>
-                                    {isSelected && <Check className="w-4 h-4 text-emerald-500 stroke-[3]" />}
-                                  </div>
-                                </button>
-                              );
-                            })}
-                          </div>
+                          {customScenarios.map((scen) => (
+                            <button
+                              type="button"
+                              role="option"
+                              aria-selected={scen.id === selectedScenarioId}
+                              key={scen.id}
+                              onClick={() => {
+                                handleSelectScenario(scen.id);
+                                setIsDropdownOpen(false);
+                              }}
+                              className={`w-full text-left p-2 rounded-xl cursor-pointer transition-all flex items-center justify-between text-xs ${
+                                scen.id === selectedScenarioId ? "bg-emerald-500/15 border border-emerald-500/40 text-[var(--foreground)]" : "hover:bg-[var(--surface)] text-[var(--foreground)]/90"
+                              }`}
+                            >
+                              <div className="min-w-0 pr-2">
+                                <div className="font-semibold truncate">{scen.title}</div>
+                                <div className="text-[10px] text-[var(--muted-foreground)] truncate">{scen.shortDescription}</div>
+                              </div>
+                              <span className={`px-1.5 py-0.5 rounded text-[9px] font-mono shrink-0 ${getCategoryBadge(scen.category)}`}>
+                                {scen.category}
+                              </span>
+                            </button>
+                          ))}
                         </div>
                       )}
 
-                      {/* Group 2: Library Scenarios */}
-                      <div>
-                        <div className={`px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--muted-foreground)] flex items-center justify-between ${customScenarios.length > 0 ? "border-t border-[var(--border)] pt-2 mt-1" : ""}`}>
-                          <span>Benchmark Scenario Library</span>
-                          <span className="px-1.5 py-0.5 rounded bg-[var(--surface)] text-[var(--muted-foreground)]">{SIMULATION_SCENARIOS.length}</span>
+                      {/* Benchmark Scenario Library */}
+                      <div className={customScenarios.length > 0 ? "border-t border-[var(--border)] pt-1" : ""}>
+                        <div className="px-2.5 py-1 text-[9px] font-mono font-bold uppercase text-[var(--muted-foreground)] flex justify-between">
+                          <span>Benchmark Scenarios ({SIMULATION_SCENARIOS.length})</span>
                         </div>
-                        <div className="space-y-1">
-                          {SIMULATION_SCENARIOS.map((scen) => {
-                            const isSelected = scen.id === selectedScenarioId;
-                            return (
-                              <button
-                                type="button"
-                                role="option"
-                                aria-selected={isSelected}
-                                key={scen.id}
-                                onClick={() => {
-                                  handleSelectScenario(scen.id);
-                                  setIsDropdownOpen(false);
-                                }}
-                                className={`w-full text-left p-2.5 rounded-xl cursor-pointer transition-all flex items-center justify-between gap-3 ${
-                                  isSelected
-                                    ? "bg-emerald-500/15 border border-emerald-500/40 text-[var(--foreground)]"
-                                    : "hover:bg-[var(--surface)] text-[var(--foreground)]/90 hover:text-[var(--foreground)] border border-transparent"
-                                }`}
-                              >
-                                <div className="flex items-center gap-2.5 min-w-0">
-                                  <span className="px-2 py-0.5 rounded-md bg-[var(--surface)] border border-[var(--border)] text-emerald-600 dark:text-emerald-400 font-mono font-bold text-[10px] shrink-0">
-                                    {scen.code}
-                                  </span>
-                                  <div className="min-w-0">
-                                    <div className="font-semibold text-xs truncate">
-                                      {scen.title}
-                                    </div>
-                                    <div className="text-[10px] text-[var(--muted-foreground)] line-clamp-1 mt-0.5">
-                                      {scen.shortDescription}
-                                    </div>
-                                  </div>
-                                </div>
-
-                                <div className="flex items-center gap-2 shrink-0">
-                                  <span className={`px-2 py-0.5 rounded text-[10px] font-mono ${getCategoryBadge(scen.category)}`}>
-                                    {scen.category}
-                                  </span>
-                                  {isSelected && <Check className="w-4 h-4 text-emerald-500 stroke-[3]" />}
-                                </div>
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      {/* Dropdown Footer: Quick Action to create new custom scenario */}
-                      <div className="pt-2 border-t border-[var(--border)] mt-1">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setIsDropdownOpen(false);
-                            setIsStudioOpen(true);
-                          }}
-                          className="w-full p-2.5 rounded-xl border border-dashed border-emerald-500/40 bg-emerald-500/5 hover:bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer"
-                        >
-                          <PlusCircle className="w-3.5 h-3.5" />
-                          <span>Create New Custom Scenario</span>
-                        </button>
+                        {SIMULATION_SCENARIOS.map((scen) => (
+                          <button
+                            type="button"
+                            role="option"
+                            aria-selected={scen.id === selectedScenarioId}
+                            key={scen.id}
+                            onClick={() => {
+                              handleSelectScenario(scen.id);
+                              setIsDropdownOpen(false);
+                            }}
+                            className={`w-full text-left p-2 rounded-xl cursor-pointer transition-all flex items-center justify-between text-xs ${
+                              scen.id === selectedScenarioId ? "bg-emerald-500/15 border border-emerald-500/40 text-[var(--foreground)]" : "hover:bg-[var(--surface)] text-[var(--foreground)]/90"
+                            }`}
+                          >
+                            <div className="min-w-0 pr-2">
+                              <div className="flex items-center gap-1.5">
+                                <span className="font-mono text-[10px] font-bold text-emerald-600 dark:text-emerald-400">{scen.code}</span>
+                                <span className="font-semibold truncate">{scen.title}</span>
+                              </div>
+                              <div className="text-[10px] text-[var(--muted-foreground)] truncate">{scen.shortDescription}</div>
+                            </div>
+                            <span className={`px-1.5 py-0.5 rounded text-[9px] font-mono shrink-0 ${getCategoryBadge(scen.category)}`}>
+                              {scen.category}
+                            </span>
+                          </button>
+                        ))}
                       </div>
                     </div>
                   )}
                 </div>
 
-                {/* Event Drivers (Multiple Selections Allowed) */}
-                <div className="space-y-2 pt-1">
-                  <div className="flex items-center justify-between text-xs font-bold text-[var(--foreground)]">
-                    <span className="flex items-center gap-1.5">
-                      <Layers className="w-3.5 h-3.5 text-emerald-500" />
-                      Active Event Drivers ({selectedDrivers.length})
-                    </span>
-                    <span className="text-[10px] font-mono text-[var(--muted-foreground)] font-normal">
-                      Multi-select enabled
-                    </span>
+                {/* Multi-Driver Compound Hazard Infographic Component */}
+                <CompoundHazardFlowInfographic
+                  selectedDrivers={selectedDrivers}
+                  onToggleDriver={toggleDriver}
+                  snowmeltIndex={snowmeltIndex}
+                  rainfall={rainfall}
+                  tributaryInflow={tributaryInflow}
+                  inflowMultiplier={inflow}
+                  isCompound={isCompoundDerived}
+                />
+
+                {/* Compact Environmental Calibration Tuning Sliders */}
+                <div className="space-y-2 pt-1 border-t border-[var(--border)]">
+                  <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--muted-foreground)] flex items-center justify-between">
+                    <span>Continuous Environmental Tuning</span>
+                    <span className="text-emerald-500">Live Physics Calibration</span>
                   </div>
 
-                  {/* Driver Pills Grid */}
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    {SIMULATION_EVENT_DRIVERS.map((driver) => {
-                      const isSelected = selectedDrivers.includes(driver.id);
-                      return (
-                        <button
-                          key={driver.id}
-                          type="button"
-                          onClick={() => toggleDriver(driver.id)}
-                          className={`p-2 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1 select-none ${
-                            isSelected
-                              ? "bg-emerald-500/15 border-emerald-500/50 text-[var(--foreground)] shadow-xs"
-                              : "bg-[var(--surface)] border-[var(--border)] text-[var(--muted-foreground)] hover:border-emerald-500/30 hover:text-[var(--foreground)]"
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className={isSelected ? "text-emerald-500" : "text-[var(--muted-foreground)]"}>
-                              {renderDriverIcon(driver.id)}
-                            </span>
-                            <span
-                              className={`w-3.5 h-3.5 rounded-full border grid place-items-center ${
-                                isSelected
-                                  ? "bg-emerald-500 border-emerald-400 text-white"
-                                  : "border-[var(--border)] bg-[var(--surface-elevated)]"
-                              }`}
-                            >
-                              {isSelected && <Check className="w-2.5 h-2.5 stroke-[3]" />}
-                            </span>
-                          </div>
-                          <div className="text-[10px] font-bold leading-tight truncate mt-1">
-                            {driver.name.split(" ")[0]} {driver.name.split(" ")[1] ?? ""}
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {/* Derived Compound Event Classification Badge */}
-                  {isCompoundDerived && (
-                    <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between text-xs font-mono animate-in fade-in duration-200">
-                      <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-bold">
-                        <Waves className="w-4 h-4 shrink-0" />
-                        <span>COMPOUND FLOOD HAZARD EVENT</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    {/* Inflow Discharge */}
+                    <div className="p-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-1">
+                      <div className="flex justify-between items-center text-[11px]">
+                        <span className="text-[var(--muted-foreground)]">Discharge Inflow:</span>
+                        <span className="font-mono font-bold text-emerald-500">{inflow.toFixed(2)}×</span>
                       </div>
-                      <span className="text-[10px] text-[var(--muted-foreground)]">
-                        Synchronous Multi-Driver Ingress
-                      </span>
+                      <input
+                        type="range"
+                        min="0.5"
+                        max="3.0"
+                        step="0.05"
+                        value={inflow}
+                        onChange={(e) => setInflow(Number(e.target.value))}
+                        className="w-full accent-emerald-500 cursor-pointer h-1"
+                      />
                     </div>
-                  )}
-                </div>
 
-                {/* Scenario Quick Presets */}
-                <div className="grid grid-cols-3 gap-2 pt-1">
-                  {/* Steady Conditions */}
-                  <button
-                    type="button"
-                    onClick={() => choosePreset("steady")}
-                    className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer relative flex flex-col items-center justify-between gap-1 ${
-                      preset === "steady"
-                        ? "border-emerald-500 bg-emerald-500/10 text-[var(--foreground)] shadow-xs"
-                        : "border-[var(--border)] bg-[var(--surface)] text-[var(--muted-foreground)] hover:border-emerald-500/40 hover:text-[var(--foreground)]"
-                    }`}
-                  >
-                    {preset === "steady" && (
-                      <span className="absolute top-1.5 right-1.5 w-3.5 h-3.5 rounded-full bg-emerald-500 text-white grid place-items-center">
-                        <Check className="w-2 h-2 stroke-[3]" />
-                      </span>
-                    )}
-                    <Waves className="w-4 h-4 text-emerald-500" />
-                    <div>
-                      <div className="text-[11px] font-bold leading-tight">Steady</div>
-                      <div className="text-[9px] text-[var(--muted-foreground)]">Baseline</div>
-                    </div>
-                  </button>
-
-                  {/* Heavy Rainfall */}
-                  <button
-                    type="button"
-                    onClick={() => choosePreset("rain")}
-                    className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer relative flex flex-col items-center justify-between gap-1 ${
-                      preset === "rain"
-                        ? "border-emerald-500 bg-emerald-500/10 text-[var(--foreground)] shadow-xs"
-                        : "border-[var(--border)] bg-[var(--surface)] text-[var(--muted-foreground)] hover:border-emerald-500/40 hover:text-[var(--foreground)]"
-                    }`}
-                  >
-                    {preset === "rain" && (
-                      <span className="absolute top-1.5 right-1.5 w-3.5 h-3.5 rounded-full bg-emerald-500 text-white grid place-items-center">
-                        <Check className="w-2 h-2 stroke-[3]" />
-                      </span>
-                    )}
-                    <CloudRain className="w-4 h-4 text-sky-500" />
-                    <div>
-                      <div className="text-[11px] font-bold leading-tight">Heavy Rain</div>
-                      <div className="text-[9px] text-[var(--muted-foreground)]">Catchment</div>
-                    </div>
-                  </button>
-
-                  {/* Rapid River Rise */}
-                  <button
-                    type="button"
-                    onClick={() => choosePreset("surge")}
-                    className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer relative flex flex-col items-center justify-between gap-1 ${
-                      preset === "surge"
-                        ? "border-emerald-500 bg-emerald-500/10 text-[var(--foreground)] shadow-xs"
-                        : "border-[var(--border)] bg-[var(--surface)] text-[var(--muted-foreground)] hover:border-emerald-500/40 hover:text-[var(--foreground)]"
-                    }`}
-                  >
-                    {preset === "surge" && (
-                      <span className="absolute top-1.5 right-1.5 w-3.5 h-3.5 rounded-full bg-emerald-500 text-white grid place-items-center">
-                        <Check className="w-2 h-2 stroke-[3]" />
-                      </span>
-                    )}
-                    <TrendingUp className="w-4 h-4 text-amber-500" />
-                    <div>
-                      <div className="text-[11px] font-bold leading-tight">Rapid Rise</div>
-                      <div className="text-[9px] text-[var(--muted-foreground)]">Compound</div>
-                    </div>
-                  </button>
-                </div>
-
-                {/* Key Environmental Parameters Sliders */}
-                <div className="space-y-3.5 pt-3 border-t border-[var(--border)]">
-                  <div className="text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-wider flex items-center justify-between">
-                    <span>Environmental Variables</span>
-                    <span className="text-[10px] font-mono text-emerald-500">Continuous Tuning</span>
-                  </div>
-
-                  {/* Discharge Multiplier */}
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between text-xs">
-                      <label htmlFor="inflow" className="text-[var(--foreground)] font-medium">
-                        Starting River Discharge Multiplier
-                      </label>
-                      <span className="px-2 py-0.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 font-mono text-emerald-600 dark:text-emerald-400 font-bold text-xs">
-                        {inflow.toFixed(2)}×
-                      </span>
-                    </div>
-                    <input
-                      id="inflow"
-                      type="range"
-                      min="0.5"
-                      max="3"
-                      step="0.05"
-                      value={inflow}
-                      onChange={(e) => setInflow(Number(e.target.value))}
-                      className="w-full accent-emerald-500 cursor-pointer"
-                    />
-                    <div className="flex justify-between text-[10px] text-[var(--muted-foreground)] font-mono">
-                      <span>0.5× (Low Flow)</span>
-                      <span>3.0× (Torrential Ingress)</span>
-                    </div>
-                  </div>
-
-                  {/* Added Rainfall Anomaly */}
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between text-xs">
-                      <label htmlFor="rainfall" className="text-[var(--foreground)] font-medium">
-                        Added Rainfall Anomaly
-                      </label>
-                      <span className="px-2 py-0.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 font-mono text-emerald-600 dark:text-emerald-400 font-bold text-xs">
-                        {rainfall} mm
-                      </span>
-                    </div>
-                    <input
-                      id="rainfall"
-                      type="range"
-                      min="0"
-                      max="500"
-                      step="5"
-                      value={rainfall}
-                      onChange={(e) => setRainfall(Number(e.target.value))}
-                      className="w-full accent-emerald-500 cursor-pointer"
-                    />
-                    <div className="flex justify-between text-[10px] text-[var(--muted-foreground)] font-mono">
-                      <span>0 mm (Dry Spells)</span>
-                      <span>500 mm (Cloudburst Peak)</span>
-                    </div>
-                  </div>
-
-                  {/* Cryosphere Melt Index */}
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between text-xs">
-                      <label htmlFor="snowmeltIndex" className="text-[var(--foreground)] font-medium">
-                        Cryosphere Melt Index
-                      </label>
-                      <span className="px-2 py-0.5 rounded-lg bg-teal-500/15 border border-teal-500/30 font-mono text-teal-600 dark:text-teal-400 font-bold text-xs">
-                        {snowmeltIndex.toFixed(1)}×
-                      </span>
-                    </div>
-                    <input
-                      id="snowmeltIndex"
-                      type="range"
-                      min="1.0"
-                      max="3.0"
-                      step="0.1"
-                      value={snowmeltIndex}
-                      onChange={(e) => setSnowmeltIndex(Number(e.target.value))}
-                      className="w-full accent-teal-500 cursor-pointer"
-                    />
-                    <div className="flex justify-between text-[10px] text-[var(--muted-foreground)] font-mono">
-                      <span>1.0× (Baseline)</span>
-                      <span>3.0× (Accelerated Thaw)</span>
-                    </div>
-                  </div>
-
-                  {/* Catchment Soil Saturation */}
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between text-xs">
-                      <label htmlFor="soilSaturation" className="text-[var(--foreground)] font-medium">
-                        Catchment Soil Saturation
-                      </label>
-                      <span className="px-2 py-0.5 rounded-lg bg-amber-500/15 border border-amber-500/30 font-mono text-amber-600 dark:text-amber-400 font-bold text-xs">
-                        {soilSaturation}%
-                      </span>
-                    </div>
-                    <input
-                      id="soilSaturation"
-                      type="range"
-                      min="20"
-                      max="100"
-                      step="5"
-                      value={soilSaturation}
-                      onChange={(e) => setSoilSaturation(Number(e.target.value))}
-                      className="w-full accent-amber-500 cursor-pointer"
-                    />
-                    <div className="flex justify-between text-[10px] text-[var(--muted-foreground)] font-mono">
-                      <span>20% (Dry Basin)</span>
-                      <span>100% (Instant Sheet Runoff)</span>
-                    </div>
-                  </div>
-
-                  {/* Tributary Confluence Flow */}
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between text-xs">
-                      <label htmlFor="tributaryInflow" className="text-[var(--foreground)] font-medium">
-                        Tributary Confluence Inflow
-                      </label>
-                      <span className="px-2 py-0.5 rounded-lg bg-purple-500/15 border border-purple-500/30 font-mono text-purple-600 dark:text-purple-400 font-bold text-xs">
-                        {tributaryInflow.toLocaleString()} m³/s
-                      </span>
-                    </div>
-                    <input
-                      id="tributaryInflow"
-                      type="range"
-                      min="2000"
-                      max="12000"
-                      step="200"
-                      value={tributaryInflow}
-                      onChange={(e) => setTributaryInflow(Number(e.target.value))}
-                      className="w-full accent-purple-500 cursor-pointer"
-                    />
-                    <div className="flex justify-between text-[10px] text-[var(--muted-foreground)] font-mono">
-                      <span>2,000 m³/s</span>
-                      <span>12,000 m³/s (Gandak + Son Surge)</span>
-                    </div>
-                  </div>
-
-                  {/* Embankment Condition & Duration Selectors */}
-                  <div className="grid grid-cols-2 gap-2 pt-1">
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-semibold text-[var(--muted-foreground)] block">
-                        Embankment Condition:
-                      </label>
-                      <div className="p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-xs font-mono flex items-center justify-between">
-                        <span className="font-bold">{currentDayState.embankmentStatus}</span>
-                        <span className="text-[9px] text-[var(--muted-foreground)]">Structural</span>
+                    {/* Added Rainfall */}
+                    <div className="p-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-1">
+                      <div className="flex justify-between items-center text-[11px]">
+                        <span className="text-[var(--muted-foreground)]">24h Rainfall:</span>
+                        <span className="font-mono font-bold text-sky-500">{rainfall} mm</span>
                       </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="500"
+                        step="5"
+                        value={rainfall}
+                        onChange={(e) => setRainfall(Number(e.target.value))}
+                        className="w-full accent-sky-500 cursor-pointer h-1"
+                      />
                     </div>
 
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-semibold text-[var(--muted-foreground)] block">
-                        Simulation Duration:
-                      </label>
-                      <div className="p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-xs font-mono flex items-center justify-between">
-                        <span className="font-bold">21 Days</span>
-                        <span className="text-[9px] text-[var(--muted-foreground)]">Multi-Phase</span>
+                    {/* Cryosphere Snowmelt */}
+                    <div className="p-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-1">
+                      <div className="flex justify-between items-center text-[11px]">
+                        <span className="text-[var(--muted-foreground)]">Snowmelt Thaw:</span>
+                        <span className="font-mono font-bold text-teal-500">{snowmeltIndex.toFixed(1)}×</span>
                       </div>
+                      <input
+                        type="range"
+                        min="1.0"
+                        max="3.0"
+                        step="0.1"
+                        value={snowmeltIndex}
+                        onChange={(e) => setSnowmeltIndex(Number(e.target.value))}
+                        className="w-full accent-teal-500 cursor-pointer h-1"
+                      />
+                    </div>
+
+                    {/* Soil Saturation */}
+                    <div className="p-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-1">
+                      <div className="flex justify-between items-center text-[11px]">
+                        <span className="text-[var(--muted-foreground)]">Soil Saturation:</span>
+                        <span className="font-mono font-bold text-amber-500">{soilSaturation}%</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="20"
+                        max="100"
+                        step="5"
+                        value={soilSaturation}
+                        onChange={(e) => setSoilSaturation(Number(e.target.value))}
+                        className="w-full accent-amber-500 cursor-pointer h-1"
+                      />
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* Action Button */}
-              <button
-                type="button"
-                onClick={() => runScenario()}
-                disabled={isRunning}
-                className="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white dark:text-black font-extrabold text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-emerald-500/25 active:scale-[0.99] cursor-pointer disabled:opacity-60"
-              >
-                {isRunning ? (
-                  <>
-                    <LoaderCircle className="w-4 h-4 animate-spin" />
-                    <span>Running Simulation…</span>
-                  </>
-                ) : (
-                  <>
-                    <Play className="w-4 h-4 fill-current" />
-                    <span>Run Simulation</span>
-                  </>
-                )}
-              </button>
-            </section>
+            {/* RIGHT COLUMN: PREDICTION HYDROGRAPH & TABBED INTELLIGENCE INFOGRAPHICS (lg:col-span-7) */}
+            <div className="lg:col-span-7 space-y-3.5">
+              {/* Reach Inundation Model Hydrograph */}
+              <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-xl shadow-xs space-y-3">
+                <div className="flex items-center justify-between border-b border-[var(--border)] pb-2">
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-[var(--foreground)]">
+                    <TrendingUp className="w-4 h-4 text-emerald-500" />
+                    <span>Reach Inundation Model · 24-Hour Predictive Horizon</span>
+                  </div>
+                  <div className="flex items-center gap-2 font-mono text-[10px] text-[var(--muted-foreground)]">
+                    <span>Danger: <strong className="text-rose-500">{selectedStation.dangerLevel}m</strong></span>
+                    <span>·</span>
+                    <span>Warning: <strong className="text-amber-500">{selectedStation.warningLevel}m</strong></span>
+                  </div>
+                </div>
 
-            {/* SECTION C: Prediction Intelligence (lg:col-span-7) */}
-            <section className="lg:col-span-7 p-5 sm:p-6 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-xl shadow-xs flex flex-col justify-between space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
-                <div>
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block">
-                    SECTION C
+                <RiverStageForecastChart
+                  startingStage={CWC_GANDHI_GHAT_BENCHMARKS.datumLevel + 1.2}
+                  tPlus6={currentStage}
+                  tPlus12={result?.result.forecast.t_plus_12 ?? (currentStage - 0.35)}
+                  tPlus24={result?.result.forecast.t_plus_24 ?? (currentStage - 0.75)}
+                  warningLevel={selectedStation.warningLevel}
+                  dangerLevel={selectedStation.dangerLevel}
+                  flowVelocity={1.84}
+                  discharge={Number((currentDayState.discharge / 1000).toFixed(1))}
+                  catchmentRain={currentDayState.upstreamRain}
+                  snowmeltIndex={currentDayState.snowmeltIndex}
+                  soilSaturation={currentDayState.soilSaturation}
+                  timeline={timeline}
+                  currentSimulationDay={currentDayState.day}
+                />
+              </div>
+
+              {/* Tabbed Intelligence & Impact Infographics Panel */}
+              <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-xl shadow-xs space-y-3">
+                {/* Tab Navigation Buttons */}
+                <div className="flex items-center justify-between border-b border-[var(--border)] pb-2 flex-wrap gap-2">
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab("impact")}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                        activeTab === "impact"
+                          ? "bg-rose-500/15 border border-rose-500/40 text-rose-600 dark:text-rose-400 shadow-xs"
+                          : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] border border-transparent"
+                      }`}
+                    >
+                      <AlertTriangle className="w-3.5 h-3.5 text-rose-500" />
+                      <span>Disaster Impact Infographics</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab("diagnostic")}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                        activeTab === "diagnostic"
+                          ? "bg-sky-500/15 border border-sky-500/40 text-sky-600 dark:text-sky-400 shadow-xs"
+                          : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] border border-transparent"
+                      }`}
+                    >
+                      <Activity className="w-3.5 h-3.5 text-sky-500" />
+                      <span>AI Causal Diagnostics</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab("defense")}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                        activeTab === "defense"
+                          ? "bg-emerald-500/15 border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 shadow-xs"
+                          : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] border border-transparent"
+                      }`}
+                    >
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                      <span>BCA Technical Defense</span>
+                    </button>
+                  </div>
+
+                  <span className="text-[10px] font-mono text-[var(--muted-foreground)]">
+                    Day {currentDayState.day} Telemetry Synced
                   </span>
-                  <h3 className="text-sm font-bold text-[var(--foreground)] flex items-center gap-2 font-heading">
-                    <TrendingUp className="w-4 h-4 text-emerald-500" /> Prediction Intelligence · Dual-Stream Closed-Loop Validation
-                  </h3>
-                </div>
-                <div className="flex items-center gap-2 font-mono text-[11px]">
-                  <span className="text-[var(--muted-foreground)]">Station Datum:</span>
-                  <span className="font-bold text-[var(--foreground)]">{CWC_GANDHI_GHAT_BENCHMARKS.warningLevel}m / {CWC_GANDHI_GHAT_BENCHMARKS.dangerLevel}m</span>
-                </div>
-              </div>
-
-              {/* Dual Stream Indicator Bar: Ground Truth vs SURAKSHA Forecast */}
-              <div className="p-3 rounded-xl bg-[var(--surface)] border border-[var(--border)] grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-mono">
-                <div className="flex flex-col justify-between">
-                  <span className="text-[10px] text-[var(--muted-foreground)] uppercase">Synthetic Ground Truth (Ht)</span>
-                  <span className="font-bold text-base text-[var(--foreground)] mt-0.5">{currentStage.toFixed(2)} m</span>
-                  <span className="text-[10px] text-emerald-500">Benchmark Reality</span>
-                </div>
-                <div className="flex flex-col justify-between border-t sm:border-t-0 sm:border-l border-[var(--border)] sm:pl-3 pt-2 sm:pt-0">
-                  <span className="text-[10px] text-[var(--muted-foreground)] uppercase">SURAKSHA AI Forecast (Ĥt)</span>
-                  <span className="font-bold text-base text-sky-500 mt-0.5">{currentDayState.aiForecastStage.toFixed(2)} m</span>
-                  <span className="text-[10px] text-sky-600 dark:text-sky-400">BiLSTM-ARIMA Lead</span>
-                </div>
-                <div className="flex flex-col justify-between border-t sm:border-t-0 sm:border-l border-[var(--border)] sm:pl-3 pt-2 sm:pt-0">
-                  <span className="text-[10px] text-[var(--muted-foreground)] uppercase">Prediction Residual (Δ)</span>
-                  <span className="font-bold text-base text-amber-500 mt-0.5">±{Math.abs(currentStage - currentDayState.aiForecastStage).toFixed(2)} m</span>
-                  <span className="text-[10px] text-[var(--muted-foreground)]">Model Error Residual</span>
-                </div>
-              </div>
-
-              {/* Interactive Hydrograph Chart */}
-              <RiverStageForecastChart
-                startingStage={CWC_GANDHI_GHAT_BENCHMARKS.datumLevel + 1.2}
-                tPlus6={currentStage}
-                tPlus12={result?.result.forecast.t_plus_12 ?? (currentStage - 0.35)}
-                tPlus24={result?.result.forecast.t_plus_24 ?? (currentStage - 0.75)}
-                warningLevel={CWC_GANDHI_GHAT_BENCHMARKS.warningLevel}
-                dangerLevel={CWC_GANDHI_GHAT_BENCHMARKS.dangerLevel}
-                flowVelocity={1.84}
-                discharge={Number((currentDayState.discharge / 1000).toFixed(1))}
-                catchmentRain={currentDayState.upstreamRain}
-                snowmeltIndex={currentDayState.snowmeltIndex}
-                soilSaturation={currentDayState.soilSaturation}
-                timeline={timeline}
-                currentSimulationDay={currentDayState.day}
-              />
-            </section>
-          </div>
-
-          {/* SECTION D: Disaster Impact Assessment (Post-Flood Analysis) */}
-          <section className="p-5 sm:p-6 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-xl shadow-xs space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[var(--border)]">
-              <div>
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-rose-500 block">
-                  SECTION D
-                </span>
-                <h3 className="text-base font-bold text-[var(--foreground)] flex items-center gap-2 font-heading">
-                  <AlertTriangle className="w-4 h-4 text-rose-500" /> Disaster Impact Assessment · Post-Flood Analysis
-                </h3>
-              </div>
-              <div className="flex items-center gap-2 text-xs font-mono">
-                <span className="text-[var(--muted-foreground)]">Impact Status:</span>
-                <span
-                  className={`px-2.5 py-0.5 rounded-full font-bold ${
-                    currentStage >= CWC_GANDHI_GHAT_BENCHMARKS.dangerLevel
-                      ? "bg-rose-500/15 border border-rose-500/30 text-rose-500"
-                      : currentStage >= CWC_GANDHI_GHAT_BENCHMARKS.warningLevel
-                      ? "bg-amber-500/15 border border-amber-500/30 text-amber-500"
-                      : "bg-emerald-500/15 border border-emerald-500/30 text-emerald-500"
-                  }`}
-                >
-                  {currentStage >= CWC_GANDHI_GHAT_BENCHMARKS.dangerLevel
-                    ? "DANGER LEVEL EXCEEDED · EVACUATION ACTIVE"
-                    : currentStage >= CWC_GANDHI_GHAT_BENCHMARKS.warningLevel
-                    ? "WARNING LEVEL EXCEEDED · STANDBY REGIME"
-                    : "NOMINAL RIVER CHANNEL CONTAINMENT"}
-                </span>
-              </div>
-            </div>
-
-            {/* 4 Impact Assessment Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* Card 1: Inundation Extent & Depth Surfaces */}
-              <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-3 flex flex-col justify-between">
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs font-mono text-[var(--muted-foreground)]">
-                    <span className="flex items-center gap-1.5">
-                      <Droplets className="w-3.5 h-3.5 text-sky-500" />
-                      Inundation Extent
-                    </span>
-                    <span className="text-emerald-500 font-bold">HAND Surface</span>
-                  </div>
-                  <div className="text-2xl font-extrabold font-mono text-[var(--foreground)]">
-                    {impactAssessment.inundationAreaKm2} <span className="text-xs font-normal text-[var(--muted-foreground)]">km²</span>
-                  </div>
-                  <p className="text-[11px] text-[var(--muted-foreground)]">
-                    Modeled active water footprint across low-lying riparian terraces.
-                  </p>
                 </div>
 
-                <div className="space-y-1.5 pt-2 border-t border-[var(--border)] text-xs font-mono">
-                  <div className="text-[10px] text-[var(--muted-foreground)] font-bold uppercase">Water Depth Profile:</div>
-                  <div className="flex justify-between items-center text-[11px]">
-                    <span className="text-[var(--muted-foreground)]">Min / Avg Depth:</span>
-                    <span className="font-bold text-[var(--foreground)]">{impactAssessment.waterDepthM.min}m / {impactAssessment.waterDepthM.avg}m</span>
-                  </div>
-                  <div className="flex justify-between items-center text-[11px]">
-                    <span className="text-[var(--muted-foreground)]">Max Crest Depth:</span>
-                    <span className="font-bold text-rose-500">{impactAssessment.waterDepthM.max}m</span>
-                  </div>
-                </div>
-              </div>
+                {/* TAB 1: DISASTER IMPACT INFOGRAPHICS */}
+                {activeTab === "impact" && (
+                  <div className="space-y-3 animate-in fade-in duration-150">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
+                      <div className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+                        <div className="text-[9px] text-[var(--muted-foreground)] uppercase">Inundation Footprint</div>
+                        <div className="text-lg font-extrabold text-[var(--foreground)] mt-0.5">{impactAssessment.inundationAreaKm2} km²</div>
+                        <div className="text-[9px] text-emerald-500">HAND Digital Terrain</div>
+                      </div>
 
-              {/* Card 2: Affected Population & Priority Wards */}
-              <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-3 flex flex-col justify-between">
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs font-mono text-[var(--muted-foreground)]">
-                    <span className="flex items-center gap-1.5">
-                      <Users className="w-3.5 h-3.5 text-amber-500" />
-                      Exposed Population
-                    </span>
-                    <span className="text-amber-500 font-bold">Census Spatial</span>
-                  </div>
-                  <div className="text-2xl font-extrabold font-mono text-[var(--foreground)]">
-                    {impactAssessment.exposedPopulation.toLocaleString()}
-                  </div>
-                  <p className="text-[11px] text-[var(--muted-foreground)]">
-                    Residents located within active flood depth surfaces ≥ 0.5m.
-                  </p>
-                </div>
+                      <div className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+                        <div className="text-[9px] text-[var(--muted-foreground)] uppercase">Exposed Population</div>
+                        <div className="text-lg font-extrabold text-amber-500 mt-0.5">{impactAssessment.exposedPopulation.toLocaleString()}</div>
+                        <div className="text-[9px] text-[var(--muted-foreground)]">Depth ≥ 0.5m</div>
+                      </div>
 
-                <div className="space-y-1.5 pt-2 border-t border-[var(--border)] text-xs">
-                  <div className="text-[10px] font-mono text-[var(--muted-foreground)] font-bold uppercase">Affected Wards:</div>
-                  <div className="flex flex-wrap gap-1">
-                    {impactAssessment.affectedWards.length > 0 ? (
-                      impactAssessment.affectedWards.map((w) => (
-                        <span key={w} className="px-1.5 py-0.5 rounded bg-[var(--surface-elevated)] border border-[var(--border)] text-[9px] font-mono text-[var(--foreground)]">
-                          {w}
-                        </span>
-                      ))
-                    ) : (
-                      <span className="text-[10px] text-[var(--muted-foreground)] font-mono">None currently exposed</span>
-                    )}
-                  </div>
-                </div>
-              </div>
+                      <div className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+                        <div className="text-[9px] text-[var(--muted-foreground)] uppercase">NDRF Boats Deployed</div>
+                        <div className="text-lg font-extrabold text-rose-500 mt-0.5">{impactAssessment.emergencyLogistics.ndrfBoatsDeployed} Boats</div>
+                        <div className="text-[9px] text-[var(--muted-foreground)]">Search & Rescue</div>
+                      </div>
 
-              {/* Card 3: Critical Infrastructure Exposure */}
-              <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-3 flex flex-col justify-between">
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs font-mono text-[var(--muted-foreground)]">
-                    <span className="flex items-center gap-1.5">
-                      <Building2 className="w-3.5 h-3.5 text-purple-500" />
-                      Infrastructure Cut Off
-                    </span>
-                    <span className="text-purple-500 font-bold">Asset Audit</span>
-                  </div>
-                  <div className="text-2xl font-extrabold font-mono text-[var(--foreground)]">
-                    {impactAssessment.criticalInfrastructure.roadsCutOff.length +
-                      impactAssessment.criticalInfrastructure.substationsAtRisk.length +
-                      impactAssessment.criticalInfrastructure.waterIntakesCompromised.length}
-                    <span className="text-xs font-normal text-[var(--muted-foreground)] ml-1">Assets</span>
-                  </div>
-                  <p className="text-[11px] text-[var(--muted-foreground)]">
-                    Critical roads, power substations, and municipal intakes compromised.
-                  </p>
-                </div>
-
-                <div className="space-y-1 pt-2 border-t border-[var(--border)] text-[10px] font-mono">
-                  <div className="text-[var(--foreground)] truncate">
-                    • Road: {impactAssessment.criticalInfrastructure.roadsCutOff[0] ?? "Nominal flow"}
-                  </div>
-                  <div className="text-[var(--foreground)] truncate">
-                    • Power: {impactAssessment.criticalInfrastructure.substationsAtRisk[0] ?? "All grids operational"}
-                  </div>
-                  <div className="text-[var(--foreground)] truncate">
-                    • Intake: {impactAssessment.criticalInfrastructure.waterIntakesCompromised[0] ?? "Normal intake"}
-                  </div>
-                </div>
-              </div>
-
-              {/* Card 4: Emergency Logistics & Recovery Window */}
-              <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-3 flex flex-col justify-between">
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs font-mono text-[var(--muted-foreground)]">
-                    <span className="flex items-center gap-1.5">
-                      <LifeBuoy className="w-3.5 h-3.5 text-emerald-500" />
-                      Emergency Logistics
-                    </span>
-                    <span className="text-emerald-500 font-bold">NDRF / SDRF</span>
-                  </div>
-                  <div className="text-2xl font-extrabold font-mono text-[var(--foreground)]">
-                    {impactAssessment.emergencyLogistics.ndrfBoatsDeployed} <span className="text-xs font-normal text-[var(--muted-foreground)]">Boats</span>
-                  </div>
-                  <p className="text-[11px] text-[var(--muted-foreground)]">
-                    Active motorized rescue boats & relief shelter mobilization.
-                  </p>
-                </div>
-
-                <div className="space-y-1.5 pt-2 border-t border-[var(--border)] text-xs font-mono">
-                  <div className="flex justify-between items-center text-[11px]">
-                    <span className="text-[var(--muted-foreground)]">Relief Shelters:</span>
-                    <span className="font-bold text-[var(--foreground)]">{impactAssessment.emergencyLogistics.reliefSheltersActivated} Camps</span>
-                  </div>
-                  <div className="flex justify-between items-center text-[11px]">
-                    <span className="text-[var(--muted-foreground)]">Recession Window:</span>
-                    <span className="font-bold text-teal-500">{impactAssessment.recoveryWindowDays} Days</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* TECHNICAL DEFENSE: System Architecture & Methodology Breakdown */}
-          <section className="p-5 sm:p-6 rounded-2xl border border-emerald-500/30 bg-[var(--surface-elevated)] backdrop-blur-xl shadow-xs space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[var(--border)]">
-              <div>
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block">
-                  TECHNICAL PANEL DEFENSE ARCHITECTURE
-                </span>
-                <h3 className="text-base font-bold text-[var(--foreground)] flex items-center gap-2 font-heading">
-                  <ShieldCheck className="w-4 h-4 text-emerald-500" /> Model Pipeline & Scientific Methodology
-                </h3>
-              </div>
-              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-mono font-bold">
-                BCA Technical Defense Reference
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-              {/* Component 1: Trained Machine Learning Pipeline */}
-              <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-2">
-                <div className="flex items-center gap-2 font-bold text-[var(--foreground)]">
-                  <Radio className="w-4 h-4 text-sky-500" />
-                  <span>1. Trained Machine Learning Models</span>
-                </div>
-                <p className="text-[11px] text-[var(--muted-foreground)] leading-relaxed">
-                  <strong>BiLSTM-ARIMA Deep Sequence Model:</strong> Trained on historical CWC Gandhi Ghat hydrometric records and IMD 0.25° gridded precipitation. Generates multi-lead stage trajectories (+6h, +12h, +24h, +48h, +72h) with 90% confidence bands.
-                </p>
-                <div className="text-[10px] font-mono text-sky-600 dark:text-sky-400 font-semibold pt-1 border-t border-[var(--border)]">
-                  • NSE: 0.962 · MAE: 0.28m · RMSE: 0.34m
-                </div>
-              </div>
-
-              {/* Component 2: Deterministic Physical Hydraulics */}
-              <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-2">
-                <div className="flex items-center gap-2 font-bold text-[var(--foreground)]">
-                  <Activity className="w-4 h-4 text-teal-500" />
-                  <span>2. Deterministic Physical Calculations</span>
-                </div>
-                <p className="text-[11px] text-[var(--muted-foreground)] leading-relaxed">
-                  <strong>Hydraulic Rating & Inundation Geometry:</strong> Manning's stage-discharge rating curves, Antecedent Soil Saturation Runoff (API index), and Height Above Nearest Drainage (HAND) digital terrain surface modeling.
-                </p>
-                <div className="text-[10px] font-mono text-teal-600 dark:text-teal-400 font-semibold pt-1 border-t border-[var(--border)]">
-                  • Mass balance water continuity preserved
-                </div>
-              </div>
-
-              {/* Component 3: AI Diagnostic Reasoning & Controlled Validation */}
-              <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-2">
-                <div className="flex items-center gap-2 font-bold text-[var(--foreground)]">
-                  <Sparkles className="w-4 h-4 text-amber-500" />
-                  <span>3. AI Diagnostic Reasoning & Ethics</span>
-                </div>
-                <p className="text-[11px] text-[var(--muted-foreground)] leading-relaxed">
-                  <strong>Causal Diagnostic Engine:</strong> Generates explainable natural-language assessments of physical interactions. Operates under controlled synthetic scenarios to safely evaluate multi-driver extremes without issuing false public alarms.
-                </p>
-                <div className="text-[10px] font-mono text-amber-600 dark:text-amber-400 font-semibold pt-1 border-t border-[var(--border)]">
-                  • Controlled synthetic evaluation mode
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* BOTTOM ROW: Analytics, Scenarios Comparison & Diagnostics */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-            {/* Bottom 1: Risk & Impact Analytics (lg:col-span-4) */}
-            <section className="lg:col-span-4 p-5 sm:p-6 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-xl shadow-xs flex flex-col justify-between space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
-                <h3 className="text-sm font-bold text-[var(--foreground)] flex items-center gap-2 font-heading">
-                  <Droplets className="w-4 h-4 text-emerald-500" /> Risk & Impact Analytics
-                </h3>
-              </div>
-
-              {/* Grid: Gauge on Left, Impact Summary on Right */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
-                <RiskGauge score={currentRisk} severity={result?.result.severity} />
-
-                <div className="space-y-3">
-                  <div className="text-[11px] font-bold text-[var(--muted-foreground)] uppercase tracking-wider">
-                    Impact Summary
-                  </div>
-                  <div className="space-y-2 text-xs">
-                    <div className="flex items-center justify-between text-[var(--foreground)]/80">
-                      <span className="flex items-center gap-2">
-                        <Users className="w-3.5 h-3.5 text-[var(--muted-foreground)]" /> People at Risk
-                      </span>
-                      <span className="font-mono font-bold text-[var(--foreground)]">
-                        {exposedPopulation.toLocaleString()}
-                      </span>
+                      <div className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+                        <div className="text-[9px] text-[var(--muted-foreground)] uppercase">Relief Shelters</div>
+                        <div className="text-lg font-extrabold text-teal-400 mt-0.5">{impactAssessment.emergencyLogistics.reliefSheltersActivated} Camps</div>
+                        <div className="text-[9px] text-[var(--muted-foreground)]">Recession: {impactAssessment.recoveryWindowDays}d</div>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between text-[var(--foreground)]/80">
-                      <span className="flex items-center gap-2">
-                        <Activity className="w-3.5 h-3.5 text-[var(--muted-foreground)]" /> Affected Area
-                      </span>
-                      <span className="font-mono font-bold text-[var(--foreground)]">
-                        {impactAssessment.inundationAreaKm2} km²
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-[var(--foreground)]/80">
-                      <span className="flex items-center gap-2">
-                        <AlertTriangle className="w-3.5 h-3.5 text-[var(--muted-foreground)]" /> Severity
-                      </span>
-                      <span
-                        className={`font-semibold ${
-                          currentRisk >= 70
-                            ? "text-rose-500"
-                            : currentRisk >= 30
-                            ? "text-amber-500"
-                            : "text-emerald-500"
-                        }`}
-                      >
-                        {currentDayState.aiSeverity}
-                      </span>
+
+                    {/* Affected Wards & Compromised Infrastructure Infographic Pills */}
+                    <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-2">
+                      <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--muted-foreground)] flex justify-between">
+                        <span>Spatial Ward & Infrastructure Impact:</span>
+                        <span className="text-rose-500">{impactAssessment.affectedWards.length} Wards Impacted</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {impactAssessment.affectedWards.map((w) => (
+                          <span key={w} className="px-2 py-0.5 rounded-md bg-[var(--surface-elevated)] border border-[var(--border)] text-[10px] font-mono text-[var(--foreground)]">
+                            {w}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="text-[10px] font-mono text-[var(--muted-foreground)] pt-1 border-t border-[var(--border)] flex justify-between">
+                        <span>Roads Cut: {impactAssessment.criticalInfrastructure.roadsCutOff[0] ?? "None"}</span>
+                        <span>Power Grids: {impactAssessment.criticalInfrastructure.substationsAtRisk[0] ?? "Nominal"}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
+                )}
 
-              {/* Safety validation pill */}
-              <div
-                className={`p-2.5 rounded-xl border text-xs flex items-center gap-2 font-medium ${
-                  currentStage >= CWC_GANDHI_GHAT_BENCHMARKS.dangerLevel
-                    ? "bg-rose-500/10 border-rose-500/20 text-rose-600 dark:text-rose-400"
-                    : "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
-                }`}
-              >
-                {currentStage >= CWC_GANDHI_GHAT_BENCHMARKS.dangerLevel ? (
-                  <>
-                    <AlertTriangle className="w-4 h-4 text-rose-500 shrink-0" />
-                    <span>Danger mark exceeded: Floodplain advisory active.</span>
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                    <span>Risk remains within safe containment limits.</span>
-                  </>
+                {/* TAB 2: AI CAUSAL DIAGNOSTICS */}
+                {activeTab === "diagnostic" && (
+                  <div className="space-y-3 animate-in fade-in duration-150">
+                    <div className="p-3.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-2">
+                      <div className="flex items-center gap-2 text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                        <Sparkles className="w-3.5 h-3.5" />
+                        <span>SURAKSHA Multi-Variable Reasoning · {currentDayState.label}</span>
+                      </div>
+                      <p className="text-xs text-[var(--foreground)]/85 leading-relaxed">
+                        {currentDayState.diagnostic}
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-mono">
+                      <div className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+                        <span className="text-[9px] text-[var(--muted-foreground)] uppercase block">Synthetic Ground Truth (Ht)</span>
+                        <span className="text-base font-bold text-[var(--foreground)] mt-0.5 block">{currentStage.toFixed(2)} m</span>
+                        <span className="text-[9px] text-emerald-500">Observed State</span>
+                      </div>
+                      <div className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+                        <span className="text-[9px] text-[var(--muted-foreground)] uppercase block">AI BiLSTM Forecast (Ĥt)</span>
+                        <span className="text-base font-bold text-sky-500 mt-0.5 block">{currentDayState.aiForecastStage.toFixed(2)} m</span>
+                        <span className="text-[9px] text-sky-400">Sequence Model</span>
+                      </div>
+                      <div className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+                        <span className="text-[9px] text-[var(--muted-foreground)] uppercase block">Model Residual (Δ)</span>
+                        <span className="text-base font-bold text-amber-500 mt-0.5 block">±{Math.abs(currentStage - currentDayState.aiForecastStage).toFixed(2)} m</span>
+                        <span className="text-[9px] text-[var(--muted-foreground)]">Residual Error</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB 3: BCA TECHNICAL DEFENSE ARCHITECTURE */}
+                {activeTab === "defense" && (
+                  <div className="space-y-3 animate-in fade-in duration-150 text-xs">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-1.5">
+                        <div className="flex items-center gap-1.5 font-bold text-[var(--foreground)]">
+                          <Radio className="w-3.5 h-3.5 text-sky-500" />
+                          <span>1. Trained ML Sequence</span>
+                        </div>
+                        <p className="text-[10px] text-[var(--muted-foreground)] leading-relaxed">
+                          BiLSTM-ARIMA neural network captures multi-horizon temporal lags (+6h, +12h, +24h) from upstream discharge.
+                        </p>
+                        <div className="text-[9px] font-mono text-sky-400 font-bold pt-1 border-t border-[var(--border)]">
+                          NSE: 0.962 · MAE: 0.28m
+                        </div>
+                      </div>
+
+                      <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-1.5">
+                        <div className="flex items-center gap-1.5 font-bold text-[var(--foreground)]">
+                          <Activity className="w-3.5 h-3.5 text-teal-500" />
+                          <span>2. Physical Hydraulics</span>
+                        </div>
+                        <p className="text-[10px] text-[var(--muted-foreground)] leading-relaxed">
+                          Manning's rating equations, Antecedent Soil Saturation Runoff (API index), and HAND elevation geometry.
+                        </p>
+                        <div className="text-[9px] font-mono text-teal-400 font-bold pt-1 border-t border-[var(--border)]">
+                          Mass continuity strictly bounded
+                        </div>
+                      </div>
+
+                      <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-1.5">
+                        <div className="flex items-center gap-1.5 font-bold text-[var(--foreground)]">
+                          <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                          <span>3. AI Diagnostic Reasoning</span>
+                        </div>
+                        <p className="text-[10px] text-[var(--muted-foreground)] leading-relaxed">
+                          Explainable reasoning engine operating under controlled synthetic scenarios for safe extreme-event testing.
+                        </p>
+                        <div className="text-[9px] font-mono text-amber-400 font-bold pt-1 border-t border-[var(--border)]">
+                          Zero false public alarms
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 )}
               </div>
-            </section>
-
-            {/* Bottom 2: Scenario Comparison (lg:col-span-4) with strictly bounded heights */}
-            <section className="lg:col-span-4 p-5 sm:p-6 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-xl shadow-xs flex flex-col justify-between">
-              <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
-                <h3 className="text-sm font-bold text-[var(--foreground)] flex items-center gap-2 font-heading">
-                  <TrendingUp className="w-4 h-4 text-emerald-500" /> Scenario Comparison
-                </h3>
-              </div>
-
-              <ScenarioComparisonChart
-                currentStage={currentStage}
-                currentRisk={currentRisk}
-                currentExposed={exposedPopulation}
-              />
-            </section>
-
-            {/* Bottom 3: Simulation Diagnostics & Closed-Loop Validation (lg:col-span-4) */}
-            <section className="lg:col-span-4 p-5 sm:p-6 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-xl shadow-xs flex flex-col justify-between space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
-                <h3 className="text-sm font-bold text-[var(--foreground)] flex items-center gap-2 font-heading">
-                  <ShieldCheck className="w-4 h-4 text-emerald-500" /> Simulation Diagnostics
-                </h3>
-                <span className="text-[11px] font-mono text-[var(--muted-foreground)] flex items-center gap-1 cursor-pointer hover:text-[var(--foreground)]">
-                  Run Details <ChevronDown className="w-3 h-3" />
-                </span>
-              </div>
-
-              {/* Step Checklist */}
-              <div className="space-y-3 font-mono text-xs">
-                <div className="flex items-center justify-between p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
-                  <div className="flex items-center gap-2 text-[var(--foreground)]">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                    <span>Input Parameters Valid</span>
-                  </div>
-                  <span className="text-[10px] text-[var(--muted-foreground)]">Nov 24, {lastRunTime}</span>
-                </div>
-
-                <div className="flex items-center justify-between p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
-                  <div className="flex items-center gap-2 text-[var(--foreground)]">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                    <span>Forecast Computation Complete</span>
-                  </div>
-                  <span className="text-[10px] text-[var(--muted-foreground)]">Nov 24, {lastRunTime}</span>
-                </div>
-
-                <div className="flex items-center justify-between p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
-                  <div className="flex items-center gap-2 text-[var(--foreground)]">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                    <span>Safety Review Passed</span>
-                  </div>
-                  <span className="text-[10px] text-[var(--muted-foreground)]">Nov 24, {lastRunTime}</span>
-                </div>
-              </div>
-
-              {/* Scientific Accuracy Metrics Box */}
-              <div className="p-3 rounded-xl bg-[var(--surface)] border border-[var(--border)] space-y-1.5 font-mono text-[11px]">
-                <div className="text-[10px] uppercase font-bold text-[var(--muted-foreground)]">
-                  Closed-Loop Model Accuracy
-                </div>
-                <div className="flex justify-between items-center text-[var(--foreground)]">
-                  <span>Nash-Sutcliffe (NSE):</span>
-                  <span className="font-bold text-emerald-500">0.962 (Operational)</span>
-                </div>
-                <div className="flex justify-between items-center text-[var(--foreground)]">
-                  <span>Mean Absolute Error (MAE):</span>
-                  <span className="font-bold text-sky-500">0.28 m</span>
-                </div>
-                <div className="flex justify-between items-center text-[var(--foreground)]">
-                  <span>Root Mean Square Error (RMSE):</span>
-                  <span className="font-bold text-teal-500">0.34 m</span>
-                </div>
-              </div>
-
-              {/* Completion Banner */}
-              <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 space-y-1">
-                <div className="flex items-center gap-2 text-xs font-bold text-emerald-800 dark:text-emerald-200">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span>Simulation completed successfully!</span>
-                </div>
-                <p className="text-[10px] text-emerald-600 dark:text-emerald-400 leading-relaxed pl-6">
-                  Results are indicative and not a real-time forecast.
-                </p>
-              </div>
-
-              {/* Research Safety Notice */}
-              <p className="text-[10px] text-[var(--muted-foreground)] leading-relaxed border-t border-[var(--border)] pt-3">
-                Synthetic scenario only: this offline run did not check a live authority bulletin or external source. Model outputs serve decision support and research evaluation.
-              </p>
-            </section>
+            </div>
           </div>
+
+          {/* RESEARCH SAFETY NOTICE */}
+          <p className="text-[10px] text-[var(--muted-foreground)] leading-relaxed border-t border-[var(--border)] pt-2.5">
+            Synthetic scenario only: this offline run did not check a live authority bulletin or external source. Model outputs serve decision support and research evaluation.
+          </p>
         </div>
       </main>
 
-      {/* Custom Scenario Creator Studio Modal */}
+      {/* CUSTOM SCENARIO CREATOR STUDIO MODAL */}
       {isStudioOpen && (
         <div
           role="dialog"
@@ -2163,13 +1411,11 @@ export default function DemoLabPage() {
             if (e.target === e.currentTarget) setIsStudioOpen(false);
           }}
         >
-          <div className="relative w-full max-w-2xl rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl p-6 space-y-6 max-h-[90vh] overflow-y-auto">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-[var(--border)]">
+          <div className="relative w-full max-w-2xl rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl p-6 space-y-5 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
               <div>
                 <div className="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
-                  <Sliders className="w-3.5 h-3.5" />
-                  CUSTOM SCENARIO STUDIO
+                  <Sliders className="w-3.5 h-3.5" /> CUSTOM SCENARIO STUDIO
                 </div>
                 <h2 id="studio-modal-title" className="text-xl font-heading font-extrabold text-[var(--foreground)] mt-0.5">
                   Design Custom Flood Event
@@ -2185,10 +1431,9 @@ export default function DemoLabPage() {
               </button>
             </div>
 
-            {/* Form Body */}
-            <div className="space-y-5">
-              {/* Scenario Name */}
-              <div className="space-y-1.5">
+            {/* Custom Studio Form Body */}
+            <div className="space-y-4">
+              <div className="space-y-1">
                 <label htmlFor="customTitle" className="text-xs font-bold text-[var(--foreground)]">
                   Scenario Title
                 </label>
@@ -2197,84 +1442,17 @@ export default function DemoLabPage() {
                   type="text"
                   value={customTitle}
                   onChange={(e) => setCustomTitle(e.target.value)}
-                  placeholder="e.g. Extreme Early Monsoon Cloudburst"
-                  className="w-full px-3.5 py-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-xs text-[var(--foreground)] font-medium focus:outline-none focus:border-emerald-500"
+                  placeholder="e.g. Extreme Alaknanda Glacial Lake Burst + Patna Cloudburst"
+                  className="w-full px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-xs text-[var(--foreground)] font-medium focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
-              {/* Multi-Select Event Driver System */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-xs font-bold text-[var(--foreground)]">
-                  <span className="flex items-center gap-1.5">
-                    <Layers className="w-3.5 h-3.5 text-emerald-500" />
-                    Configure Environmental Event Drivers
-                  </span>
-                  <span className="text-[10px] font-mono text-[var(--muted-foreground)] font-normal">
-                    Multi-select ({customDrivers.length} active)
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {SIMULATION_EVENT_DRIVERS.map((driver) => {
-                    const isSelected = customDrivers.includes(driver.id);
-                    return (
-                      <button
-                        key={driver.id}
-                        type="button"
-                        onClick={() => toggleCustomDriver(driver.id)}
-                        className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1 select-none ${
-                          isSelected
-                            ? "bg-emerald-500/15 border-emerald-500/50 text-[var(--foreground)] shadow-xs"
-                            : "bg-[var(--surface)] border-[var(--border)] text-[var(--muted-foreground)] hover:border-emerald-500/30 hover:text-[var(--foreground)]"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className={isSelected ? "text-emerald-500" : "text-[var(--muted-foreground)]"}>
-                            {renderDriverIcon(driver.id)}
-                          </span>
-                          <span
-                            className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-bold ${
-                              isSelected
-                                ? "bg-emerald-500 text-white"
-                                : "bg-[var(--surface-elevated)] border border-[var(--border)] text-[var(--muted-foreground)]"
-                            }`}
-                          >
-                            {isSelected ? "ON" : "OFF"}
-                          </span>
-                        </div>
-                        <div className="text-[10px] font-bold leading-tight truncate mt-1">
-                          {driver.name}
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* Auto-derived Compound Surge Badge */}
-                {isCustomCompound && (
-                  <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between text-xs font-mono">
-                    <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-bold">
-                      <Waves className="w-4 h-4 shrink-0" />
-                      <span>COMPOUND SURGE EVENT (AUTOMATICALLY DERIVED)</span>
-                    </div>
-                    <span className="text-[10px] text-[var(--muted-foreground)]">
-                      Multiple Interacting Drivers
-                    </span>
-                  </div>
-                )}
-
-                <p className="text-[10px] text-[var(--muted-foreground)] italic pt-0.5">
-                  * Note: Drawdown represents the natural post-flood recession phase (Days 19–21 after the peak), not a flood-generating event driver.
-                </p>
-              </div>
-
-              {/* Multi-variable Parameters Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                {/* Starting River Discharge Multiplier */}
-                <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-1.5">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-[var(--foreground)]">River Discharge Multiplier</span>
-                    <span className="font-mono text-emerald-500 font-bold">{customInflow.toFixed(2)}×</span>
+              {/* Sliders */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-1">
+                  <div className="flex justify-between">
+                    <span>Discharge Inflow Multiplier:</span>
+                    <strong className="font-mono text-emerald-500">{customInflow.toFixed(2)}×</strong>
                   </div>
                   <input
                     type="range"
@@ -2283,139 +1461,51 @@ export default function DemoLabPage() {
                     step="0.05"
                     value={customInflow}
                     onChange={(e) => setCustomInflow(Number(e.target.value))}
-                    className="w-full accent-emerald-500 cursor-pointer"
+                    className="w-full accent-emerald-500 cursor-pointer h-1.5"
                   />
-                  <div className="flex justify-between text-[9px] text-[var(--muted-foreground)] font-mono">
-                    <span>0.5× (Low)</span>
-                    <span>3.0× (Torrential)</span>
-                  </div>
                 </div>
 
-                {/* Added Rainfall Anomaly */}
-                <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-1.5">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-[var(--foreground)]">Precipitation Anomaly</span>
-                    <span className="font-mono text-sky-500 font-bold">{customRainfall} mm</span>
+                <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-1">
+                  <div className="flex justify-between">
+                    <span>Added 24h Rainfall:</span>
+                    <strong className="font-mono text-sky-500">{customRainfall} mm</strong>
                   </div>
                   <input
                     type="range"
                     min="0"
                     max="500"
-                    step="5"
+                    step="10"
                     value={customRainfall}
                     onChange={(e) => setCustomRainfall(Number(e.target.value))}
-                    className="w-full accent-sky-500 cursor-pointer"
-                  />
-                  <div className="flex justify-between text-[9px] text-[var(--muted-foreground)] font-mono">
-                    <span>0 mm</span>
-                    <span>500 mm (Cloudburst)</span>
-                  </div>
-                </div>
-
-                {/* Glacial Melt Anomaly */}
-                <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-1.5">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-[var(--foreground)]">Cryosphere Melt Index</span>
-                    <span className="font-mono text-teal-500 font-bold">{customSnowmelt.toFixed(1)}×</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="1.0"
-                    max="3.0"
-                    step="0.1"
-                    value={customSnowmelt}
-                    onChange={(e) => setCustomSnowmelt(Number(e.target.value))}
-                    className="w-full accent-teal-500 cursor-pointer"
-                  />
-                  <div className="flex justify-between text-[9px] text-[var(--muted-foreground)] font-mono">
-                    <span>1.0× (Baseline)</span>
-                    <span>3.0× (Rapid Thaw)</span>
-                  </div>
-                </div>
-
-                {/* Catchment Soil Saturation */}
-                <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-1.5">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-[var(--foreground)]">Soil Saturation</span>
-                    <span className="font-mono text-amber-500 font-bold">{customSoil}%</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="20"
-                    max="100"
-                    step="5"
-                    value={customSoil}
-                    onChange={(e) => setCustomSoil(Number(e.target.value))}
-                    className="w-full accent-amber-500 cursor-pointer"
-                  />
-                  <div className="flex justify-between text-[9px] text-[var(--muted-foreground)] font-mono">
-                    <span>20% (Dry)</span>
-                    <span>100% (Saturated)</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Tributary Confluence & Breach Toggle */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-1.5">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-[var(--foreground)]">Tributary Confluence Flow</span>
-                    <span className="font-mono text-purple-500 font-bold">{customTributary.toLocaleString()} m³/s</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="2000"
-                    max="12000"
-                    step="200"
-                    value={customTributary}
-                    onChange={(e) => setCustomTributary(Number(e.target.value))}
-                    className="w-full accent-purple-500 cursor-pointer"
-                  />
-                  <div className="flex justify-between text-[9px] text-[var(--muted-foreground)] font-mono">
-                    <span>2,000 m³/s</span>
-                    <span>12,000 m³/s</span>
-                  </div>
-                </div>
-
-                <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] flex items-center justify-between">
-                  <div className="space-y-0.5 pr-2">
-                    <div className="text-xs font-semibold text-[var(--foreground)]">Danapur Embankment Breach</div>
-                    <div className="text-[10px] text-[var(--muted-foreground)]">Simulate structural failure if stage crosses 48.2m</div>
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={customBreachRisk}
-                    onChange={(e) => setCustomBreachRisk(e.target.checked)}
-                    className="w-4 h-4 accent-rose-500 cursor-pointer shrink-0"
+                    className="w-full accent-sky-500 cursor-pointer h-1.5"
                   />
                 </div>
               </div>
 
               {/* Real-time Preview Pill */}
-              <div className="p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 flex items-center justify-between text-xs font-mono">
-                <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold">
-                  <Sparkles className="w-4 h-4" />
-                  <span>Predicted Simulation Output:</span>
+              <div className="p-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 flex items-center justify-between text-xs font-mono">
+                <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-bold">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Predicted Peak Stage:</span>
                 </div>
-                <div className="text-[var(--foreground)]">
-                  Est. Peak: ~{(44.0 + Math.pow(Math.max(0, (21000 * customInflow + customRainfall * 40 + customTributary * 0.4) - 18000) / 5200, 0.72)).toFixed(2)}m
+                <div className="text-[var(--foreground)] font-bold">
+                  ~{(44.0 + Math.pow(Math.max(0, (21000 * customInflow + customRainfall * 40 + customTributary * 0.4) - 18000) / 5200, 0.72)).toFixed(2)}m
                 </div>
               </div>
             </div>
 
-            {/* Modal Actions */}
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-[var(--border)]">
+            <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[var(--border)]">
               <button
                 type="button"
                 onClick={() => setIsStudioOpen(false)}
-                className="px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-elevated)] text-xs font-semibold text-[var(--foreground)] transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-elevated)] text-xs font-semibold text-[var(--foreground)] transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleCreateAndLaunchCustomScenario}
-                className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white dark:text-black font-bold text-xs flex items-center gap-2 transition-all shadow-md shadow-emerald-500/25 active:scale-95 cursor-pointer"
+                className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white dark:text-black font-bold text-xs flex items-center gap-1.5 transition-all shadow-md shadow-emerald-500/25 active:scale-95 cursor-pointer"
               >
                 <span>Launch Live 21-Day Simulation</span>
                 <Play className="w-3.5 h-3.5 fill-current" />
@@ -2425,7 +1515,7 @@ export default function DemoLabPage() {
         </div>
       )}
 
-      {/* Detailed Forecast Horizon Inspector Modal */}
+      {/* DETAILED FORECAST HORIZON INSPECTOR MODAL */}
       {isForecastModalOpen && (
         <div
           role="dialog"
@@ -2436,18 +1526,16 @@ export default function DemoLabPage() {
             if (e.target === e.currentTarget) setIsForecastModalOpen(false);
           }}
         >
-          <div className="relative w-full max-w-3xl rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl p-6 space-y-6 max-h-[90vh] overflow-y-auto">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-[var(--border)]">
+          <div className="relative w-full max-w-3xl rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl p-6 space-y-5 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
               <div>
                 <div className="text-[10px] font-mono font-bold uppercase tracking-widest text-sky-500 flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5" />
-                  DETAILED HYDROLOGICAL FORECAST HORIZON
+                  <Clock className="w-3.5 h-3.5" /> DETAILED HYDROLOGICAL FORECAST HORIZON
                 </div>
                 <h2 id="forecast-modal-title" className="text-xl font-heading font-extrabold text-[var(--foreground)] mt-0.5">
                   Reach Inundation & Multi-Lead Forecast Analysis
                 </h2>
-                <div className="flex items-center gap-2 text-xs text-[var(--muted-foreground)] mt-1 font-mono">
+                <div className="flex items-center gap-2 text-xs text-[var(--muted-foreground)] mt-0.5 font-mono">
                   <span>{selectedStation.id}</span>
                   <span>·</span>
                   <span>{selectedStation.name}</span>
@@ -2466,36 +1554,36 @@ export default function DemoLabPage() {
             </div>
 
             {/* Key Summary Metrics Cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
-              <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
-                <div className="text-[10px] text-[var(--muted-foreground)]">PEAK STAGE</div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs font-mono">
+              <div className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+                <div className="text-[9px] text-[var(--muted-foreground)]">PEAK STAGE</div>
                 <div className="text-base font-bold text-[var(--foreground)] mt-0.5">{currentStage.toFixed(2)} m</div>
-                <div className="text-[10px] text-emerald-500 mt-0.5">
-                  {currentStage >= CWC_GANDHI_GHAT_BENCHMARKS.dangerLevel ? "▲ Danger Exceeded" : "Nominal Containment"}
+                <div className="text-[9px] text-emerald-500 mt-0.5">
+                  {currentStage >= selectedStation.dangerLevel ? "▲ Danger Exceeded" : "Nominal"}
                 </div>
               </div>
 
-              <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
-                <div className="text-[10px] text-[var(--muted-foreground)]">MODEL LEAD</div>
+              <div className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+                <div className="text-[9px] text-[var(--muted-foreground)]">MODEL LEAD</div>
                 <div className="text-base font-bold text-[var(--foreground)] mt-0.5">72-Hour Causal</div>
-                <div className="text-[10px] text-[var(--muted-foreground)] mt-0.5">BiLSTM-ARIMA</div>
+                <div className="text-[9px] text-[var(--muted-foreground)] mt-0.5">BiLSTM-ARIMA</div>
               </div>
 
-              <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
-                <div className="text-[10px] text-[var(--muted-foreground)]">NSE ACCURACY</div>
+              <div className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+                <div className="text-[9px] text-[var(--muted-foreground)]">NSE ACCURACY</div>
                 <div className="text-base font-bold text-emerald-500 mt-0.5">0.962</div>
-                <div className="text-[10px] text-[var(--muted-foreground)] mt-0.5">MAE: 0.28m</div>
+                <div className="text-[9px] text-[var(--muted-foreground)] mt-0.5">MAE: 0.28m</div>
               </div>
 
-              <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
-                <div className="text-[10px] text-[var(--muted-foreground)]">EXPOSED POPULATION</div>
+              <div className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+                <div className="text-[9px] text-[var(--muted-foreground)]">EXPOSED PEOPLE</div>
                 <div className="text-base font-bold text-amber-500 mt-0.5">{exposedPopulation.toLocaleString()}</div>
-                <div className="text-[10px] text-[var(--muted-foreground)] mt-0.5">HAND Surface Depth</div>
+                <div className="text-[9px] text-[var(--muted-foreground)] mt-0.5">HAND Surface</div>
               </div>
             </div>
 
             {/* Multi-Horizon Step Table */}
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <div className="text-xs font-bold text-[var(--foreground)] font-heading">
                 Step-by-Step Predictive Horizon Progression
               </div>
@@ -2503,105 +1591,63 @@ export default function DemoLabPage() {
                 <table className="w-full text-left text-xs">
                   <thead className="bg-[var(--surface)] text-[10px] font-mono uppercase text-[var(--muted-foreground)] border-b border-[var(--border)]">
                     <tr>
-                      <th className="p-2.5">Horizon</th>
-                      <th className="p-2.5">Forecast Stage</th>
-                      <th className="p-2.5">90% Confidence Interval</th>
-                      <th className="p-2.5">Est. Discharge</th>
-                      <th className="p-2.5">Hazard Regime</th>
+                      <th className="p-2">Horizon</th>
+                      <th className="p-2">Forecast Stage</th>
+                      <th className="p-2">90% Confidence Interval</th>
+                      <th className="p-2">Est. Discharge</th>
+                      <th className="p-2">Hazard Regime</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[var(--border)] font-mono text-xs">
                     <tr>
-                      <td className="p-2.5 font-bold text-[var(--foreground)]">Now (T+0)</td>
-                      <td className="p-2.5">{(currentStage - 0.45).toFixed(2)} m</td>
-                      <td className="p-2.5 text-[var(--muted-foreground)]">±0.04 m</td>
-                      <td className="p-2.5">24,200 m³/s</td>
-                      <td className="p-2.5"><span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-[10px]">SAFE BASELINE</span></td>
+                      <td className="p-2 font-bold text-[var(--foreground)]">Now (T+0)</td>
+                      <td className="p-2">{(currentStage - 0.45).toFixed(2)} m</td>
+                      <td className="p-2 text-[var(--muted-foreground)]">±0.04 m</td>
+                      <td className="p-2">24,200 m³/s</td>
+                      <td className="p-2"><span className="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-[10px]">SAFE BASELINE</span></td>
                     </tr>
                     <tr>
-                      <td className="p-2.5 font-bold text-[var(--foreground)]">+3h Lead</td>
-                      <td className="p-2.5">{(currentStage - 0.2).toFixed(2)} m</td>
-                      <td className="p-2.5 text-[var(--muted-foreground)]">±0.10 m</td>
-                      <td className="p-2.5">26,900 m³/s</td>
-                      <td className="p-2.5"><span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-[10px]">INFLOW SWELL</span></td>
+                      <td className="p-2 font-bold text-[var(--foreground)]">+3h Lead</td>
+                      <td className="p-2">{(currentStage - 0.2).toFixed(2)} m</td>
+                      <td className="p-2 text-[var(--muted-foreground)]">±0.10 m</td>
+                      <td className="p-2">26,900 m³/s</td>
+                      <td className="p-2"><span className="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-[10px]">INFLOW SWELL</span></td>
                     </tr>
                     <tr className="bg-sky-500/5">
-                      <td className="p-2.5 font-bold text-sky-500">+6h Lead</td>
-                      <td className="p-2.5 font-bold text-[var(--foreground)]">{currentStage.toFixed(2)} m</td>
-                      <td className="p-2.5 text-[var(--muted-foreground)]">±0.18 m</td>
-                      <td className="p-2.5">29,800 m³/s</td>
-                      <td className="p-2.5">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${currentStage >= CWC_GANDHI_GHAT_BENCHMARKS.dangerLevel ? "bg-rose-500/15 text-rose-500" : currentStage >= CWC_GANDHI_GHAT_BENCHMARKS.warningLevel ? "bg-amber-500/15 text-amber-500" : "bg-emerald-500/15 text-emerald-500"}`}>
-                          {currentStage >= CWC_GANDHI_GHAT_BENCHMARKS.dangerLevel ? "DANGER SURGE" : currentStage >= CWC_GANDHI_GHAT_BENCHMARKS.warningLevel ? "WARNING REGIME" : "ELEVATED"}
+                      <td className="p-2 font-bold text-sky-500">+6h Lead</td>
+                      <td className="p-2 font-bold text-[var(--foreground)]">{currentStage.toFixed(2)} m</td>
+                      <td className="p-2 text-[var(--muted-foreground)]">±0.18 m</td>
+                      <td className="p-2">29,800 m³/s</td>
+                      <td className="p-2">
+                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${currentStage >= selectedStation.dangerLevel ? "bg-rose-500/15 text-rose-500" : currentStage >= selectedStation.warningLevel ? "bg-amber-500/15 text-amber-500" : "bg-emerald-500/15 text-emerald-500"}`}>
+                          {currentStage >= selectedStation.dangerLevel ? "DANGER SURGE" : currentStage >= selectedStation.warningLevel ? "WARNING REGIME" : "ELEVATED"}
                         </span>
                       </td>
                     </tr>
                     <tr>
-                      <td className="p-2.5 font-bold text-[var(--foreground)]">+12h Lead</td>
-                      <td className="p-2.5">{(result?.result.forecast.t_plus_12 ?? (currentStage - 0.35)).toFixed(2)} m</td>
-                      <td className="p-2.5 text-[var(--muted-foreground)]">±0.25 m</td>
-                      <td className="p-2.5">34,100 m³/s</td>
-                      <td className="p-2.5"><span className="px-2 py-0.5 rounded bg-amber-500/15 text-amber-500 text-[10px]">TRIBUTARY INGRESS</span></td>
+                      <td className="p-2 font-bold text-[var(--foreground)]">+12h Lead</td>
+                      <td className="p-2">{(result?.result.forecast.t_plus_12 ?? (currentStage - 0.35)).toFixed(2)} m</td>
+                      <td className="p-2 text-[var(--muted-foreground)]">±0.25 m</td>
+                      <td className="p-2">34,100 m³/s</td>
+                      <td className="p-2"><span className="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-500 text-[10px]">TRIBUTARY INGRESS</span></td>
                     </tr>
                     <tr className="bg-emerald-500/5">
-                      <td className="p-2.5 font-bold text-emerald-600 dark:text-emerald-400">+24h Lead</td>
-                      <td className="p-2.5 font-bold text-[var(--foreground)]">{(result?.result.forecast.t_plus_24 ?? (currentStage - 0.75)).toFixed(2)} m</td>
-                      <td className="p-2.5 text-[var(--muted-foreground)]">±0.38 m</td>
-                      <td className="p-2.5">38,500 m³/s</td>
-                      <td className="p-2.5"><span className="px-2 py-0.5 rounded bg-teal-500/15 text-teal-400 text-[10px]">DIURNAL CREST</span></td>
-                    </tr>
-                    <tr>
-                      <td className="p-2.5 font-bold text-[var(--foreground)]">+48h Lead</td>
-                      <td className="p-2.5">{(currentStage - 1.1).toFixed(2)} m</td>
-                      <td className="p-2.5 text-[var(--muted-foreground)]">±0.52 m</td>
-                      <td className="p-2.5">32,400 m³/s</td>
-                      <td className="p-2.5"><span className="px-2 py-0.5 rounded bg-teal-500/15 text-teal-400 text-[10px]">RECESSION WATCH</span></td>
-                    </tr>
-                    <tr>
-                      <td className="p-2.5 font-bold text-[var(--foreground)]">+72h Lead</td>
-                      <td className="p-2.5">{(currentStage - 1.45).toFixed(2)} m</td>
-                      <td className="p-2.5 text-[var(--muted-foreground)]">±0.68 m</td>
-                      <td className="p-2.5">27,800 m³/s</td>
-                      <td className="p-2.5"><span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-[10px]">RECOVERY BASEFLOW</span></td>
+                      <td className="p-2 font-bold text-emerald-600 dark:text-emerald-400">+24h Lead</td>
+                      <td className="p-2 font-bold text-[var(--foreground)]">{(result?.result.forecast.t_plus_24 ?? (currentStage - 0.75)).toFixed(2)} m</td>
+                      <td className="p-2 text-[var(--muted-foreground)]">±0.38 m</td>
+                      <td className="p-2">38,500 m³/s</td>
+                      <td className="p-2"><span className="px-1.5 py-0.5 rounded bg-teal-500/15 text-teal-400 text-[10px]">DIURNAL CREST</span></td>
                     </tr>
                   </tbody>
                 </table>
               </div>
             </div>
 
-            {/* Datum Threshold Proximity Matrix */}
-            <div className="p-3.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-2">
-              <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--muted-foreground)]">
-                Datum Threshold Proximity ({selectedStation.shortName})
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-mono">
-                <div className="p-2 rounded-lg bg-[var(--surface-elevated)] border border-[var(--border)] flex justify-between items-center">
-                  <span className="text-[var(--muted-foreground)]">Warning ({selectedStation.warningLevel}m):</span>
-                  <span className={`font-bold ${currentStage >= selectedStation.warningLevel ? "text-amber-500" : "text-emerald-500"}`}>
-                    {currentStage >= selectedStation.warningLevel ? `+${(currentStage - selectedStation.warningLevel).toFixed(2)}m (EXCEEDED)` : `${(currentStage - selectedStation.warningLevel).toFixed(2)}m (Safe)`}
-                  </span>
-                </div>
-                <div className="p-2 rounded-lg bg-[var(--surface-elevated)] border border-[var(--border)] flex justify-between items-center">
-                  <span className="text-[var(--muted-foreground)]">Danger ({selectedStation.dangerLevel}m):</span>
-                  <span className={`font-bold ${currentStage >= selectedStation.dangerLevel ? "text-rose-500" : "text-emerald-500"}`}>
-                    {currentStage >= selectedStation.dangerLevel ? `+${(currentStage - selectedStation.dangerLevel).toFixed(2)}m (EXCEEDED)` : `${(currentStage - selectedStation.dangerLevel).toFixed(2)}m (Safe)`}
-                  </span>
-                </div>
-                <div className="p-2 rounded-lg bg-[var(--surface-elevated)] border border-[var(--border)] flex justify-between items-center">
-                  <span className="text-[var(--muted-foreground)]">HFL ({selectedStation.hfl}m):</span>
-                  <span className="font-bold text-purple-400">
-                    {(currentStage - selectedStation.hfl).toFixed(2)}m (Below HFL)
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Modal Actions */}
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-[var(--border)]">
+            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-[var(--border)]">
               <button
                 type="button"
                 onClick={() => setIsForecastModalOpen(false)}
-                className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white dark:text-black font-bold text-xs transition-all shadow-md shadow-emerald-500/25 active:scale-95 cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white dark:text-black font-bold text-xs transition-all shadow-md shadow-emerald-500/25 cursor-pointer"
               >
                 Close Inspector
               </button>
