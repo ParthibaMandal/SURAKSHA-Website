@@ -1,36 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
-import { Shield, CheckCircle2, XCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import React from "react";
+import { Shield } from "lucide-react";
 
 export default function AdminApprovalsPage() {
-  const [status, setStatus] = useState<"DRAFT" | "AUTHORIZED & PUBLISHED" | "REJECTED BY COMMANDER">("DRAFT");
-  const [toast, setToast] = useState<string | null>(null);
-
-  const showToast = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(null), 2800);
-  };
-
-  const handleApprove = () => {
-    setStatus("AUTHORIZED & PUBLISHED");
-    showToast("Advisory authorized and recorded in immutable ledger.");
-  };
-
-  const handleReject = () => {
-    setStatus("REJECTED BY COMMANDER");
-    showToast("Advisory rejected. Reason logged.");
-  };
-
   return (
     <div className="space-y-6">
-      {toast && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#0A0A0A] border border-[#FFFFFF]/40 text-xs font-mono text-[#A1A1AA] shadow-2xl flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-[#FFFFFF]" /> {toast}
-        </div>
-      )}
-
       {/* Heading */}
       <div className="pb-4 border-b border-[#A1A1AA]/15">
         <div className="eyebrow">OPERATIONS WORKSPACE</div>
@@ -47,10 +22,10 @@ export default function AdminApprovalsPage() {
         <Shield className="w-5 h-5 text-[#F59E0B] shrink-0 mt-0.5" />
         <div className="text-xs space-y-0.5">
           <strong className="text-[#FFFFFF] font-bold block">
-            Human-in-the-loop authorization required.
+            Prototype only · no advisory can be approved or published from this page.
           </strong>
           <p className="text-[#A69B88]">
-            Automated models never publish directly to citizens. CAP recommendations require confirmation by an authorized operational commander.
+            A verified, audited write path and dispatch integration are not connected. Follow official local guidance for real conditions.
           </p>
         </div>
       </div>
@@ -62,15 +37,9 @@ export default function AdminApprovalsPage() {
           <div className="flex items-center justify-between pb-3 border-b border-[#A1A1AA]/12">
             <h3 className="text-sm font-bold text-[#A1A1AA]">Draft Recommendation · OASIS CAP v1.2</h3>
             <span
-              className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase border ${
-                status === "AUTHORIZED & PUBLISHED"
-                  ? "bg-[#FFFFFF]/20 text-[#FFFFFF] border-[#FFFFFF]/40"
-                  : status === "REJECTED BY COMMANDER"
-                  ? "bg-[#EF4444]/20 text-[#EF4444] border-[#EF4444]/40"
-                  : "bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30"
-              }`}
+              className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase border bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30"
             >
-              {status}
+              SAMPLE · NOT CONNECTED
             </span>
           </div>
 
@@ -94,7 +63,7 @@ export default function AdminApprovalsPage() {
             <div className="py-2.5 flex items-center justify-between text-xs">
               <div>
                 <strong className="text-[#A1A1AA] block">Severity Level</strong>
-                <small className="text-[#A69B88]">Advisory · Level 2</small>
+            <small className="text-[#A69B88]">Illustrative sample label</small>
               </div>
               <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/30">
                 Elevated Warning
@@ -104,28 +73,16 @@ export default function AdminApprovalsPage() {
             <div className="py-2.5 flex items-center justify-between text-xs">
               <div>
                 <strong className="text-[#A1A1AA] block">Evidence Source</strong>
-                <small className="text-[#A69B88]">Ensemble Jev + STN-PAT-01 + Sentinel-1 SAR</small>
+                <small className="text-[#A69B88]">Synthetic fixture only · no corroborating source attached</small>
               </div>
-              <span className="text-xs font-mono text-[#FFFFFF]">Triangulated</span>
+              <span className="text-xs font-mono text-[#A69B88]">Not verified</span>
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2.5 pt-4 border-t border-[#A1A1AA]/12">
-            <Button
-              onClick={handleApprove}
-              disabled={status === "AUTHORIZED & PUBLISHED"}
-              className="text-xs flex items-center gap-1.5"
-            >
-              <CheckCircle2 className="w-3.5 h-3.5" /> Authorize & Publish
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleReject}
-              disabled={status === "REJECTED BY COMMANDER"}
-              className="text-xs flex items-center gap-1.5"
-            >
-              <XCircle className="w-3.5 h-3.5" /> Reject Advisory
-            </Button>
+          <div className="pt-4 border-t border-[#A1A1AA]/12">
+            <p className="rounded-lg border border-[#A1A1AA]/15 bg-[#000000] p-3 text-xs text-[#A69B88]">
+              Review controls are unavailable until alert decisions can be persisted with least-privilege database policies and an audit record.
+            </p>
           </div>
         </div>
 

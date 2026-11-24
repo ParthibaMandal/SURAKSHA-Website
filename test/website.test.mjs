@@ -80,3 +80,39 @@ test('Platform menu supports explicit open, escape, and outside close without ho
   assert.match(source, /closeOnOutsidePointer/);
   assert.doesNotMatch(source, /onMouseEnter=\{\(\) => setPlatformDropdownOpen/);
 });
+
+test('unavailable engine services never report healthy status or fabricated actuator records', async () => {
+  const health = await read('app/api/flood/health/route.ts');
+  const stations = await read('app/api/flood/stations/route.ts');
+  const gates = await read('app/api/flood/gates/route.ts');
+  assert.match(health, /status: "UNAVAILABLE"/);
+  assert.doesNotMatch(health, /status: "HEALTHY"/);
+  assert.doesNotMatch(stations, /from "@\/lib\/mock-data"/);
+  assert.match(gates, /status: 501/);
+  assert.doesNotMatch(gates, /last_actuated_at|current_opening_pct/);
+});
+
+test('prototype gate and alert approval screens do not claim actions were executed', async () => {
+  const gates = await read('app/admin/gates/page.tsx');
+  const gateDetail = await read('app/admin/gates/[gateId]/page.tsx');
+  const approvals = await read('app/admin/approvals/page.tsx');
+  const alerts = await read('app/api/flood/alerts/route.ts');
+  assert.match(gates, /No barrage control or actuator endpoint is connected/);
+  assert.doesNotMatch(gates, /handleAdjust|setToast\(/);
+  assert.match(gateDetail, /Gate execution is unavailable/);
+  assert.doesNotMatch(gateDetail, /Execute Gate Verification Check|showToast/);
+  assert.match(approvals, /SAMPLE · NOT CONNECTED/);
+  assert.doesNotMatch(approvals, /handleApprove|handleReject|Authorize & Publish/);
+  assert.match(alerts, /status: 501/);
+});
+
+test('dashboard example telemetry is visibly distinguished from observed operations data', async () => {
+  const chart = await read('components/shared/HydrologicalChart.tsx');
+  const dashboard = await read('app/admin/page.tsx');
+  assert.match(chart, /Illustrative sample for Patna/);
+  assert.match(chart, /SYNTHETIC SURGE EXAMPLE/);
+  assert.doesNotMatch(chart, /Observed Stage/);
+  assert.match(dashboard, /Engine status unavailable/);
+  assert.match(dashboard, /Synthetic reference · no live incident feed/);
+  assert.doesNotMatch(dashboard, /Lalganj tributary surge flagged|NSE Score: 0\.89|HUMAN-IN-THE-LOOP ACTIVE/);
+});

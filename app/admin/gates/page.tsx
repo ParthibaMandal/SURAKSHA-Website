@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { CheckCircle2, RefreshCw, ShieldCheck } from "lucide-react";
+import { RefreshCw, ShieldCheck } from "lucide-react";
 
 interface GateItem {
   id: string;
@@ -18,18 +18,19 @@ interface GateItem {
 export default function AdminGatesIndexPage() {
   const [gates, setGates] = useState<GateItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [toast, setToast] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchGates = async () => {
     setLoading(true);
+    setError(null);
     try {
       const res = await fetch("/api/flood/gates", { cache: "no-store" });
-      if (res.ok) {
-        const data = await res.json();
-        setGates(data);
-      }
-    } catch {
-      // Fallback
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.detail || "Gate telemetry is unavailable.");
+      setGates(data);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Gate telemetry is unavailable.");
+      setGates([]);
     } finally {
       setLoading(false);
     }
@@ -39,31 +40,8 @@ export default function AdminGatesIndexPage() {
     fetchGates();
   }, []);
 
-  const handleAdjust = (gateId: string, newPct: number) => {
-    setGates((prev) =>
-      prev.map((g) =>
-        g.id === gateId
-          ? {
-              ...g,
-              current_opening_pct: newPct,
-              discharge_rate_cusecs: Math.round(newPct * 380),
-              last_actuated_at: new Date().toISOString(),
-            }
-          : g
-      )
-    );
-    setToast(`Gate ${gateId} actuated to ${newPct}% aperture.`);
-    setTimeout(() => setToast(null), 3000);
-  };
-
   return (
     <div className="space-y-6">
-      {toast && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#0A0A0A] border border-[#FFFFFF]/40 text-xs font-mono text-[#A1A1AA] shadow-2xl flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-[#FFFFFF]" /> {toast}
-        </div>
-      )}
-
       {/* Heading */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#A1A1AA]/15">
         <div>
@@ -72,7 +50,7 @@ export default function AdminGatesIndexPage() {
             Analytical Gates & Barrage Control
           </h1>
           <p className="text-xs text-[#A69B88] mt-1">
-            Review Pre-Run, Mid-Run, and Post-Run verification gates and barrage discharge apertures.
+            Reference checklists for Pre-Run, Mid-Run, and Post-Run verification. Live gate telemetry is not connected.
           </p>
         </div>
         <button
@@ -84,7 +62,9 @@ export default function AdminGatesIndexPage() {
         </button>
       </div>
 
-      {/* Analytical Verification Gates Overview */}
+      {error && <div role="alert" className="rounded-xl border border-amber-300/25 bg-amber-300/[0.06] p-4 text-sm text-amber-100">{error}</div>}
+
+      {/* Analytical Verification Gate Templates */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {[
           {
@@ -92,21 +72,21 @@ export default function AdminGatesIndexPage() {
             step: "GATE 01",
             name: "Pre-Run Verification",
             desc: "Sensor quorum, timestamp freshness, and physical range bounds prior to forecasting.",
-            status: "PASS",
+            status: "REFERENCE",
           },
           {
             id: "mid-run",
             step: "GATE 02",
             name: "Mid-Run Verification",
             desc: "Ensemble stability, Courant-Friedrichs-Lewy step convergence, and uncertainty spread.",
-            status: "PASS",
+            status: "REFERENCE",
           },
           {
             id: "post-run",
             step: "GATE 03",
             name: "Post-Run Verification",
             desc: "Stage threshold crossing audit, SAR water-mask agreement, and CAP v1.2 readiness.",
-            status: "PASS",
+            status: "REFERENCE",
           },
         ].map((g) => (
           <Link
@@ -136,16 +116,16 @@ export default function AdminGatesIndexPage() {
         <ShieldCheck className="w-5 h-5 text-[#F59E0B] shrink-0 mt-0.5" />
         <div className="text-xs space-y-0.5">
           <strong className="text-[#FFFFFF] font-bold block">
-            Jev Supervisory Safeguard Interlock Active (SYNTHETIC SIMULATION)
+            Reference safeguards only · no actuator interlock is connected
           </strong>
           <p className="text-[#A69B88]">
-            Aperture adjustments exceeding downstream embankment threshold (51.80 m) require dual commander authorization.
+            No barrage control or actuator endpoint is connected. This screen cannot read or change physical gate equipment.
           </p>
         </div>
       </div>
 
       {/* Physical Barrage Gates Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {gates.length > 0 && <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {gates.map((gate) => (
           <div
             key={gate.id}
@@ -173,26 +153,7 @@ export default function AdminGatesIndexPage() {
                 </div>
               </div>
 
-              {/* Interactive Aperture Slider */}
-              <div className="mt-5 space-y-2">
-                <div className="flex justify-between text-xs text-[#A69B88]">
-                  <span>Adjust Aperture</span>
-                  <span className="font-mono text-[#A1A1AA] font-bold">{gate.current_opening_pct}%</span>
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={gate.current_opening_pct}
-                  onChange={(e) => handleAdjust(gate.id, parseInt(e.target.value))}
-                  className="w-full accent-[#FFFFFF] cursor-pointer"
-                />
-                <div className="flex justify-between text-[10px] font-mono text-[#A69B88]">
-                  <span>0% (Closed)</span>
-                  <span>50%</span>
-                  <span>100% (Max Flush)</span>
-                </div>
-              </div>
+              <p className="mt-5 rounded-lg border border-[#A1A1AA]/12 bg-black p-3 text-xs text-[#A69B88]">Read-only telemetry display. No control operations are available.</p>
             </div>
 
             <div className="pt-3 border-t border-[#A1A1AA]/10 flex items-center justify-between text-xs">
@@ -208,7 +169,8 @@ export default function AdminGatesIndexPage() {
             </div>
           </div>
         ))}
-      </div>
+      </div>}
+      {!loading && !error && gates.length === 0 && <p className="rounded-xl border border-dashed border-[#A1A1AA]/20 p-6 text-center text-sm text-[#A69B88]">No gate telemetry is available.</p>}
     </div>
   );
 }

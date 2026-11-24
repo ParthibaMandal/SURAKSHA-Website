@@ -1,33 +1,37 @@
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const backendUrl = process.env.SURAKSHA_BACKEND_URL || "http://127.0.0.1:8000";
+  const backendUrl = process.env.SURAKSHA_BACKEND_URL;
+  if (!backendUrl) {
+    return NextResponse.json(
+      { status: "UNAVAILABLE", operational_readiness: "UNKNOWN", notice: "The SURAKSHA service URL is not configured." },
+      { status: 503, headers: { "Cache-Control": "no-store" } },
+    );
+  }
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 5000);
 
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
-
-    const res = await fetch(`${backendUrl}/api/v1/flood/health`, {
+    const res = await fetch(`${backendUrl.replace(/\/$/, "")}/api/v1/flood/health`, {
       headers: { accept: "application/json" },
       signal: controller.signal,
       cache: "no-store",
+      redirect: "error",
     });
-    clearTimeout(timeoutId);
-
-    if (res.ok) {
-      const data = await res.json();
-      return NextResponse.json(data);
+    const contentType = res.headers.get("content-type") || "";
+    if (!contentType.includes("application/json")) {
+      return NextResponse.json({ status: "UNAVAILABLE", notice: "The SURAKSHA service returned an unexpected response." }, { status: 502, headers: { "Cache-Control": "no-store" } });
     }
-  } catch {
-    // Backend offline / not reachable
+    const data = await res.json();
+    return NextResponse.json(data, { status: res.status, headers: { "Cache-Control": "no-store" } });
+  } catch (error) {
+    const timedOut = error instanceof Error && error.name === "AbortError";
+    return NextResponse.json(
+      { status: "UNAVAILABLE", operational_readiness: "UNKNOWN", notice: timedOut ? "The SURAKSHA service did not respond in time." : "The SURAKSHA service could not be reached." },
+      { status: 502, headers: { "Cache-Control": "no-store" } },
+    );
+  } finally {
+    clearTimeout(timeoutId);
   }
-
-  // Graceful deterministic preview fallback
-  return NextResponse.json({
-    status: "HEALTHY",
-    operational_readiness: "SYNTHETIC_PREVIEW_MODE",
-    readiness_blockers: [],
-    notice: "Operating in local Next.js synthetic telemetry mode. FastAPI service not connected.",
-  });
 }
 
