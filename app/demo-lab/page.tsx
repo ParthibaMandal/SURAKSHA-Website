@@ -16,9 +16,6 @@ import {
   CloudRain,
   TrendingUp,
   Clock,
-  LayoutDashboard,
-  Radio,
-  FileText,
   ChevronDown,
   Calendar,
   AlertTriangle,
@@ -28,9 +25,7 @@ import {
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { RiskGauge } from "@/components/simulation/RiskGauge";
 import { ScenarioComparisonChart } from "@/components/simulation/ScenarioComparisonChart";
-import { FloodForecastMap } from "@/components/simulation/FloodForecastMap";
 import { RiverStageForecastChart } from "@/components/simulation/RiverStageForecastChart";
-import { BrandLogo } from "@/components/shared/BrandLogo";
 
 type ScenarioResult = {
   suite_id: string;
@@ -199,91 +194,8 @@ export default function DemoLabPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-[#07090D] text-white font-sans">
-      {/* 1. Left Workspace Sidebar */}
-      <aside className="hidden lg:flex w-64 shrink-0 flex-col justify-between border-r border-white/10 bg-[#090C10] p-5">
-        <div className="space-y-6">
-          {/* Logo */}
-          <div className="pb-4 border-b border-white/10">
-            <BrandLogo />
-            <div className="text-[10px] font-mono tracking-widest text-emerald-400 font-semibold mt-1">
-              FLOOD INTELLIGENCE
-            </div>
-          </div>
-
-          {/* Navigation Items */}
-          <nav className="space-y-1.5" aria-label="Workspace Navigation">
-            <div className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-2 px-3">
-              Workspace
-            </div>
-            <Link
-              href="/admin"
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-zinc-400 hover:text-white hover:bg-white/[0.04] transition-colors"
-            >
-              <LayoutDashboard className="w-4 h-4" />
-              <span>Overview</span>
-            </Link>
-            <Link
-              href="/platform"
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-zinc-400 hover:text-white hover:bg-white/[0.04] transition-colors"
-            >
-              <Radio className="w-4 h-4" />
-              <span>Live Monitoring</span>
-            </Link>
-            <Link
-              href="/demo-lab"
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-white bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 transition-colors"
-            >
-              <Waves className="w-4 h-4 text-emerald-400" />
-              <span>Simulation Lab</span>
-            </Link>
-            <Link
-              href="/study-area"
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-zinc-400 hover:text-white hover:bg-white/[0.04] transition-colors"
-            >
-              <TrendingUp className="w-4 h-4" />
-              <span>Research & Data</span>
-            </Link>
-            <Link
-              href="/docs"
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-zinc-400 hover:text-white hover:bg-white/[0.04] transition-colors"
-            >
-              <FileText className="w-4 h-4" />
-              <span>Documentation</span>
-            </Link>
-          </nav>
-
-          {/* Scenic River/Glacier Thumbnail Card */}
-          <div className="rounded-2xl overflow-hidden border border-white/10 relative h-32 w-full mt-4">
-            <Image
-              src="/images/hero-himalayas-ganga.jpg"
-              alt="Himalayan Ganga Reach"
-              fill
-              className="object-cover opacity-60"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-2.5">
-              <span className="text-[10px] font-mono text-zinc-300">Middle Ganga Basin Reach</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom Demonstration Mode Banner */}
-        <div className="p-3 rounded-xl border border-white/10 bg-black/40 space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-amber-400" />
-            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-300">
-              ENVIRONMENT
-            </span>
-          </div>
-          <div className="text-[11px] font-semibold text-white">DEMONSTRATION MODE</div>
-          <p className="text-[10px] text-zinc-500 leading-relaxed">
-            Synthetic inputs and offline outputs for controlled scenario exploration only.
-          </p>
-        </div>
-      </aside>
-
-      {/* 2. Main Content Container */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+    <div className="min-h-screen bg-[#07090D] text-white font-sans">
+      <main className="w-full">
         {/* Top Panoramic Mountain Header Banner */}
         <header className="relative w-full border-b border-white/10 overflow-hidden bg-[#0A0D12]">
           {/* Panoramic Mountain Backdrop */}
@@ -479,10 +391,10 @@ export default function DemoLabPage() {
             </div>
           </div>
 
-          {/* 4. Middle Row: 3 Primary Panels */}
+          {/* 4. Middle Row: 2 Primary Panels */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-            {/* Panel 1: Scenario Configuration (lg:col-span-4) */}
-            <section className="lg:col-span-4 p-5 sm:p-6 rounded-2xl border border-white/10 bg-zinc-950/90 backdrop-blur-xl shadow-2xl flex flex-col justify-between space-y-5">
+            {/* Panel 1: Scenario Configuration (lg:col-span-5) */}
+            <section className="lg:col-span-5 p-5 sm:p-6 rounded-2xl border border-white/10 bg-zinc-950/90 backdrop-blur-xl shadow-2xl flex flex-col justify-between space-y-5">
               <div className="space-y-4">
                 <div className="flex items-center justify-between pb-3 border-b border-white/10">
                   <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -640,13 +552,8 @@ export default function DemoLabPage() {
               </button>
             </section>
 
-            {/* Panel 2: Flood Forecast Overview (lg:col-span-4) */}
-            <div className="lg:col-span-4">
-              <FloodForecastMap waterLevel={currentStage} riskScore={currentRisk} />
-            </div>
-
-            {/* Panel 3: River-stage Forecast (lg:col-span-4) */}
-            <section className="lg:col-span-4 p-5 sm:p-6 rounded-2xl border border-white/10 bg-zinc-950/90 backdrop-blur-xl shadow-2xl flex flex-col justify-between">
+            {/* Panel 2: River-stage Forecast (lg:col-span-7) */}
+            <section className="lg:col-span-7 p-5 sm:p-6 rounded-2xl border border-white/10 bg-zinc-950/90 backdrop-blur-xl shadow-2xl flex flex-col justify-between">
               <RiverStageForecastChart
                 startingStage={44.2}
                 tPlus6={result?.result.forecast.t_plus_6 ?? 47.17}

@@ -26,26 +26,26 @@ export const RiverStageForecastChart: React.FC<RiverStageForecastChartProps> = (
   const points = React.useMemo(() => {
     if (horizon === "6h") {
       return [
-        { label: "Now", value: startingStage, x: 70, y: 0 },
-        { label: "+2h", value: Number((startingStage + (tPlus6 - startingStage) * 0.45).toFixed(2)), x: 190, y: 0 },
-        { label: "+4h", value: Number((startingStage + (tPlus6 - startingStage) * 0.85).toFixed(2)), x: 310, y: 0 },
-        { label: "+6h", value: tPlus6, x: 430, y: 0 },
+        { label: "Now", value: startingStage, x: 80, y: 0 },
+        { label: "+2h", value: Number((startingStage + (tPlus6 - startingStage) * 0.45).toFixed(2)), x: 250, y: 0 },
+        { label: "+4h", value: Number((startingStage + (tPlus6 - startingStage) * 0.85).toFixed(2)), x: 420, y: 0 },
+        { label: "+6h", value: tPlus6, x: 580, y: 0 },
       ];
     }
     if (horizon === "72h") {
       return [
-        { label: "Now", value: startingStage, x: 70, y: 0 },
-        { label: "+12h", value: tPlus12, x: 190, y: 0 },
-        { label: "+24h", value: tPlus24, x: 310, y: 0 },
-        { label: "+72h", value: Number(Math.max(43.5, tPlus24 - 1.2).toFixed(2)), x: 430, y: 0 },
+        { label: "Now", value: startingStage, x: 80, y: 0 },
+        { label: "+12h", value: tPlus12, x: 250, y: 0 },
+        { label: "+24h", value: tPlus24, x: 420, y: 0 },
+        { label: "+72h", value: Number(Math.max(43.5, tPlus24 - 1.2).toFixed(2)), x: 580, y: 0 },
       ];
     }
     // 24h default (matching image 1)
     return [
-      { label: "Now", value: startingStage, x: 70, y: 0 },
-      { label: "+6h", value: tPlus6, x: 190, y: 0 },
-      { label: "+12h", value: tPlus12, x: 310, y: 0 },
-      { label: "+24h", value: tPlus24, x: 430, y: 0 },
+      { label: "Now", value: startingStage, x: 80, y: 0 },
+      { label: "+6h", value: tPlus6, x: 250, y: 0 },
+      { label: "+12h", value: tPlus12, x: 420, y: 0 },
+      { label: "+24h", value: tPlus24, x: 580, y: 0 },
     ];
   }, [horizon, startingStage, tPlus6, tPlus12, tPlus24]);
 
@@ -65,19 +65,24 @@ export const RiverStageForecastChart: React.FC<RiverStageForecastChartProps> = (
   const p2 = mappedPoints[2];
   const p3 = mappedPoints[3];
 
-  const pathD = `M ${p0.x} ${p0.y} C ${p0.x + 60} ${p0.y - 15}, ${p1.x - 50} ${p1.y}, ${p1.x} ${p1.y} S ${p2.x - 50} ${p2.y}, ${p2.x} ${p2.y} S ${p3.x - 50} ${p3.y}, ${p3.x} ${p3.y}`;
+  const pathD = `M ${p0.x} ${p0.y} C ${p0.x + 80} ${p0.y - 15}, ${p1.x - 70} ${p1.y}, ${p1.x} ${p1.y} S ${p2.x - 70} ${p2.y}, ${p2.x} ${p2.y} S ${p3.x - 70} ${p3.y}, ${p3.x} ${p3.y}`;
   const areaD = `${pathD} L ${p3.x} 185 L ${p0.x} 185 Z`;
 
   // 90% Prediction Band polygon ribbon
-  const bandUpperD = `M ${p0.x} ${p0.y - 6} C ${p0.x + 60} ${p0.y - 22}, ${p1.x - 50} ${p1.y - 12}, ${p1.x} ${p1.y - 12} S ${p2.x - 50} ${p2.y - 14}, ${p2.x} ${p2.y - 14} S ${p3.x - 50} ${p3.y - 16}, ${p3.x} ${p3.y - 16}`;
-  const bandLowerD = `L ${p3.x} ${p3.y + 14} C ${p3.x - 50} ${p3.y + 14}, ${p2.x + 50} ${p2.y + 12}, ${p2.x} ${p2.y + 12} S ${p1.x + 50} ${p1.y + 10}, ${p1.x} ${p1.y + 10} S ${p0.x + 60} ${p0.y + 6}, ${p0.x} ${p0.y + 6} Z`;
+  const bandUpperD = `M ${p0.x} ${p0.y - 6} C ${p0.x + 80} ${p0.y - 22}, ${p1.x - 70} ${p1.y - 12}, ${p1.x} ${p1.y - 12} S ${p2.x - 70} ${p2.y - 14}, ${p2.x} ${p2.y - 14} S ${p3.x - 70} ${p3.y - 16}, ${p3.x} ${p3.y - 16}`;
+  const bandLowerD = `L ${p3.x} ${p3.y + 14} C ${p3.x - 70} ${p3.y + 14}, ${p2.x + 70} ${p2.y + 12}, ${p2.x} ${p2.y + 12} S ${p1.x + 70} ${p1.y + 10}, ${p1.x} ${p1.y + 10} S ${p0.x + 80} ${p0.y + 6}, ${p0.x} ${p0.y + 6} Z`;
   const bandD = `${bandUpperD} ${bandLowerD}`;
 
   return (
     <div className="w-full flex flex-col justify-between h-full space-y-3 font-sans">
       {/* Top Header & Horizon Switcher */}
       <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold text-white">River-stage Forecast</span>
+        <div>
+          <span className="text-xs font-semibold text-white">River-stage Forecast</span>
+          <span className="hidden sm:inline-block ml-2 text-[10px] font-mono text-zinc-500">
+            STN-PAT-01 · Gandhi Ghat Reach
+          </span>
+        </div>
         <div className="flex items-center gap-1 bg-black/60 p-1 rounded-lg border border-white/10 text-xs">
           {(["6h", "24h", "72h"] as const).map((h) => (
             <button
@@ -95,8 +100,8 @@ export const RiverStageForecastChart: React.FC<RiverStageForecastChartProps> = (
       </div>
 
       {/* SVG Hydrograph Viewport */}
-      <div className="relative w-full h-[180px] bg-black/40 rounded-xl border border-white/5 p-2 overflow-visible">
-        <svg viewBox="0 0 500 200" className="w-full h-full overflow-visible">
+      <div className="relative w-full h-[200px] bg-black/40 rounded-xl border border-white/5 p-2 overflow-visible">
+        <svg viewBox="0 0 650 200" className="w-full h-full overflow-visible">
           <defs>
             <linearGradient id="hydroFill" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#10B981" stopOpacity="0.30" />
@@ -113,36 +118,48 @@ export const RiverStageForecastChart: React.FC<RiverStageForecastChartProps> = (
             const y = mapY(lvl);
             return (
               <g key={lvl}>
-                <line x1="45" y1={y} x2="480" y2={y} stroke="rgba(255, 255, 255, 0.06)" strokeWidth="1" />
-                <text x="35" y={y + 3.5} fill="rgba(255, 255, 255, 0.35)" fontSize="9" textAnchor="end" fontFamily="monospace">
+                <line x1="55" y1={y} x2="615" y2={y} stroke="rgba(255, 255, 255, 0.06)" strokeWidth="1" />
+                <text x="45" y={y + 3.5} fill="rgba(255, 255, 255, 0.35)" fontSize="9" textAnchor="end" fontFamily="monospace">
                   {lvl}
                 </text>
               </g>
             );
           })}
 
+          {/* Vertical T+0 Line */}
+          <line x1="80" y1="20" x2="80" y2="185" stroke="rgba(255, 255, 255, 0.15)" strokeWidth="1" strokeDasharray="3 3" />
+          <text x="80" y="16" fill="rgba(255, 255, 255, 0.45)" fontSize="8.5" textAnchor="middle" fontFamily="monospace">
+            NOW (T+0)
+          </text>
+
           {/* Amber Warning Mark (47.60m) */}
           <line
-            x1="45"
+            x1="55"
             y1={warningMarkY}
-            x2="480"
+            x2="615"
             y2={warningMarkY}
             stroke="#F59E0B"
             strokeWidth="1.2"
             strokeDasharray="4 4"
             opacity="0.85"
           />
+          <text x="615" y={warningMarkY - 4} fill="#F59E0B" fontSize="8" textAnchor="end" fontFamily="monospace">
+            WARNING 47.60m
+          </text>
 
           {/* Red Danger Threshold Line (48.60m) */}
           <line
-            x1="45"
+            x1="55"
             y1={dangerMarkY}
-            x2="480"
+            x2="615"
             y2={dangerMarkY}
             stroke="#EF4444"
             strokeWidth="1.5"
             strokeDasharray="4 4"
           />
+          <text x="615" y={dangerMarkY - 4} fill="#EF4444" fontSize="8" textAnchor="end" fontFamily="monospace" fontWeight="bold">
+            DANGER 48.60m
+          </text>
 
           {/* 90% Prediction Band (Home Page Hydrograph Uncertainty) */}
           <path d={bandD} fill="url(#confidenceBand)" />
@@ -232,7 +249,7 @@ export const RiverStageForecastChart: React.FC<RiverStageForecastChartProps> = (
         </div>
         <div className="flex items-center gap-1.5">
           <span className="w-3.5 h-2 rounded bg-sky-400/20 border border-sky-400/40" />
-          <span>90% Band</span>
+          <span>90% Uncertainty Band</span>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="w-3.5 h-0.5 border-b-2 border-dashed border-amber-400" />
