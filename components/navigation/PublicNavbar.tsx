@@ -67,7 +67,11 @@ export const PublicNavbar: React.FC = () => {
     };
   }, [platformDropdownOpen]);
 
-  if (pathname?.startsWith("/horizon")) {
+  if (
+    pathname?.startsWith("/horizon") ||
+    pathname?.startsWith("/admin") ||
+    pathname?.startsWith("/citizen")
+  ) {
     return null;
   }
 
@@ -148,7 +152,7 @@ export const PublicNavbar: React.FC = () => {
                     />
                   </button>
 
-                  {/* Dropdown Menu - Elevated translucent surface with Animated Glass Icons */}
+                  {/* Dropdown Menu - Elevated translucent surface with Bento Grid */}
                   <AnimatePresence>
                     {platformDropdownOpen && (
                       <motion.div
@@ -157,22 +161,22 @@ export const PublicNavbar: React.FC = () => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 6, scale: 0.96 }}
                         transition={{ duration: prefersReducedMotion ? 0 : 0.2, ease: [0.22, 1, 0.36, 1] }}
-                        className="absolute top-full left-0 mt-2.5 w-68 rounded-2xl bg-white/95 dark:bg-[#18231E]/95 backdrop-blur-2xl border border-zinc-200 dark:border-[#2D3C33] p-2 shadow-2xl z-50"
+                        className="absolute top-full left-0 mt-2.5 w-80 rounded-2xl bg-white/95 dark:bg-zinc-950/95 backdrop-blur-2xl border border-zinc-200 dark:border-white/10 p-2 shadow-2xl z-50"
                       >
                         <Link
                           href="/platform"
                           role="menuitem"
                           onClick={() => setPlatformDropdownOpen(false)}
-                          className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-[#223029] transition-colors text-xs group"
+                          className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors text-xs group"
                         >
                           <div className="icon-glass w-8 h-8 rounded-lg text-white shrink-0 mt-0.5">
-                            <LayoutDashboard className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
+                            <LayoutDashboard className="w-4 h-4 transition-transform duration-300 group-hover:scale-110 text-white" />
                           </div>
                           <div>
-                            <span className="font-semibold text-zinc-900 dark:text-white block group-hover:text-[#059669] dark:group-hover:text-[#10B981] transition-colors">
+                            <span className="font-semibold text-zinc-900 dark:text-white block group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors">
                               Platform Overview
                             </span>
-                            <span className="text-[11px] text-zinc-500 dark:text-[#9BA5A0]">
+                            <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
                               3D Basin simulation & reach models
                             </span>
                           </div>
@@ -182,17 +186,17 @@ export const PublicNavbar: React.FC = () => {
                           href="/study-area"
                           role="menuitem"
                           onClick={() => setPlatformDropdownOpen(false)}
-                          className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-[#223029] transition-colors text-xs group"
+                          className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors text-xs group"
                         >
                           <div className="icon-glass w-8 h-8 rounded-lg text-white shrink-0 mt-0.5">
-                            <MapPin className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
+                            <MapPin className="w-4 h-4 transition-transform duration-300 group-hover:scale-110 text-white" />
                           </div>
                           <div>
-                            <span className="font-semibold text-zinc-900 dark:text-white block group-hover:text-[#059669] dark:group-hover:text-[#10B981] transition-colors">
+                            <span className="font-semibold text-zinc-900 dark:text-white block group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors">
                               Catchment Study Area
                             </span>
-                            <span className="text-[11px] text-zinc-500 dark:text-[#9BA5A0]">
-                              Middle Ganga reach stations
+                            <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                              Middle Ganga reach stations & gauges
                             </span>
                           </div>
                         </Link>
@@ -201,17 +205,17 @@ export const PublicNavbar: React.FC = () => {
                           href="/demo-lab"
                           role="menuitem"
                           onClick={() => setPlatformDropdownOpen(false)}
-                          className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-[#223029] transition-colors text-xs group"
+                          className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors text-xs group"
                         >
                           <div className="icon-glass w-8 h-8 rounded-lg text-white shrink-0 mt-0.5">
-                            <FlaskConical className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
+                            <FlaskConical className="w-4 h-4 transition-transform duration-300 group-hover:scale-110 text-white" />
                           </div>
                           <div>
-                            <span className="font-semibold text-zinc-900 dark:text-white block group-hover:text-[#059669] dark:group-hover:text-[#10B981] transition-colors">
+                            <span className="font-semibold text-zinc-900 dark:text-white block group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors">
                               Simulation Lab
                             </span>
-                            <span className="text-[11px] text-zinc-500 dark:text-[#9BA5A0]">
-                              Test scenarios & emergency alerts
+                            <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                              Interactive test scenarios & response checks
                             </span>
                           </div>
                         </Link>
@@ -264,15 +268,15 @@ export const PublicNavbar: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                  className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full border border-[#1F2823] bg-[#0D100E] hover:border-[#10B981]/40 text-xs text-white transition-all cursor-pointer"
+                  className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full border border-zinc-200 dark:border-white/10 bg-zinc-100 dark:bg-zinc-900 hover:border-zinc-300 dark:hover:border-white/20 text-xs text-zinc-900 dark:text-white transition-all cursor-pointer whitespace-nowrap"
                 >
-                  <span className="w-6 h-6 rounded-full bg-[#10B981] text-black font-bold text-[10px] grid place-items-center">
+                  <span className="w-6 h-6 rounded-full bg-emerald-500 text-black font-bold text-[10px] grid place-items-center">
                     {profile?.full_name ? profile.full_name[0].toUpperCase() : "U"}
                   </span>
                   <span className="max-w-[100px] truncate text-xs font-medium">
                     {profile?.full_name?.split(" ")[0] || "Account"}
                   </span>
-                  <ChevronDown className="w-3 h-3 text-[#9BA5A0]" />
+                  <ChevronDown className="w-3 h-3 text-zinc-400" />
                 </button>
 
                 <AnimatePresence>
@@ -282,13 +286,13 @@ export const PublicNavbar: React.FC = () => {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 6, scale: 0.96 }}
                       transition={{ duration: prefersReducedMotion ? 0 : 0.2, ease: [0.22, 1, 0.36, 1] }}
-                      className="absolute right-0 mt-2 w-56 rounded-xl bg-white/95 dark:bg-[#18231E]/95 backdrop-blur-xl border border-zinc-200 dark:border-[#2D3C33] p-1.5 shadow-2xl z-50"
+                      className="absolute right-0 mt-2 w-56 rounded-xl bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl border border-zinc-200 dark:border-white/10 p-1.5 shadow-2xl z-50"
                     >
-                      <div className="px-3 py-2 border-b border-zinc-200 dark:border-[#2D3C33] mb-1">
+                      <div className="px-3 py-2 border-b border-zinc-200 dark:border-white/10 mb-1">
                         <div className="text-xs font-semibold text-zinc-900 dark:text-white truncate">
                           {profile?.full_name || user.email}
                         </div>
-                        <div className="text-[10px] text-zinc-500 dark:text-[#9BA5A0] uppercase tracking-wider mt-0.5">
+                        <div className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mt-0.5">
                           ROLE: {profile?.role || "Unavailable"}
                         </div>
                       </div>
@@ -296,7 +300,7 @@ export const PublicNavbar: React.FC = () => {
                         <Link
                           href={portalHref}
                           onClick={() => setUserDropdownOpen(false)}
-                          className="flex items-center gap-2 px-3 py-2 rounded text-xs text-zinc-700 dark:text-[#9BA5A0] hover:text-black dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-[#223029] transition-colors"
+                          className="flex items-center gap-2 px-3 py-2 rounded text-xs text-zinc-700 dark:text-zinc-300 hover:text-black dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
                         >
                           <User className="w-3.5 h-3.5" />
                           <span>Open Workspace</span>
@@ -312,7 +316,7 @@ export const PublicNavbar: React.FC = () => {
                           setUserDropdownOpen(false);
                           signOut();
                         }}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded text-xs text-[#EF4444] hover:text-red-400 hover:bg-[#EF4444]/10 transition-colors text-left cursor-pointer"
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded text-xs text-red-600 dark:text-red-400 hover:bg-red-500/10 transition-colors text-left cursor-pointer"
                       >
                         <LogOut className="w-3.5 h-3.5" />
                         <span>Sign Out</span>
@@ -325,10 +329,10 @@ export const PublicNavbar: React.FC = () => {
           ) : (
             <Link
               href="/auth/login"
-              className="btn-glass-primary px-5 py-2 text-xs font-semibold text-white group"
+              className="btn-glass-primary px-5 py-2 text-xs font-semibold text-white group whitespace-nowrap inline-flex items-center gap-1.5 shrink-0"
             >
-              <span className="relative z-10">Sign In</span>
-              <ArrowRight className="relative z-10 w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+              <span className="relative z-10 whitespace-nowrap">Sign In</span>
+              <ArrowRight className="relative z-10 w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1 shrink-0" />
             </Link>
           )}
         </div>
@@ -359,7 +363,7 @@ export const PublicNavbar: React.FC = () => {
           )}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 rounded-md border border-[#1F2823] bg-[#0D100E] text-white hover:bg-[#141816]"
+            className="p-2 rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-100 dark:bg-zinc-900 text-zinc-800 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors"
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

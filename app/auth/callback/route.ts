@@ -11,8 +11,21 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = createClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      if (next === "/" && data?.user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", data.user.id)
+          .maybeSingle();
+
+        const role = profile?.role;
+        next = role === "admin" || role === "operator" || role === "hydrologist"
+          ? "/admin"
+          : "/citizen";
+      }
+
       const forwardedHost = request.headers.get("x-forwarded-host");
       const isLocalEnv = process.env.NODE_ENV === "development";
       if (isLocalEnv || !forwardedHost || !/^[a-zA-Z0-9.-]+(:\d+)?$/.test(forwardedHost)) {

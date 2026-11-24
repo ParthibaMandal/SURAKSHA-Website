@@ -161,25 +161,25 @@ export default function DemoLabPage() {
   }
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#050708] text-white">
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[560px] bg-[radial-gradient(ellipse_at_top_right,rgba(16,185,129,0.11),transparent_58%)]" />
+    <main className="relative min-h-screen overflow-hidden bg-black text-white">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[560px] bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.05),transparent_65%)]" />
       <div className="mx-auto flex w-full max-w-[1320px] flex-col gap-8 px-4 py-10 sm:px-6 sm:py-14 lg:px-10">
         <FadeIn>
           <header className="flex flex-col gap-6 border-b border-white/10 pb-8 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl">
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-300/[0.06] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-100">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-400/25 bg-emerald-400/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-300">
                 <Activity className="h-3.5 w-3.5" /> SURAKSHA · Simulation Lab
               </div>
-              <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">See how conditions shape a flood response.</h1>
+              <h1 className="text-3xl font-bold tracking-tight sm:text-5xl">See how conditions shape a flood response.</h1>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-400 sm:text-base">
                 Choose a scenario, adjust the conditions, and review the forecast and checks returned by SURAKSHA.
               </p>
             </div>
-            <div className="flex w-fit items-center gap-3 rounded-2xl border border-amber-300/20 bg-amber-300/[0.06] px-4 py-3">
-              <span className="h-2 w-2 rounded-full bg-amber-300" />
+            <div className="flex w-fit items-center gap-3 rounded-2xl border border-amber-400/25 bg-amber-400/10 px-4 py-3">
+              <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
               <div>
-                <p className="text-xs font-semibold text-amber-100">Synthetic scenario</p>
-                <p className="mt-0.5 text-[11px] text-zinc-400">For demonstration and review</p>
+                <p className="text-xs font-semibold text-amber-200">Synthetic Scenario Mode</p>
+                <p className="mt-0.5 text-[11px] text-zinc-400">Offline deterministic stress testing</p>
               </div>
             </div>
           </header>
@@ -187,16 +187,16 @@ export default function DemoLabPage() {
 
         <div className="grid gap-6 lg:grid-cols-[0.88fr_1.12fr]">
           <FadeIn delay={0.08}>
-            <section className="h-full rounded-3xl border border-white/10 bg-[#0b1012] p-5 shadow-2xl sm:p-7" aria-labelledby="scenario-title">
+            <section className="h-full rounded-3xl border border-white/10 bg-zinc-950/90 p-5 shadow-2xl sm:p-7 backdrop-blur-xl" aria-labelledby="scenario-title">
               <div className="mb-6 flex items-start justify-between gap-4">
                 <div>
                   <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-500">01 / Set conditions</p>
-                  <h2 id="scenario-title" className="mt-2 text-xl font-semibold">Choose a scenario</h2>
+                  <h2 id="scenario-title" className="mt-2 text-xl font-bold text-white">Choose a scenario</h2>
                 </div>
-                <Waves className="h-5 w-5 text-emerald-300" />
+                <Waves className="h-5 w-5 text-emerald-400" />
               </div>
 
-              <div className="space-y-2" role="group" aria-label="Scenario presets">
+              <div className="space-y-2.5" role="group" aria-label="Scenario presets">
                 {(Object.entries(PRESETS) as [DemoPreset, typeof PRESETS[DemoPreset]][]).map(([key, item]) => (
                   <motion.button
                     key={key}
@@ -206,12 +206,12 @@ export default function DemoLabPage() {
                     whileHover={prefersReducedMotion ? undefined : { y: -2 }}
                     whileTap={prefersReducedMotion ? undefined : { scale: 0.99 }}
                     transition={{ type: "spring", stiffness: 380, damping: 30, duration: prefersReducedMotion ? 0 : undefined }}
-                    className={`relative w-full overflow-hidden rounded-2xl border p-4 text-left transition-colors ${preset === key ? "border-emerald-300/35 bg-emerald-300/[0.04]" : "border-white/10 bg-white/[0.02] hover:border-white/20"}`}
+                    className={`relative w-full overflow-hidden rounded-2xl border p-4 text-left transition-colors cursor-pointer ${preset === key ? "border-emerald-400/50 bg-emerald-400/[0.08]" : "border-white/10 bg-zinc-900/40 hover:bg-zinc-900/80 hover:border-white/20"}`}
                   >
-                    {preset === key && <motion.span layoutId="selected-scenario" className="absolute inset-0 rounded-2xl bg-emerald-300/[0.045]" transition={{ type: "spring", stiffness: 340, damping: 30 }} />}
+                    {preset === key && <motion.span layoutId="selected-scenario" className="absolute inset-0 rounded-2xl bg-emerald-400/[0.06]" transition={{ type: "spring", stiffness: 340, damping: 30 }} />}
                     <span className="relative z-10 flex items-center justify-between gap-3">
                       <span className="text-sm font-semibold text-white">{item.label}</span>
-                      <span className={`h-2 w-2 rounded-full ${preset === key ? "bg-emerald-300" : "bg-zinc-700"}`} />
+                      <span className={`h-2 w-2 rounded-full ${preset === key ? "bg-emerald-400" : "bg-zinc-700"}`} />
                     </span>
                     <span className="relative z-10 mt-1.5 block text-xs leading-relaxed text-zinc-400">{item.description}</span>
                   </motion.button>
@@ -221,38 +221,38 @@ export default function DemoLabPage() {
               <div className="mt-7 space-y-6 border-t border-white/10 pt-6">
                 <div>
                   <div className="mb-3 flex items-center justify-between gap-3">
-                    <label htmlFor="inflow" className="text-xs font-medium text-zinc-300">Starting river discharge multiplier</label>
-                    <span className="rounded-lg bg-white/[0.06] px-2.5 py-1 font-mono text-xs text-white">{inflow.toFixed(2)}×</span>
+                    <label htmlFor="inflow" className="text-xs font-semibold text-zinc-300">Starting river discharge multiplier</label>
+                    <span className="rounded-lg bg-zinc-900 border border-white/10 px-2.5 py-1 font-mono text-xs text-emerald-400 font-bold">{inflow.toFixed(2)}×</span>
                   </div>
-                  <input id="inflow" type="range" min="0.5" max="3" step="0.05" value={inflow} onChange={(event) => setInflow(Number(event.target.value))} className="w-full accent-emerald-300" />
-                  <div className="mt-1 flex justify-between text-[10px] text-zinc-600"><span>0.5×</span><span>3.0×</span></div>
+                  <input id="inflow" type="range" min="0.5" max="3" step="0.05" value={inflow} onChange={(event) => setInflow(Number(event.target.value))} className="w-full accent-emerald-400 cursor-pointer" />
+                  <div className="mt-1 flex justify-between text-[10px] text-zinc-500 font-mono"><span>0.5×</span><span>3.0×</span></div>
                   <p className="mt-1 text-[10px] leading-relaxed text-zinc-500">Scales the scenario&apos;s synthetic starting discharge; no live upstream gauge is changed.</p>
                 </div>
                 <div>
                   <div className="mb-3 flex items-center justify-between gap-3">
-                    <label htmlFor="rainfall" className="text-xs font-medium text-zinc-300">Added rainfall</label>
-                    <span className="rounded-lg bg-white/[0.06] px-2.5 py-1 font-mono text-xs text-white">{rainfall} mm</span>
+                    <label htmlFor="rainfall" className="text-xs font-semibold text-zinc-300">Added rainfall anomaly</label>
+                    <span className="rounded-lg bg-zinc-900 border border-white/10 px-2.5 py-1 font-mono text-xs text-emerald-400 font-bold">{rainfall} mm</span>
                   </div>
-                  <input id="rainfall" type="range" min="0" max="500" step="5" value={rainfall} onChange={(event) => setRainfall(Number(event.target.value))} className="w-full accent-emerald-300" />
-                  <div className="mt-1 flex justify-between text-[10px] text-zinc-600"><span>0 mm</span><span>500 mm</span></div>
+                  <input id="rainfall" type="range" min="0" max="500" step="5" value={rainfall} onChange={(event) => setRainfall(Number(event.target.value))} className="w-full accent-emerald-400 cursor-pointer" />
+                  <div className="mt-1 flex justify-between text-[10px] text-zinc-500 font-mono"><span>0 mm</span><span>500 mm</span></div>
                 </div>
               </div>
 
-              <motion.button type="button" onClick={runScenario} disabled={isRunning} whileHover={prefersReducedMotion || isRunning ? undefined : { y: -1 }} whileTap={prefersReducedMotion || isRunning ? undefined : { scale: 0.99 }} className="mt-7 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald-300 px-5 text-sm font-semibold text-[#061013] transition-colors hover:bg-emerald-200 disabled:cursor-wait disabled:opacity-70">
+              <motion.button type="button" onClick={runScenario} disabled={isRunning} whileHover={prefersReducedMotion || isRunning ? undefined : { y: -1 }} whileTap={prefersReducedMotion || isRunning ? undefined : { scale: 0.99 }} className="mt-7 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 text-sm font-bold text-black transition-all hover:bg-emerald-400 active:scale-[0.99] cursor-pointer shadow-lg shadow-emerald-500/20 disabled:cursor-wait disabled:opacity-60">
                 {isRunning ? <><LoaderCircle className="h-4 w-4 animate-spin" /> Running simulation…</> : <><Play className="h-4 w-4 fill-current" /> Run simulation</>}
               </motion.button>
-                <p className="mt-3 text-center text-[11px] leading-relaxed text-zinc-500">{selectedPreset.anchor} · Synthetic inputs</p>
+              <p className="mt-3 text-center text-[11px] leading-relaxed text-zinc-500">{selectedPreset.anchor} · Synthetic inputs</p>
             </section>
           </FadeIn>
 
           <FadeIn delay={0.14}>
-            <section className="min-h-[440px] rounded-3xl border border-white/10 bg-[#0b1012] p-5 shadow-2xl sm:p-7" aria-live="polite" aria-labelledby="result-title">
+            <section className="min-h-[440px] rounded-3xl border border-white/10 bg-zinc-950/90 p-5 shadow-2xl sm:p-7 backdrop-blur-xl" aria-live="polite" aria-labelledby="result-title">
               <div className="flex flex-wrap items-start justify-between gap-4 border-b border-white/10 pb-5">
                 <div>
                   <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-500">02 / Review outcome</p>
-                  <h2 id="result-title" className="mt-2 text-xl font-semibold">Simulation result</h2>
+                  <h2 id="result-title" className="mt-2 text-xl font-bold text-white">Simulation result</h2>
                 </div>
-                {result && <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-300/20 bg-emerald-300/[0.06] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-emerald-200"><CheckCircle2 className="h-3.5 w-3.5" /> Run complete</span>}
+                {result && <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-emerald-300"><CheckCircle2 className="h-3.5 w-3.5" /> Run complete</span>}
               </div>
 
               <AnimatePresence mode="wait" initial={false}>
@@ -286,9 +286,9 @@ export default function DemoLabPage() {
                     </motion.div>
                   </motion.div>
 
-                  <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-200/15 bg-emerald-200/[0.04] p-4">
+                  <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-400/20 bg-emerald-400/[0.06] p-4">
                     <div><p className="text-sm font-semibold text-white">Review checks</p><p className="mt-1 text-xs text-zinc-400">A person reviews any advisory before action.</p></div>
-                    <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-emerald-100">{needsHumanReview ? "Manual review advised" : "Review checks complete"}</span>
+                    <span className="rounded-full border border-white/10 bg-black/40 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-emerald-300">{needsHumanReview ? "Manual review advised" : "Review checks complete"}</span>
                   </div>
 
                   <motion.div initial={prefersReducedMotion ? false : "hidden"} animate="visible" variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.07, delayChildren: 0.15 } } }} className="mt-3 grid gap-3 sm:grid-cols-3">
@@ -308,7 +308,7 @@ export default function DemoLabPage() {
                 </>
               ) : (
                 <div className="flex min-h-[330px] flex-col items-center justify-center px-5 text-center">
-                  <div className="grid h-14 w-14 place-items-center rounded-2xl border border-emerald-200/15 bg-emerald-200/[0.05]"><Waves className="h-6 w-6 text-emerald-100" /></div>
+                  <div className="grid h-14 w-14 place-items-center rounded-2xl border border-white/10 bg-white/[0.04]"><Waves className="h-6 w-6 text-emerald-400" /></div>
                   <p className="mt-5 text-base font-semibold text-white">Your results will appear here</p>
                   <p className="mt-2 max-w-sm text-sm leading-relaxed text-zinc-500">Run a scenario to see its forecast, risk level, potential exposure, and review checks.</p>
                 </div>

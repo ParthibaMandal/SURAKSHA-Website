@@ -6,21 +6,39 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   const identity = await getAuthenticatedProfile();
   if (!identity) return NextResponse.json({ detail: "Sign in required." }, { status: 401 });
-  if (!["admin", "operator"].includes(identity.profile.role)) {
-    return NextResponse.json({ detail: "You are not allowed to view the assistance queue." }, { status: 403 });
+
+  // Admins & Operators see full queue
+  if (["admin", "operator"].includes(identity.profile.role)) {
+    const { data, error } = await identity.supabase
+      .from("citizen_sos_reports")
+      .select("id,citizen_name,contact_phone,location_name,urgency,description,status,created_at")
+      .order("created_at", { ascending: false })
+      .limit(200);
+
+    if (error) {
+      return NextResponse.json({ detail: "The assistance queue is unavailable." }, { status: 503 });
+    }
+
+    return NextResponse.json(data ?? [], { headers: { "Cache-Control": "no-store" } });
   }
 
-  const { data, error } = await identity.supabase
-    .from("citizen_sos_reports")
-    .select("id,citizen_name,contact_phone,location_name,urgency,description,status,created_at")
-    .order("created_at", { ascending: false })
-    .limit(200);
+  // Citizens see their own submitted requests
+  if (identity.profile.role === "citizen") {
+    const { data, error } = await identity.supabase
+      .from("citizen_sos_reports")
+      .select("id,citizen_name,contact_phone,location_name,urgency,description,status,created_at")
+      .eq("citizen_id", identity.user.id)
+      .order("created_at", { ascending: false })
+      .limit(50);
 
-  if (error) {
-    return NextResponse.json({ detail: "The assistance queue is unavailable." }, { status: 503 });
+    if (error) {
+      return NextResponse.json({ detail: "Your assistance records are unavailable." }, { status: 503 });
+    }
+
+    return NextResponse.json(data ?? [], { headers: { "Cache-Control": "no-store" } });
   }
 
-  return NextResponse.json(data ?? [], { headers: { "Cache-Control": "no-store" } });
+  return NextResponse.json({ detail: "You are not allowed to view the assistance queue." }, { status: 403 });
 }
 
 export async function POST(request: Request) {
@@ -84,4 +102,49 @@ export async function POST(request: Request) {
   }
 
   return NextResponse.json(data, { status: 201, headers: { "Cache-Control": "no-store" } });
+}
+
+export async function PATCH(request: Request) {
+  const identity = await getAuthenticatedProfile();
+  if (!identity) return NextResponse.json({ detail: "Sign in required." }, { status: 401 });
+  if (!["admin", "operator"].includes(identity.profile.role)) {
+    return NextResponse.json({ detail: "Only operators and admins can update ticket statuses." }, { status: 403 });
+  }
+
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ detail: "Request body must be valid JSON." }, { status: 400 });
+  }
+
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return NextResponse.json({ detail: "Request body must be a status update object." }, { status: 400 });
+  }
+
+  const input = body as Record<string, unknown>;
+  const id = typeof input.id === "string" ? input.id.trim() : "";
+  const status = typeof input.status === "string" ? input.status.trim() : "";
+
+  if (!id) {
+    return NextResponse.json({ detail: "Valid ticket ID is required." }, { status: 400 });
+  }
+
+  const validStatuses = ["OPEN", "IN_REVIEW", "DISPATCHED", "RESOLVED", "CANCELLED"];
+  if (!validStatuses.includes(status)) {
+    return NextResponse.json({ detail: `Status must be one of: ${validStatuses.join(", ")}` }, { status: 400 });
+  }
+
+  const { data, error } = await identity.supabase
+    .from("citizen_sos_reports")
+    .update({ status })
+    .eq("id", id)
+    .select("id,status,created_at")
+    .single();
+
+  if (error || !data) {
+    return NextResponse.json({ detail: "Failed to update ticket status." }, { status: 500 });
+  }
+
+  return NextResponse.json(data, { headers: { "Cache-Control": "no-store" } });
 }

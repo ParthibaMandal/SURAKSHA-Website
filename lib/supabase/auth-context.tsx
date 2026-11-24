@@ -158,11 +158,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signInWithGoogle = async (redirectTo?: string) => {
     setIsLoading(true);
-    const destination =
-      redirectTo ||
-      (typeof window !== "undefined"
-        ? `${window.location.origin}/auth/callback`
-        : "https://suraksha-nine-wheat.vercel.app/auth/callback");
+    const origin =
+      typeof window !== "undefined"
+        ? window.location.origin
+        : (process.env.NEXT_PUBLIC_SITE_URL || "https://suraksha-nine-wheat.vercel.app");
+
+    const destination = redirectTo || `${origin}/auth/callback?next=/citizen`;
 
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
