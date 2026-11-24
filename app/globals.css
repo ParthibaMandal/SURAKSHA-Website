@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -6,42 +6,42 @@
 
 @layer base {
   :root {
-    /* Burnt Sienna Warm Beige Light Theme (#F5F5DC, #E35336, #F4A460, #A0522D) */
-    --background: #F5F5DC;
-    --foreground: #1A0D09;
+    /* Glacial Ice-Blue Light Theme (#F0F9FF, #0EA5E9, #38BDF8, #0284C7) */
+    --background: #F0F9FF;
+    --foreground: #081424;
 
-    --surface: #FAF8E8;
-    --surface-elevated: #EFEBD2;
-    --surface-glass: rgba(245, 245, 220, 0.92);
+    --surface: #F8FCFF;
+    --surface-elevated: #E0F2FE;
+    --surface-glass: rgba(240, 249, 255, 0.92);
 
-    --border: rgba(160, 82, 45, 0.28);
-    --border-hover: rgba(227, 83, 54, 0.55);
-    --border-focus: #E35336;
+    --border: rgba(2, 132, 199, 0.24);
+    --border-hover: rgba(14, 165, 233, 0.55);
+    --border-focus: #0EA5E9;
 
-    --muted: #EFEBD2;
-    --muted-foreground: #6E391F;
+    --muted: #E0F2FE;
+    --muted-foreground: #0369A1;
 
-    --card: #FAF8E8;
-    --card-foreground: #1A0D09;
-    --popover: #FAF8E8;
-    --popover-foreground: #1A0D09;
+    --card: #F8FCFF;
+    --card-foreground: #081424;
+    --popover: #F8FCFF;
+    --popover-foreground: #081424;
 
-    --primary: #E35336;
-    --primary-foreground: #F5F5DC;
-    --secondary: #F4A460;
-    --secondary-foreground: #1A0D09;
+    --primary: #0EA5E9;
+    --primary-foreground: #F0F9FF;
+    --secondary: #38BDF8;
+    --secondary-foreground: #081424;
 
-    --accent: rgba(227, 83, 54, 0.14);
-    --accent-foreground: #A0522D;
+    --accent: rgba(14, 165, 233, 0.14);
+    --accent-foreground: #0284C7;
 
-    --status-live: #E35336;
-    --status-watch: #F4A460;
-    --status-danger: #E35336;
-    --destructive: #E35336;
-    --destructive-foreground: #F5F5DC;
-    --warning: #F4A460;
+    --status-live: #0EA5E9;
+    --status-watch: #F59E0B;
+    --status-danger: #EF4444;
+    --destructive: #EF4444;
+    --destructive-foreground: #F0F9FF;
+    --warning: #F59E0B;
 
-    --ring: rgba(227, 83, 54, 0.45);
+    --ring: rgba(14, 165, 233, 0.45);
     --radius-pill: 9999px;
     --radius-card: 0.75rem;
     --radius: 0.5rem;
@@ -52,42 +52,42 @@
   }
 
   .dark {
-    /* Burnt Sienna Deep Espresso Dark Theme (#E35336, #F5F5DC, #F4A460, #A0522D) */
-    --background: #110805;
-    --foreground: #F5F5DC;
+    /* Abyssal Hydrological Blue Dark Theme (#040B14, #081424, #0EA5E9, #38BDF8, #F0F9FF) */
+    --background: #040B14;
+    --foreground: #F0F9FF;
 
-    --surface: #1A0D09;
-    --surface-elevated: #24120C;
-    --surface-glass: rgba(26, 13, 9, 0.88);
+    --surface: #081424;
+    --surface-elevated: #0D1F36;
+    --surface-glass: rgba(8, 20, 36, 0.88);
 
-    --border: rgba(160, 82, 45, 0.38);
-    --border-hover: rgba(244, 164, 96, 0.55);
-    --border-focus: #E35336;
+    --border: rgba(56, 189, 248, 0.25);
+    --border-hover: rgba(56, 189, 248, 0.55);
+    --border-focus: #0EA5E9;
 
-    --muted: #24120C;
-    --muted-foreground: #D9C3B0;
+    --muted: #0D1F36;
+    --muted-foreground: #BAE6FD;
 
-    --card: #1A0D09;
-    --card-foreground: #F5F5DC;
-    --popover: #1A0D09;
-    --popover-foreground: #F5F5DC;
+    --card: #081424;
+    --card-foreground: #F0F9FF;
+    --popover: #081424;
+    --popover-foreground: #F0F9FF;
 
-    --primary: #E35336;
-    --primary-foreground: #F5F5DC;
-    --secondary: #A0522D;
-    --secondary-foreground: #F5F5DC;
+    --primary: #0EA5E9;
+    --primary-foreground: #F0F9FF;
+    --secondary: #0284C7;
+    --secondary-foreground: #F0F9FF;
 
-    --accent: rgba(244, 164, 96, 0.16);
-    --accent-foreground: #F4A460;
+    --accent: rgba(56, 189, 248, 0.16);
+    --accent-foreground: #38BDF8;
 
-    --status-live: #F4A460;
-    --status-watch: #F4A460;
-    --status-danger: #E35336;
-    --destructive: #E35336;
-    --destructive-foreground: #F5F5DC;
-    --warning: #F4A460;
+    --status-live: #38BDF8;
+    --status-watch: #F59E0B;
+    --status-danger: #EF4444;
+    --destructive: #EF4444;
+    --destructive-foreground: #F0F9FF;
+    --warning: #F59E0B;
 
-    --ring: rgba(227, 83, 54, 0.45);
+    --ring: rgba(14, 165, 233, 0.45);
   }
 }
 
@@ -118,23 +118,23 @@ pre,
   font-family: var(--font-mono);
 }
 
-/* Burnt Sienna Scrollbars */
+/* Hydrological Blue Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #110805;
+  background: #040B14;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(160, 82, 45, 0.55);
+  background: rgba(2, 132, 199, 0.55);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #E35336;
+  background: #0EA5E9;
 }
 
-/* Burnt Sienna Eyebrow Labels */
+/* Hydrological Blue Eyebrow Labels */
 .eyebrow {
   display: inline-flex;
   align-items: center;
@@ -143,7 +143,7 @@ pre,
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #F4A460;
+  color: #38BDF8;
   font-weight: 600;
   margin-bottom: 6px;
 }
@@ -153,11 +153,11 @@ pre,
   width: 6px;
   height: 6px;
   border-radius: 2px;
-  background: #E35336;
-  box-shadow: 0 0 8px rgba(227, 83, 54, 0.65);
+  background: #0EA5E9;
+  box-shadow: 0 0 8px rgba(14, 165, 233, 0.75);
 }
 
-/* Burnt Sienna Tag Utilities */
+/* Hydrological Blue Tag Utilities */
 .pill {
   display: inline-flex;
   align-items: center;
@@ -167,9 +167,9 @@ pre,
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.02em;
-  border: 1px solid rgba(160, 82, 45, 0.45);
-  background: rgba(160, 82, 45, 0.16);
-  color: #F5F5DC;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  background: rgba(2, 132, 199, 0.16);
+  color: #F0F9FF;
 }
 
 .pill .dot {
@@ -178,53 +178,53 @@ pre,
   border-radius: 2px;
 }
 .pill .dot.green {
-  background: #F4A460;
+  background: #38BDF8;
 }
 .pill .dot.amber {
-  background: #F4A460;
+  background: #F59E0B;
 }
 .pill .dot.red {
-  background: #E35336;
+  background: #EF4444;
 }
 .pill .dot.neutral {
-  background: #A0522D;
+  background: #0284C7;
 }
 
-/* Burnt Sienna Card Surface */
+/* Hydrological Blue Card Surface */
 .glass-panel {
-  background: #1A0D09;
-  border: 1px solid rgba(160, 82, 45, 0.35);
+  background: #081424;
+  border: 1px solid rgba(56, 189, 248, 0.25);
   border-radius: 0.75rem;
 }
 
 .notice {
   padding: 0.875rem 1.125rem;
   border-radius: 0.75rem;
-  border: 1px solid rgba(244, 164, 96, 0.35);
-  background: rgba(160, 82, 45, 0.14);
-  color: #F5F5DC;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  background: rgba(2, 132, 199, 0.14);
+  color: #F0F9FF;
   font-size: 0.75rem;
   line-height: 1.6;
 }
 
 /* =========================================================================
-   ANIMATED BURNT SIENNA GLASSMORPHISM BUTTON SYSTEM
-   (#E35336, #F5F5DC, #F4A460, #A0522D)
+   ANIMATED HYDROLOGICAL BLUE GLASSMORPHISM BUTTON SYSTEM
+   (#0EA5E9, #38BDF8, #7DD3FC, #0284C7, #F0F9FF)
    ========================================================================= */
 @keyframes glassPulseGlow {
   0%, 100% {
     box-shadow:
-      inset 0 1px 0 0 rgba(245, 245, 220, 0.42),
-      inset 0 -1px 0 0 rgba(160, 82, 45, 0.25),
-      0 8px 28px -4px rgba(17, 8, 5, 0.65),
-      0 0 18px 0 rgba(227, 83, 54, 0.22);
+      inset 0 1px 0 0 rgba(240, 249, 255, 0.45),
+      inset 0 -1px 0 0 rgba(2, 132, 199, 0.28),
+      0 8px 28px -4px rgba(4, 11, 20, 0.7),
+      0 0 18px 0 rgba(14, 165, 233, 0.25);
   }
   50% {
     box-shadow:
-      inset 0 1px 0 0 rgba(245, 245, 220, 0.62),
-      inset 0 -1px 0 0 rgba(244, 164, 96, 0.3),
-      0 12px 34px -4px rgba(17, 8, 5, 0.75),
-      0 0 28px 3px rgba(227, 83, 54, 0.38);
+      inset 0 1px 0 0 rgba(240, 249, 255, 0.68),
+      inset 0 -1px 0 0 rgba(56, 189, 248, 0.35),
+      0 12px 34px -4px rgba(4, 11, 20, 0.8),
+      0 0 28px 3px rgba(14, 165, 233, 0.42);
   }
 }
 
@@ -239,6 +239,7 @@ pre,
   justify-content: center;
   gap: 0.5rem;
   border-radius: 9999px;
+  white-space: nowrap;
   backdrop-filter: blur(18px) saturate(165%);
   -webkit-backdrop-filter: blur(18px) saturate(165%);
   transition:
@@ -249,7 +250,7 @@ pre,
   will-change: transform, box-shadow;
 }
 
-/* Warm Beige (#F5F5DC) & Sandy Brown (#F4A460) Specular Shimmer Sweep */
+/* Glacial Ice (#F0F9FF) & Sky Blue (#38BDF8) Specular Shimmer Sweep */
 .btn-glass::after,
 .btn-glass-primary::after,
 .btn-glass-secondary::after,
@@ -262,9 +263,9 @@ pre,
   height: 200%;
   background: linear-gradient(
     90deg,
-    rgba(245, 245, 220, 0) 0%,
-    rgba(245, 245, 220, 0.34) 50%,
-    rgba(244, 164, 96, 0) 100%
+    rgba(240, 249, 255, 0) 0%,
+    rgba(240, 249, 255, 0.36) 50%,
+    rgba(56, 189, 248, 0) 100%
   );
   transform: translateX(-180%) rotate(22deg);
   transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
@@ -292,17 +293,17 @@ pre,
   transform: translateY(0) scale(0.98);
 }
 
-/* Primary Burnt Sienna (#E35336) & Sandy Brown (#F4A460) Luminous Glass Button */
+/* Primary Hydrological Blue (#0EA5E9) & Glacial Cyan (#38BDF8) Luminous Glass Button */
 .btn-glass-primary,
 .btn.primary {
   background: linear-gradient(
     135deg,
-    rgba(227, 83, 54, 0.62) 0%,
-    rgba(160, 82, 45, 0.48) 55%,
-    rgba(244, 164, 96, 0.42) 100%
+    rgba(14, 165, 233, 0.62) 0%,
+    rgba(2, 132, 199, 0.50) 55%,
+    rgba(56, 189, 248, 0.44) 100%
   );
-  color: #F5F5DC;
-  border: 1px solid rgba(244, 164, 96, 0.55);
+  color: #F0F9FF;
+  border: 1px solid rgba(125, 211, 252, 0.55);
   animation: glassPulseGlow 4s ease-in-out infinite;
 }
 
@@ -310,44 +311,44 @@ pre,
 .btn.primary:hover {
   background: linear-gradient(
     135deg,
-    rgba(227, 83, 54, 0.82) 0%,
-    rgba(160, 82, 45, 0.62) 55%,
-    rgba(244, 164, 96, 0.58) 100%
+    rgba(14, 165, 233, 0.84) 0%,
+    rgba(2, 132, 199, 0.65) 55%,
+    rgba(56, 189, 248, 0.60) 100%
   );
-  border-color: #F5F5DC;
+  border-color: #F0F9FF;
   box-shadow:
-    inset 0 1px 0 0 rgba(245, 245, 220, 0.75),
-    0 14px 36px -6px rgba(17, 8, 5, 0.8),
-    0 0 30px 3px rgba(227, 83, 54, 0.45);
+    inset 0 1px 0 0 rgba(240, 249, 255, 0.78),
+    0 14px 36px -6px rgba(4, 11, 20, 0.82),
+    0 0 30px 3px rgba(14, 165, 233, 0.48);
 }
 
-/* Secondary Deep Sienna (#A0522D) Smoked Glass Button */
+/* Secondary Deep Marine Blue (#0284C7) Smoked Glass Button */
 .btn-glass-secondary,
 .btn.secondary {
   background: linear-gradient(
     135deg,
-    rgba(160, 82, 45, 0.28) 0%,
-    rgba(26, 13, 9, 0.65) 100%
+    rgba(2, 132, 199, 0.26) 0%,
+    rgba(8, 20, 36, 0.68) 100%
   );
-  color: #F5F5DC;
-  border: 1px solid rgba(160, 82, 45, 0.55);
+  color: #F0F9FF;
+  border: 1px solid rgba(56, 189, 248, 0.42);
   box-shadow:
-    inset 0 1px 0 0 rgba(244, 164, 96, 0.28),
-    0 8px 24px -4px rgba(17, 8, 5, 0.6);
+    inset 0 1px 0 0 rgba(125, 211, 252, 0.28),
+    0 8px 24px -4px rgba(4, 11, 20, 0.65);
 }
 
 .btn-glass-secondary:hover,
 .btn.secondary:hover {
   background: linear-gradient(
     135deg,
-    rgba(227, 83, 54, 0.35) 0%,
-    rgba(160, 82, 45, 0.42) 100%
+    rgba(14, 165, 233, 0.36) 0%,
+    rgba(2, 132, 199, 0.44) 100%
   );
-  border-color: #F4A460;
+  border-color: #38BDF8;
   box-shadow:
-    inset 0 1px 0 0 rgba(245, 245, 220, 0.5),
-    0 12px 32px -4px rgba(17, 8, 5, 0.75),
-    0 0 22px 0 rgba(244, 164, 96, 0.25);
+    inset 0 1px 0 0 rgba(240, 249, 255, 0.52),
+    0 12px 32px -4px rgba(4, 11, 20, 0.78),
+    0 0 22px 0 rgba(56, 189, 248, 0.28);
 }
 
 .btn.small {
@@ -356,24 +357,24 @@ pre,
 }
 
 /* =========================================================================
-   ANIMATED BURNT SIENNA GLASSMORPHISM ICONS & NAVBAR PILL SYSTEM
+   ANIMATED HYDROLOGICAL BLUE GLASSMORPHISM ICONS & NAVBAR PILL SYSTEM
    ========================================================================= */
 @keyframes iconGlassFloat {
   0%, 100% {
     transform: translateY(0);
     box-shadow:
-      inset 0 1px 0 0 rgba(245, 245, 220, 0.38),
-      inset 0 -1px 0 0 rgba(160, 82, 45, 0.18),
-      0 6px 20px -4px rgba(17, 8, 5, 0.65),
-      0 0 14px 0 rgba(227, 83, 54, 0.16);
+      inset 0 1px 0 0 rgba(240, 249, 255, 0.40),
+      inset 0 -1px 0 0 rgba(2, 132, 199, 0.20),
+      0 6px 20px -4px rgba(4, 11, 20, 0.68),
+      0 0 14px 0 rgba(14, 165, 233, 0.18);
   }
   50% {
     transform: translateY(-2px);
     box-shadow:
-      inset 0 1px 0 0 rgba(245, 245, 220, 0.58),
-      inset 0 -1px 0 0 rgba(244, 164, 96, 0.28),
-      0 10px 26px -4px rgba(17, 8, 5, 0.75),
-      0 0 22px 2px rgba(227, 83, 54, 0.32);
+      inset 0 1px 0 0 rgba(240, 249, 255, 0.62),
+      inset 0 -1px 0 0 rgba(56, 189, 248, 0.32),
+      0 10px 26px -4px rgba(4, 11, 20, 0.78),
+      0 0 22px 2px rgba(14, 165, 233, 0.35);
   }
 }
 
@@ -385,23 +386,19 @@ pre,
   justify-content: center;
   background: linear-gradient(
     135deg,
-    rgba(227, 83, 54, 0.38) 0%,
-    rgba(160, 82, 45, 0.22) 55%,
-    rgba(244, 164, 96, 0.28) 100%
+    rgba(14, 165, 233, 0.38) 0%,
+    rgba(2, 132, 199, 0.24) 55%,
+    rgba(56, 189, 248, 0.30) 100%
   );
-  border: 1px solid rgba(244, 164, 96, 0.45);
+  border: 1px solid rgba(125, 211, 252, 0.45);
   backdrop-filter: blur(16px) saturate(165%);
   -webkit-backdrop-filter: blur(16px) saturate(165%);
-  box-shadow:
-    inset 0 1px 0 0 rgba(245, 245, 220, 0.42),
-    inset 0 -1px 0 0 rgba(160, 82, 45, 0.18),
-    0 6px 20px -4px rgba(17, 8, 5, 0.65);
-  transition:
-    transform 0.34s cubic-bezier(0.22, 1, 0.36, 1),
-    background 0.34s cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 0.34s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.34s cubic-bezier(0.22, 1, 0.36, 1);
   animation: iconGlassFloat 4.2s ease-in-out infinite;
+  transition:
+    transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.32s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .icon-glass::after {
@@ -413,9 +410,9 @@ pre,
   height: 200%;
   background: linear-gradient(
     90deg,
-    rgba(245, 245, 220, 0) 0%,
-    rgba(245, 245, 220, 0.38) 50%,
-    rgba(244, 164, 96, 0) 100%
+    rgba(240, 249, 255, 0) 0%,
+    rgba(240, 249, 255, 0.40) 50%,
+    rgba(56, 189, 248, 0) 100%
   );
   transform: translateX(-180%) rotate(22deg);
   transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
@@ -432,30 +429,30 @@ pre,
   transform: translateY(-3px) scale(1.08);
   background: linear-gradient(
     135deg,
-    rgba(227, 83, 54, 0.62) 0%,
-    rgba(160, 82, 45, 0.38) 55%,
-    rgba(244, 164, 96, 0.46) 100%
+    rgba(14, 165, 233, 0.64) 0%,
+    rgba(2, 132, 199, 0.42) 55%,
+    rgba(56, 189, 248, 0.48) 100%
   );
-  border-color: #F5F5DC;
+  border-color: #F0F9FF;
   box-shadow:
-    inset 0 1px 0 0 rgba(245, 245, 220, 0.72),
-    0 10px 28px -4px rgba(17, 8, 5, 0.8),
-    0 0 24px 3px rgba(227, 83, 54, 0.38);
+    inset 0 1px 0 0 rgba(240, 249, 255, 0.74),
+    0 10px 28px -4px rgba(4, 11, 20, 0.82),
+    0 0 24px 3px rgba(14, 165, 233, 0.42);
 }
 
-/* Navbar Burnt Sienna Frosted Glass Dock & Nav Item Pills */
+/* Navbar Hydrological Blue Frosted Glass Dock & Nav Item Pills */
 .nav-glass-dock {
   background: linear-gradient(
     135deg,
-    rgba(160, 82, 45, 0.24) 0%,
-    rgba(26, 13, 9, 0.62) 100%
+    rgba(2, 132, 199, 0.22) 0%,
+    rgba(8, 20, 36, 0.66) 100%
   );
-  border: 1px solid rgba(244, 164, 96, 0.32);
+  border: 1px solid rgba(56, 189, 248, 0.32);
   backdrop-filter: blur(18px) saturate(165%);
   -webkit-backdrop-filter: blur(18px) saturate(165%);
   box-shadow:
-    inset 0 1px 0 0 rgba(245, 245, 220, 0.25),
-    0 10px 30px -6px rgba(17, 8, 5, 0.65);
+    inset 0 1px 0 0 rgba(240, 249, 255, 0.25),
+    0 10px 30px -6px rgba(4, 11, 20, 0.68);
 }
 
 .nav-glass-pill {
@@ -466,15 +463,15 @@ pre,
   gap: 0.5rem;
   padding: 0.4rem 0.9rem;
   border-radius: 9999px;
-  border: 1px solid rgba(160, 82, 45, 0.38);
+  border: 1px solid rgba(56, 189, 248, 0.32);
   background: linear-gradient(
     135deg,
-    rgba(160, 82, 45, 0.22) 0%,
-    rgba(26, 13, 9, 0.45) 100%
+    rgba(2, 132, 199, 0.20) 0%,
+    rgba(8, 20, 36, 0.48) 100%
   );
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  box-shadow: inset 0 1px 0 0 rgba(245, 245, 220, 0.22);
+  box-shadow: inset 0 1px 0 0 rgba(240, 249, 255, 0.22);
   transition:
     transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
     background 0.3s cubic-bezier(0.22, 1, 0.36, 1),
@@ -491,9 +488,9 @@ pre,
   height: 200%;
   background: linear-gradient(
     90deg,
-    rgba(245, 245, 220, 0) 0%,
-    rgba(245, 245, 220, 0.32) 50%,
-    rgba(244, 164, 96, 0) 100%
+    rgba(240, 249, 255, 0) 0%,
+    rgba(240, 249, 255, 0.34) 50%,
+    rgba(56, 189, 248, 0) 100%
   );
   transform: translateX(-180%) rotate(22deg);
   transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
@@ -509,14 +506,14 @@ pre,
   transform: translateY(-1.5px) scale(1.03);
   background: linear-gradient(
     135deg,
-    rgba(227, 83, 54, 0.45) 0%,
-    rgba(160, 82, 45, 0.35) 100%
+    rgba(14, 165, 233, 0.45) 0%,
+    rgba(2, 132, 199, 0.35) 100%
   );
-  border-color: #F4A460;
+  border-color: #38BDF8;
   box-shadow:
-    inset 0 1px 0 0 rgba(245, 245, 220, 0.55),
-    0 8px 22px -4px rgba(17, 8, 5, 0.65),
-    0 0 18px 0 rgba(227, 83, 54, 0.28);
+    inset 0 1px 0 0 rgba(240, 249, 255, 0.55),
+    0 8px 22px -4px rgba(4, 11, 20, 0.68),
+    0 0 18px 0 rgba(14, 165, 233, 0.32);
 }
 
 /* =========================================================================
@@ -542,12 +539,12 @@ pre,
 
 @keyframes riverSwellPulse {
   0%, 100% {
-    opacity: 0.26;
-    filter: drop-shadow(0 0 12px rgba(227, 83, 54, 0.4));
+    opacity: 0.28;
+    filter: drop-shadow(0 0 12px rgba(14, 165, 233, 0.42));
   }
   50% {
-    opacity: 0.44;
-    filter: drop-shadow(0 0 22px rgba(244, 164, 96, 0.7));
+    opacity: 0.46;
+    filter: drop-shadow(0 0 22px rgba(56, 189, 248, 0.72));
   }
 }
 
