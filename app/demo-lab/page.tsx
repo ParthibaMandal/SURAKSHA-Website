@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import {
   Activity,
@@ -30,16 +30,29 @@ import {
   Flame,
   Mountain,
   Zap,
+  Building2,
+  Truck,
+  HeartPulse,
+  Radio,
+  LifeBuoy,
+  MapPin,
+  FileText,
+  Layers,
+  HelpCircle,
+  Info,
 } from "lucide-react";
 import { RiskGauge } from "@/components/simulation/RiskGauge";
 import { ScenarioComparisonChart } from "@/components/simulation/ScenarioComparisonChart";
 import { RiverStageForecastChart } from "@/components/simulation/RiverStageForecastChart";
 import {
   SIMULATION_SCENARIOS,
+  SIMULATION_EVENT_DRIVERS,
   SimulationScenario,
   SimulationDayState,
+  FloodImpactAssessment,
   CWC_GANDHI_GHAT_BENCHMARKS,
   generateCustomScenario,
+  computeImpactAssessment,
   CustomScenarioInput,
 } from "@/lib/simulation-scenarios";
 
@@ -196,14 +209,37 @@ export default function DemoLabPage() {
 
   const [selectedScenarioId, setSelectedScenarioId] = useState<string>("WORST_01_RAPID_RIVER_SURGE");
   const [preset, setPreset] = useState<DemoPreset>("surge");
-  const [inflow, setInflow] = useState(PRESETS.surge.inflow);
-  const [rainfall, setRainfall] = useState(PRESETS.surge.rainfall);
+
+  // Environmental Controls State (Section A)
+  const [inflow, setInflow] = useState<number>(PRESETS.surge.inflow);
+  const [rainfall, setRainfall] = useState<number>(PRESETS.surge.rainfall);
+  const [snowmeltIndex, setSnowmeltIndex] = useState<number>(2.1);
+  const [soilSaturation, setSoilSaturation] = useState<number>(82);
+  const [tributaryInflow, setTributaryInflow] = useState<number>(6200);
+  const [startStage, setStartStage] = useState<number>(44.2);
+  const [embankmentStatus, setEmbankmentStatus] = useState<"Stable" | "Under Stress" | "Structural Seepage" | "Breach">("Stable");
+  const [durationDays, setDurationDays] = useState<number>(21);
+
+  // Multi-selectable Event Drivers
+  const [selectedDrivers, setSelectedDrivers] = useState<string[]>([
+    "glacier_melt",
+    "persistent_rain",
+    "tributary_surge",
+  ]);
+
+  // Derived Compound Hazard Classification
+  const isCompoundDerived =
+    selectedDrivers.length >= 2 ||
+    (selectedDrivers.includes("glacier_melt") &&
+      (selectedDrivers.includes("persistent_rain") || selectedDrivers.includes("tributary_surge")));
+
+  // API Simulation Execution State
   const [result, setResult] = useState<ScenarioResult | null>(null);
-  const [isRunning, setIsRunning] = useState(false);
+  const [isRunning, setIsRunning] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [lastRunTime, setLastRunTime] = useState<string>("16:42:10");
 
-  // 21-Day Progressive Timeline Player States
+  // 21-Day Progressive Timeline Player States (Section B)
   const [currentDayIndex, setCurrentDayIndex] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
@@ -225,12 +261,12 @@ export default function DemoLabPage() {
   const [isDateOpen, setIsDateOpen] = useState<boolean>(false);
   const [isForecastModalOpen, setIsForecastModalOpen] = useState<boolean>(false);
 
-  const locationRef = React.useRef<HTMLDivElement>(null);
-  const dateRef = React.useRef<HTMLDivElement>(null);
+  const locationRef = useRef<HTMLDivElement>(null);
+  const dateRef = useRef<HTMLDivElement>(null);
 
   // Custom Dropdown Menu State & Outside Click Listener
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-  const dropdownRef = React.useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -313,20 +349,49 @@ export default function DemoLabPage() {
   // Multi-variable Physical States synced with active timeline progression
   const currentStage = currentDayState ? currentDayState.stage : (forecastPeak?.value ?? 47.17);
   const currentRisk = currentDayState ? currentDayState.aiRiskScore : (result ? Math.round(result.result.risk_score * 100) : 15);
-  
-  // Dynamic population exposure model based on stage and CWC Danger Mark
-  const exposedPopulation =
-    currentStage >= CWC_GANDHI_GHAT_BENCHMARKS.dangerLevel
-      ? Math.round(18900 * Math.min(1.6, Math.max(0.6, (currentStage - CWC_GANDHI_GHAT_BENCHMARKS.dangerLevel) / 0.8 + 0.8)))
-      : currentStage >= CWC_GANDHI_GHAT_BENCHMARKS.warningLevel
-      ? 4200
-      : 0;
+
+  // Disaster Impact Assessment Model (Section D)
+  const impactAssessment: FloodImpactAssessment = computeImpactAssessment(
+    currentStage,
+    currentDayState.embankmentStatus
+  );
+
+  const exposedPopulation = impactAssessment.exposedPopulation;
+
+  function toggleDriver(driverId: string) {
+    setSelectedDrivers((prev) => {
+      const isSelected = prev.includes(driverId);
+      const next = isSelected ? prev.filter((d) => d !== driverId) : [...prev, driverId];
+      // Automatically adjust environmental inputs based on driver toggles
+      if (!isSelected) {
+        if (driverId === "glacier_melt") setSnowmeltIndex(2.2);
+        if (driverId === "cloudburst") setRainfall((r) => Math.max(r, 220));
+        if (driverId === "persistent_rain") {
+          setRainfall((r) => Math.max(r, 160));
+          setSoilSaturation((s) => Math.max(s, 85));
+        }
+        if (driverId === "tributary_surge") setTributaryInflow(8500);
+        if (driverId === "glof") {
+          setInflow((f) => Math.max(f, 2.0));
+          setSnowmeltIndex(2.5);
+        }
+        if (driverId === "reservoir_release") setInflow((f) => Math.max(f, 1.8));
+      }
+      return next;
+    });
+  }
 
   function handleSelectScenario(scenarioId: string) {
     const scen = allScenarios.find((s) => s.id === scenarioId) ?? SIMULATION_SCENARIOS[0];
     setSelectedScenarioId(scen.id);
     setInflow(scen.initialInflowMultiplier);
     setRainfall(scen.initialRainfallAnomaly);
+    setSnowmeltIndex(scen.initialSnowmeltIndex ?? 1.0);
+    setSoilSaturation(scen.initialSoilSaturation ?? 65);
+    setTributaryInflow(scen.initialTributaryInflow ?? 4500);
+    setSelectedDrivers(scen.activeDrivers ?? ["glacier_melt", "persistent_rain"]);
+    setStartStage(scen.timeline[0]?.stage ?? 44.2);
+    setEmbankmentStatus(scen.timeline.some((t) => t.embankmentStatus === "Breach") ? "Breach" : "Stable");
     setCurrentDayIndex(0);
     setIsPlaying(false);
     setError(null);
@@ -399,7 +464,7 @@ export default function DemoLabPage() {
     setRainfall(newScenario.initialRainfallAnomaly);
     setCurrentDayIndex(0);
     setIsStudioOpen(false);
-    setIsPlaying(true); // Automatically play live simulation!
+    setIsPlaying(true); // Automatically play live simulation
     runScenario(newScenario);
   }
 
@@ -422,11 +487,31 @@ export default function DemoLabPage() {
 
   const phaseInfo = getPhaseInfo(currentStage, currentDayState.day);
 
+  // Render Driver Icon
+  const renderDriverIcon = (id: string, className = "w-3.5 h-3.5") => {
+    switch (id) {
+      case "glacier_melt":
+        return <Mountain className={className} />;
+      case "cloudburst":
+        return <Zap className={className} />;
+      case "persistent_rain":
+        return <CloudRain className={className} />;
+      case "tributary_surge":
+        return <Waves className={className} />;
+      case "glof":
+        return <Flame className={className} />;
+      case "reservoir_release":
+        return <Sliders className={className} />;
+      default:
+        return <Activity className={className} />;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans transition-colors duration-200">
       <main className="w-full">
         {/* Top Panoramic Mountain Header Banner */}
-        <header className="relative z-30 w-full border-b border-[var(--border)] bg-[var(--surface)]">
+        <header className="relative z-30 w-full border-b border-[var(--border)] bg-[var(--surface)] overflow-visible">
           {/* Panoramic Mountain Backdrop with Atmospheric Gradient */}
           <div className="absolute inset-0 z-0 overflow-hidden opacity-40 dark:opacity-25 select-none pointer-events-none">
             <Image
@@ -466,13 +551,13 @@ export default function DemoLabPage() {
               <div>
                 <div className="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
                   <Sparkles className="w-3.5 h-3.5" />
-                  FLOOD SCENARIO SIMULATION LABORATORY
+                  FLOOD SCENARIO SIMULATION LABORATORY 2.0
                 </div>
                 <h1 className="text-3xl sm:text-4xl font-heading font-extrabold tracking-tight text-[var(--foreground)] mt-1">
-                  Flood Simulation Lab
+                  Flood Scenario Simulation Laboratory
                 </h1>
                 <p className="text-xs sm:text-sm text-[var(--muted-foreground)] mt-1.5 max-w-2xl leading-relaxed">
-                  Interactive multi-variable flood scenario engine. Create custom environmental scenarios or run library benchmarks with live 21-day timeline evolution and closed-loop predictive validation.
+                  Interactive multi-driver compound flood scenario engine. Configure environmental variables, run benchmark scenarios or custom events, scrub through the 21-day timeline, and assess predictive intelligence with post-flood disaster impacts.
                 </p>
               </div>
 
@@ -577,7 +662,7 @@ export default function DemoLabPage() {
                       <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--muted-foreground)] border-b border-[var(--border)] pb-1.5">
                         Simulation Date Calibration
                       </div>
-                      
+
                       {/* Presets */}
                       <div className="space-y-1">
                         {PRESET_DATES.map((pd) => {
@@ -652,7 +737,7 @@ export default function DemoLabPage() {
         </header>
 
         {/* Dashboard Container */}
-        <div className="p-4 sm:p-8 max-w-[1600px] mx-auto w-full space-y-6">
+        <div className="p-4 sm:p-8 max-w-[1600px] mx-auto w-full space-y-8">
           {error && (
             <div className="p-4 rounded-2xl border border-rose-500/30 bg-rose-500/10 text-rose-800 dark:text-rose-200 text-xs flex items-center gap-3">
               <CircleAlert className="w-5 h-5 text-rose-500 shrink-0" />
@@ -674,7 +759,7 @@ export default function DemoLabPage() {
                     CWC DANGER MARK EXCEEDED · {currentStage.toFixed(2)} m (THRESHOLD: {CWC_GANDHI_GHAT_BENCHMARKS.dangerLevel.toFixed(2)} m)
                   </div>
                   <div className="text-sm font-semibold mt-0.5">
-                    Substantial inundation risk detected. Approximately 18,900 people in low-lying Digha, Danapur, and Gandhi Ghat floodplains exposed.
+                    Substantial inundation risk detected. Approximately {exposedPopulation.toLocaleString()} people in low-lying Digha, Danapur, and Gandhi Ghat floodplains exposed.
                   </div>
                 </div>
               </div>
@@ -686,7 +771,7 @@ export default function DemoLabPage() {
             </div>
           )}
 
-          {/* 1. Top 4 Metric KPI Cards with Wave Sparklines */}
+          {/* Top 4 Metric KPI Cards with Wave Sparklines */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* KPI 1: Highest returned stage */}
             <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-md flex flex-col justify-between space-y-2 shadow-xs">
@@ -808,21 +893,40 @@ export default function DemoLabPage() {
             </div>
           </div>
 
-          {/* 2. Flagship 21-Day Progressive Timeline Controller Card */}
+          {/* SECTION B: Simulation Timeline (Flagship GANGA-01) */}
           <section className="p-5 sm:p-6 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-xl shadow-xs space-y-5">
+            <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold uppercase tracking-wider font-mono text-emerald-600 dark:text-emerald-400">
+                  SECTION B
+                </span>
+                <span className="text-sm font-bold text-[var(--foreground)] font-heading">
+                  Simulation Timeline · 21-Day Dynamic Hydrological Progression
+                </span>
+              </div>
+              <span className="text-[11px] font-mono text-[var(--muted-foreground)] hidden sm:inline-block">
+                Flagship GANGA-01 Engine
+              </span>
+            </div>
+
             {/* Timeline Header Bar */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[var(--border)]">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
               <div className="space-y-1">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <span className="px-2.5 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 font-mono text-xs font-bold">
                     {activeScenario.code}
                   </span>
-                  <span className="text-xs font-bold text-[var(--foreground)] uppercase tracking-wider font-heading">
+                  <span className="text-xs sm:text-sm font-bold text-[var(--foreground)] uppercase tracking-wider font-heading">
                     {activeScenario.title}
                   </span>
-                  <span className="hidden sm:inline-block text-[10px] px-2 py-0.5 rounded bg-[var(--surface)] border border-[var(--border)] text-[var(--muted-foreground)]">
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-[var(--surface)] border border-[var(--border)] text-[var(--muted-foreground)]">
                     {activeScenario.category}
                   </span>
+                  {activeScenario.isCompound && (
+                    <span className="px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-400 text-[10px] font-mono font-bold">
+                      COMPOUND EVENT
+                    </span>
+                  )}
                   {activeScenario.id.startsWith("CUSTOM_") && (
                     <span className="px-2 py-0.5 rounded bg-emerald-500 text-black text-[9px] font-bold font-mono uppercase tracking-wider">
                       User Created
@@ -835,7 +939,7 @@ export default function DemoLabPage() {
               </div>
 
               {/* Day Badge & Phase Indicator */}
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2.5 shrink-0">
                 <span className={`px-3 py-1 rounded-full border text-[11px] font-mono font-bold ${phaseInfo.color}`}>
                   {phaseInfo.label}
                 </span>
@@ -857,7 +961,7 @@ export default function DemoLabPage() {
               <div className="relative w-full py-2">
                 {/* Horizontal Background Rail */}
                 <div className="absolute top-1/2 left-0 right-0 h-1.5 -translate-y-1/2 bg-[var(--surface)] rounded-full border border-[var(--border)]" />
-                
+
                 {/* Active Colored Progress Fill */}
                 <div
                   className="absolute top-1/2 left-0 h-1.5 -translate-y-1/2 bg-emerald-500 rounded-full transition-all duration-300"
@@ -1031,7 +1135,7 @@ export default function DemoLabPage() {
               <Activity className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
               <div className="space-y-1">
                 <div className="text-[11px] font-bold text-[var(--foreground)] uppercase font-mono tracking-wider flex items-center gap-2">
-                  <span>SURAKSHA Reasoning · {currentDayState.label} Analysis</span>
+                  <span>SURAKSHA Reasoning · {currentDayState.label} Diagnostic Analysis</span>
                   <span className="text-[10px] text-[var(--muted-foreground)]">
                     (Predicted: {currentDayState.aiForecastStage.toFixed(2)}m · Error: {Math.abs(currentDayState.stage - currentDayState.aiForecastStage).toFixed(2)}m)
                   </span>
@@ -1043,20 +1147,25 @@ export default function DemoLabPage() {
             </div>
           </section>
 
-          {/* 3. Middle Row: Scenario Configuration & River-Stage Hydrograph Forecast */}
+          {/* MIDDLE ROW: SECTION A (Scenario Studio) & SECTION C (Prediction Intelligence) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-            {/* Panel 1: Scenario Configuration (lg:col-span-5) */}
+            {/* SECTION A: Scenario Studio (lg:col-span-5) */}
             <section className="lg:col-span-5 p-5 sm:p-6 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-xl shadow-xs flex flex-col justify-between space-y-5">
               <div className="space-y-4">
                 <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
-                  <h3 className="text-sm font-bold text-[var(--foreground)] flex items-center gap-2 font-heading">
-                    <Activity className="w-4 h-4 text-emerald-500" /> Scenario Configuration
-                  </h3>
+                  <div>
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block">
+                      SECTION A
+                    </span>
+                    <h3 className="text-sm font-bold text-[var(--foreground)] flex items-center gap-2 font-heading">
+                      <Sliders className="w-4 h-4 text-emerald-500" /> Scenario Studio Workspace
+                    </h3>
+                  </div>
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
                       onClick={() => setIsStudioOpen(true)}
-                      className="px-2 py-1 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold hover:bg-emerald-500/25 transition-all cursor-pointer flex items-center gap-1"
+                      className="px-2.5 py-1 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold hover:bg-emerald-500/25 transition-all cursor-pointer flex items-center gap-1"
                     >
                       <PlusCircle className="w-3 h-3" />
                       <span>+ Custom</span>
@@ -1222,27 +1331,90 @@ export default function DemoLabPage() {
                   )}
                 </div>
 
+                {/* Event Drivers (Multiple Selections Allowed) */}
+                <div className="space-y-2 pt-1">
+                  <div className="flex items-center justify-between text-xs font-bold text-[var(--foreground)]">
+                    <span className="flex items-center gap-1.5">
+                      <Layers className="w-3.5 h-3.5 text-emerald-500" />
+                      Active Event Drivers ({selectedDrivers.length})
+                    </span>
+                    <span className="text-[10px] font-mono text-[var(--muted-foreground)] font-normal">
+                      Multi-select enabled
+                    </span>
+                  </div>
+
+                  {/* Driver Pills Grid */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {SIMULATION_EVENT_DRIVERS.map((driver) => {
+                      const isSelected = selectedDrivers.includes(driver.id);
+                      return (
+                        <button
+                          key={driver.id}
+                          type="button"
+                          onClick={() => toggleDriver(driver.id)}
+                          className={`p-2 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1 select-none ${
+                            isSelected
+                              ? "bg-emerald-500/15 border-emerald-500/50 text-[var(--foreground)] shadow-xs"
+                              : "bg-[var(--surface)] border-[var(--border)] text-[var(--muted-foreground)] hover:border-emerald-500/30 hover:text-[var(--foreground)]"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className={isSelected ? "text-emerald-500" : "text-[var(--muted-foreground)]"}>
+                              {renderDriverIcon(driver.id)}
+                            </span>
+                            <span
+                              className={`w-3.5 h-3.5 rounded-full border grid place-items-center ${
+                                isSelected
+                                  ? "bg-emerald-500 border-emerald-400 text-white"
+                                  : "border-[var(--border)] bg-[var(--surface-elevated)]"
+                              }`}
+                            >
+                              {isSelected && <Check className="w-2.5 h-2.5 stroke-[3]" />}
+                            </span>
+                          </div>
+                          <div className="text-[10px] font-bold leading-tight truncate mt-1">
+                            {driver.name.split(" ")[0]} {driver.name.split(" ")[1] ?? ""}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Derived Compound Event Classification Badge */}
+                  {isCompoundDerived && (
+                    <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between text-xs font-mono animate-in fade-in duration-200">
+                      <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-bold">
+                        <Waves className="w-4 h-4 shrink-0" />
+                        <span>COMPOUND FLOOD HAZARD EVENT</span>
+                      </div>
+                      <span className="text-[10px] text-[var(--muted-foreground)]">
+                        Synchronous Multi-Driver Ingress
+                      </span>
+                    </div>
+                  )}
+                </div>
+
                 {/* Scenario Quick Presets */}
                 <div className="grid grid-cols-3 gap-2 pt-1">
                   {/* Steady Conditions */}
                   <button
                     type="button"
                     onClick={() => choosePreset("steady")}
-                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer relative flex flex-col items-center justify-between gap-1.5 ${
+                    className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer relative flex flex-col items-center justify-between gap-1 ${
                       preset === "steady"
                         ? "border-emerald-500 bg-emerald-500/10 text-[var(--foreground)] shadow-xs"
                         : "border-[var(--border)] bg-[var(--surface)] text-[var(--muted-foreground)] hover:border-emerald-500/40 hover:text-[var(--foreground)]"
                     }`}
                   >
                     {preset === "steady" && (
-                      <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-emerald-500 text-white grid place-items-center">
-                        <Check className="w-2.5 h-2.5 stroke-[3]" />
+                      <span className="absolute top-1.5 right-1.5 w-3.5 h-3.5 rounded-full bg-emerald-500 text-white grid place-items-center">
+                        <Check className="w-2 h-2 stroke-[3]" />
                       </span>
                     )}
-                    <Waves className="w-5 h-5 text-emerald-500" />
+                    <Waves className="w-4 h-4 text-emerald-500" />
                     <div>
                       <div className="text-[11px] font-bold leading-tight">Steady</div>
-                      <div className="text-[9px] text-[var(--muted-foreground)] mt-0.5">Baseline</div>
+                      <div className="text-[9px] text-[var(--muted-foreground)]">Baseline</div>
                     </div>
                   </button>
 
@@ -1250,21 +1422,21 @@ export default function DemoLabPage() {
                   <button
                     type="button"
                     onClick={() => choosePreset("rain")}
-                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer relative flex flex-col items-center justify-between gap-1.5 ${
+                    className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer relative flex flex-col items-center justify-between gap-1 ${
                       preset === "rain"
                         ? "border-emerald-500 bg-emerald-500/10 text-[var(--foreground)] shadow-xs"
                         : "border-[var(--border)] bg-[var(--surface)] text-[var(--muted-foreground)] hover:border-emerald-500/40 hover:text-[var(--foreground)]"
                     }`}
                   >
                     {preset === "rain" && (
-                      <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-emerald-500 text-white grid place-items-center">
-                        <Check className="w-2.5 h-2.5 stroke-[3]" />
+                      <span className="absolute top-1.5 right-1.5 w-3.5 h-3.5 rounded-full bg-emerald-500 text-white grid place-items-center">
+                        <Check className="w-2 h-2 stroke-[3]" />
                       </span>
                     )}
-                    <CloudRain className="w-5 h-5 text-sky-500" />
+                    <CloudRain className="w-4 h-4 text-sky-500" />
                     <div>
                       <div className="text-[11px] font-bold leading-tight">Heavy Rain</div>
-                      <div className="text-[9px] text-[var(--muted-foreground)] mt-0.5">Precipitation</div>
+                      <div className="text-[9px] text-[var(--muted-foreground)]">Catchment</div>
                     </div>
                   </button>
 
@@ -1272,33 +1444,34 @@ export default function DemoLabPage() {
                   <button
                     type="button"
                     onClick={() => choosePreset("surge")}
-                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer relative flex flex-col items-center justify-between gap-1.5 ${
+                    className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer relative flex flex-col items-center justify-between gap-1 ${
                       preset === "surge"
                         ? "border-emerald-500 bg-emerald-500/10 text-[var(--foreground)] shadow-xs"
                         : "border-[var(--border)] bg-[var(--surface)] text-[var(--muted-foreground)] hover:border-emerald-500/40 hover:text-[var(--foreground)]"
                     }`}
                   >
                     {preset === "surge" && (
-                      <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-emerald-500 text-white grid place-items-center">
-                        <Check className="w-2.5 h-2.5 stroke-[3]" />
+                      <span className="absolute top-1.5 right-1.5 w-3.5 h-3.5 rounded-full bg-emerald-500 text-white grid place-items-center">
+                        <Check className="w-2 h-2 stroke-[3]" />
                       </span>
                     )}
-                    <TrendingUp className="w-5 h-5 text-amber-500" />
+                    <TrendingUp className="w-4 h-4 text-amber-500" />
                     <div>
                       <div className="text-[11px] font-bold leading-tight">Rapid Rise</div>
-                      <div className="text-[9px] text-[var(--muted-foreground)] mt-0.5">High surge</div>
+                      <div className="text-[9px] text-[var(--muted-foreground)]">Compound</div>
                     </div>
                   </button>
                 </div>
 
-                {/* Key Parameters Sliders */}
-                <div className="space-y-4 pt-3 border-t border-[var(--border)]">
-                  <div className="text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-wider">
-                    Key Parameters
+                {/* Key Environmental Parameters Sliders */}
+                <div className="space-y-3.5 pt-3 border-t border-[var(--border)]">
+                  <div className="text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-wider flex items-center justify-between">
+                    <span>Environmental Variables</span>
+                    <span className="text-[10px] font-mono text-emerald-500">Continuous Tuning</span>
                   </div>
 
                   {/* Discharge Multiplier */}
-                  <div className="space-y-1.5">
+                  <div className="space-y-1">
                     <div className="flex items-center justify-between text-xs">
                       <label htmlFor="inflow" className="text-[var(--foreground)] font-medium">
                         Starting River Discharge Multiplier
@@ -1318,13 +1491,13 @@ export default function DemoLabPage() {
                       className="w-full accent-emerald-500 cursor-pointer"
                     />
                     <div className="flex justify-between text-[10px] text-[var(--muted-foreground)] font-mono">
-                      <span>0.5×</span>
-                      <span>3.0×</span>
+                      <span>0.5× (Low Flow)</span>
+                      <span>3.0× (Torrential Ingress)</span>
                     </div>
                   </div>
 
                   {/* Added Rainfall Anomaly */}
-                  <div className="space-y-1.5">
+                  <div className="space-y-1">
                     <div className="flex items-center justify-between text-xs">
                       <label htmlFor="rainfall" className="text-[var(--foreground)] font-medium">
                         Added Rainfall Anomaly
@@ -1344,8 +1517,109 @@ export default function DemoLabPage() {
                       className="w-full accent-emerald-500 cursor-pointer"
                     />
                     <div className="flex justify-between text-[10px] text-[var(--muted-foreground)] font-mono">
-                      <span>0 mm</span>
-                      <span>500 mm</span>
+                      <span>0 mm (Dry Spells)</span>
+                      <span>500 mm (Cloudburst Peak)</span>
+                    </div>
+                  </div>
+
+                  {/* Cryosphere Melt Index */}
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-xs">
+                      <label htmlFor="snowmeltIndex" className="text-[var(--foreground)] font-medium">
+                        Cryosphere Melt Index
+                      </label>
+                      <span className="px-2 py-0.5 rounded-lg bg-teal-500/15 border border-teal-500/30 font-mono text-teal-600 dark:text-teal-400 font-bold text-xs">
+                        {snowmeltIndex.toFixed(1)}×
+                      </span>
+                    </div>
+                    <input
+                      id="snowmeltIndex"
+                      type="range"
+                      min="1.0"
+                      max="3.0"
+                      step="0.1"
+                      value={snowmeltIndex}
+                      onChange={(e) => setSnowmeltIndex(Number(e.target.value))}
+                      className="w-full accent-teal-500 cursor-pointer"
+                    />
+                    <div className="flex justify-between text-[10px] text-[var(--muted-foreground)] font-mono">
+                      <span>1.0× (Baseline)</span>
+                      <span>3.0× (Accelerated Thaw)</span>
+                    </div>
+                  </div>
+
+                  {/* Catchment Soil Saturation */}
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-xs">
+                      <label htmlFor="soilSaturation" className="text-[var(--foreground)] font-medium">
+                        Catchment Soil Saturation
+                      </label>
+                      <span className="px-2 py-0.5 rounded-lg bg-amber-500/15 border border-amber-500/30 font-mono text-amber-600 dark:text-amber-400 font-bold text-xs">
+                        {soilSaturation}%
+                      </span>
+                    </div>
+                    <input
+                      id="soilSaturation"
+                      type="range"
+                      min="20"
+                      max="100"
+                      step="5"
+                      value={soilSaturation}
+                      onChange={(e) => setSoilSaturation(Number(e.target.value))}
+                      className="w-full accent-amber-500 cursor-pointer"
+                    />
+                    <div className="flex justify-between text-[10px] text-[var(--muted-foreground)] font-mono">
+                      <span>20% (Dry Basin)</span>
+                      <span>100% (Instant Sheet Runoff)</span>
+                    </div>
+                  </div>
+
+                  {/* Tributary Confluence Flow */}
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-xs">
+                      <label htmlFor="tributaryInflow" className="text-[var(--foreground)] font-medium">
+                        Tributary Confluence Inflow
+                      </label>
+                      <span className="px-2 py-0.5 rounded-lg bg-purple-500/15 border border-purple-500/30 font-mono text-purple-600 dark:text-purple-400 font-bold text-xs">
+                        {tributaryInflow.toLocaleString()} m³/s
+                      </span>
+                    </div>
+                    <input
+                      id="tributaryInflow"
+                      type="range"
+                      min="2000"
+                      max="12000"
+                      step="200"
+                      value={tributaryInflow}
+                      onChange={(e) => setTributaryInflow(Number(e.target.value))}
+                      className="w-full accent-purple-500 cursor-pointer"
+                    />
+                    <div className="flex justify-between text-[10px] text-[var(--muted-foreground)] font-mono">
+                      <span>2,000 m³/s</span>
+                      <span>12,000 m³/s (Gandak + Son Surge)</span>
+                    </div>
+                  </div>
+
+                  {/* Embankment Condition & Duration Selectors */}
+                  <div className="grid grid-cols-2 gap-2 pt-1">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-semibold text-[var(--muted-foreground)] block">
+                        Embankment Condition:
+                      </label>
+                      <div className="p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-xs font-mono flex items-center justify-between">
+                        <span className="font-bold">{currentDayState.embankmentStatus}</span>
+                        <span className="text-[9px] text-[var(--muted-foreground)]">Structural</span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-semibold text-[var(--muted-foreground)] block">
+                        Simulation Duration:
+                      </label>
+                      <div className="p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-xs font-mono flex items-center justify-between">
+                        <span className="font-bold">21 Days</span>
+                        <span className="text-[9px] text-[var(--muted-foreground)]">Multi-Phase</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1372,8 +1646,43 @@ export default function DemoLabPage() {
               </button>
             </section>
 
-            {/* Panel 2: River-stage Forecast (lg:col-span-7) */}
-            <section className="lg:col-span-7 p-5 sm:p-6 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-xl shadow-xs flex flex-col justify-between">
+            {/* SECTION C: Prediction Intelligence (lg:col-span-7) */}
+            <section className="lg:col-span-7 p-5 sm:p-6 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-xl shadow-xs flex flex-col justify-between space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+                <div>
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block">
+                    SECTION C
+                  </span>
+                  <h3 className="text-sm font-bold text-[var(--foreground)] flex items-center gap-2 font-heading">
+                    <TrendingUp className="w-4 h-4 text-emerald-500" /> Prediction Intelligence · Dual-Stream Closed-Loop Validation
+                  </h3>
+                </div>
+                <div className="flex items-center gap-2 font-mono text-[11px]">
+                  <span className="text-[var(--muted-foreground)]">Station Datum:</span>
+                  <span className="font-bold text-[var(--foreground)]">{CWC_GANDHI_GHAT_BENCHMARKS.warningLevel}m / {CWC_GANDHI_GHAT_BENCHMARKS.dangerLevel}m</span>
+                </div>
+              </div>
+
+              {/* Dual Stream Indicator Bar: Ground Truth vs SURAKSHA Forecast */}
+              <div className="p-3 rounded-xl bg-[var(--surface)] border border-[var(--border)] grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-mono">
+                <div className="flex flex-col justify-between">
+                  <span className="text-[10px] text-[var(--muted-foreground)] uppercase">Synthetic Ground Truth (Ht)</span>
+                  <span className="font-bold text-base text-[var(--foreground)] mt-0.5">{currentStage.toFixed(2)} m</span>
+                  <span className="text-[10px] text-emerald-500">Benchmark Reality</span>
+                </div>
+                <div className="flex flex-col justify-between border-t sm:border-t-0 sm:border-l border-[var(--border)] sm:pl-3 pt-2 sm:pt-0">
+                  <span className="text-[10px] text-[var(--muted-foreground)] uppercase">SURAKSHA AI Forecast (Ĥt)</span>
+                  <span className="font-bold text-base text-sky-500 mt-0.5">{currentDayState.aiForecastStage.toFixed(2)} m</span>
+                  <span className="text-[10px] text-sky-600 dark:text-sky-400">BiLSTM-ARIMA Lead</span>
+                </div>
+                <div className="flex flex-col justify-between border-t sm:border-t-0 sm:border-l border-[var(--border)] sm:pl-3 pt-2 sm:pt-0">
+                  <span className="text-[10px] text-[var(--muted-foreground)] uppercase">Prediction Residual (Δ)</span>
+                  <span className="font-bold text-base text-amber-500 mt-0.5">±{Math.abs(currentStage - currentDayState.aiForecastStage).toFixed(2)} m</span>
+                  <span className="text-[10px] text-[var(--muted-foreground)]">Model Error Residual</span>
+                </div>
+              </div>
+
+              {/* Interactive Hydrograph Chart */}
               <RiverStageForecastChart
                 startingStage={CWC_GANDHI_GHAT_BENCHMARKS.datumLevel + 1.2}
                 tPlus6={currentStage}
@@ -1392,7 +1701,171 @@ export default function DemoLabPage() {
             </section>
           </div>
 
-          {/* 4. Bottom Row: 3 Analytics Panels */}
+          {/* SECTION D: Disaster Impact Assessment (Post-Flood Analysis) */}
+          <section className="p-5 sm:p-6 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-xl shadow-xs space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[var(--border)]">
+              <div>
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-rose-500 block">
+                  SECTION D
+                </span>
+                <h3 className="text-base font-bold text-[var(--foreground)] flex items-center gap-2 font-heading">
+                  <AlertTriangle className="w-4 h-4 text-rose-500" /> Disaster Impact Assessment · Post-Flood Analysis
+                </h3>
+              </div>
+              <div className="flex items-center gap-2 text-xs font-mono">
+                <span className="text-[var(--muted-foreground)]">Impact Status:</span>
+                <span
+                  className={`px-2.5 py-0.5 rounded-full font-bold ${
+                    currentStage >= CWC_GANDHI_GHAT_BENCHMARKS.dangerLevel
+                      ? "bg-rose-500/15 border border-rose-500/30 text-rose-500"
+                      : currentStage >= CWC_GANDHI_GHAT_BENCHMARKS.warningLevel
+                      ? "bg-amber-500/15 border border-amber-500/30 text-amber-500"
+                      : "bg-emerald-500/15 border border-emerald-500/30 text-emerald-500"
+                  }`}
+                >
+                  {currentStage >= CWC_GANDHI_GHAT_BENCHMARKS.dangerLevel
+                    ? "DANGER LEVEL EXCEEDED · EVACUATION ACTIVE"
+                    : currentStage >= CWC_GANDHI_GHAT_BENCHMARKS.warningLevel
+                    ? "WARNING LEVEL EXCEEDED · STANDBY REGIME"
+                    : "NOMINAL RIVER CHANNEL CONTAINMENT"}
+                </span>
+              </div>
+            </div>
+
+            {/* 4 Impact Assessment Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Card 1: Inundation Extent & Depth Surfaces */}
+              <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-3 flex flex-col justify-between">
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-xs font-mono text-[var(--muted-foreground)]">
+                    <span className="flex items-center gap-1.5">
+                      <Droplets className="w-3.5 h-3.5 text-sky-500" />
+                      Inundation Extent
+                    </span>
+                    <span className="text-emerald-500 font-bold">HAND Surface</span>
+                  </div>
+                  <div className="text-2xl font-extrabold font-mono text-[var(--foreground)]">
+                    {impactAssessment.inundationAreaKm2} <span className="text-xs font-normal text-[var(--muted-foreground)]">km²</span>
+                  </div>
+                  <p className="text-[11px] text-[var(--muted-foreground)]">
+                    Modeled active water footprint across low-lying riparian terraces.
+                  </p>
+                </div>
+
+                <div className="space-y-1.5 pt-2 border-t border-[var(--border)] text-xs font-mono">
+                  <div className="text-[10px] text-[var(--muted-foreground)] font-bold uppercase">Water Depth Profile:</div>
+                  <div className="flex justify-between items-center text-[11px]">
+                    <span className="text-[var(--muted-foreground)]">Min / Avg Depth:</span>
+                    <span className="font-bold text-[var(--foreground)]">{impactAssessment.waterDepthM.min}m / {impactAssessment.waterDepthM.avg}m</span>
+                  </div>
+                  <div className="flex justify-between items-center text-[11px]">
+                    <span className="text-[var(--muted-foreground)]">Max Crest Depth:</span>
+                    <span className="font-bold text-rose-500">{impactAssessment.waterDepthM.max}m</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 2: Affected Population & Priority Wards */}
+              <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-3 flex flex-col justify-between">
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-xs font-mono text-[var(--muted-foreground)]">
+                    <span className="flex items-center gap-1.5">
+                      <Users className="w-3.5 h-3.5 text-amber-500" />
+                      Exposed Population
+                    </span>
+                    <span className="text-amber-500 font-bold">Census Spatial</span>
+                  </div>
+                  <div className="text-2xl font-extrabold font-mono text-[var(--foreground)]">
+                    {impactAssessment.exposedPopulation.toLocaleString()}
+                  </div>
+                  <p className="text-[11px] text-[var(--muted-foreground)]">
+                    Residents located within active flood depth surfaces ≥ 0.5m.
+                  </p>
+                </div>
+
+                <div className="space-y-1.5 pt-2 border-t border-[var(--border)] text-xs">
+                  <div className="text-[10px] font-mono text-[var(--muted-foreground)] font-bold uppercase">Affected Wards:</div>
+                  <div className="flex flex-wrap gap-1">
+                    {impactAssessment.affectedWards.length > 0 ? (
+                      impactAssessment.affectedWards.map((w) => (
+                        <span key={w} className="px-1.5 py-0.5 rounded bg-[var(--surface-elevated)] border border-[var(--border)] text-[9px] font-mono text-[var(--foreground)]">
+                          {w}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-[10px] text-[var(--muted-foreground)] font-mono">None currently exposed</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 3: Critical Infrastructure Exposure */}
+              <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-3 flex flex-col justify-between">
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-xs font-mono text-[var(--muted-foreground)]">
+                    <span className="flex items-center gap-1.5">
+                      <Building2 className="w-3.5 h-3.5 text-purple-500" />
+                      Infrastructure Cut Off
+                    </span>
+                    <span className="text-purple-500 font-bold">Asset Audit</span>
+                  </div>
+                  <div className="text-2xl font-extrabold font-mono text-[var(--foreground)]">
+                    {impactAssessment.criticalInfrastructure.roadsCutOff.length +
+                      impactAssessment.criticalInfrastructure.substationsAtRisk.length +
+                      impactAssessment.criticalInfrastructure.waterIntakesCompromised.length}
+                    <span className="text-xs font-normal text-[var(--muted-foreground)] ml-1">Assets</span>
+                  </div>
+                  <p className="text-[11px] text-[var(--muted-foreground)]">
+                    Critical roads, power substations, and municipal intakes compromised.
+                  </p>
+                </div>
+
+                <div className="space-y-1 pt-2 border-t border-[var(--border)] text-[10px] font-mono">
+                  <div className="text-[var(--foreground)] truncate">
+                    • Road: {impactAssessment.criticalInfrastructure.roadsCutOff[0] ?? "Nominal flow"}
+                  </div>
+                  <div className="text-[var(--foreground)] truncate">
+                    • Power: {impactAssessment.criticalInfrastructure.substationsAtRisk[0] ?? "All grids operational"}
+                  </div>
+                  <div className="text-[var(--foreground)] truncate">
+                    • Intake: {impactAssessment.criticalInfrastructure.waterIntakesCompromised[0] ?? "Normal intake"}
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 4: Emergency Logistics & Recovery Window */}
+              <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-3 flex flex-col justify-between">
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-xs font-mono text-[var(--muted-foreground)]">
+                    <span className="flex items-center gap-1.5">
+                      <LifeBuoy className="w-3.5 h-3.5 text-emerald-500" />
+                      Emergency Logistics
+                    </span>
+                    <span className="text-emerald-500 font-bold">NDRF / SDRF</span>
+                  </div>
+                  <div className="text-2xl font-extrabold font-mono text-[var(--foreground)]">
+                    {impactAssessment.emergencyLogistics.ndrfBoatsDeployed} <span className="text-xs font-normal text-[var(--muted-foreground)]">Boats</span>
+                  </div>
+                  <p className="text-[11px] text-[var(--muted-foreground)]">
+                    Active motorized rescue boats & relief shelter mobilization.
+                  </p>
+                </div>
+
+                <div className="space-y-1.5 pt-2 border-t border-[var(--border)] text-xs font-mono">
+                  <div className="flex justify-between items-center text-[11px]">
+                    <span className="text-[var(--muted-foreground)]">Relief Shelters:</span>
+                    <span className="font-bold text-[var(--foreground)]">{impactAssessment.emergencyLogistics.reliefSheltersActivated} Camps</span>
+                  </div>
+                  <div className="flex justify-between items-center text-[11px]">
+                    <span className="text-[var(--muted-foreground)]">Recession Window:</span>
+                    <span className="font-bold text-teal-500">{impactAssessment.recoveryWindowDays} Days</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* BOTTOM ROW: Analytics, Scenarios Comparison & Diagnostics */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
             {/* Bottom 1: Risk & Impact Analytics (lg:col-span-4) */}
             <section className="lg:col-span-4 p-5 sm:p-6 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-xl shadow-xs flex flex-col justify-between space-y-4">
@@ -1424,7 +1897,7 @@ export default function DemoLabPage() {
                         <Activity className="w-3.5 h-3.5 text-[var(--muted-foreground)]" /> Affected Area
                       </span>
                       <span className="font-mono font-bold text-[var(--foreground)]">
-                        {exposedPopulation > 0 ? "1.4 km²" : "0 km²"}
+                        {impactAssessment.inundationAreaKm2} km²
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-[var(--foreground)]/80">
@@ -1535,6 +2008,10 @@ export default function DemoLabPage() {
                   <span>Mean Absolute Error (MAE):</span>
                   <span className="font-bold text-sky-500">0.28 m</span>
                 </div>
+                <div className="flex justify-between items-center text-[var(--foreground)]">
+                  <span>Root Mean Square Error (RMSE):</span>
+                  <span className="font-bold text-teal-500">0.34 m</span>
+                </div>
               </div>
 
               {/* Completion Banner */}
@@ -1557,7 +2034,7 @@ export default function DemoLabPage() {
         </div>
       </main>
 
-      {/* 5. Custom Scenario Creator Studio Modal */}
+      {/* Custom Scenario Creator Studio Modal */}
       {isStudioOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-200">
           <div className="relative w-full max-w-2xl rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl p-6 space-y-6 max-h-[90vh] overflow-y-auto">
@@ -1819,7 +2296,7 @@ export default function DemoLabPage() {
         </div>
       )}
 
-      {/* 6. Detailed Forecast Horizon Inspector Modal */}
+      {/* Detailed Forecast Horizon Inspector Modal */}
       {isForecastModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-200">
           <div className="relative w-full max-w-3xl rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl p-6 space-y-6 max-h-[90vh] overflow-y-auto">
@@ -1905,7 +2382,7 @@ export default function DemoLabPage() {
                     </tr>
                     <tr>
                       <td className="p-2.5 font-bold text-[var(--foreground)]">+3h Lead</td>
-                      <td className="p-2.5">{(currentStage - 0.20).toFixed(2)} m</td>
+                      <td className="p-2.5">{(currentStage - 0.2).toFixed(2)} m</td>
                       <td className="p-2.5 text-[var(--muted-foreground)]">±0.10 m</td>
                       <td className="p-2.5">26,900 m³/s</td>
                       <td className="p-2.5"><span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-[10px]">INFLOW SWELL</span></td>
@@ -1937,7 +2414,7 @@ export default function DemoLabPage() {
                     </tr>
                     <tr>
                       <td className="p-2.5 font-bold text-[var(--foreground)]">+48h Lead</td>
-                      <td className="p-2.5">{(currentStage - 1.10).toFixed(2)} m</td>
+                      <td className="p-2.5">{(currentStage - 1.1).toFixed(2)} m</td>
                       <td className="p-2.5 text-[var(--muted-foreground)]">±0.52 m</td>
                       <td className="p-2.5">32,400 m³/s</td>
                       <td className="p-2.5"><span className="px-2 py-0.5 rounded bg-teal-500/15 text-teal-400 text-[10px]">RECESSION WATCH</span></td>
