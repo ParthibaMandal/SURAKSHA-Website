@@ -38,8 +38,10 @@ import {
   Layers,
   Info,
   Maximize2,
+  BarChart3,
 } from "lucide-react";
 import { RiskGauge } from "@/components/simulation/RiskGauge";
+import { ScenarioComparisonChart } from "@/components/simulation/ScenarioComparisonChart";
 import { RiverStageForecastChart } from "@/components/simulation/RiverStageForecastChart";
 import { HydrometricStageStaffGauge } from "@/components/simulation/HydrometricStageStaffGauge";
 import { CompoundHazardFlowInfographic } from "@/components/simulation/CompoundHazardFlowInfographic";
@@ -518,7 +520,7 @@ export default function DemoLabPage() {
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans transition-colors duration-200">
       <main className="w-full">
         {/* COMPACT TOP PANORAMIC COMMAND STRIP */}
-        <header className="relative z-30 w-full border-b border-[var(--border)] bg-[var(--surface)] overflow-visible">
+        <header className="relative z-50 w-full border-b border-[var(--border)] bg-[var(--surface)] overflow-visible">
           <div className="absolute inset-0 z-0 overflow-hidden opacity-30 dark:opacity-20 select-none pointer-events-none">
             <Image
               src="/images/hero-himalayas-ganga.jpg"
@@ -530,12 +532,12 @@ export default function DemoLabPage() {
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--surface)]/80 to-[var(--surface)]" />
           </div>
 
-          <div className="relative z-10 px-4 sm:px-6 lg:px-8 py-3.5 max-w-[1700px] mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div className="relative z-20 px-4 sm:px-6 lg:px-8 py-3.5 max-w-[1700px] mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
             {/* Title & Identity */}
             <div>
               <div className="flex items-center gap-2">
                 <span className="px-2 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                  <Sparkles className="w-3 h-3" /> BCA MINOR PROJECT
+                  <Sparkles className="w-3.5 h-3.5" /> BCA MINOR PROJECT
                 </span>
                 <span className="text-[10px] font-mono text-[var(--muted-foreground)]">STN-PAT-01 · Gandhi Ghat, Patna</span>
               </div>
@@ -570,7 +572,7 @@ export default function DemoLabPage() {
                 {isLocationOpen && (
                   <div
                     onClick={(e) => e.stopPropagation()}
-                    className="absolute left-0 sm:left-auto sm:right-0 top-full mt-1.5 z-50 w-72 max-w-[calc(100vw-2rem)] rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl backdrop-blur-2xl p-1.5 space-y-1 animate-in fade-in slide-in-from-top-2 duration-150"
+                    className="absolute left-0 top-full mt-1.5 z-50 w-72 max-w-[calc(100vw-2rem)] rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl backdrop-blur-2xl p-1.5 space-y-1 animate-in fade-in slide-in-from-top-2 duration-150"
                   >
                     <div className="px-2.5 py-1 text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--muted-foreground)] border-b border-[var(--border)] pb-1">
                       Hydrometric Gauging Stations
@@ -629,7 +631,7 @@ export default function DemoLabPage() {
                 {isDateOpen && (
                   <div
                     onClick={(e) => e.stopPropagation()}
-                    className="absolute left-0 sm:left-auto sm:right-0 top-full mt-1.5 z-50 w-64 max-w-[calc(100vw-2rem)] rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl backdrop-blur-2xl p-2 space-y-2 animate-in fade-in slide-in-from-top-2 duration-150"
+                    className="absolute left-0 top-full mt-1.5 z-50 w-64 max-w-[calc(100vw-2rem)] rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl backdrop-blur-2xl p-2 space-y-2 animate-in fade-in slide-in-from-top-2 duration-150"
                   >
                     <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--muted-foreground)] border-b border-[var(--border)] pb-1">
                       Calibration Date Preset
@@ -788,7 +790,20 @@ export default function DemoLabPage() {
             </div>
 
             {/* Card 4: Forecast Horizon & Detailed Inspector */}
-            <div className="p-3.5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-md shadow-xs flex flex-col justify-between space-y-2">
+            <div
+              onClick={() => setIsForecastModalOpen(true)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setIsForecastModalOpen(true);
+                }
+              }}
+              aria-haspopup="dialog"
+              aria-expanded={isForecastModalOpen}
+              className="p-3.5 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] hover:border-emerald-500/50 hover:bg-[var(--surface)] backdrop-blur-md shadow-xs flex flex-col justify-between space-y-2 cursor-pointer transition-all group select-none"
+            >
               <div className="flex items-center justify-between border-b border-[var(--border)] pb-2 text-xs font-semibold text-[var(--foreground)]">
                 <span className="flex items-center gap-1.5">
                   <Clock className="w-4 h-4 text-sky-500" />
@@ -813,10 +828,13 @@ export default function DemoLabPage() {
               <div className="border-t border-[var(--border)] pt-2 flex items-center justify-between">
                 <button
                   type="button"
-                  onClick={() => setIsForecastModalOpen(true)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsForecastModalOpen(true);
+                  }}
                   aria-haspopup="dialog"
                   aria-expanded={isForecastModalOpen}
-                  className="text-emerald-600 dark:text-emerald-400 font-semibold text-xs hover:underline cursor-pointer flex items-center gap-1 focus:outline-none"
+                  className="text-emerald-600 dark:text-emerald-400 font-semibold text-xs group-hover:underline cursor-pointer flex items-center gap-1 focus:outline-none"
                 >
                   Detailed forecast →
                 </button>
@@ -1043,9 +1061,12 @@ export default function DemoLabPage() {
                                 <div className="font-semibold truncate">{scen.title}</div>
                                 <div className="text-[10px] text-[var(--muted-foreground)] truncate">{scen.shortDescription}</div>
                               </div>
-                              <span className={`px-1.5 py-0.5 rounded text-[9px] font-mono shrink-0 ${getCategoryBadge(scen.category)}`}>
-                                {scen.category}
-                              </span>
+                              <div className="flex items-center gap-2 shrink-0">
+                                <span className={`px-1.5 py-0.5 rounded text-[9px] font-mono ${getCategoryBadge(scen.category)}`}>
+                                  {scen.category}
+                                </span>
+                                {scen.id === selectedScenarioId && <Check className="w-3.5 h-3.5 text-emerald-500" />}
+                              </div>
                             </button>
                           ))}
                         </div>
@@ -1077,9 +1098,12 @@ export default function DemoLabPage() {
                               </div>
                               <div className="text-[10px] text-[var(--muted-foreground)] truncate">{scen.shortDescription}</div>
                             </div>
-                            <span className={`px-1.5 py-0.5 rounded text-[9px] font-mono shrink-0 ${getCategoryBadge(scen.category)}`}>
-                              {scen.category}
-                            </span>
+                            <div className="flex items-center gap-2 shrink-0">
+                              <span className={`px-1.5 py-0.5 rounded text-[9px] font-mono ${getCategoryBadge(scen.category)}`}>
+                                {scen.category}
+                              </span>
+                              {scen.id === selectedScenarioId && <Check className="w-3.5 h-3.5 text-emerald-500" />}
+                            </div>
                           </button>
                         ))}
                       </div>
@@ -1208,6 +1232,24 @@ export default function DemoLabPage() {
                   soilSaturation={currentDayState.soilSaturation}
                   timeline={timeline}
                   currentSimulationDay={currentDayState.day}
+                />
+              </div>
+
+              {/* Cross-Scenario Comparative Benchmarking Bar Graph */}
+              <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-xl shadow-xs space-y-3">
+                <div className="flex items-center justify-between border-b border-[var(--border)] pb-2">
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-[var(--foreground)]">
+                    <BarChart3 className="w-4 h-4 text-emerald-500" />
+                    <span>Cross-Scenario Comparative Benchmarking</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-[var(--muted-foreground)]">
+                    Baseline vs Heavy Rain vs Rapid River Rise
+                  </span>
+                </div>
+                <ScenarioComparisonChart
+                  currentStage={currentStage}
+                  currentRisk={currentRisk}
+                  currentExposed={exposedPopulation}
                 />
               </div>
 

@@ -39,39 +39,40 @@ export const RiverStageForecastChart: React.FC<RiverStageForecastChartProps> = (
   const [chartMode, setChartMode] = useState<"forecast" | "trajectories">("forecast");
   const [activePoint, setActivePoint] = useState<number | null>(1); // default highlight +6h
 
-  // Coordinate mapping: Stage range 43.0m to 51.5m mapped to Y coordinate (height 200, pad 25)
+  // Coordinate mapping: Stage range 43.0m to 51.5m mapped to Y coordinate (height span 160, top pad 35, baseline 195)
   const minY = 43.0;
   const maxY = 51.5;
-  const mapY = (val: number) => 180 - ((val - minY) / (maxY - minY)) * 155;
+  const mapY = (val: number) => 195 - ((Math.max(minY, Math.min(maxY, val)) - minY) / (maxY - minY)) * 160;
 
   const warningMarkY = mapY(warningLevel); // 47.60m
   const dangerMarkY = mapY(dangerLevel); // 48.60m
   const hflMarkY = mapY(CWC_GANDHI_GHAT_BENCHMARKS.highestFloodLevel); // 50.52m
 
   // 1. Data nodes for the 24h/6h/72h forecast curve
+  // Forecast points with wide horizontal spacing and ample right margin (p3 at x=495, badges at x>=570)
   const forecastPoints = React.useMemo(() => {
     if (horizon === "6h") {
       return [
-        { label: "Now", value: startingStage, x: 80, y: 0 },
-        { label: "+2h", value: Number((startingStage + (tPlus6 - startingStage) * 0.45).toFixed(2)), x: 250, y: 0 },
-        { label: "+4h", value: Number((startingStage + (tPlus6 - startingStage) * 0.85).toFixed(2)), x: 420, y: 0 },
-        { label: "+6h", value: tPlus6, x: 580, y: 0 },
+        { label: "Now", value: startingStage, x: 95, y: 0 },
+        { label: "+2h", value: Number((startingStage + (tPlus6 - startingStage) * 0.45).toFixed(2)), x: 230, y: 0 },
+        { label: "+4h", value: Number((startingStage + (tPlus6 - startingStage) * 0.85).toFixed(2)), x: 365, y: 0 },
+        { label: "+6h", value: tPlus6, x: 495, y: 0 },
       ];
     }
     if (horizon === "72h") {
       return [
-        { label: "Now", value: startingStage, x: 80, y: 0 },
-        { label: "+12h", value: tPlus12, x: 250, y: 0 },
-        { label: "+24h", value: tPlus24, x: 420, y: 0 },
-        { label: "+72h", value: Number(Math.max(43.5, tPlus24 - 1.2).toFixed(2)), x: 580, y: 0 },
+        { label: "Now", value: startingStage, x: 95, y: 0 },
+        { label: "+12h", value: tPlus12, x: 230, y: 0 },
+        { label: "+24h", value: tPlus24, x: 365, y: 0 },
+        { label: "+72h", value: Number(Math.max(43.5, tPlus24 - 1.2).toFixed(2)), x: 495, y: 0 },
       ];
     }
     // 24h default
     return [
-      { label: "Now", value: startingStage, x: 80, y: 0 },
-      { label: "+6h", value: tPlus6, x: 250, y: 0 },
-      { label: "+12h", value: tPlus12, x: 420, y: 0 },
-      { label: "+24h", value: tPlus24, x: 580, y: 0 },
+      { label: "Now", value: startingStage, x: 95, y: 0 },
+      { label: "+6h", value: tPlus6, x: 230, y: 0 },
+      { label: "+12h", value: tPlus12, x: 365, y: 0 },
+      { label: "+24h", value: tPlus24, x: 495, y: 0 },
     ];
   }, [horizon, startingStage, tPlus6, tPlus12, tPlus24]);
 
@@ -82,7 +83,7 @@ export const RiverStageForecastChart: React.FC<RiverStageForecastChartProps> = (
   const p3 = mappedForecastPoints[3];
 
   const forecastPathD = `M ${p0.x} ${p0.y} C ${p0.x + 80} ${p0.y - 15}, ${p1.x - 70} ${p1.y}, ${p1.x} ${p1.y} S ${p2.x - 70} ${p2.y}, ${p2.x} ${p2.y} S ${p3.x - 70} ${p3.y}, ${p3.x} ${p3.y}`;
-  const forecastAreaD = `${forecastPathD} L ${p3.x} 190 L ${p0.x} 190 Z`;
+  const forecastAreaD = `${forecastPathD} L ${p3.x} 195 L ${p0.x} 195 Z`;
 
   // 90% Prediction Band polygon ribbon
   const bandUpperD = `M ${p0.x} ${p0.y - 6} C ${p0.x + 80} ${p0.y - 22}, ${p1.x - 70} ${p1.y - 12}, ${p1.x} ${p1.y - 12} S ${p2.x - 70} ${p2.y - 14}, ${p2.x} ${p2.y - 14} S ${p3.x - 70} ${p3.y - 16}, ${p3.x} ${p3.y - 16}`;
@@ -93,8 +94,8 @@ export const RiverStageForecastChart: React.FC<RiverStageForecastChartProps> = (
   const trajectoryPoints = React.useMemo(() => {
     if (!timeline || timeline.length === 0) return null;
     const count = timeline.length;
-    const xStart = 70;
-    const xEnd = 590;
+    const xStart = 85;
+    const xEnd = 525;
     const step = (xEnd - xStart) / Math.max(1, count - 1);
 
     return timeline.map((pt, idx) => ({
@@ -220,8 +221,8 @@ export const RiverStageForecastChart: React.FC<RiverStageForecastChartProps> = (
       </div>
 
       {/* SVG Hydrograph Viewport */}
-      <div className="relative w-full h-[220px] bg-[var(--surface)] rounded-xl border border-[var(--border)] p-2 overflow-visible">
-        <svg viewBox="0 0 650 220" className="w-full h-full overflow-visible">
+      <div className="relative w-full h-[260px] bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-3 sm:p-4 overflow-visible">
+        <svg viewBox="0 0 720 245" className="w-full h-full overflow-visible">
           <defs>
             <linearGradient id="hydroFill" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#10B981" stopOpacity="0.30" />
@@ -238,8 +239,8 @@ export const RiverStageForecastChart: React.FC<RiverStageForecastChartProps> = (
             const y = mapY(lvl);
             return (
               <g key={lvl}>
-                <line x1="55" y1={y} x2="615" y2={y} stroke="rgba(255, 255, 255, 0.08)" strokeWidth="1" strokeDasharray="3 3" />
-                <text x="45" y={y + 3.5} fill="currentColor" opacity="0.4" fontSize="9" textAnchor="end" fontFamily="monospace">
+                <line x1="55" y1={y} x2="705" y2={y} stroke="rgba(255, 255, 255, 0.08)" strokeWidth="1" strokeDasharray="3 3" />
+                <text x="48" y={y + 3.5} fill="currentColor" opacity="0.4" fontSize="9" textAnchor="end" fontFamily="monospace">
                   {lvl}m
                 </text>
               </g>
@@ -250,14 +251,15 @@ export const RiverStageForecastChart: React.FC<RiverStageForecastChartProps> = (
           <line
             x1="55"
             y1={hflMarkY}
-            x2="615"
+            x2="705"
             y2={hflMarkY}
             stroke="#9333EA"
             strokeWidth="1.2"
             strokeDasharray="5 3"
             opacity="0.8"
           />
-          <text x="615" y={hflMarkY - 4} fill="#C084FC" fontSize="8" textAnchor="end" fontFamily="monospace" fontWeight="bold">
+          <rect x="575" y={hflMarkY - 10} width="130" height="15" rx="4" fill="var(--surface)" stroke="#9333EA" strokeWidth="0.8" opacity="0.95" />
+          <text x="700" y={hflMarkY + 1} fill="#C084FC" fontSize="8.5" textAnchor="end" fontFamily="monospace" fontWeight="bold">
             HISTORIC HFL 50.52m
           </text>
 
@@ -265,13 +267,14 @@ export const RiverStageForecastChart: React.FC<RiverStageForecastChartProps> = (
           <line
             x1="55"
             y1={dangerMarkY}
-            x2="615"
+            x2="705"
             y2={dangerMarkY}
             stroke="#EF4444"
             strokeWidth="1.5"
             strokeDasharray="4 4"
           />
-          <text x="615" y={dangerMarkY - 4} fill="#EF4444" fontSize="8" textAnchor="end" fontFamily="monospace" fontWeight="bold">
+          <rect x="560" y={dangerMarkY - 10} width="145" height="15" rx="4" fill="var(--surface)" stroke="#EF4444" strokeWidth="0.8" opacity="0.95" />
+          <text x="700" y={dangerMarkY + 1} fill="#EF4444" fontSize="8.5" textAnchor="end" fontFamily="monospace" fontWeight="bold">
             DANGER MARK {dangerLevel.toFixed(2)}m
           </text>
 
@@ -279,14 +282,15 @@ export const RiverStageForecastChart: React.FC<RiverStageForecastChartProps> = (
           <line
             x1="55"
             y1={warningMarkY}
-            x2="615"
+            x2="705"
             y2={warningMarkY}
             stroke="#F59E0B"
             strokeWidth="1.2"
             strokeDasharray="4 4"
             opacity="0.85"
           />
-          <text x="615" y={warningMarkY - 4} fill="#F59E0B" fontSize="8" textAnchor="end" fontFamily="monospace" fontWeight="bold">
+          <rect x="550" y={warningMarkY - 10} width="155" height="15" rx="4" fill="var(--surface)" stroke="#F59E0B" strokeWidth="0.8" opacity="0.95" />
+          <text x="700" y={warningMarkY + 1} fill="#F59E0B" fontSize="8.5" textAnchor="end" fontFamily="monospace" fontWeight="bold">
             WARNING MARK {warningLevel.toFixed(2)}m
           </text>
 
@@ -294,8 +298,8 @@ export const RiverStageForecastChart: React.FC<RiverStageForecastChartProps> = (
           {chartMode === "forecast" ? (
             <>
               {/* Vertical T+0 Line */}
-              <line x1="80" y1="20" x2="80" y2="200" stroke="currentColor" opacity="0.25" strokeWidth="1" strokeDasharray="3 3" />
-              <text x="80" y="16" fill="currentColor" opacity="0.6" fontSize="8.5" textAnchor="middle" fontFamily="monospace" fontWeight="bold">
+              <line x1="90" y1="28" x2="90" y2="210" stroke="currentColor" opacity="0.25" strokeWidth="1" strokeDasharray="3 3" />
+              <text x="90" y="22" fill="currentColor" opacity="0.6" fontSize="9" textAnchor="middle" fontFamily="monospace" fontWeight="bold">
                 T+0 NOW
               </text>
 
@@ -344,30 +348,43 @@ export const RiverStageForecastChart: React.FC<RiverStageForecastChartProps> = (
                         </text>
                       </g>
                     ) : (
-                      <text
-                        x={pt.x}
-                        y={pt.y - 8}
-                        fill="currentColor"
-                        opacity="0.75"
-                        fontSize="9.5"
-                        fontFamily="monospace"
-                        textAnchor="middle"
-                      >
-                        {pt.value.toFixed(1)} m
-                      </text>
+                      <g transform={`translate(${pt.x}, ${pt.y - 12})`}>
+                        <rect
+                          x="-20"
+                          y="-10"
+                          width="40"
+                          height="15"
+                          rx="4"
+                          fill="var(--surface)"
+                          stroke="currentColor"
+                          strokeWidth="0.5"
+                          opacity="0.85"
+                        />
+                        <text
+                          x="0"
+                          y="1"
+                          fill="currentColor"
+                          fontSize="9"
+                          fontWeight="semibold"
+                          fontFamily="monospace"
+                          textAnchor="middle"
+                        >
+                          {pt.value.toFixed(1)} m
+                        </text>
+                      </g>
                     )}
 
                     <circle
                       cx={pt.x}
                       cy={pt.y}
-                      r={isHighlight ? "5" : "3.5"}
+                      r={isHighlight ? "5.5" : "3.5"}
                       fill={isHighlight ? "#10B981" : "#FFFFFF"}
                       stroke="#09090B"
                       strokeWidth="2"
                       className="transition-all duration-200"
                     />
 
-                    <text x={pt.x} y="210" fill="currentColor" opacity="0.5" fontSize="9.5" textAnchor="middle" fontFamily="sans-serif">
+                    <text x={pt.x} y="222" fill="currentColor" opacity="0.6" fontSize="9.5" textAnchor="middle" fontFamily="sans-serif">
                       {pt.label}
                     </text>
                   </g>
@@ -414,7 +431,7 @@ export const RiverStageForecastChart: React.FC<RiverStageForecastChartProps> = (
                             x1={p.x}
                             y1="25"
                             x2={p.x}
-                            y2="200"
+                            y2="205"
                             stroke="#10B981"
                             strokeWidth="1.5"
                             strokeDasharray="3 3"
@@ -434,7 +451,7 @@ export const RiverStageForecastChart: React.FC<RiverStageForecastChartProps> = (
                         {/* X-axis Day Label */}
                         <text
                           x={p.x}
-                          y="212"
+                          y="222"
                           fill={isCurrent ? "#10B981" : "currentColor"}
                           opacity={isCurrent ? 1 : 0.5}
                           fontWeight={isCurrent ? "bold" : "normal"}
