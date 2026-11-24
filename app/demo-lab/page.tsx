@@ -9,20 +9,19 @@ type ScenarioResult = {
   suite_id: string;
   scenario_id: string;
   scenario_name: string;
-  mode: string;
+  mode: "static" | "supervised";
   synthetic_data_only: boolean;
+  jev_mode: string;
   result: {
     event_id: string;
     timestamp: string;
     severity: string;
     risk_score: number;
-    current_condition?: { water_level_m?: number };
-    forecast?: { t_plus_6?: number; t_plus_12?: number; t_plus_24?: number; confidence_interval?: number[] };
+    metadata?: { data_provenance?: string; jev_mode?: string };
+    current_condition: { water_level_m?: number };
+    forecast: { t_plus_6?: number; t_plus_12?: number; t_plus_24?: number; confidence_interval?: number[] };
     impact_assessment?: { affected_population?: number };
     pre_event_assessment?: { exposed_population?: number };
-    active_event_assessment?: { affected_population?: number };
-    post_event_assessment?: { affected_population?: number };
-    grounding_verification?: { corroboration_confirmed?: boolean; is_live_api?: boolean };
     requires_human_review?: boolean;
     supervisor?: { requires_human_review?: boolean };
   };
@@ -30,41 +29,56 @@ type ScenarioResult = {
 
 type DemoPreset = "steady" | "rain" | "surge";
 
-const PRESETS: Record<DemoPreset, { label: string; description: string; basin: string; scenarioId: string; inflow: number; rainfall: number }> = {
+const PRESETS: Record<DemoPreset, { label: string; description: string; anchor: string; scenarioId: string; inflow: number; rainfall: number }> = {
   steady: {
     label: "Steady conditions",
-    description: "A baseline run with no added upstream pressure.",
-    basin: "Middle Ganga",
+    description: "Baseline synthetic conditions at the Patna gauge.",
+    anchor: "GANGES_PATNA · Gandhi Ghat, Patna",
     scenarioId: "BEST_01_CALM_BASELINE",
     inflow: 1,
     rainfall: 0,
   },
   rain: {
     label: "Heavy rainfall",
-    description: "Add rainfall and a modest upstream flow increase.",
-    basin: "Middle Ganga",
+    description: "Increase synthetic starting discharge and add rainfall.",
+    anchor: "GANGES_PATNA · Gandhi Ghat, Patna",
     scenarioId: "STRESS_01_HEAVY_RAINFALL",
     inflow: 1.25,
     rainfall: 80,
   },
   surge: {
-    label: "Rapid upstream rise",
-    description: "Explore a high inflow and rainfall scenario in the Gandak basin.",
-    basin: "Gandak Basin",
+    label: "Rapid river rise",
+    description: "Explore a synthetic rise scenario at Patna with higher river discharge and rainfall.",
+    anchor: "GANGES_PATNA · Gandhi Ghat, Patna",
     scenarioId: "WORST_01_RAPID_RIVER_SURGE",
     inflow: 1.6,
     rainfall: 160,
   },
 };
 
-function isScenarioResult(value: unknown): value is ScenarioResult {
+function isScenarioResult(value: unknown, expectedScenarioId: string): value is ScenarioResult {
   if (!value || typeof value !== "object") return false;
   const data = value as Partial<ScenarioResult>;
-  return typeof data.scenario_name === "string"
+  const result = data.result;
+  const forecastValues = [result?.forecast?.t_plus_6, result?.forecast?.t_plus_12, result?.forecast?.t_plus_24];
+  return data.scenario_id === expectedScenarioId
+    && data.synthetic_data_only === true
+    && data.mode === "static"
+    && data.jev_mode === "OFFLINE_DETERMINISTIC_SIMULATOR"
+    && typeof data.scenario_name === "string"
     && typeof data.result?.event_id === "string"
     && typeof data.result.timestamp === "string"
+    && Number.isFinite(Date.parse(data.result.timestamp))
+    && typeof data.result.severity === "string"
     && typeof data.result.risk_score === "number"
-    && [data.result.forecast?.t_plus_6, data.result.forecast?.t_plus_12, data.result.forecast?.t_plus_24].some((value) => typeof value === "number" && Number.isFinite(value));
+    && Number.isFinite(data.result.risk_score)
+    && data.result.risk_score >= 0
+    && data.result.risk_score <= 1
+    && data.result.current_condition !== null
+    && typeof data.result.current_condition === "object"
+    && data.result.metadata?.data_provenance === "SYNTHETIC_SCENARIO"
+    && data.result.metadata?.jev_mode === "OFFLINE_DETERMINISTIC_SIMULATOR"
+    && forecastValues.some((value) => typeof value === "number" && Number.isFinite(value));
 }
 
 const formatTime = (value: string) => {
@@ -97,15 +111,21 @@ export default function DemoLabPage() {
   const prefersReducedMotion = useReducedMotion();
 
   const selectedPreset = PRESETS[preset];
-  const forecastValues = result ? [result.result.forecast?.t_plus_6, result.result.forecast?.t_plus_12, result.result.forecast?.t_plus_24].filter((value): value is number => typeof value === "number" && Number.isFinite(value)) : [];
-  const forecastPeak = forecastValues.length ? Math.max(...forecastValues) : null;
+  const forecastPoints = result
+    ? [
+        { horizon: "+6h", value: result.result.forecast.t_plus_6 },
+        { horizon: "+12h", value: result.result.forecast.t_plus_12 },
+        { horizon: "+24h", value: result.result.forecast.t_plus_24 },
+      ].filter((point): point is { horizon: string; value: number } => typeof point.value === "number" && Number.isFinite(point.value))
+    : [];
+  const forecastPeak = forecastPoints.reduce<{ horizon: string; value: number } | null>(
+    (peak, point) => peak === null || point.value > peak.value ? point : peak,
+    null,
+  );
   const exposedPopulation = result?.result.pre_event_assessment?.exposed_population
-    ?? result?.result.active_event_assessment?.affected_population
-    ?? result?.result.post_event_assessment?.affected_population
     ?? result?.result.impact_assessment?.affected_population
     ?? null;
   const needsHumanReview = Boolean(result?.result.requires_human_review ?? result?.result.supervisor?.requires_human_review);
-  const externalCheckPassed = Boolean(result?.result.grounding_verification?.corroboration_confirmed);
 
   function choosePreset(value: DemoPreset) {
     setPreset(value);
@@ -123,15 +143,14 @@ export default function DemoLabPage() {
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
           scenario_id: selectedPreset.scenarioId,
-          upstream_inflow_multiplier: inflow,
+          river_discharge_multiplier: inflow,
           precipitation_anomaly_mm: rainfall,
-          enable_jev_supervision: false,
         }),
         cache: "no-store",
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data?.detail || "The simulation service could not complete this run.");
-      if (!isScenarioResult(data)) throw new Error("The simulation service returned an incomplete result.");
+      if (!isScenarioResult(data, selectedPreset.scenarioId)) throw new Error("The simulation service returned an incomplete or unexpected synthetic result.");
       setResult(data);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "The simulation service could not be reached.");
@@ -202,11 +221,12 @@ export default function DemoLabPage() {
               <div className="mt-7 space-y-6 border-t border-white/10 pt-6">
                 <div>
                   <div className="mb-3 flex items-center justify-between gap-3">
-                    <label htmlFor="inflow" className="text-xs font-medium text-zinc-300">Upstream flow multiplier</label>
+                    <label htmlFor="inflow" className="text-xs font-medium text-zinc-300">Starting river discharge multiplier</label>
                     <span className="rounded-lg bg-white/[0.06] px-2.5 py-1 font-mono text-xs text-white">{inflow.toFixed(2)}×</span>
                   </div>
                   <input id="inflow" type="range" min="0.5" max="3" step="0.05" value={inflow} onChange={(event) => setInflow(Number(event.target.value))} className="w-full accent-emerald-300" />
                   <div className="mt-1 flex justify-between text-[10px] text-zinc-600"><span>0.5×</span><span>3.0×</span></div>
+                  <p className="mt-1 text-[10px] leading-relaxed text-zinc-500">Scales the scenario&apos;s synthetic starting discharge; no live upstream gauge is changed.</p>
                 </div>
                 <div>
                   <div className="mb-3 flex items-center justify-between gap-3">
@@ -221,7 +241,7 @@ export default function DemoLabPage() {
               <motion.button type="button" onClick={runScenario} disabled={isRunning} whileHover={prefersReducedMotion || isRunning ? undefined : { y: -1 }} whileTap={prefersReducedMotion || isRunning ? undefined : { scale: 0.99 }} className="mt-7 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald-300 px-5 text-sm font-semibold text-[#061013] transition-colors hover:bg-emerald-200 disabled:cursor-wait disabled:opacity-70">
                 {isRunning ? <><LoaderCircle className="h-4 w-4 animate-spin" /> Running simulation…</> : <><Play className="h-4 w-4 fill-current" /> Run simulation</>}
               </motion.button>
-              <p className="mt-3 text-center text-[11px] leading-relaxed text-zinc-500">{selectedPreset.basin} · Synthetic inputs</p>
+                <p className="mt-3 text-center text-[11px] leading-relaxed text-zinc-500">{selectedPreset.anchor} · Synthetic inputs</p>
             </section>
           </FadeIn>
 
@@ -251,8 +271,9 @@ export default function DemoLabPage() {
                 <>
                   <motion.div initial={prefersReducedMotion ? false : "hidden"} animate="visible" variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.07 } } }} className="mt-6 grid gap-3 sm:grid-cols-3">
                     <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: prefersReducedMotion ? 0 : 0.3 }} className="rounded-2xl border border-white/10 bg-white/[0.025] p-4">
-                      <div className="flex items-center gap-2 text-xs text-zinc-400"><Droplets className="h-4 w-4 text-emerald-300" /> 24-hour forecast peak</div>
-                      <p className="mt-3 font-mono text-3xl font-semibold tracking-tight">{forecastPeak?.toFixed(2) ?? "—"}<span className="ml-1 text-sm text-zinc-400">m</span></p>
+                      <div className="flex items-center gap-2 text-xs text-zinc-400"><Droplets className="h-4 w-4 text-emerald-300" /> Highest returned stage</div>
+                      <p className="mt-3 font-mono text-3xl font-semibold tracking-tight">{forecastPeak?.value.toFixed(2) ?? "—"}<span className="ml-1 text-sm text-zinc-400">m</span></p>
+                      {forecastPeak && <p className="mt-1 text-[10px] text-zinc-500">At {forecastPeak.horizon} · sampled forecast horizon</p>}
                     </motion.div>
                     <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: prefersReducedMotion ? 0 : 0.3 }} className="rounded-2xl border border-white/10 bg-white/[0.025] p-4">
                       <div className="flex items-center gap-2 text-xs text-zinc-400"><Activity className="h-4 w-4 text-emerald-300" /> Flood risk</div>
@@ -271,7 +292,7 @@ export default function DemoLabPage() {
                   </div>
 
                   <motion.div initial={prefersReducedMotion ? false : "hidden"} animate="visible" variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.07, delayChildren: 0.15 } } }} className="mt-3 grid gap-3 sm:grid-cols-3">
-                    <ReviewCheck title="Input checks" passed={Boolean(result.result.current_condition)} detail={result.result.current_condition?.water_level_m !== undefined ? `Starting water level: ${result.result.current_condition.water_level_m.toFixed(2)} m` : "Synthetic scenario inputs were accepted."} />
+                    <ReviewCheck title="Input checks" passed={Boolean(result.result.current_condition)} detail={result.result.current_condition.water_level_m !== undefined ? `Starting stage: ${result.result.current_condition.water_level_m.toFixed(2)} m` : "Synthetic scenario inputs were accepted."} />
                     <ReviewCheck title="Forecast & risk" passed={forecastPeak !== null && typeof result.result.risk_score === "number"} detail="Forecast and risk estimates were returned for this scenario." />
                     <ReviewCheck title="Safety review" passed={!needsHumanReview} detail={needsHumanReview ? "Review the scenario findings before sharing or acting on them." : "No additional review was flagged for this scenario."} />
                   </motion.div>
@@ -282,7 +303,7 @@ export default function DemoLabPage() {
                   </div>
                   <div className="mt-3 flex items-start gap-2 text-[11px] leading-relaxed text-zinc-500">
                     <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                    <p>{externalCheckPassed ? "Independent corroboration is available for this run." : "Synthetic scenario only: no live authority bulletin or external source was checked."} This is decision support, not an operational warning.</p>
+                    <p>Synthetic scenario only: this offline run did not check a live authority bulletin or external source. This is decision support, not an operational warning.</p>
                   </div>
                 </>
               ) : (

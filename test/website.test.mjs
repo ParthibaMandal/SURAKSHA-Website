@@ -1,11 +1,28 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { access, readFile } from 'node:fs/promises';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import ts from 'typescript';
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const read = (relativePath) => readFile(path.join(root, relativePath), 'utf8');
+const require = createRequire(import.meta.url);
+const CommonJSModule = require('node:module');
+
+async function loadTypeScriptRoute(relativePath) {
+  const routePath = path.join(root, relativePath);
+  const source = await read(relativePath);
+  const { outputText } = ts.transpileModule(source, {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: true },
+  });
+  const routeModule = new CommonJSModule(routePath);
+  routeModule.filename = routePath;
+  routeModule.paths = CommonJSModule._nodeModulePaths(path.dirname(routePath));
+  routeModule._compile(outputText, routePath);
+  return routeModule.exports;
+}
 
 async function routeExists(route) {
   const segments = route.split('/').filter(Boolean);
@@ -171,4 +188,104 @@ test('missing or invalid Supabase profiles never become citizen identities', asy
   assert.match(navbar, /Account role could not be verified/);
   assert.match(sidebar, /Profile unavailable/);
   assert.doesNotMatch(sidebar, /Duty Hydrologist|Citizen Account|Patna Reach \(Preview\)/);
+});
+
+test('simulation lab submits only active controls and accepts only synthetic engine results', async () => {
+  const [page, route, apiDoc] = await Promise.all([
+    read('app/demo-lab/page.tsx'),
+    read('app/api/flood/scenarios/route.ts'),
+    read('docs/API_DOCUMENTATION.md'),
+  ]);
+  assert.match(page, /river_discharge_multiplier: inflow/);
+  assert.doesNotMatch(page, /enable_jev_supervision|Gandak Basin|Upstream flow multiplier/);
+  assert.match(page, /synthetic_data_only === true/);
+  assert.match(page, /data\.jev_mode === "OFFLINE_DETERMINISTIC_SIMULATOR"/);
+  assert.match(page, /data_provenance === "SYNTHETIC_SCENARIO"/);
+  assert.match(page, /\+6h|\+12h|\+24h/);
+  assert.match(page, /Highest returned stage/);
+  assert.match(page, /offline run did not check a live authority bulletin or external source/);
+  assert.match(route, /river_discharge_multiplier/);
+  assert.match(route, /unsupported scenario options/);
+  assert.match(route, /catalog\?\.synthetic_data_only !== true/);
+  assert.match(route, /does not provide a usable starting river discharge/);
+  assert.match(route, /conditions\.river_discharge_m3s = Number/);
+  assert.match(route, /conditions\.rainfall_24h_mm = Number/);
+  assert.match(apiDoc, /river_discharge_multiplier/);
+  assert.match(apiDoc, /current_condition\.river_discharge_m3s/);
+  assert.doesNotMatch(route, /upstream_inflow_multiplier/);
+  assert.match(apiDoc, /starting river discharge multiplier/);
+});
+
+test('scenario proxy applies sliders to catalog fields and rejects incomplete inputs', async () => {
+  const route = await loadTypeScriptRoute('app/api/flood/scenarios/route.ts');
+  const previousFetch = globalThis.fetch;
+  const previousBackendUrl = process.env.SURAKSHA_BACKEND_URL;
+  process.env.SURAKSHA_BACKEND_URL = 'https://engine.test';
+  const baseScenario = {
+    id: 'BEST_01_CALM_BASELINE',
+    input: { current_condition: { river_discharge_m3s: 100, rainfall_24h_mm: 10 } },
+  };
+  let submittedRun = null;
+  let calls = 0;
+  globalThis.fetch = async (url, init = {}) => {
+    calls += 1;
+    if (String(url).endsWith('/api/v1/flood/demo/scenarios')) {
+      return new Response(JSON.stringify({ synthetic_data_only: true, scenarios: [baseScenario] }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      });
+    }
+    assert.match(String(url), /\/demo\/scenarios\/BEST_01_CALM_BASELINE\/run\?mode=static$/);
+    submittedRun = JSON.parse(init.body);
+    return new Response(JSON.stringify({ accepted: true }), {
+      status: 200,
+      headers: { 'content-type': 'application/json' },
+    });
+  };
+
+  try {
+    const validResponse = await route.POST(new Request('https://website.test/api/flood/scenarios', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        scenario_id: baseScenario.id,
+        river_discharge_multiplier: 1.25,
+        precipitation_anomaly_mm: 80,
+      }),
+    }));
+    assert.equal(validResponse.status, 200);
+    assert.equal(submittedRun.input.current_condition.river_discharge_m3s, 125);
+    assert.equal(submittedRun.input.current_condition.rainfall_24h_mm, 90);
+    assert.deepEqual(baseScenario.input.current_condition, { river_discharge_m3s: 100, rainfall_24h_mm: 10 });
+
+    calls = 0;
+    const extraFieldResponse = await route.POST(new Request('https://website.test/api/flood/scenarios', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        scenario_id: baseScenario.id,
+        river_discharge_multiplier: 1,
+        precipitation_anomaly_mm: 0,
+        enable_jev_supervision: false,
+      }),
+    }));
+    assert.equal(extraFieldResponse.status, 400);
+    assert.equal(calls, 0, 'unsupported options must not invoke the engine');
+
+    globalThis.fetch = async () => new Response(JSON.stringify({
+      synthetic_data_only: true,
+      scenarios: [{ id: baseScenario.id, input: { current_condition: { rainfall_24h_mm: 10 } } }],
+    }), { status: 200, headers: { 'content-type': 'application/json' } });
+    const incompleteCatalogResponse = await route.POST(new Request('https://website.test/api/flood/scenarios', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ scenario_id: baseScenario.id, river_discharge_multiplier: 1, precipitation_anomaly_mm: 0 }),
+    }));
+    assert.equal(incompleteCatalogResponse.status, 502);
+    assert.match((await incompleteCatalogResponse.json()).detail, /usable starting river discharge/);
+  } finally {
+    globalThis.fetch = previousFetch;
+    if (previousBackendUrl === undefined) delete process.env.SURAKSHA_BACKEND_URL;
+    else process.env.SURAKSHA_BACKEND_URL = previousBackendUrl;
+  }
 });
