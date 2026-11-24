@@ -289,3 +289,21 @@ test('scenario proxy applies sliders to catalog fields and rejects incomplete in
     else process.env.SURAKSHA_BACKEND_URL = previousBackendUrl;
   }
 });
+
+test('citizen account previews do not claim unsaved data or invented security facts', async () => {
+  const profile = await read('app/citizen/profile/page.tsx');
+  const locations = await read('app/citizen/locations/page.tsx');
+  const notifications = await read('app/citizen/notifications/page.tsx');
+
+  assert.match(profile, /useAuth\(\)/);
+  assert.match(profile, /user\?\.email/);
+  assert.match(profile, /Profile editing and language preference storage are not connected/);
+  assert.doesNotMatch(profile, /Last changed 14 days ago|citizen@example\.test|Changes saved|Protected/);
+
+  assert.match(locations, /Preview only: adding or removing a row changes this page session/);
+  assert.match(locations, /not saved/);
+  assert.match(locations, /disabled\s+title="Location editing is unavailable/);
+  assert.match(notifications, /No notifications will be sent/);
+  assert.match(notifications, /Apply to Preview/);
+  assert.doesNotMatch(notifications, /Notification preferences saved/);
+});

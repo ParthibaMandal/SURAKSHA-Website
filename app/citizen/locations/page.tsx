@@ -54,18 +54,18 @@ export default function CitizenLocationsPage() {
     };
     setLocations((prev) => [...prev, item]);
     setNewName("");
-    showToast(`Added monitored location: ${item.name}`);
+    showToast(`Added ${item.name} to this sample preview only. It was not saved.`);
   };
 
   const handleRemove = (id: string) => {
     setLocations((prev) => prev.filter((l) => l.id !== id));
-    showToast(`Removed location ${id}.`);
+    showToast(`Removed ${id} from this sample preview only. No saved record changed.`);
   };
 
   return (
     <div className="space-y-6">
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#0A0A0A] border border-[#FFFFFF]/40 text-xs font-mono text-[#A1A1AA] shadow-2xl flex items-center gap-2">
+        <div role="status" aria-live="polite" className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#0A0A0A] border border-[#FFFFFF]/40 text-xs font-mono text-[#A1A1AA] shadow-2xl flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4 text-[#FFFFFF]" /> {toast}
         </div>
       )}
@@ -78,7 +78,7 @@ export default function CitizenLocationsPage() {
             Saved Locations
           </h1>
           <p className="text-xs text-[#A69B88] mt-1">
-            Add, edit, remove, and inspect monitored geographic areas for human-approved flood advisories.
+            Preview location controls. This workspace has no saved-location or alert-subscription service connected.
           </p>
         </div>
       </div>
@@ -89,10 +89,11 @@ export default function CitizenLocationsPage() {
         className="p-5 rounded-xl border border-[#A1A1AA]/15 bg-[#0A0A0A] flex flex-col sm:flex-row items-stretch sm:items-end gap-3"
       >
         <div className="flex-1 space-y-1">
-          <label className="text-[10px] font-mono uppercase tracking-wider text-[#A69B88]">
-            Location Label
+          <label htmlFor="location-label" className="text-[10px] font-mono uppercase tracking-wider text-[#A69B88]">
+            Sample Location Label
           </label>
           <input
+            id="location-label"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             placeholder="e.g., Kankarbagh Workplace"
@@ -100,10 +101,11 @@ export default function CitizenLocationsPage() {
           />
         </div>
         <div className="sm:w-56 space-y-1">
-          <label className="text-[10px] font-mono uppercase tracking-wider text-[#A69B88]">
-            Corridor / Reach
+          <label htmlFor="location-area" className="text-[10px] font-mono uppercase tracking-wider text-[#A69B88]">
+            Sample Corridor / Reach
           </label>
           <select
+            id="location-area"
             value={newArea}
             onChange={(e) => setNewArea(e.target.value)}
             className="w-full px-3.5 py-2 rounded-lg bg-[#000000] border border-[#A1A1AA]/20 text-xs text-[#A1A1AA] focus:outline-none focus:border-[#FFFFFF]"
@@ -123,7 +125,7 @@ export default function CitizenLocationsPage() {
       <div className="p-6 rounded-xl border border-[#A1A1AA]/15 bg-[#0A0A0A] space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-[#A1A1AA]/12">
           <h3 className="text-sm font-bold text-[#A1A1AA]">Monitored Locations</h3>
-          <span className="text-xs font-mono text-[#A69B88]">{locations.length} Saved · SAMPLE</span>
+          <span className="text-xs font-mono text-[#A69B88]">{locations.length} In preview · SAMPLE</span>
         </div>
 
         <div className="overflow-x-auto">
@@ -158,8 +160,10 @@ export default function CitizenLocationsPage() {
                   </td>
                   <td className="py-3 px-3 flex items-center gap-2">
                     <button
-                      onClick={() => showToast(`Updated alert radius for ${loc.name}.`)}
-                      className="px-2.5 py-1 rounded bg-[#141414] border border-[#A1A1AA]/20 text-[11px] text-[#A1A1AA] hover:border-[#FFFFFF] flex items-center gap-1"
+                      type="button"
+                      disabled
+                      title="Location editing is unavailable until saved-location records are connected."
+                      className="px-2.5 py-1 rounded bg-[#141414] border border-[#A1A1AA]/20 text-[11px] text-[#A1A1AA]/50 cursor-not-allowed flex items-center gap-1"
                     >
                       <Edit3 className="w-3 h-3" /> Edit
                     </button>
@@ -179,7 +183,7 @@ export default function CitizenLocationsPage() {
 
       {/* Notice */}
       <div className="notice">
-        Precise street addresses are not retained. Only coarse ward-level spatial coordinates are stored to match public advisory polygons.
+        Preview only: adding or removing a row changes this page session and does not save a location, subscribe to an alert, or monitor a real area. No precise address is requested.
       </div>
     </div>
   );

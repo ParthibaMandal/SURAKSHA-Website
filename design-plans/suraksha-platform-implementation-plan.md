@@ -41,6 +41,8 @@ The simulation lab now labels and submits its actual editable variables: the mul
 
 The prototype-era `docs/SURAKSHA_IMPLEMENTATION_ROADMAP.md` was replaced with a current summary linking back to this plan; its obsolete plain-HTML/local-bridge and separate-database assumptions no longer describe the repository. Remaining documentation verification is focused on archival scientific design/specification material, where proposed architectures must be distinguished from implemented capabilities.
 
+The citizen profile, saved-location, and notification pages were audited for false persistence claims. The profile now reads the authenticated name/email and removes invented password/session/MFA facts; profile edits and language storage are identified as unavailable. Location rows and notifications are explicitly session-only previews, unsupported editing is disabled, and the UI no longer claims that preferences or locations were saved or delivered. A regression test guards these constraints. Durable location subscriptions, profile editing, and notification delivery still require approved schema, RLS, and service contracts.
+
 ## Target system boundaries
 
 ```text

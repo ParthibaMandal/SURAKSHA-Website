@@ -14,7 +14,7 @@ export default function CitizenNotificationsPage() {
   });
 
   const handleSave = () => {
-    setToast("Notification preferences saved.");
+    setToast("Preview updated for this page session only. No notifications will be sent.");
     setTimeout(() => setToast(null), 2600);
   };
 
@@ -33,7 +33,7 @@ export default function CitizenNotificationsPage() {
           Notification Preferences
         </h1>
         <p className="text-xs text-[#A69B88] mt-1">
-          Configure how you receive human-approved flood advisories for your saved locations.
+          Adjust a local preview. Preference storage and notification delivery are not connected.
         </p>
       </div>
 
@@ -49,8 +49,8 @@ export default function CitizenNotificationsPage() {
         <div className="divide-y divide-[#A1A1AA]/10">
           <div className="py-3 flex items-center justify-between gap-4">
             <div>
-              <strong className="text-xs text-[#FFFFFF] block">Browser push notifications</strong>
-              <small className="text-[11px] text-[#A69B88]">Receive instant desktop and mobile updates</small>
+              <strong className="text-xs text-[#FFFFFF] block">Browser push preview</strong>
+              <small className="text-[11px] text-[#A69B88]">No push subscription or delivery service is connected.</small>
             </div>
             <label className="flex items-center gap-2 text-xs font-mono text-[#A1A1AA] cursor-pointer">
               <input
@@ -65,8 +65,8 @@ export default function CitizenNotificationsPage() {
 
           <div className="py-3 flex items-center justify-between gap-4">
             <div>
-              <strong className="text-xs text-[#FFFFFF] block">Audible alarms</strong>
-              <small className="text-[11px] text-[#A69B88]">Distinct alert sounds for high-urgency notifications</small>
+              <strong className="text-xs text-[#FFFFFF] block">Audible alarm preview</strong>
+              <small className="text-[11px] text-[#A69B88]">No alert sound is triggered by this setting.</small>
             </div>
             <label className="flex items-center gap-2 text-xs font-mono text-[#A1A1AA] cursor-pointer">
               <input
@@ -81,8 +81,8 @@ export default function CitizenNotificationsPage() {
 
           <div className="py-3 flex items-center justify-between gap-4">
             <div>
-              <strong className="text-xs text-[#FFFFFF] block">Haptic vibration</strong>
-              <small className="text-[11px] text-[#A69B88]">Vibration pulses on compatible mobile browsers</small>
+              <strong className="text-xs text-[#FFFFFF] block">Vibration preview</strong>
+              <small className="text-[11px] text-[#A69B88]">No vibration is triggered by this setting.</small>
             </div>
             <label className="flex items-center gap-2 text-xs font-mono text-[#A1A1AA] cursor-pointer">
               <input
@@ -97,8 +97,8 @@ export default function CitizenNotificationsPage() {
 
           <div className="py-3 flex items-center justify-between gap-4">
             <div>
-              <strong className="text-xs text-[#FFFFFF] block">Email summaries</strong>
-              <small className="text-[11px] text-[#A69B88]">Daily or incident-based email digests</small>
+              <strong className="text-xs text-[#FFFFFF] block">Email summary preview</strong>
+              <small className="text-[11px] text-[#A69B88]">No email subscription or delivery service is connected.</small>
             </div>
             <label className="flex items-center gap-2 text-xs font-mono text-[#A1A1AA] cursor-pointer">
               <input
@@ -114,7 +114,7 @@ export default function CitizenNotificationsPage() {
 
         <div className="pt-2">
           <Button onClick={handleSave} className="h-10 text-xs font-bold">
-            Save Preferences
+            Apply to Preview
           </Button>
         </div>
       </div>
