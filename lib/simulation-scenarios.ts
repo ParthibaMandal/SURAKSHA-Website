@@ -696,3 +696,169 @@ export const SIMULATION_SCENARIOS: SimulationScenario[] = [
     ],
   },
 ];
+
+export interface CustomScenarioInput {
+  title: string;
+  category?: "Low-Risk" | "Moderate-Risk" | "High-Risk" | "Extreme-Event" | "System-Reliability";
+  description?: string;
+  initialInflowMultiplier: number;
+  initialRainfallAnomaly: number;
+  initialSnowmeltIndex: number;
+  initialSoilSaturation: number;
+  initialTributaryInflow: number;
+  eventPattern: "compound_surge" | "flash_cloudburst" | "glacier_wave" | "steady_recession";
+  embankmentBreachRisk?: boolean;
+}
+
+export function generateCustomScenario(input: CustomScenarioInput): SimulationScenario {
+  const code = `C${Math.floor(Math.random() * 899 + 100)}`;
+  const id = `CUSTOM_${Date.now()}_${input.title.toLowerCase().replace(/[^a-z0-9]/g, "_")}`;
+
+  const days = [1, 3, 5, 7, 9, 11, 13, 15, 18, 21];
+  const timeline: SimulationDayState[] = days.map((day) => {
+    let rainFactor = 1.0;
+    let meltFactor = 1.0;
+    let flowFactor = 1.0;
+
+    if (input.eventPattern === "flash_cloudburst") {
+      if (day <= 3) rainFactor = 0.2;
+      else if (day <= 9) rainFactor = 2.2;
+      else if (day <= 13) rainFactor = 1.1;
+      else rainFactor = 0.3;
+
+      flowFactor = day <= 3 ? 0.9 : day <= 11 ? 1.6 : 1.1;
+      meltFactor = 1.0;
+    } else if (input.eventPattern === "glacier_wave") {
+      meltFactor = day <= 9 ? 1.0 + (day / 9) * 0.8 : Math.max(1.0, 1.8 - ((day - 9) / 12) * 0.7);
+      rainFactor = 0.5 + (day / 21) * 0.5;
+      flowFactor = 1.0 + (day <= 11 ? (day / 11) * 0.6 : 0.6 - ((day - 11) / 10) * 0.4);
+    } else if (input.eventPattern === "steady_recession") {
+      const decay = (21 - day) / 20;
+      flowFactor = 0.6 + 0.4 * decay;
+      rainFactor = 0.2 + 0.8 * decay;
+      meltFactor = 0.8 + 0.2 * decay;
+    } else {
+      // compound_surge
+      if (day <= 5) {
+        meltFactor = 1.0 + (day / 5) * 0.6;
+        rainFactor = 0.3 + (day / 5) * 0.5;
+        flowFactor = 1.0 + (day / 5) * 0.25;
+      } else if (day <= 15) {
+        meltFactor = 1.6 - ((day - 5) / 10) * 0.3;
+        rainFactor = 0.8 + ((day - 5) / 10) * 1.0;
+        flowFactor = 1.25 + ((day - 5) / 10) * 0.6;
+      } else {
+        meltFactor = 1.1;
+        rainFactor = 0.4;
+        flowFactor = 1.4 - ((day - 15) / 6) * 0.5;
+      }
+    }
+
+    const localRain = Math.round(input.initialRainfallAnomaly * 0.6 * rainFactor);
+    const upstreamRain = Math.round(input.initialRainfallAnomaly * rainFactor);
+    const snowmeltIndex = Number((input.initialSnowmeltIndex * meltFactor).toFixed(1));
+    const soilSaturation = Math.min(
+      100,
+      Math.max(20, Math.round(input.initialSoilSaturation + (upstreamRain / 12) * (day <= 15 ? 1 : -0.5)))
+    );
+    const tributaryInflow = Math.round(input.initialTributaryInflow * flowFactor);
+
+    const baseDischarge = 21000 * input.initialInflowMultiplier * flowFactor;
+    const runoffDischarge = (upstreamRain * (soilSaturation / 100)) * 55;
+    const meltDischarge = (snowmeltIndex - 1.0) * 4500;
+    const discharge = Math.round(baseDischarge + runoffDischarge + meltDischarge + (tributaryInflow * 0.4));
+
+    const excessQ = Math.max(0, discharge - 18000);
+    const stage = Number(
+      Math.min(51.2, 44.0 + Math.pow(excessQ / 5200, 0.72)).toFixed(2)
+    );
+
+    const isBreach = Boolean(input.embankmentBreachRisk && stage >= 48.2 && day >= 9 && day <= 18);
+    const embankmentStatus = isBreach
+      ? "Breach"
+      : stage >= 47.6
+      ? "Under Stress"
+      : "Stable";
+
+    const modelError = Number((Math.sin(day * 1.5) * 0.18).toFixed(2));
+    const aiForecastStage = Number((stage + modelError).toFixed(2));
+
+    let aiRiskScore = 15;
+    if (stage >= 49.5) aiRiskScore = 98;
+    else if (stage >= 48.6) aiRiskScore = Math.min(96, Math.round(80 + (stage - 48.6) * 16));
+    else if (stage >= 47.6) aiRiskScore = Math.min(78, Math.round(48 + (stage - 47.6) * 30));
+    else aiRiskScore = Math.min(45, Math.round(15 + (stage - 44.0) * 8));
+
+    const aiSeverity: "LOW" | "MODERATE" | "HIGH" | "CRITICAL" =
+      aiRiskScore >= 80 ? "CRITICAL" : aiRiskScore >= 50 ? "HIGH" : aiRiskScore >= 30 ? "MODERATE" : "LOW";
+
+    const optimisticStage = Number(Math.max(43.5, stage - (0.4 + (day / 21) * 0.5)).toFixed(2));
+    const referenceStage = stage;
+    const severeStage = Number((stage + (0.35 + (day / 21) * 0.65)).toFixed(2));
+
+    let diagnostic = "";
+    if (stage >= 48.6) {
+      diagnostic = `CRITICAL DANGER THRESHOLD EXCEEDED (${stage.toFixed(2)}m vs 48.60m). Tributary inflow at ${tributaryInflow.toLocaleString()} m³/s with ${soilSaturation}% soil saturation. Evacuation advisories initiated for Gandhi Ghat & Danapur lowlands.`;
+    } else if (stage >= 47.6) {
+      diagnostic = `CWC WARNING LEVEL BREACHED (${stage.toFixed(2)}m vs 47.60m). Basin runoff accelerating due to ${upstreamRain} mm/day catchment rainfall and antecedent soil saturation (${soilSaturation}%).`;
+    } else if (day <= 3) {
+      diagnostic = `Initial conditions: ${input.initialInflowMultiplier.toFixed(2)}× starting discharge and ${snowmeltIndex.toFixed(1)}× cryosphere anomaly. Ganga stage nominal at ${stage.toFixed(2)}m.`;
+    } else if (day <= 9) {
+      diagnostic = `Hydrological escalation detected: snowmelt index reaches ${snowmeltIndex.toFixed(1)}× while tributary inflows swell to ${tributaryInflow.toLocaleString()} m³/s. Monitoring backwater response.`;
+    } else {
+      diagnostic = `Recession phase underway. Runoff draining into lower Gangetic reaches. Stage receding to ${stage.toFixed(2)}m. Embankment status: ${embankmentStatus}.`;
+    }
+
+    return {
+      day,
+      label: `Day ${day.toString().padStart(2, "0")}`,
+      stage,
+      discharge,
+      localRain,
+      upstreamRain,
+      snowmeltIndex,
+      soilSaturation,
+      tributaryInflow,
+      embankmentStatus,
+      aiForecastStage,
+      aiRiskScore,
+      aiSeverity,
+      diagnostic,
+      optimisticStage,
+      referenceStage,
+      severeStage,
+    };
+  });
+
+  const maxStage = Math.max(...timeline.map((s) => s.stage));
+  const category =
+    input.category ??
+    (maxStage >= 48.6
+      ? input.embankmentBreachRisk
+        ? "Extreme-Event"
+        : "High-Risk"
+      : maxStage >= 47.6
+      ? "Moderate-Risk"
+      : "Low-Risk");
+
+  return {
+    id,
+    code,
+    title: input.title,
+    category,
+    shortDescription: input.description || `Custom simulation: ${input.initialInflowMultiplier}× discharge, ${input.initialRainfallAnomaly}mm rain, ${input.initialSnowmeltIndex}× melt.`,
+    fullDescription: `User-defined synthetic simulation scenario testing hydrological response to ${input.initialInflowMultiplier}× initial discharge, ${input.initialRainfallAnomaly} mm rainfall anomaly, ${input.initialSnowmeltIndex}× cryosphere thaw, and ${input.initialSoilSaturation}% soil saturation under a ${input.eventPattern.replace("_", " ")} pattern.`,
+    testingObjective: `Custom evaluation of multi-variable flood risk escalation and predictive warning lead time.`,
+    benchmarkStation: CWC_GANDHI_GHAT_BENCHMARKS.stationName,
+    warningLevel: CWC_GANDHI_GHAT_BENCHMARKS.warningLevel,
+    dangerLevel: CWC_GANDHI_GHAT_BENCHMARKS.dangerLevel,
+    highestFloodLevel: CWC_GANDHI_GHAT_BENCHMARKS.highestFloodLevel,
+    initialInflowMultiplier: input.initialInflowMultiplier,
+    initialRainfallAnomaly: input.initialRainfallAnomaly,
+    initialSnowmeltIndex: input.initialSnowmeltIndex,
+    initialSoilSaturation: input.initialSoilSaturation,
+    initialTributaryInflow: input.initialTributaryInflow,
+    timeline,
+  };
+}
+

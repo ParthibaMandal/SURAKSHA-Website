@@ -23,8 +23,13 @@ import {
   Calendar,
   AlertTriangle,
   Check,
-  Layers,
   Sparkles,
+  PlusCircle,
+  X,
+  Sliders,
+  Flame,
+  Mountain,
+  Zap,
 } from "lucide-react";
 import { RiskGauge } from "@/components/simulation/RiskGauge";
 import { ScenarioComparisonChart } from "@/components/simulation/ScenarioComparisonChart";
@@ -34,6 +39,8 @@ import {
   SimulationScenario,
   SimulationDayState,
   CWC_GANDHI_GHAT_BENCHMARKS,
+  generateCustomScenario,
+  CustomScenarioInput,
 } from "@/lib/simulation-scenarios";
 
 type ScenarioResult = {
@@ -118,7 +125,10 @@ function isScenarioResult(value: unknown, expectedScenarioId: string): value is 
 }
 
 export default function DemoLabPage() {
-  // Scenario & Simulation Engine States
+  // Scenario Catalog & Custom Scenarios State
+  const [customScenarios, setCustomScenarios] = useState<SimulationScenario[]>([]);
+  const allScenarios = [...customScenarios, ...SIMULATION_SCENARIOS];
+
   const [selectedScenarioId, setSelectedScenarioId] = useState<string>("WORST_01_RAPID_RIVER_SURGE");
   const [preset, setPreset] = useState<DemoPreset>("surge");
   const [inflow, setInflow] = useState(PRESETS.surge.inflow);
@@ -132,9 +142,20 @@ export default function DemoLabPage() {
   const [currentDayIndex, setCurrentDayIndex] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
-  // Active scenario from catalog
+  // Custom Scenario Creator Studio Modal State
+  const [isStudioOpen, setIsStudioOpen] = useState<boolean>(false);
+  const [customTitle, setCustomTitle] = useState<string>("Custom Upper Ganga Inflow Surge");
+  const [customPattern, setCustomPattern] = useState<"compound_surge" | "flash_cloudburst" | "glacier_wave" | "steady_recession">("compound_surge");
+  const [customInflow, setCustomInflow] = useState<number>(1.5);
+  const [customRainfall, setCustomRainfall] = useState<number>(150);
+  const [customSnowmelt, setCustomSnowmelt] = useState<number>(2.0);
+  const [customSoil, setCustomSoil] = useState<number>(75);
+  const [customTributary, setCustomTributary] = useState<number>(6800);
+  const [customBreachRisk, setCustomBreachRisk] = useState<boolean>(false);
+
+  // Active scenario
   const activeScenario: SimulationScenario =
-    SIMULATION_SCENARIOS.find((s) => s.id === selectedScenarioId) ?? SIMULATION_SCENARIOS[0];
+    allScenarios.find((s) => s.id === selectedScenarioId) ?? SIMULATION_SCENARIOS[0];
   const timeline: SimulationDayState[] = activeScenario.timeline;
   const currentDayState: SimulationDayState = timeline[currentDayIndex] ?? timeline[0];
 
@@ -185,7 +206,7 @@ export default function DemoLabPage() {
       : 0;
 
   function handleSelectScenario(scenarioId: string) {
-    const scen = SIMULATION_SCENARIOS.find((s) => s.id === scenarioId) ?? SIMULATION_SCENARIOS[0];
+    const scen = allScenarios.find((s) => s.id === scenarioId) ?? SIMULATION_SCENARIOS[0];
     setSelectedScenarioId(scen.id);
     setInflow(scen.initialInflowMultiplier);
     setRainfall(scen.initialRainfallAnomaly);
@@ -210,15 +231,16 @@ export default function DemoLabPage() {
     setError(null);
   }
 
-  async function runScenario() {
+  async function runScenario(scenarioToRun?: SimulationScenario) {
     setIsRunning(true);
     setError(null);
+    const target = scenarioToRun ?? activeScenario;
     try {
       const response = await fetch("/api/flood/scenarios", {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
-          scenario_id: activeScenario.id,
+          scenario_id: target.id.startsWith("CUSTOM_") ? PRESETS.surge.scenarioId : target.id,
           river_discharge_multiplier: inflow,
           precipitation_anomaly_mm: rainfall,
         }),
@@ -226,7 +248,8 @@ export default function DemoLabPage() {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data?.detail || "The simulation service could not complete this run.");
-      if (!isScenarioResult(data, activeScenario.id)) {
+      const expectedId = target.id.startsWith("CUSTOM_") ? PRESETS.surge.scenarioId : target.id;
+      if (!isScenarioResult(data, expectedId)) {
         throw new Error("The simulation service returned an incomplete or unexpected synthetic result.");
       }
       setResult(data);
@@ -238,6 +261,29 @@ export default function DemoLabPage() {
     } finally {
       setIsRunning(false);
     }
+  }
+
+  function handleCreateAndLaunchCustomScenario() {
+    const input: CustomScenarioInput = {
+      title: customTitle.trim() || "User Custom Scenario",
+      initialInflowMultiplier: customInflow,
+      initialRainfallAnomaly: customRainfall,
+      initialSnowmeltIndex: customSnowmelt,
+      initialSoilSaturation: customSoil,
+      initialTributaryInflow: customTributary,
+      eventPattern: customPattern,
+      embankmentBreachRisk: customBreachRisk,
+    };
+
+    const newScenario = generateCustomScenario(input);
+    setCustomScenarios((prev) => [newScenario, ...prev]);
+    setSelectedScenarioId(newScenario.id);
+    setInflow(newScenario.initialInflowMultiplier);
+    setRainfall(newScenario.initialRainfallAnomaly);
+    setCurrentDayIndex(0);
+    setIsStudioOpen(false);
+    setIsPlaying(true); // Automatically play live simulation!
+    runScenario(newScenario);
   }
 
   // Hydrological phase determination
@@ -290,7 +336,7 @@ export default function DemoLabPage() {
               <div className="flex items-center gap-3">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-[11px] font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
                   <span className={`w-1.5 h-1.5 rounded-full ${isRunning || isPlaying ? "bg-amber-400 animate-ping" : "bg-emerald-500"}`} />
-                  {isRunning ? "COMPUTING FORECAST" : isPlaying ? "TIMELINE ADVANCING" : "READY TO RUN"}
+                  {isRunning ? "COMPUTING FORECAST" : isPlaying ? "LIVE SIMULATION RUNNING" : "READY TO RUN"}
                 </span>
                 <div className="w-7 h-7 rounded-full bg-[var(--surface-elevated)] border border-[var(--border)] text-[var(--foreground)] font-bold text-xs grid place-items-center">
                   SC
@@ -309,12 +355,22 @@ export default function DemoLabPage() {
                   Flood Simulation Lab
                 </h1>
                 <p className="text-xs sm:text-sm text-[var(--muted-foreground)] mt-1.5 max-w-2xl leading-relaxed">
-                  Interactive multi-variable flood scenario engine. Explore evolving river discharge, glacial meltwater anomalies, and monsoon escalations with closed-loop predictive validation.
+                  Interactive multi-variable flood scenario engine. Create custom environmental scenarios or run library benchmarks with live 21-day timeline evolution and closed-loop predictive validation.
                 </p>
               </div>
 
-              {/* Filter Selectors & Action Button */}
+              {/* Action Buttons & Selectors */}
               <div className="flex flex-wrap items-center gap-3">
+                {/* Create Custom Scenario Button */}
+                <button
+                  type="button"
+                  onClick={() => setIsStudioOpen(true)}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold text-xs transition-all shadow-xs active:scale-95 cursor-pointer"
+                >
+                  <PlusCircle className="w-4 h-4" />
+                  <span>Create Custom Scenario</span>
+                </button>
+
                 {/* Location Selector */}
                 <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-md text-xs text-[var(--foreground)] shadow-xs">
                   <Activity className="w-3.5 h-3.5 text-emerald-500" />
@@ -332,7 +388,7 @@ export default function DemoLabPage() {
                 {/* Run Simulation Button */}
                 <button
                   type="button"
-                  onClick={runScenario}
+                  onClick={() => runScenario()}
                   disabled={isRunning}
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white dark:text-black font-bold text-xs transition-all shadow-md shadow-emerald-500/25 active:scale-95 disabled:opacity-60 cursor-pointer"
                 >
@@ -409,7 +465,6 @@ export default function DemoLabPage() {
                 <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
                   ↑ +{(currentStage - CWC_GANDHI_GHAT_BENCHMARKS.datumLevel - 1.2).toFixed(2)} m vs baseline
                 </span>
-                {/* Mini Wave Sparkline */}
                 <svg width="48" height="16" viewBox="0 0 48 16" className="text-sky-500">
                   <path d="M0 12 Q 12 2 24 8 T 48 4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                 </svg>
@@ -520,6 +575,11 @@ export default function DemoLabPage() {
                   <span className="hidden sm:inline-block text-[10px] px-2 py-0.5 rounded bg-[var(--surface)] border border-[var(--border)] text-[var(--muted-foreground)]">
                     {activeScenario.category}
                   </span>
+                  {activeScenario.id.startsWith("CUSTOM_") && (
+                    <span className="px-2 py-0.5 rounded bg-emerald-500 text-black text-[9px] font-bold font-mono uppercase tracking-wider">
+                      User Created
+                    </span>
+                  )}
                 </div>
                 <p className="text-xs text-[var(--muted-foreground)] line-clamp-1">
                   {activeScenario.shortDescription}
@@ -576,7 +636,6 @@ export default function DemoLabPage() {
                         }}
                         className="group relative flex flex-col items-center cursor-pointer select-none focus:outline-none"
                       >
-                        {/* Step Marker Dot */}
                         <div
                           className={`w-6 h-6 rounded-full flex items-center justify-center transition-all text-[10px] font-mono font-bold border-2 ${
                             isCurrent
@@ -593,7 +652,6 @@ export default function DemoLabPage() {
                           {step.day}
                         </div>
 
-                        {/* Stage Altitude Pill on Hover or Current */}
                         {isCurrent && (
                           <div className="absolute -top-7 whitespace-nowrap px-2 py-0.5 rounded bg-[var(--surface-elevated)] border border-[var(--border)] text-[10px] font-mono font-bold text-emerald-600 dark:text-emerald-400 shadow-xs">
                             {step.stage.toFixed(2)}m
@@ -746,9 +804,19 @@ export default function DemoLabPage() {
                   <h3 className="text-sm font-bold text-[var(--foreground)] flex items-center gap-2 font-heading">
                     <Activity className="w-4 h-4 text-emerald-500" /> Scenario Configuration
                   </h3>
-                  <span className="text-[10px] font-mono text-[var(--muted-foreground)]">
-                    {SIMULATION_SCENARIOS.length} Catalog Scenarios
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsStudioOpen(true)}
+                      className="px-2 py-1 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold hover:bg-emerald-500/25 transition-all cursor-pointer flex items-center gap-1"
+                    >
+                      <PlusCircle className="w-3 h-3" />
+                      <span>+ Custom</span>
+                    </button>
+                    <span className="text-[10px] font-mono text-[var(--muted-foreground)]">
+                      {allScenarios.length} Total
+                    </span>
+                  </div>
                 </div>
 
                 {/* Scenario Catalog Dropdown */}
@@ -763,7 +831,7 @@ export default function DemoLabPage() {
                       onChange={(e) => handleSelectScenario(e.target.value)}
                       className="w-full px-3 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-xs text-[var(--foreground)] font-semibold appearance-none cursor-pointer focus:outline-none focus:border-emerald-500"
                     >
-                      {SIMULATION_SCENARIOS.map((scen) => (
+                      {allScenarios.map((scen) => (
                         <option key={scen.id} value={scen.id}>
                           {scen.code} — {scen.title} ({scen.category})
                         </option>
@@ -905,7 +973,7 @@ export default function DemoLabPage() {
               {/* Action Button */}
               <button
                 type="button"
-                onClick={runScenario}
+                onClick={() => runScenario()}
                 disabled={isRunning}
                 className="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white dark:text-black font-extrabold text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-emerald-500/25 active:scale-[0.99] cursor-pointer disabled:opacity-60"
               >
@@ -955,10 +1023,8 @@ export default function DemoLabPage() {
 
               {/* Grid: Gauge on Left, Impact Summary on Right */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
-                {/* Semicircular Gauge */}
                 <RiskGauge score={currentRisk} severity={result?.result.severity} />
 
-                {/* Impact Summary Table */}
                 <div className="space-y-3">
                   <div className="text-[11px] font-bold text-[var(--muted-foreground)] uppercase tracking-wider">
                     Impact Summary
@@ -1109,6 +1175,268 @@ export default function DemoLabPage() {
           </div>
         </div>
       </main>
+
+      {/* 5. Custom Scenario Creator Studio Modal */}
+      {isStudioOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="relative w-full max-w-2xl rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl p-6 space-y-6 max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-4 border-b border-[var(--border)]">
+              <div>
+                <div className="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+                  <Sliders className="w-3.5 h-3.5" />
+                  CUSTOM SCENARIO STUDIO
+                </div>
+                <h2 className="text-xl font-heading font-extrabold text-[var(--foreground)] mt-0.5">
+                  Design Custom Flood Event
+                </h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsStudioOpen(false)}
+                className="w-8 h-8 rounded-full border border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-elevated)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] grid place-items-center transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Form Body */}
+            <div className="space-y-5">
+              {/* Scenario Name */}
+              <div className="space-y-1.5">
+                <label htmlFor="customTitle" className="text-xs font-bold text-[var(--foreground)]">
+                  Scenario Title
+                </label>
+                <input
+                  id="customTitle"
+                  type="text"
+                  value={customTitle}
+                  onChange={(e) => setCustomTitle(e.target.value)}
+                  placeholder="e.g. Extreme Early Monsoon Cloudburst"
+                  className="w-full px-3.5 py-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-xs text-[var(--foreground)] font-medium focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              {/* Pattern Selector */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-[var(--foreground)]">
+                  Hydrological Event Pattern
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setCustomPattern("compound_surge")}
+                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${
+                      customPattern === "compound_surge"
+                        ? "border-emerald-500 bg-emerald-500/10 text-[var(--foreground)] shadow-xs"
+                        : "border-[var(--border)] bg-[var(--surface)] text-[var(--muted-foreground)] hover:border-emerald-500/40"
+                    }`}
+                  >
+                    <Waves className="w-4 h-4 text-emerald-500" />
+                    <span className="text-[11px] font-bold">Compound Surge</span>
+                    <span className="text-[9px] text-[var(--muted-foreground)]">Glacier + Rain</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setCustomPattern("flash_cloudburst")}
+                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${
+                      customPattern === "flash_cloudburst"
+                        ? "border-emerald-500 bg-emerald-500/10 text-[var(--foreground)] shadow-xs"
+                        : "border-[var(--border)] bg-[var(--surface)] text-[var(--muted-foreground)] hover:border-emerald-500/40"
+                    }`}
+                  >
+                    <Zap className="w-4 h-4 text-amber-500" />
+                    <span className="text-[11px] font-bold">Cloudburst</span>
+                    <span className="text-[9px] text-[var(--muted-foreground)]">Intense Spike</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setCustomPattern("glacier_wave")}
+                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${
+                      customPattern === "glacier_wave"
+                        ? "border-emerald-500 bg-emerald-500/10 text-[var(--foreground)] shadow-xs"
+                        : "border-[var(--border)] bg-[var(--surface)] text-[var(--muted-foreground)] hover:border-emerald-500/40"
+                    }`}
+                  >
+                    <Mountain className="w-4 h-4 text-sky-500" />
+                    <span className="text-[11px] font-bold">Glacial Wave</span>
+                    <span className="text-[9px] text-[var(--muted-foreground)]">Cryosphere Thaw</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setCustomPattern("steady_recession")}
+                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${
+                      customPattern === "steady_recession"
+                        ? "border-emerald-500 bg-emerald-500/10 text-[var(--foreground)] shadow-xs"
+                        : "border-[var(--border)] bg-[var(--surface)] text-[var(--muted-foreground)] hover:border-emerald-500/40"
+                    }`}
+                  >
+                    <TrendingUp className="w-4 h-4 text-teal-500 rotate-180" />
+                    <span className="text-[11px] font-bold">Drawdown</span>
+                    <span className="text-[9px] text-[var(--muted-foreground)]">Recession</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Multi-variable Parameters Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                {/* Starting River Discharge Multiplier */}
+                <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-1.5">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-[var(--foreground)]">River Discharge Multiplier</span>
+                    <span className="font-mono text-emerald-500 font-bold">{customInflow.toFixed(2)}×</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0.5"
+                    max="3.0"
+                    step="0.05"
+                    value={customInflow}
+                    onChange={(e) => setCustomInflow(Number(e.target.value))}
+                    className="w-full accent-emerald-500 cursor-pointer"
+                  />
+                  <div className="flex justify-between text-[9px] text-[var(--muted-foreground)] font-mono">
+                    <span>0.5× (Low)</span>
+                    <span>3.0× (Torrential)</span>
+                  </div>
+                </div>
+
+                {/* Added Rainfall Anomaly */}
+                <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-1.5">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-[var(--foreground)]">Precipitation Anomaly</span>
+                    <span className="font-mono text-sky-500 font-bold">{customRainfall} mm</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="500"
+                    step="5"
+                    value={customRainfall}
+                    onChange={(e) => setCustomRainfall(Number(e.target.value))}
+                    className="w-full accent-sky-500 cursor-pointer"
+                  />
+                  <div className="flex justify-between text-[9px] text-[var(--muted-foreground)] font-mono">
+                    <span>0 mm</span>
+                    <span>500 mm (Cloudburst)</span>
+                  </div>
+                </div>
+
+                {/* Glacial Melt Anomaly */}
+                <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-1.5">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-[var(--foreground)]">Cryosphere Melt Index</span>
+                    <span className="font-mono text-teal-500 font-bold">{customSnowmelt.toFixed(1)}×</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="1.0"
+                    max="3.0"
+                    step="0.1"
+                    value={customSnowmelt}
+                    onChange={(e) => setCustomSnowmelt(Number(e.target.value))}
+                    className="w-full accent-teal-500 cursor-pointer"
+                  />
+                  <div className="flex justify-between text-[9px] text-[var(--muted-foreground)] font-mono">
+                    <span>1.0× (Baseline)</span>
+                    <span>3.0× (Rapid Thaw)</span>
+                  </div>
+                </div>
+
+                {/* Catchment Soil Saturation */}
+                <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-1.5">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-[var(--foreground)]">Soil Saturation</span>
+                    <span className="font-mono text-amber-500 font-bold">{customSoil}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="20"
+                    max="100"
+                    step="5"
+                    value={customSoil}
+                    onChange={(e) => setCustomSoil(Number(e.target.value))}
+                    className="w-full accent-amber-500 cursor-pointer"
+                  />
+                  <div className="flex justify-between text-[9px] text-[var(--muted-foreground)] font-mono">
+                    <span>20% (Dry)</span>
+                    <span>100% (Saturated)</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tributary Confluence & Breach Toggle */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-1.5">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-[var(--foreground)]">Tributary Confluence Flow</span>
+                    <span className="font-mono text-purple-500 font-bold">{customTributary.toLocaleString()} m³/s</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="2000"
+                    max="12000"
+                    step="200"
+                    value={customTributary}
+                    onChange={(e) => setCustomTributary(Number(e.target.value))}
+                    className="w-full accent-purple-500 cursor-pointer"
+                  />
+                  <div className="flex justify-between text-[9px] text-[var(--muted-foreground)] font-mono">
+                    <span>2,000 m³/s</span>
+                    <span>12,000 m³/s</span>
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] flex items-center justify-between">
+                  <div className="space-y-0.5 pr-2">
+                    <div className="text-xs font-semibold text-[var(--foreground)]">Danapur Embankment Breach</div>
+                    <div className="text-[10px] text-[var(--muted-foreground)]">Simulate structural failure if stage crosses 48.2m</div>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={customBreachRisk}
+                    onChange={(e) => setCustomBreachRisk(e.target.checked)}
+                    className="w-4 h-4 accent-rose-500 cursor-pointer shrink-0"
+                  />
+                </div>
+              </div>
+
+              {/* Real-time Preview Pill */}
+              <div className="p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 flex items-center justify-between text-xs font-mono">
+                <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold">
+                  <Sparkles className="w-4 h-4" />
+                  <span>Predicted Simulation Output:</span>
+                </div>
+                <div className="text-[var(--foreground)]">
+                  Est. Peak: ~{(44.0 + Math.pow(Math.max(0, (21000 * customInflow + customRainfall * 40 + customTributary * 0.4) - 18000) / 5200, 0.72)).toFixed(2)}m
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-[var(--border)]">
+              <button
+                type="button"
+                onClick={() => setIsStudioOpen(false)}
+                className="px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-elevated)] text-xs font-semibold text-[var(--foreground)] transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleCreateAndLaunchCustomScenario}
+                className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white dark:text-black font-bold text-xs flex items-center gap-2 transition-all shadow-md shadow-emerald-500/25 active:scale-95 cursor-pointer"
+              >
+                <span>Launch Live 21-Day Simulation</span>
+                <Play className="w-3.5 h-3.5 fill-current" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
