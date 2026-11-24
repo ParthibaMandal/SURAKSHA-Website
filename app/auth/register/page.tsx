@@ -60,7 +60,9 @@ export default function RegisterPage() {
     setLoadingAction("google");
 
     try {
-      const res = await signInWithGoogle();
+      const origin = typeof window !== "undefined" ? window.location.origin : "";
+      const destination = origin ? `${origin}/auth/callback?next=/citizen` : undefined;
+      const res = await signInWithGoogle(destination);
       if (res.error) {
         if (res.error.message.toLowerCase().includes("provider is not enabled")) {
           setErrorMessage(
