@@ -48,7 +48,7 @@ export const ScenarioComparisonChart: React.FC<ScenarioComparisonChartProps> = (
   return (
     <div className="w-full flex flex-col justify-between h-full space-y-3 font-sans overflow-hidden">
       {/* Legend */}
-      <div className="flex flex-wrap items-center justify-end gap-4 text-[11px] font-medium text-zinc-400">
+      <div className="flex flex-wrap items-center justify-end gap-4 text-[11px] font-medium text-[var(--muted-foreground)]">
         <div className="flex items-center gap-1.5">
           <span className="w-2.5 h-2.5 rounded-full bg-slate-400" />
           <span>Baseline</span>
@@ -64,13 +64,13 @@ export const ScenarioComparisonChart: React.FC<ScenarioComparisonChartProps> = (
       </div>
 
       {/* Bar Chart Area */}
-      <div className="grid grid-cols-3 gap-6 pt-4 border-b border-white/10 pb-2 h-44 items-end overflow-hidden">
+      <div className="grid grid-cols-3 gap-6 pt-4 border-b border-[var(--border)] pb-2 h-44 items-end overflow-hidden">
         {/* Metric 1: Peak Stage */}
         <div className="flex flex-col items-center h-full justify-end overflow-hidden">
           <div className="flex items-end gap-1.5 h-32 w-full justify-center overflow-hidden">
             {/* Baseline */}
             <div className="flex flex-col items-center gap-1">
-              <span className="text-[10px] font-mono text-zinc-400">{baseline.stage.toFixed(1)}</span>
+              <span className="text-[10px] font-mono text-[var(--muted-foreground)]">{baseline.stage.toFixed(1)}</span>
               <div
                 style={{ height: `${getStageHeight(baseline.stage)}px`, maxHeight: "85px" }}
                 className="w-5 sm:w-7 rounded-t bg-slate-400/70 hover:bg-slate-400 transition-all max-h-[85px]"
@@ -93,7 +93,7 @@ export const ScenarioComparisonChart: React.FC<ScenarioComparisonChartProps> = (
               />
             </div>
           </div>
-          <span className="mt-2 text-xs font-semibold text-zinc-300 text-center">Peak Stage (m)</span>
+          <span className="mt-2 text-xs font-semibold text-[var(--foreground)] text-center">Peak Stage (m)</span>
         </div>
 
         {/* Metric 2: Flood Risk (/100) */}
@@ -101,7 +101,7 @@ export const ScenarioComparisonChart: React.FC<ScenarioComparisonChartProps> = (
           <div className="flex items-end gap-1.5 h-32 w-full justify-center overflow-hidden">
             {/* Baseline */}
             <div className="flex flex-col items-center gap-1">
-              <span className="text-[10px] font-mono text-zinc-400">{baseline.risk}</span>
+              <span className="text-[10px] font-mono text-[var(--muted-foreground)]">{baseline.risk}</span>
               <div
                 style={{ height: `${getRiskHeight(baseline.risk)}px`, maxHeight: "85px" }}
                 className="w-5 sm:w-7 rounded-t bg-slate-400/70 hover:bg-slate-400 transition-all max-h-[85px]"
@@ -124,7 +124,7 @@ export const ScenarioComparisonChart: React.FC<ScenarioComparisonChartProps> = (
               />
             </div>
           </div>
-          <span className="mt-2 text-xs font-semibold text-zinc-300 text-center">Flood Risk (/100)</span>
+          <span className="mt-2 text-xs font-semibold text-[var(--foreground)] text-center">Flood Risk (/100)</span>
         </div>
 
         {/* Metric 3: Exposed People */}
@@ -132,10 +132,10 @@ export const ScenarioComparisonChart: React.FC<ScenarioComparisonChartProps> = (
           <div className="flex items-end gap-1.5 h-32 w-full justify-center overflow-hidden">
             {/* Baseline */}
             <div className="flex flex-col items-center gap-1">
-              <span className="text-[10px] font-mono text-zinc-400">{formatExposed(baseline.exposed)}</span>
+              <span className="text-[10px] font-mono text-[var(--muted-foreground)]">0</span>
               <div
                 style={{ height: `${getExposedHeight(baseline.exposed)}px`, maxHeight: "85px" }}
-                className="w-5 sm:w-7 rounded-t bg-slate-400/70 max-h-[85px]"
+                className="w-5 sm:w-7 rounded-t bg-slate-400/70 hover:bg-slate-400 transition-all max-h-[85px]"
               />
             </div>
             {/* Heavy Rainfall */}
@@ -155,7 +155,7 @@ export const ScenarioComparisonChart: React.FC<ScenarioComparisonChartProps> = (
               />
             </div>
           </div>
-          <span className="mt-2 text-xs font-semibold text-zinc-300 text-center">Exposed People</span>
+          <span className="mt-2 text-xs font-semibold text-[var(--foreground)] text-center">Exposed People</span>
         </div>
       </div>
     </div>

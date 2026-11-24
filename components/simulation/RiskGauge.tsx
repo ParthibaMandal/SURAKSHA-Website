@@ -44,7 +44,7 @@ export const RiskGauge: React.FC<RiskGaugeProps> = ({ score, severity = "LOW" })
         <path
           d="M 20 105 A 80 80 0 0 1 180 105"
           fill="none"
-          stroke="rgba(255, 255, 255, 0.1)"
+          stroke="rgba(255, 255, 255, 0.15)"
           strokeWidth="16"
           strokeLinecap="round"
         />
@@ -82,8 +82,8 @@ export const RiskGauge: React.FC<RiskGaugeProps> = ({ score, severity = "LOW" })
 
       {/* Central Score Display */}
       <div className="text-center mt-1">
-        <div className="font-mono text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-          {clampedScore} <span className="text-sm font-normal text-zinc-400">/ 100</span>
+        <div className="font-mono text-2xl sm:text-3xl font-extrabold text-[var(--foreground)] tracking-tight">
+          {clampedScore} <span className="text-sm font-normal text-[var(--muted-foreground)]">/ 100</span>
         </div>
         <div className="mt-1">
           <span
