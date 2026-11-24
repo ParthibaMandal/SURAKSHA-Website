@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { DigitalTwinEngine } from "@/lib/three/digital-twin-engine";
 import { TacticalMapSvg } from "./TacticalMapSvg";
 import { FallbackCanvas2D } from "./FallbackCanvas2D";
+import { PATNA_GANDHI_GHAT } from "@/lib/mock-data";
 import { RotateCcw, AlertTriangle, Layers, Hand } from "lucide-react";
 
 interface DigitalTwinSceneProps {
@@ -16,8 +17,7 @@ export const DigitalTwinScene: React.FC<DigitalTwinSceneProps> = ({ onSurgeState
 
   const [viewMode, setViewMode] = useState<"3d" | "2d">("3d");
   const [isSurge, setIsSurge] = useState(false);
-  // CWC Gandhi Ghat levels: baseline 46.85m, surge 48.85m (breaching danger 48.60m)
-  const [stageReading, setStageReading] = useState(46.85);
+  const [stageReading, setStageReading] = useState<number>(PATNA_GANDHI_GHAT.currentStage);
   const [webGlSupported, setWebGlSupported] = useState(true);
   const [mobileInteracting, setMobileInteracting] = useState(false);
 
@@ -29,7 +29,7 @@ export const DigitalTwinScene: React.FC<DigitalTwinSceneProps> = ({ onSurgeState
       const engine = new DigitalTwinEngine(containerRef.current, {
         onSurgeToggle: (active) => {
           setIsSurge(active);
-          setStageReading(active ? 48.85 : 46.85);
+          setStageReading(active ? PATNA_GANDHI_GHAT.surgeStage : PATNA_GANDHI_GHAT.currentStage);
           if (onSurgeStateChange) onSurgeStateChange(active);
         },
       });
@@ -50,12 +50,12 @@ export const DigitalTwinScene: React.FC<DigitalTwinSceneProps> = ({ onSurgeState
     if (engineRef.current) {
       const active = engineRef.current.toggleSurge();
       setIsSurge(active);
-      setStageReading(active ? 48.85 : 46.85);
+      setStageReading(active ? PATNA_GANDHI_GHAT.surgeStage : PATNA_GANDHI_GHAT.currentStage);
       if (onSurgeStateChange) onSurgeStateChange(active);
     } else {
       const next = !isSurge;
       setIsSurge(next);
-      setStageReading(next ? 48.85 : 46.85);
+      setStageReading(next ? PATNA_GANDHI_GHAT.surgeStage : PATNA_GANDHI_GHAT.currentStage);
       if (onSurgeStateChange) onSurgeStateChange(next);
     }
   };
@@ -160,14 +160,14 @@ export const DigitalTwinScene: React.FC<DigitalTwinSceneProps> = ({ onSurgeState
         {/* Floating HUD */}
         <div className="absolute bottom-3 left-4 right-4 z-30 flex flex-wrap items-center justify-between gap-3 px-3.5 py-2 rounded-2xl bg-[#0A0A0A]/90 backdrop-blur-md border border-white/15 text-xs">
           <div className="flex flex-wrap items-center gap-2.5">
-            <span className="text-zinc-400">Gandhi Ghat Datum: 46.20m</span>
+            <span className="text-zinc-400">Reference baseline: {PATNA_GANDHI_GHAT.baseline.toFixed(2)}m</span>
             <span className="text-zinc-600">|</span>
             <span
               className={`font-semibold tracking-wide ${
                 isSurge ? "text-rose-400" : "text-white"
               }`}
             >
-              Stage: <span className="font-mono">{stageReading.toFixed(2)} m</span> {isSurge ? "(Danger breach 48.60m)" : "(Nominal)"}
+              Stage: <span className="font-mono">{stageReading.toFixed(2)} m</span> {isSurge ? `(Above danger ${PATNA_GANDHI_GHAT.dangerLevel.toFixed(2)}m)` : "(Nominal sample)"}
             </span>
             <span className="text-zinc-600">|</span>
             <span className="text-zinc-300">3 stations active</span>

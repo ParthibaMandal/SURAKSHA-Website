@@ -1,17 +1,18 @@
 "use client";
 
 import React, { useState } from "react";
+import { PATNA_GANDHI_GHAT } from "@/lib/mock-data";
 import { CheckCircle2, Radio, Activity, Layers, Search } from "lucide-react";
 
 const STATIONS_LIST = [
   {
     id: "STN-PAT-01",
-    name: "Gandhighat · Patna Main",
+    name: "Gandhi Ghat · Patna Main",
     type: "River Stage & Discharge",
     location: "Patna Urban Reach",
-    stage: "49.82 m",
-    warn: "50.50 m",
-    danger: "51.80 m",
+    stage: `${PATNA_GANDHI_GHAT.currentStage.toFixed(2)} m`,
+    warn: `${PATNA_GANDHI_GHAT.warningLevel.toFixed(2)} m`,
+    danger: `${PATNA_GANDHI_GHAT.dangerLevel.toFixed(2)} m`,
     freshness: "2 mins ago",
     provenance: "SAMPLE",
     status: "Connected",

@@ -79,7 +79,7 @@ export default function AdminApprovalsPage() {
             River Stage Advisory · Patna Sector
           </h2>
           <p className="text-xs text-[#A69B88] leading-relaxed">
-            Predicted gradual stage increase exceeding warning levels (50.50 m) in lower floodplain wards within 24 hours.
+            Synthetic sample forecast approaches the 47.60 m warning reference within 24 hours. Follow current official local guidance for real conditions.
           </p>
 
           <div className="divide-y divide-[#A1A1AA]/10 pt-2">

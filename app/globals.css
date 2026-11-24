@@ -102,6 +102,140 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+html.dark {
+  color-scheme: dark;
+}
+
+html.light {
+  color-scheme: light;
+}
+
+/* Theme bridge for existing Tailwind surfaces while the app migrates to tokens. */
+html.light body {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+html.light main {
+  color: var(--foreground);
+}
+
+html.light main :is(.bg-black, [class~="bg-black/95"], [class~="bg-black/90"], [class~="bg-black/85"], [class~="bg-black/80"], [class~="bg-black/60"], [class~="bg-black/50"], [class*="bg-[#000000]"], [class*="bg-[#080B09]"], [class*="bg-[#0A0A0A]"], [class*="bg-[#0D100E]"], [class*="bg-[#141414]"], [class*="bg-[#141816]"]) {
+  background-color: var(--surface) !important;
+}
+
+html.light main :is([class*="bg-[#050708]"], [class*="bg-[#0b1012]"], [class*="bg-[#0B1012]"], [class*="bg-[#FFFFFF]/"], [class~="bg-white/5"], [class~="bg-white/10"], [class~="bg-white/15"], [class~="bg-white/20"]) {
+  background-color: var(--muted) !important;
+}
+
+html.light main :is(.hydrograph-chart, .command-chart) [fill="#FFFFFF"] {
+  fill: var(--foreground);
+}
+
+html.light main :is(.hydrograph-chart, .command-chart) [stroke="#FFFFFF"],
+html.light main :is(.hydrograph-chart, .command-chart) [stroke="#E4E4E7"] {
+  stroke: var(--foreground);
+}
+
+html.light main :is(.text-white, [class*="text-[#FFFFFF]"], [class*="text-zinc-200"], [class*="text-zinc-300"], [class*="text-zinc-400"], [class*="text-[#A1A1AA]"], [class*="text-[#A69B88]"], [class*="text-[#9BA5A0]"]) {
+  color: var(--foreground) !important;
+}
+
+/* The cinematic landing hero intentionally stays dark in both themes. */
+html.light main .himalayas-hero {
+  background-color: #000 !important;
+  color: #fff !important;
+}
+
+html.light main .himalayas-hero :is(.text-white, [class*="text-zinc-200"], [class*="text-zinc-300"], [class*="text-zinc-400"], [class*="text-[#FFFFFF]"], [class*="text-[#A1A1AA]"], [class*="text-[#A69B88]"], [class*="text-[#9BA5A0]"]) {
+  color: #fff !important;
+}
+
+html.light main .himalayas-hero :is([class*="text-zinc-300"], [class*="text-zinc-400"], [class*="text-[#A1A1AA]"], [class*="text-[#A69B88]"], [class*="text-[#9BA5A0]"]) {
+  color: #d1d5db !important;
+}
+
+html.light main :is([class*="border-white/"], [class*="border-[#1F2823]"], [class*="border-[#A1A1AA]"]) {
+  border-color: var(--border) !important;
+}
+
+html.light .workspace-shell {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+html.light footer {
+  background-color: var(--surface) !important;
+  border-color: var(--border) !important;
+  color: var(--muted-foreground) !important;
+}
+
+html.light header {
+  color: var(--foreground);
+  border-color: var(--border);
+}
+
+html.light header .nav-glass-dock,
+html.light header .nav-glass-pill {
+  color: var(--foreground);
+  background: var(--surface-elevated);
+  border-color: var(--border);
+  box-shadow: none;
+}
+
+html.light header [class~="text-white"],
+html.light header [class*="text-white"] {
+  color: var(--foreground) !important;
+}
+
+html.light header[data-home-hero="true"] .brand-logo,
+html.light header[data-home-hero="true"] .brand-logo [class*="text-white"] {
+  color: #fff !important;
+}
+
+html.light header .icon-glass {
+  background: var(--accent);
+  border-color: var(--border);
+  box-shadow: none;
+}
+
+html.light header .icon-glass svg {
+  color: var(--primary);
+}
+
+html.light footer :is(.text-white, [class*="text-white"], [class*="text-[#9BA5A0]"]) {
+  color: var(--foreground) !important;
+}
+
+html.light footer :is([class*="bg-[#141816]"], [class*="border-[#1F2823]"]) {
+  background-color: var(--muted) !important;
+  border-color: var(--border) !important;
+}
+
+html.light .btn-glass-primary,
+html.light .btn.primary {
+  color: var(--foreground);
+  border-color: var(--border);
+  background: var(--primary);
+  animation: none;
+}
+
+html.light .btn-glass-secondary,
+html.light .btn.secondary {
+  color: var(--foreground);
+  border-color: var(--border);
+  background: var(--surface-elevated);
+  box-shadow: none;
+}
+
+html.light ::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+html.light ::-webkit-scrollbar-thumb {
+  background: rgba(12, 15, 13, 0.24);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html:focus-within {
     scroll-behavior: auto;
@@ -351,6 +485,20 @@ pre,
     inset 0 1px 0 0 rgba(255, 255, 255, 0.4),
     0 12px 32px -4px rgba(0, 0, 0, 0.65),
     0 0 20px 0 rgba(255, 255, 255, 0.14);
+}
+
+.himalayas-hero .hero-cta-transparent,
+.himalayas-hero .hero-cta-transparent:hover {
+  background: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow: none;
+  animation: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.himalayas-hero .hero-cta-transparent::after {
+  display: none;
 }
 
 .btn.small {

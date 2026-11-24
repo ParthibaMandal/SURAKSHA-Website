@@ -1,0 +1,15 @@
+{
+  "mode": "implement",
+  "objective": "Repair SURAKSHA website theme behavior, broken workspace navigation, public menu interaction, and inconsistent Patna sample values; add regression coverage, run verification, and push a reviewable branch to GitHub.",
+  "allowed_write_scope": ["app/", "components/", "lib/", "test/", "package.json", "design-plans/", ".gravitas/sessions/site-ui-repair/"],
+  "acceptance_criteria": [
+    "Dark and light themes apply to public, admin, and citizen shells and remain selected across navigation/reload.",
+    "All sidebar links resolve to implemented routes and route tests reject missing destinations.",
+    "Platform menu can be opened and closed consistently by pointer and keyboard.",
+    "Patna STN-PAT-01 sample stage, threshold and provenance labels are consistent across affected views.",
+    "Automated regression tests and production build pass.",
+    "Changes are pushed to a non-main GitHub branch."
+  ],
+  "verification": ["npm test", "npm run build"],
+  "risk": "medium"
+}

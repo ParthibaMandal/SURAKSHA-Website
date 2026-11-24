@@ -3,6 +3,7 @@ import { FadeIn } from "@/components/motion/FadeIn";
 import { TacticalMapSvg } from "@/components/three/TacticalMapSvg";
 import { STATIONS } from "@/lib/mock-data";
 import { MapPin } from "lucide-react";
+import { PATNA_GANDHI_GHAT } from "@/lib/mock-data";
 
 export const metadata = {
   title: "Study Area | SURAKSHA",
@@ -19,7 +20,7 @@ export default function StudyAreaPage() {
             A focused starting point in the Ganga corridor.
           </h1>
           <p className="text-base text-[#A69B88] mt-4 leading-relaxed">
-            The initial study context centres on riverine flood risk in Bihar, particularly around Patna (base datum 49.82 m). Map boundaries and station coverage shown here are illustrative schematic representations.
+            The initial study context centres on the Gandhi Ghat reach near Patna. The {PATNA_GANDHI_GHAT.baseline.toFixed(2)} m baseline and {PATNA_GANDHI_GHAT.currentStage.toFixed(2)} m station reading are synthetic preview values; map boundaries and station coverage are illustrative.
           </p>
         </div>
       </FadeIn>

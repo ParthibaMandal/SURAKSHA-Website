@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/lib/supabase/auth-context";
 import { createClient } from "@/lib/supabase/client";
+import { PATNA_GANDHI_GHAT } from "@/lib/mock-data";
 
 interface StationRow {
   id: string;
@@ -36,11 +37,11 @@ interface StationRow {
 const COMMAND_STATIONS: StationRow[] = [
   {
     id: "STN-PAT-01",
-    name: "Patna · Digha Ghat",
+    name: PATNA_GANDHI_GHAT.name,
     river: "Ganga Mainstream",
-    stage: 49.82,
-    warning: 50.5,
-    danger: 51.8,
+    stage: PATNA_GANDHI_GHAT.currentStage,
+    warning: PATNA_GANDHI_GHAT.warningLevel,
+    danger: PATNA_GANDHI_GHAT.dangerLevel,
     trend: "+0.42 m / 6h",
     lastObs: "12m ago",
     dataState: "SAMPLE",

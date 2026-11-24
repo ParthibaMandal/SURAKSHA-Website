@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { PATNA_GANDHI_GHAT } from "@/lib/mock-data";
 import { Plus, CheckCircle2, Trash2, Edit3 } from "lucide-react";
 
 interface SavedLocation {
@@ -20,7 +21,7 @@ export default function CitizenLocationsPage() {
       name: "Patna · Central Residence",
       area: "Gandhighat Corridor (Ward 04)",
       subscription: "Advisory, Watch, Warning",
-      station: "STN-PAT-01 (49.82 m)",
+      station: `${PATNA_GANDHI_GHAT.id} (${PATNA_GANDHI_GHAT.currentStage.toFixed(2)} m · sample)`,
       state: "Active",
     },
     {
@@ -48,7 +49,7 @@ export default function CitizenLocationsPage() {
       name: newName.trim(),
       area: newArea,
       subscription: "Advisory, Watch, Warning",
-      station: "STN-PAT-01 (49.82 m)",
+      station: `${PATNA_GANDHI_GHAT.id} (${PATNA_GANDHI_GHAT.currentStage.toFixed(2)} m · sample)`,
       state: "Active",
     };
     setLocations((prev) => [...prev, item]);

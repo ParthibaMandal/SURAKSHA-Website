@@ -40,7 +40,7 @@ export default function AdminForecastsPage() {
             <Activity className="w-4 h-4 text-[#FFFFFF]" />
           </div>
           <div className="text-2xl font-extrabold font-mono text-[#A1A1AA]">
-            {surgeMode ? "52.32 m" : "50.24 m"}
+            {surgeMode ? "49.30 m" : "47.38 m"}
           </div>
           <div className="text-[11px] font-mono text-[#FFFFFF]">T+8h projected peak</div>
         </div>
@@ -71,9 +71,9 @@ export default function AdminForecastsPage() {
             <AlertTriangle className="w-4 h-4 text-[#F59E0B]" />
           </div>
           <div className="text-2xl font-extrabold font-mono text-[#FBBF24]">
-            {surgeMode ? "+0.52 m (BREACH)" : "-0.26 m (WATCH)"}
+            {surgeMode ? "+0.70 m (ABOVE DANGER)" : "-0.22 m (BELOW WARNING)"}
           </div>
-          <div className="text-[11px] font-mono text-[#FBBF24]">Warning level: 50.5m</div>
+          <div className="text-[11px] font-mono text-[#FBBF24]">Warning level: 47.60m</div>
         </div>
       </div>
 

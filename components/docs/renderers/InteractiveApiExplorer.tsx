@@ -91,9 +91,9 @@ const ENDPOINTS: ApiEndpoint[] = [
     "river": "Ganga",
     "state": "Bihar",
     "zero_level_m": 45.00,
-    "warning_level_m": 50.50,
-    "danger_level_m": 51.80,
-    "hfl_m": 52.52,
+    "warning_level_m": 47.60,
+    "danger_level_m": 48.60,
+    "hfl_m": 50.52,
     "hfl_date": "2016-08-25",
     "status": "active"
   },
@@ -151,18 +151,18 @@ const ENDPOINTS: ApiEndpoint[] = [
   "station_id": "STN-PAT-01",
   "station_name": "Gandhi Ghat, Patna",
   "model_selected": "Ensemble (Champion: SARIMA 60%, Challenger: BiLSTM 40%)",
-  "current_stage_m": 49.82,
-  "danger_level_m": 51.80,
-  "peak_forecast_stage_m": 51.24,
+  "current_stage_m": 46.85,
+  "danger_level_m": 48.60,
+  "peak_forecast_stage_m": 47.95,
   "peak_time_utc": "2026-11-22T18:00:00Z",
   "risk_classification": "ALERT_ELEVATED",
   "lead_time_to_warning_hours": 16.5,
   "trajectory": [
-    { "lead_hours": 6, "stage_m": 50.05, "p10_m": 49.95, "p90_m": 50.15 },
-    { "lead_hours": 12, "stage_m": 50.38, "p10_m": 50.22, "p90_m": 50.54 },
-    { "lead_hours": 24, "stage_m": 50.85, "p10_m": 50.60, "p90_m": 51.10 },
-    { "lead_hours": 48, "stage_m": 51.24, "p10_m": 50.92, "p90_m": 51.55 },
-    { "lead_hours": 72, "stage_m": 50.90, "p10_m": 50.45, "p90_m": 51.35 }
+    { "lead_hours": 6, "stage_m": 47.15, "p10_m": 46.95, "p90_m": 47.35 },
+    { "lead_hours": 12, "stage_m": 47.38, "p10_m": 47.05, "p90_m": 47.75 },
+    { "lead_hours": 24, "stage_m": 47.30, "p10_m": 46.95, "p90_m": 47.68 },
+    { "lead_hours": 48, "stage_m": 47.95, "p10_m": 47.60, "p90_m": 48.20 },
+    { "lead_hours": 72, "stage_m": 47.40, "p10_m": 46.95, "p90_m": 47.85 }
   ],
   "jev_supervisor_verdict": {
     "pre_run_gate": "PASSED (Quality score: 0.98)",
@@ -209,7 +209,7 @@ const ENDPOINTS: ApiEndpoint[] = [
     "severity": "Moderate",
     "certainty": "Likely",
     "headline": "Ganga River Stage Approaching Warning Level at Gandhi Ghat, Patna",
-    "description": "Hydrodynamic model forecasts Ganga stage reaching 50.50m (Warning Level) within 16 hours due to upstream discharge.",
+    "description": "Synthetic sample forecast approaches the 47.60m warning reference within 16 hours.",
     "area": {
       "areaDesc": "Patna Urban Corridor, Bihar",
       "circle": "25.6120,85.1780,15.0"

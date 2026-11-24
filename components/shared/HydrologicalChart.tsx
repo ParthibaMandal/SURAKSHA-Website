@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { PATNA_GANDHI_GHAT } from "@/lib/mock-data";
 
 interface HydrologicalChartProps {
   isSurge?: boolean;
@@ -16,8 +17,7 @@ interface DataPoint {
   rainfallMm: number;
 }
 
-// CWC Gandhi Ghat Benchmarks:
-// Baseline Normal: 46.20 m | Warning: 47.60 m | Danger: 48.60 m | Record HFL: 50.52 m
+// Illustrative Gandhi Ghat preview values; replace with verified live feed metadata when connected.
 const DATA_6H_NOMINAL: DataPoint[] = [
   { time: "-3h", observed: 46.22, ensembleMean: 46.22, ensembleUpper: 46.30, ensembleLower: 46.15, rainfallMm: 4 },
   { time: "-2h", observed: 46.28, ensembleMean: 46.28, ensembleUpper: 46.38, ensembleLower: 46.20, rainfallMm: 6 },
@@ -115,8 +115,8 @@ export const HydrologicalChart: React.FC<HydrologicalChartProps> = ({
     chartBottom - ((val - minStage) / (maxStage - minStage)) * height;
 
   // CWC Gandhi Ghat Thresholds
-  const warningY = toY(47.60);
-  const dangerY = toY(48.60);
+  const warningY = toY(PATNA_GANDHI_GHAT.warningLevel);
+  const dangerY = toY(PATNA_GANDHI_GHAT.dangerLevel);
 
   const upperPoints = series.map((d, i) => `${toX(i)},${toY(d.ensembleUpper)}`).join(" ");
   const lowerPoints = [...series]
@@ -214,7 +214,7 @@ export const HydrologicalChart: React.FC<HydrologicalChartProps> = ({
       {/* SVG Hydrograph Canvas */}
       <svg
         viewBox="0 0 585 205"
-        className="w-full h-auto overflow-visible select-none"
+        className="hydrograph-chart w-full h-auto overflow-visible select-none"
         role="img"
         aria-label="River stage hydrograph and forecast uncertainty chart"
       >
@@ -272,7 +272,7 @@ export const HydrologicalChart: React.FC<HydrologicalChartProps> = ({
           fontFamily="JetBrains Mono, monospace"
           fontWeight="600"
         >
-          DANGER THRESHOLD 48.60m
+          DANGER THRESHOLD {PATNA_GANDHI_GHAT.dangerLevel.toFixed(2)}m
         </text>
 
         {/* Warning Threshold Line (#F59E0B) at 47.60m */}
@@ -294,7 +294,7 @@ export const HydrologicalChart: React.FC<HydrologicalChartProps> = ({
           fontFamily="JetBrains Mono, monospace"
           fontWeight="600"
         >
-          WARNING THRESHOLD 47.60m
+          WARNING THRESHOLD {PATNA_GANDHI_GHAT.warningLevel.toFixed(2)}m
         </text>
 
         {/* Rainfall Hyetograph Bars along Bottom */}
@@ -424,10 +424,10 @@ export const HydrologicalChart: React.FC<HydrologicalChartProps> = ({
               <span className="w-3 h-2 rounded-sm bg-white/10 inline-block" /> 90% Prediction Band
             </span>
             <span className="inline-flex items-center gap-1.5 text-[#FBBF24]">
-              <span className="w-3 h-0.5 bg-[#F59E0B] inline-block" /> Warning (47.60m)
+              <span className="w-3 h-0.5 bg-[#F59E0B] inline-block" /> Warning ({PATNA_GANDHI_GHAT.warningLevel.toFixed(2)}m)
             </span>
             <span className="inline-flex items-center gap-1.5 text-[#F87171]">
-              <span className="w-3 h-0.5 bg-[#EF4444] inline-block" /> Danger (48.60m)
+              <span className="w-3 h-0.5 bg-[#EF4444] inline-block" /> Danger ({PATNA_GANDHI_GHAT.dangerLevel.toFixed(2)}m)
             </span>
           </div>
           <span className="text-[10px] font-mono text-zinc-500">
