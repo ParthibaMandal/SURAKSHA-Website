@@ -39,6 +39,8 @@ The generated `/docs` API reference now has a website-owned override so syncs pr
 
 The simulation lab now labels and submits its actual editable variables: the multiplier scales synthetic `current_condition.river_discharge_m3s`, rainfall is added to `rainfall_24h_mm`, and the unused supervision flag was removed. The proxy rejects unknown fields, non-synthetic catalogs, and scenario inputs missing either numeric source value instead of silently ignoring a slider. The UI accepts only matching static synthetic responses with `SYNTHETIC_SCENARIO` provenance and the offline simulator mode; the highest returned horizon is shown accurately and live corroboration is not claimed. A test executes the Next.js route with mocked engine responses and verifies transformed values, no catalog mutation, rejection of ignored fields, and errors for missing input. Two FastAPI synthetic-demo integration tests in the engine checkout also passed.
 
+The prototype-era `docs/SURAKSHA_IMPLEMENTATION_ROADMAP.md` was replaced with a current summary linking back to this plan; its obsolete plain-HTML/local-bridge and separate-database assumptions no longer describe the repository. Remaining documentation verification is focused on archival scientific design/specification material, where proposed architectures must be distinguished from implemented capabilities.
+
 ## Target system boundaries
 
 ```text
