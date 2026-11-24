@@ -1,52 +1,47 @@
-# SURAKSHA Production Delivery Roadmap
+# SURAKSHA Website Delivery Roadmap
 
-This document outlines the phased engineering milestones executed to transform the Google Stitch design into a complete, full-stack, production-grade application.
+This roadmap tracks verified website and service integration work. Older documents claimed complete MySQL schemas, JWT identity, gate actuation, and alert lifecycle features that are not present in the deployed architecture; those claims have been removed.
 
----
+## Completed in this repository
 
-## Milestone Progress Matrix
+- Supabase Auth-backed sessions and role checks sourced from `profiles.role`.
+- Removed demo credentials, implicit demo provisioning, and role selection during registration.
+- Citizen SOS submission routed through a server handler with validation and session-owned citizen IDs; operations queue reads are role-gated.
+- Removed fake SOS lifecycle controls and false local alert progression.
+- Replaced misleading healthy/station fallbacks with explicit unavailable or reference states.
+- API explorer aligned to actual FastAPI routes and operator-key/demo-mode constraints.
+- Updated README and architecture/API/database docs to describe actual services and feature boundaries.
 
-| Milestone | Scope & Deliverable | Status | Verification Criteria |
-|---|---|---|---|
-| **Phase 1** | Stitch Design System & Specification Audit | **COMPLETE** | `DESIGN_ANALYSIS.md` produced with full screen, component, and token inventory. |
-| **Phase 2** | Full-Stack Architecture & Schemas | **COMPLETE** | `SYSTEM_ARCHITECTURE.md`, `DATABASE_SCHEMA.md`, and `API_DOCUMENTATION.md` published. |
-| **Phase 3** | Database Layer & Seed Fixtures | **COMPLETE** | Production-ready `database/schema.sql` (MySQL) and `database/seeds.sql` created. |
-| **Phase 4** | Python FastAPI Backend Implementation | **IN PROGRESS** | Deploy modular FastAPI backend with SQLAlchemy models, Pydantic schemas, and REST routers. |
-| **Phase 5** | Functional Integration & Frontend Polish | **QUEUED** | Wire up interactive SOS dispatch, gate adjustments, approval reviews, and auth sessions in Next.js. |
-| **Phase 6** | End-to-End Verification & Documentation | **QUEUED** | Execute automated test runner, verify responsive layouts, and update `README.md`. |
+## Remaining phases
 
----
+### 1. Database authorization (highest security priority)
 
-## Detailed Task Checklist
+- Tighten production RLS for SOS, profiles, stations, alerts, gates, and observations.
+- Prevent self-service role changes; establish an admin-only role assignment path.
+- Harden trigger functions and grants, add missing FK indexes, and establish migration history.
+- Exercise direct Supabase access as anon, citizen, operator, and admin after migration.
 
-### Phase 3 — Database Assets (`database/`)
-- [x] Write `database/schema.sql` with 12 normalized 3NF tables, foreign keys, and indexes.
-- [x] Write `database/seeds.sql` with realistic Ganga-Brahmaputra telemetry stations, sample users (admin, operator, citizen), active scenarios, barrage gates, CAP alerts, and SOS queue items.
+### 2. Service integration contracts
 
-### Phase 4 — Backend Implementation (`backend/`)
-- [ ] Create `backend/requirements.txt` with FastAPI, Uvicorn, SQLAlchemy, Pydantic v2, Python-Jose, Passlib, and Bcrypt.
-- [ ] Create `backend/app/database.py` with multi-dialect support (MySQL with SQLite automatic fallback).
-- [ ] Implement SQLAlchemy ORM models in `backend/app/models/`.
-- [ ] Implement Pydantic validation schemas in `backend/app/schemas/`.
-- [ ] Implement REST routes:
-  - `auth.py`
-  - `stations.py`
-  - `scenarios.py`
-  - `gates.py`
-  - `alerts.py`
-  - `sos.py`
-  - `incidents.py`
-  - `audit.py`
-- [ ] Wire routers into `backend/app/main.py` with CORS and error handlers.
+- Decide and implement an authenticated website-to-engine pattern for operator-key-protected writes; keep secrets server-only.
+- Define durable contracts for gate telemetry/control, alert persistence and approval, and SOS triage/lifecycle before enabling those controls.
+- Ensure demo workflows stay disabled on production engine deployments and make this limitation clear in the UI.
 
-### Phase 5 — Functional Integration
-- [ ] Connect Next.js Citizen SOS form (`app/citizen/sos/page.tsx`) to submit live requests to `/api/flood/sos`.
-- [ ] Connect Admin Approvals (`app/admin/approvals/page.tsx`) to approve/reject real alert drafts.
-- [ ] Connect Admin Gates (`app/admin/gates/page.tsx`) to actuate real gate aperture percentages.
-- [ ] Connect Flood Lab (`app/demo-lab/page.tsx`) to trigger real scenario simulation runs.
-- [ ] Connect Auth pages (`app/auth/login/page.tsx` & `app/auth/register/page.tsx`) to handle real tokens and role switches.
+### 3. UI completion and usability
 
-### Phase 6 — Delivery & Run Guides
-- [ ] Build automated test script in `scripts/test_system.py` to verify all REST endpoints.
-- [ ] Author unified `README.md` with startup commands, environment configurations, and deployment steps.
+- Audit every route, tab, button, theme, responsive state, and keyboard path against implemented contracts.
+- Keep every action functional or explicitly unavailable with a useful explanation.
+- Verify empty, loading, error, and permission-denied states using representative service responses.
 
+### 4. Verification and release
+
+- Run unit tests and production build; add/maintain focused coverage for auth, role boundaries, API validation, and unavailable states.
+- Manually exercise high-priority flows in light/dark themes and desktop/mobile layouts.
+- Review the deployment preview and runtime logs; confirm configuration before production promotion.
+
+## Release guardrails
+
+- No fabricated operational data or success messages.
+- No direct gate actuation without an independently verified and authorized actuator integration.
+- No public exposure of SOS contact/location data.
+- No production RLS changes without reviewed migrations and role-based verification.
