@@ -67,6 +67,71 @@ type ScenarioResult = {
 
 type DemoPreset = "steady" | "rain" | "surge";
 
+const STUDY_STATIONS = [
+  {
+    id: "STN-PAT-01",
+    name: "Ganges – Gandhi Ghat, Patna",
+    shortName: "Gandhi Ghat, Patna",
+    corridor: "Ganga Mainstream Corridor",
+    warningLevel: 47.6,
+    dangerLevel: 48.6,
+    hfl: 50.52,
+    badge: "Primary Reference Node",
+    status: "Active Telemetry",
+  },
+  {
+    id: "STN-DIG-02",
+    name: "Ganges – Digha Ghat Reach",
+    shortName: "Digha Ghat Reach",
+    corridor: "Upper Inflow Reach Corridor",
+    warningLevel: 50.4,
+    dangerLevel: 51.4,
+    hfl: 52.8,
+    badge: "Inflow Gauge Node",
+    status: "Operational",
+  },
+  {
+    id: "STN-HAT-03",
+    name: "Ganges – Hathidah Reach",
+    shortName: "Hathidah Reach",
+    corridor: "Downstream Gauge Node",
+    warningLevel: 41.76,
+    dangerLevel: 42.76,
+    hfl: 44.5,
+    badge: "Discharge Node",
+    status: "Operational",
+  },
+  {
+    id: "STN-SON-04",
+    name: "Son River – Koelwar Reach",
+    shortName: "Koelwar Reach",
+    corridor: "Southern Tributary Confluence",
+    warningLevel: 52.6,
+    dangerLevel: 53.6,
+    hfl: 55.1,
+    badge: "Confluence Monitor",
+    status: "Operational",
+  },
+  {
+    id: "STN-GAN-05",
+    name: "Gandak River – Hajipur Reach",
+    shortName: "Hajipur Gandak Reach",
+    corridor: "Northern Tributary Confluence",
+    warningLevel: 49.5,
+    dangerLevel: 50.5,
+    hfl: 51.8,
+    badge: "Tributary Gauge Node",
+    status: "Operational",
+  },
+];
+
+const PRESET_DATES = [
+  { label: "01 Jun, 2026", desc: "Early Summer Glacier Thaw Onset", value: "2026-06-01" },
+  { label: "15 Jul, 2026", desc: "Active Monsoon Depression Inflow", value: "2026-07-15" },
+  { label: "24 Aug, 2026", desc: "Peak Historical Monsoon Crest", value: "2026-08-24" },
+  { label: "24 Nov, 2026", desc: "Late Season Hydrological Baseline", value: "2026-11-24" },
+];
+
 const PRESETS: Record<
   DemoPreset,
   { label: string; description: string; anchor: string; scenarioId: string; inflow: number; rainfall: number }
@@ -153,6 +218,16 @@ export default function DemoLabPage() {
   const [customTributary, setCustomTributary] = useState<number>(6800);
   const [customBreachRisk, setCustomBreachRisk] = useState<boolean>(false);
 
+  // Station Selector & Date Selector States
+  const [selectedStation, setSelectedStation] = useState(STUDY_STATIONS[0]);
+  const [selectedDate, setSelectedDate] = useState<string>("2026-11-24");
+  const [isLocationOpen, setIsLocationOpen] = useState<boolean>(false);
+  const [isDateOpen, setIsDateOpen] = useState<boolean>(false);
+  const [isForecastModalOpen, setIsForecastModalOpen] = useState<boolean>(false);
+
+  const locationRef = React.useRef<HTMLDivElement>(null);
+  const dateRef = React.useRef<HTMLDivElement>(null);
+
   // Custom Dropdown Menu State & Outside Click Listener
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
@@ -162,10 +237,25 @@ export default function DemoLabPage() {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
       }
+      if (locationRef.current && !locationRef.current.contains(event.target as Node)) {
+        setIsLocationOpen(false);
+      }
+      if (dateRef.current && !dateRef.current.contains(event.target as Node)) {
+        setIsDateOpen(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const formatDisplayDate = (dateStr: string) => {
+    try {
+      const d = new Date(dateStr + "T00:00:00");
+      return d.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
+    } catch {
+      return "Nov 24, 2026";
+    }
+  };
 
   const getCategoryBadge = (category: string) => {
     switch (category) {
@@ -398,18 +488,143 @@ export default function DemoLabPage() {
                   <span>Create Custom Scenario</span>
                 </button>
 
-                {/* Location Selector */}
-                <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-md text-xs text-[var(--foreground)] shadow-xs">
-                  <Activity className="w-3.5 h-3.5 text-emerald-500" />
-                  <span className="font-semibold">Ganges – Gandhi Ghat, Patna</span>
-                  <ChevronDown className="w-3.5 h-3.5 text-[var(--muted-foreground)]" />
+                {/* Location Selector Dropdown */}
+                <div ref={locationRef} className="relative">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsLocationOpen(!isLocationOpen);
+                      setIsDateOpen(false);
+                    }}
+                    className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs text-[var(--foreground)] transition-all cursor-pointer shadow-xs select-none ${
+                      isLocationOpen
+                        ? "border-emerald-500 bg-[var(--surface-elevated)] ring-2 ring-emerald-500/20"
+                        : "border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-md hover:border-emerald-500/40"
+                    }`}
+                  >
+                    <Activity className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                    <span className="font-semibold truncate max-w-[190px]">{selectedStation.name}</span>
+                    <ChevronDown className={`w-3.5 h-3.5 text-[var(--muted-foreground)] transition-transform duration-200 shrink-0 ${isLocationOpen ? "rotate-180 text-emerald-500" : ""}`} />
+                  </button>
+
+                  {/* Location Popup Menu */}
+                  {isLocationOpen && (
+                    <div className="absolute right-0 top-full mt-1.5 z-50 w-72 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl backdrop-blur-2xl p-1.5 space-y-1 animate-in fade-in slide-in-from-top-2 duration-150">
+                      <div className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--muted-foreground)] flex items-center justify-between border-b border-[var(--border)] pb-2">
+                        <span>Hydrometric Gauging Stations</span>
+                        <span>{STUDY_STATIONS.length}</span>
+                      </div>
+                      <div className="space-y-1 pt-1 max-h-72 overflow-y-auto">
+                        {STUDY_STATIONS.map((stn) => {
+                          const isSelected = stn.id === selectedStation.id;
+                          return (
+                            <div
+                              key={stn.id}
+                              onClick={() => {
+                                setSelectedStation(stn);
+                                setIsLocationOpen(false);
+                              }}
+                              className={`p-2.5 rounded-xl cursor-pointer transition-all flex items-center justify-between gap-2.5 ${
+                                isSelected
+                                  ? "bg-emerald-500/15 border border-emerald-500/40 text-[var(--foreground)]"
+                                  : "hover:bg-[var(--surface)] text-[var(--foreground)]/90 hover:text-[var(--foreground)] border border-transparent"
+                              }`}
+                            >
+                              <div className="min-w-0">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="font-mono text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                                    {stn.id}
+                                  </span>
+                                  <span className="font-semibold text-xs truncate">
+                                    {stn.shortName}
+                                  </span>
+                                </div>
+                                <div className="text-[10px] text-[var(--muted-foreground)] mt-0.5 truncate">
+                                  {stn.corridor} · Warning: {stn.warningLevel}m / Danger: {stn.dangerLevel}m
+                                </div>
+                              </div>
+                              {isSelected && <Check className="w-4 h-4 text-emerald-500 stroke-[3] shrink-0" />}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                {/* Date Selector */}
-                <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-md text-xs text-[var(--foreground)] font-mono shadow-xs">
-                  <Calendar className="w-3.5 h-3.5 text-[var(--muted-foreground)]" />
-                  <span>Nov 24, 2026</span>
-                  <ChevronDown className="w-3.5 h-3.5 text-[var(--muted-foreground)]" />
+                {/* Date Selector Dropdown */}
+                <div ref={dateRef} className="relative">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsDateOpen(!isDateOpen);
+                      setIsLocationOpen(false);
+                    }}
+                    className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs text-[var(--foreground)] font-mono transition-all cursor-pointer shadow-xs select-none ${
+                      isDateOpen
+                        ? "border-emerald-500 bg-[var(--surface-elevated)] ring-2 ring-emerald-500/20"
+                        : "border-[var(--border)] bg-[var(--surface-elevated)] backdrop-blur-md hover:border-emerald-500/40"
+                    }`}
+                  >
+                    <Calendar className="w-3.5 h-3.5 text-[var(--muted-foreground)] shrink-0" />
+                    <span>{formatDisplayDate(selectedDate)}</span>
+                    <ChevronDown className={`w-3.5 h-3.5 text-[var(--muted-foreground)] transition-transform duration-200 shrink-0 ${isDateOpen ? "rotate-180 text-emerald-500" : ""}`} />
+                  </button>
+
+                  {/* Date Popup Menu */}
+                  {isDateOpen && (
+                    <div className="absolute right-0 top-full mt-1.5 z-50 w-64 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl backdrop-blur-2xl p-2.5 space-y-2.5 animate-in fade-in slide-in-from-top-2 duration-150">
+                      <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--muted-foreground)] border-b border-[var(--border)] pb-1.5">
+                        Simulation Date Calibration
+                      </div>
+                      
+                      {/* Presets */}
+                      <div className="space-y-1">
+                        {PRESET_DATES.map((pd) => {
+                          const isSelected = selectedDate === pd.value;
+                          return (
+                            <div
+                              key={pd.value}
+                              onClick={() => {
+                                setSelectedDate(pd.value);
+                                setIsDateOpen(false);
+                              }}
+                              className={`p-2 rounded-xl cursor-pointer transition-all flex items-center justify-between text-xs ${
+                                isSelected
+                                  ? "bg-emerald-500/15 border border-emerald-500/40 text-[var(--foreground)] font-bold"
+                                  : "hover:bg-[var(--surface)] text-[var(--foreground)]/80 hover:text-[var(--foreground)] border border-transparent"
+                              }`}
+                            >
+                              <div>
+                                <div className="font-mono">{pd.label}</div>
+                                <div className="text-[9px] text-[var(--muted-foreground)] font-normal">{pd.desc}</div>
+                              </div>
+                              {isSelected && <Check className="w-3.5 h-3.5 text-emerald-500 stroke-[3]" />}
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Custom Date Input */}
+                      <div className="pt-2 border-t border-[var(--border)] space-y-1">
+                        <label htmlFor="customDatePicker" className="text-[10px] font-semibold text-[var(--muted-foreground)] block">
+                          Pick Specific Calendar Date:
+                        </label>
+                        <input
+                          id="customDatePicker"
+                          type="date"
+                          value={selectedDate}
+                          onChange={(e) => {
+                            if (e.target.value) {
+                              setSelectedDate(e.target.value);
+                              setIsDateOpen(false);
+                            }
+                          }}
+                          className="w-full px-2.5 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-xs text-[var(--foreground)] font-mono cursor-pointer focus:outline-none focus:border-emerald-500"
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Run Simulation Button */}
@@ -579,7 +794,13 @@ export default function DemoLabPage() {
                 <span className="text-xs font-mono text-[var(--muted-foreground)]">/ 21d total</span>
               </div>
               <div className="flex items-center justify-between text-[11px] pt-1 border-t border-[var(--border)]">
-                <span className="text-emerald-600 dark:text-emerald-400 font-medium hover:underline cursor-pointer">Detailed forecast →</span>
+                <button
+                  type="button"
+                  onClick={() => setIsForecastModalOpen(true)}
+                  className="text-emerald-600 dark:text-emerald-400 font-medium hover:underline cursor-pointer flex items-center gap-1 focus:outline-none"
+                >
+                  Detailed forecast →
+                </button>
                 <svg width="48" height="16" viewBox="0 0 48 16" className="text-sky-500">
                   <path d="M0 14 Q 18 10 32 4 T 48 8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                 </svg>
@@ -1592,6 +1813,182 @@ export default function DemoLabPage() {
               >
                 <span>Launch Live 21-Day Simulation</span>
                 <Play className="w-3.5 h-3.5 fill-current" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 6. Detailed Forecast Horizon Inspector Modal */}
+      {isForecastModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="relative w-full max-w-3xl rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl p-6 space-y-6 max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-4 border-b border-[var(--border)]">
+              <div>
+                <div className="text-[10px] font-mono font-bold uppercase tracking-widest text-sky-500 flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5" />
+                  DETAILED HYDROLOGICAL FORECAST HORIZON
+                </div>
+                <h2 className="text-xl font-heading font-extrabold text-[var(--foreground)] mt-0.5">
+                  Reach Inundation & Multi-Lead Forecast Analysis
+                </h2>
+                <div className="flex items-center gap-2 text-xs text-[var(--muted-foreground)] mt-1 font-mono">
+                  <span>{selectedStation.id}</span>
+                  <span>·</span>
+                  <span>{selectedStation.name}</span>
+                  <span>·</span>
+                  <span>Calibration: {formatDisplayDate(selectedDate)}</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsForecastModalOpen(false)}
+                className="w-8 h-8 rounded-full border border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-elevated)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] grid place-items-center transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Key Summary Metrics Cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
+              <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+                <div className="text-[10px] text-[var(--muted-foreground)]">PEAK STAGE</div>
+                <div className="text-base font-bold text-[var(--foreground)] mt-0.5">{currentStage.toFixed(2)} m</div>
+                <div className="text-[10px] text-emerald-500 mt-0.5">
+                  {currentStage >= CWC_GANDHI_GHAT_BENCHMARKS.dangerLevel ? "▲ Danger Exceeded" : "Nominal Containment"}
+                </div>
+              </div>
+
+              <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+                <div className="text-[10px] text-[var(--muted-foreground)]">MODEL LEAD</div>
+                <div className="text-base font-bold text-[var(--foreground)] mt-0.5">72-Hour Causal</div>
+                <div className="text-[10px] text-[var(--muted-foreground)] mt-0.5">BiLSTM-ARIMA</div>
+              </div>
+
+              <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+                <div className="text-[10px] text-[var(--muted-foreground)]">NSE ACCURACY</div>
+                <div className="text-base font-bold text-emerald-500 mt-0.5">0.962</div>
+                <div className="text-[10px] text-[var(--muted-foreground)] mt-0.5">MAE: 0.28m</div>
+              </div>
+
+              <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+                <div className="text-[10px] text-[var(--muted-foreground)]">EXPOSED POPULATION</div>
+                <div className="text-base font-bold text-amber-500 mt-0.5">{exposedPopulation.toLocaleString()}</div>
+                <div className="text-[10px] text-[var(--muted-foreground)] mt-0.5">HAND Surface Depth</div>
+              </div>
+            </div>
+
+            {/* Multi-Horizon Step Table */}
+            <div className="space-y-2">
+              <div className="text-xs font-bold text-[var(--foreground)] font-heading">
+                Step-by-Step Predictive Horizon Progression
+              </div>
+              <div className="rounded-xl border border-[var(--border)] overflow-hidden">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-[var(--surface)] text-[10px] font-mono uppercase text-[var(--muted-foreground)] border-b border-[var(--border)]">
+                    <tr>
+                      <th className="p-2.5">Horizon</th>
+                      <th className="p-2.5">Forecast Stage</th>
+                      <th className="p-2.5">90% Confidence Interval</th>
+                      <th className="p-2.5">Est. Discharge</th>
+                      <th className="p-2.5">Hazard Regime</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[var(--border)] font-mono text-xs">
+                    <tr>
+                      <td className="p-2.5 font-bold text-[var(--foreground)]">Now (T+0)</td>
+                      <td className="p-2.5">{(currentStage - 0.45).toFixed(2)} m</td>
+                      <td className="p-2.5 text-[var(--muted-foreground)]">±0.04 m</td>
+                      <td className="p-2.5">24,200 m³/s</td>
+                      <td className="p-2.5"><span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-[10px]">SAFE BASELINE</span></td>
+                    </tr>
+                    <tr>
+                      <td className="p-2.5 font-bold text-[var(--foreground)]">+3h Lead</td>
+                      <td className="p-2.5">{(currentStage - 0.20).toFixed(2)} m</td>
+                      <td className="p-2.5 text-[var(--muted-foreground)]">±0.10 m</td>
+                      <td className="p-2.5">26,900 m³/s</td>
+                      <td className="p-2.5"><span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-[10px]">INFLOW SWELL</span></td>
+                    </tr>
+                    <tr className="bg-sky-500/5">
+                      <td className="p-2.5 font-bold text-sky-500">+6h Lead</td>
+                      <td className="p-2.5 font-bold text-[var(--foreground)]">{currentStage.toFixed(2)} m</td>
+                      <td className="p-2.5 text-[var(--muted-foreground)]">±0.18 m</td>
+                      <td className="p-2.5">29,800 m³/s</td>
+                      <td className="p-2.5">
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${currentStage >= CWC_GANDHI_GHAT_BENCHMARKS.dangerLevel ? "bg-rose-500/15 text-rose-500" : currentStage >= CWC_GANDHI_GHAT_BENCHMARKS.warningLevel ? "bg-amber-500/15 text-amber-500" : "bg-emerald-500/15 text-emerald-500"}`}>
+                          {currentStage >= CWC_GANDHI_GHAT_BENCHMARKS.dangerLevel ? "DANGER SURGE" : currentStage >= CWC_GANDHI_GHAT_BENCHMARKS.warningLevel ? "WARNING REGIME" : "ELEVATED"}
+                        </span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="p-2.5 font-bold text-[var(--foreground)]">+12h Lead</td>
+                      <td className="p-2.5">{(result?.result.forecast.t_plus_12 ?? (currentStage - 0.35)).toFixed(2)} m</td>
+                      <td className="p-2.5 text-[var(--muted-foreground)]">±0.25 m</td>
+                      <td className="p-2.5">34,100 m³/s</td>
+                      <td className="p-2.5"><span className="px-2 py-0.5 rounded bg-amber-500/15 text-amber-500 text-[10px]">TRIBUTARY INGRESS</span></td>
+                    </tr>
+                    <tr className="bg-emerald-500/5">
+                      <td className="p-2.5 font-bold text-emerald-600 dark:text-emerald-400">+24h Lead</td>
+                      <td className="p-2.5 font-bold text-[var(--foreground)]">{(result?.result.forecast.t_plus_24 ?? (currentStage - 0.75)).toFixed(2)} m</td>
+                      <td className="p-2.5 text-[var(--muted-foreground)]">±0.38 m</td>
+                      <td className="p-2.5">38,500 m³/s</td>
+                      <td className="p-2.5"><span className="px-2 py-0.5 rounded bg-teal-500/15 text-teal-400 text-[10px]">DIURNAL CREST</span></td>
+                    </tr>
+                    <tr>
+                      <td className="p-2.5 font-bold text-[var(--foreground)]">+48h Lead</td>
+                      <td className="p-2.5">{(currentStage - 1.10).toFixed(2)} m</td>
+                      <td className="p-2.5 text-[var(--muted-foreground)]">±0.52 m</td>
+                      <td className="p-2.5">32,400 m³/s</td>
+                      <td className="p-2.5"><span className="px-2 py-0.5 rounded bg-teal-500/15 text-teal-400 text-[10px]">RECESSION WATCH</span></td>
+                    </tr>
+                    <tr>
+                      <td className="p-2.5 font-bold text-[var(--foreground)]">+72h Lead</td>
+                      <td className="p-2.5">{(currentStage - 1.45).toFixed(2)} m</td>
+                      <td className="p-2.5 text-[var(--muted-foreground)]">±0.68 m</td>
+                      <td className="p-2.5">27,800 m³/s</td>
+                      <td className="p-2.5"><span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-[10px]">RECOVERY BASEFLOW</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Datum Threshold Proximity Matrix */}
+            <div className="p-3.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] space-y-2">
+              <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--muted-foreground)]">
+                Datum Threshold Proximity ({selectedStation.shortName})
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-mono">
+                <div className="p-2 rounded-lg bg-[var(--surface-elevated)] border border-[var(--border)] flex justify-between items-center">
+                  <span className="text-[var(--muted-foreground)]">Warning ({selectedStation.warningLevel}m):</span>
+                  <span className={`font-bold ${currentStage >= selectedStation.warningLevel ? "text-amber-500" : "text-emerald-500"}`}>
+                    {currentStage >= selectedStation.warningLevel ? `+${(currentStage - selectedStation.warningLevel).toFixed(2)}m (EXCEEDED)` : `${(currentStage - selectedStation.warningLevel).toFixed(2)}m (Safe)`}
+                  </span>
+                </div>
+                <div className="p-2 rounded-lg bg-[var(--surface-elevated)] border border-[var(--border)] flex justify-between items-center">
+                  <span className="text-[var(--muted-foreground)]">Danger ({selectedStation.dangerLevel}m):</span>
+                  <span className={`font-bold ${currentStage >= selectedStation.dangerLevel ? "text-rose-500" : "text-emerald-500"}`}>
+                    {currentStage >= selectedStation.dangerLevel ? `+${(currentStage - selectedStation.dangerLevel).toFixed(2)}m (EXCEEDED)` : `${(currentStage - selectedStation.dangerLevel).toFixed(2)}m (Safe)`}
+                  </span>
+                </div>
+                <div className="p-2 rounded-lg bg-[var(--surface-elevated)] border border-[var(--border)] flex justify-between items-center">
+                  <span className="text-[var(--muted-foreground)]">HFL ({selectedStation.hfl}m):</span>
+                  <span className="font-bold text-purple-400">
+                    {(currentStage - selectedStation.hfl).toFixed(2)}m (Below HFL)
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-[var(--border)]">
+              <button
+                type="button"
+                onClick={() => setIsForecastModalOpen(false)}
+                className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white dark:text-black font-bold text-xs transition-all shadow-md shadow-emerald-500/25 active:scale-95 cursor-pointer"
+              >
+                Close Inspector
               </button>
             </div>
           </div>
