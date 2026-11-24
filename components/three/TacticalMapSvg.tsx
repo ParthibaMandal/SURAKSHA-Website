@@ -30,7 +30,6 @@ export const TacticalMapSvg: React.FC = () => {
   } | null>(null);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    // Ignore clicks on UI buttons
     if ((e.target as HTMLElement).closest("button")) return;
     e.currentTarget.setPointerCapture(e.pointerId);
     setIsDragging(true);
@@ -46,7 +45,6 @@ export const TacticalMapSvg: React.FC = () => {
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!isDragging || !dragStartRef.current) {
-      // Subtle 3D parallax hover tilt when not dragging
       if (!is3D || !containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       const nx = (e.clientX - rect.left) / rect.width - 0.5;
@@ -63,14 +61,12 @@ export const TacticalMapSvg: React.FC = () => {
     const dy = e.clientY - dragStartRef.current.clientY;
 
     if (e.shiftKey) {
-      // Shift + Drag orbits 3D tilt angle directly
       setRotation((prev) => ({
         ...prev,
         x: Math.max(0, Math.min(50, dragStartRef.current!.rotX - dy * 0.25)),
         y: Math.max(-35, Math.min(35, dragStartRef.current!.rotY + dx * 0.25)),
       }));
     } else {
-      // Standard Drag moves/pans the river map smoothly AND subtly banks the 3D angle
       setPan({
         x: Math.max(-140, Math.min(140, dragStartRef.current.panX + dx)),
         y: Math.max(-95, Math.min(95, dragStartRef.current.panY + dy)),
@@ -113,29 +109,29 @@ export const TacticalMapSvg: React.FC = () => {
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
-      className={`relative w-full h-full min-h-[320px] overflow-hidden select-none bg-[#03080E] ${
+      className={`relative w-full h-full min-h-[320px] overflow-hidden select-none bg-[#110805] ${
         isDragging ? "cursor-grabbing" : "cursor-grab"
       }`}
     >
-      {/* Ambient 3D Hydrological Glow Backdrop */}
+      {/* Ambient 3D Burnt Sienna Hydrological Glow Backdrop */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background: isSurge
-            ? "radial-gradient(circle at 52% 46%, rgba(14, 165, 233, 0.24), rgba(2, 132, 199, 0.08) 48%, rgba(3, 8, 14, 0.96) 80%)"
-            : "radial-gradient(circle at 52% 46%, rgba(6, 182, 212, 0.16), rgba(37, 99, 235, 0.06) 45%, rgba(3, 8, 14, 0.96) 78%)",
+            ? "radial-gradient(circle at 52% 46%, rgba(227, 83, 54, 0.30), rgba(160, 82, 45, 0.14) 48%, rgba(17, 8, 5, 0.96) 80%)"
+            : "radial-gradient(circle at 52% 46%, rgba(244, 164, 96, 0.18), rgba(160, 82, 45, 0.09) 45%, rgba(17, 8, 5, 0.96) 78%)",
         }}
       />
 
-      {/* Top-Left Basin Header Overlay (Fixed HUD above 3D Canvas) */}
+      {/* Top-Left Basin Header Overlay */}
       <div className="pointer-events-none absolute top-3.5 left-4 z-20 flex flex-col gap-0.5">
         <div className="flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-[#38BDF8] shadow-[0_0_10px_#38BDF8] animate-pulse" />
-          <span className="text-xs font-bold tracking-wider text-white font-sans">
+          <span className="h-2 w-2 rounded-full bg-[#E35336] shadow-[0_0_10px_#E35336] animate-pulse" />
+          <span className="text-xs font-bold tracking-wider text-[#F5F5DC] font-sans">
             Ganga Basin, Patna Reach (25.61°N, 85.14°E)
           </span>
         </div>
-        <span className="text-[10px] font-mono text-sky-300/75 pl-4">
+        <span className="text-[10px] font-mono text-[#F4A460]/85 pl-4">
           EPSG:4326 · Interactive 3D Hydrodynamic River Channel · Drag to Move
         </span>
       </div>
@@ -147,12 +143,12 @@ export const TacticalMapSvg: React.FC = () => {
           onClick={() => setIsSurge((s) => !s)}
           className={`px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold border backdrop-blur-md transition-all flex items-center gap-1 cursor-pointer ${
             isSurge
-              ? "bg-sky-500/25 border-sky-400 text-sky-200 shadow-[0_0_15px_rgba(56,189,248,0.35)]"
-              : "bg-black/60 border-white/15 text-zinc-300 hover:text-white hover:border-sky-400/50"
+              ? "bg-[#E35336]/30 border-[#E35336] text-[#F5F5DC] shadow-[0_0_15px_rgba(227,83,54,0.45)]"
+              : "bg-[#1A0D09]/80 border-[#A0522D]/60 text-[#F5F5DC]/85 hover:text-[#F5F5DC] hover:border-[#F4A460]"
           }`}
           title="Toggle 3D river surge wave animation"
         >
-          <Waves className="w-3 h-3 text-sky-400" />
+          <Waves className="w-3 h-3 text-[#F4A460]" />
           <span>{isSurge ? "SURGE FLOW: ON" : "SURGE FLOW"}</span>
         </button>
 
@@ -161,19 +157,19 @@ export const TacticalMapSvg: React.FC = () => {
           onClick={() => setIs3D((v) => !v)}
           className={`px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold border backdrop-blur-md transition-all flex items-center gap-1 cursor-pointer ${
             is3D
-              ? "bg-cyan-500/20 border-cyan-400/60 text-cyan-200"
-              : "bg-black/60 border-white/15 text-zinc-300 hover:text-white"
+              ? "bg-[#A0522D]/35 border-[#F4A460]/70 text-[#F5F5DC]"
+              : "bg-[#1A0D09]/80 border-[#A0522D]/60 text-[#F5F5DC]/80 hover:text-[#F5F5DC]"
           }`}
           title="Toggle 3D perspective tilt"
         >
-          <Compass className="w-3 h-3 text-cyan-400" />
+          <Compass className="w-3 h-3 text-[#F4A460]" />
           <span>{is3D ? "3D VIEW" : "2D VIEW"}</span>
         </button>
 
         <button
           type="button"
           onClick={() => setZoom((z) => Math.min(1.45, +(z + 0.12).toFixed(2)))}
-          className="p-1.5 rounded-full bg-black/60 border border-white/15 text-zinc-300 hover:text-white hover:border-sky-400/50 backdrop-blur-md transition-colors cursor-pointer"
+          className="p-1.5 rounded-full bg-[#1A0D09]/80 border border-[#A0522D]/60 text-[#F5F5DC]/80 hover:text-[#F5F5DC] hover:border-[#F4A460] backdrop-blur-md transition-colors cursor-pointer"
           title="Zoom In"
           aria-label="Zoom In"
         >
@@ -183,7 +179,7 @@ export const TacticalMapSvg: React.FC = () => {
         <button
           type="button"
           onClick={() => setZoom((z) => Math.max(0.8, +(z - 0.12).toFixed(2)))}
-          className="p-1.5 rounded-full bg-black/60 border border-white/15 text-zinc-300 hover:text-white hover:border-sky-400/50 backdrop-blur-md transition-colors cursor-pointer"
+          className="p-1.5 rounded-full bg-[#1A0D09]/80 border border-[#A0522D]/60 text-[#F5F5DC]/80 hover:text-[#F5F5DC] hover:border-[#F4A460] backdrop-blur-md transition-colors cursor-pointer"
           title="Zoom Out"
           aria-label="Zoom Out"
         >
@@ -193,7 +189,7 @@ export const TacticalMapSvg: React.FC = () => {
         <button
           type="button"
           onClick={handleReset}
-          className="p-1.5 rounded-full bg-black/60 border border-white/15 text-zinc-300 hover:text-white hover:border-sky-400/50 backdrop-blur-md transition-colors cursor-pointer"
+          className="p-1.5 rounded-full bg-[#1A0D09]/80 border border-[#A0522D]/60 text-[#F5F5DC]/80 hover:text-[#F5F5DC] hover:border-[#F4A460] backdrop-blur-md transition-colors cursor-pointer"
           title="Reset 3D camera position"
           aria-label="Reset camera"
         >
@@ -216,36 +212,36 @@ export const TacticalMapSvg: React.FC = () => {
           aria-label="Interactive 3D Ganga Basin Geospatial Schematic Map — Patna Study Area"
         >
           <defs>
-            {/* 3D Terrain Bathymetry Grid Dots */}
+            {/* 3D Terrain Bathymetry Grid Dots (#F4A460) */}
             <pattern
-              id="hydroGridDots3D"
+              id="siennaGridDots3D"
               width="26"
               height="26"
               patternUnits="userSpaceOnUse"
             >
-              <circle cx="2" cy="2" r="1" fill="#38BDF8" opacity="0.18" />
+              <circle cx="2" cy="2" r="1" fill="#F4A460" opacity="0.22" />
             </pattern>
 
-            {/* Primary Luminous Cyan-Blue Ganga River Gradient */}
+            {/* Primary Luminous Burnt Sienna (#E35336) & Sandy Brown (#F4A460) Ganga River Gradient */}
             <linearGradient id="gangaRiver3DGrad" x1="0" y1="0" x2="1" y2="0.35">
-              <stop offset="0%" stopColor="#0284C7" stopOpacity="0.95" />
-              <stop offset="35%" stopColor="#0EA5E9" stopOpacity="0.98" />
-              <stop offset="70%" stopColor="#06B6D4" stopOpacity="0.98" />
-              <stop offset="100%" stopColor="#38BDF8" stopOpacity="0.95" />
+              <stop offset="0%" stopColor="#A0522D" stopOpacity="0.96" />
+              <stop offset="35%" stopColor="#E35336" stopOpacity="0.98" />
+              <stop offset="70%" stopColor="#F4A460" stopOpacity="0.98" />
+              <stop offset="100%" stopColor="#E35336" stopOpacity="0.96" />
             </linearGradient>
 
-            {/* Specular Crest Highlight Gradient */}
+            {/* Warm Beige (#F5F5DC) Specular Crest Highlight Gradient */}
             <linearGradient id="gangaCoreHighlight" x1="0" y1="0" x2="1" y2="0.35">
-              <stop offset="0%" stopColor="#BAE6FD" stopOpacity="0.85" />
-              <stop offset="50%" stopColor="#7DD3FC" stopOpacity="0.95" />
-              <stop offset="100%" stopColor="#E0F2FE" stopOpacity="0.85" />
+              <stop offset="0%" stopColor="#F5F5DC" stopOpacity="0.88" />
+              <stop offset="50%" stopColor="#F4A460" stopOpacity="0.96" />
+              <stop offset="100%" stopColor="#F5F5DC" stopOpacity="0.88" />
             </linearGradient>
 
-            {/* Floodplain Inundation Envelope Gradient */}
+            {/* Floodplain Inundation Envelope Gradient (#A0522D -> #E35336) */}
             <linearGradient id="floodplainEnvelopeGrad" x1="0" y1="0" x2="1" y2="0.5">
-              <stop offset="0%" stopColor="#0369A1" stopOpacity="0.22" />
-              <stop offset="50%" stopColor="#0EA5E9" stopOpacity="0.32" />
-              <stop offset="100%" stopColor="#0284C7" stopOpacity="0.24" />
+              <stop offset="0%" stopColor="#A0522D" stopOpacity="0.26" />
+              <stop offset="50%" stopColor="#E35336" stopOpacity="0.34" />
+              <stop offset="100%" stopColor="#F4A460" stopOpacity="0.26" />
             </linearGradient>
 
             {/* 3D River Glow & Extrusion Shadow Filter */}
@@ -254,7 +250,7 @@ export const TacticalMapSvg: React.FC = () => {
                 dx="0"
                 dy="8"
                 stdDeviation="6"
-                floodColor="#0284C7"
+                floodColor="#E35336"
                 floodOpacity="0.55"
               />
               <feGaussianBlur stdDeviation="2.5" result="blur" />
@@ -271,11 +267,11 @@ export const TacticalMapSvg: React.FC = () => {
           </defs>
 
           {/* Base Bathymetric Terrain & 3D Perspective Grid */}
-          <rect width="640" height="360" fill="#03080E" />
-          <rect width="640" height="360" fill="url(#hydroGridDots3D)" />
+          <rect width="640" height="360" fill="#110805" />
+          <rect width="640" height="360" fill="url(#siennaGridDots3D)" />
 
           {/* Perspective Coordinate Graticule Lines */}
-          <g stroke="#38BDF8" strokeOpacity="0.09" strokeDasharray="3 5">
+          <g stroke="#F4A460" strokeOpacity="0.12" strokeDasharray="3 5">
             <line x1="120" y1="0" x2="120" y2="360" />
             <line x1="260" y1="0" x2="260" y2="360" />
             <line x1="400" y1="0" x2="400" y2="360" />
@@ -288,22 +284,22 @@ export const TacticalMapSvg: React.FC = () => {
           {/* Topographic Elevation Contours (3D Basin Relief Lines) */}
           <path
             d="M0 295 Q140 215 245 248 T485 212 T640 145"
-            stroke="#38BDF8"
-            strokeOpacity="0.16"
+            stroke="#F4A460"
+            strokeOpacity="0.22"
             strokeWidth="1.2"
             fill="none"
           />
           <path
             d="M15 35 Q170 98 310 56 T585 42"
-            stroke="#38BDF8"
-            strokeOpacity="0.14"
+            stroke="#A0522D"
+            strokeOpacity="0.32"
             strokeWidth="1.2"
             fill="none"
           />
           <path
             d="M75 355 Q205 298 345 328 T605 288"
-            stroke="#0EA5E9"
-            strokeOpacity="0.14"
+            stroke="#E35336"
+            strokeOpacity="0.2"
             strokeWidth="1.2"
             fill="none"
           />
@@ -311,8 +307,8 @@ export const TacticalMapSvg: React.FC = () => {
           {/* 3D Bathymetric Depth Shadow Underneath River Channel */}
           <path
             d={GANGA_PATH}
-            stroke="#000000"
-            strokeOpacity="0.75"
+            stroke="#060201"
+            strokeOpacity="0.82"
             strokeWidth={isSurge ? "68" : "52"}
             fill="none"
             transform="translate(0, 12)"
@@ -331,8 +327,8 @@ export const TacticalMapSvg: React.FC = () => {
           {/* Inner Active Floodplain Corridor */}
           <path
             d={GANGA_PATH}
-            stroke="#0EA5E9"
-            strokeOpacity={isSurge ? "0.34" : "0.22"}
+            stroke="#E35336"
+            strokeOpacity={isSurge ? "0.38" : "0.24"}
             strokeWidth={isSurge ? "44" : "30"}
             strokeLinecap="round"
             fill="none"
@@ -342,23 +338,23 @@ export const TacticalMapSvg: React.FC = () => {
           {/* Tributary 1: Gandak Feeder (North -> Confluence near Patna) */}
           <path
             d={GANDAK_PATH}
-            stroke="#0284C7"
-            strokeOpacity="0.3"
+            stroke="#A0522D"
+            strokeOpacity="0.38"
             strokeWidth={isSurge ? "18" : "12"}
             fill="none"
           />
           <path
             d={GANDAK_PATH}
-            stroke="#38BDF8"
-            strokeOpacity="0.9"
+            stroke="#F4A460"
+            strokeOpacity="0.92"
             strokeWidth={isSurge ? "6.5" : "4.5"}
             fill="none"
             filter="url(#riverGlow3D)"
           />
           <path
             d={GANDAK_PATH}
-            stroke="#E0F2FE"
-            strokeOpacity="0.85"
+            stroke="#F5F5DC"
+            strokeOpacity="0.88"
             strokeWidth="1.6"
             fill="none"
             strokeDasharray="6 12"
@@ -368,30 +364,30 @@ export const TacticalMapSvg: React.FC = () => {
           {/* Tributary 2: Sone Sub-Basin Feeder (South-West -> Confluence) */}
           <path
             d={SONE_PATH}
-            stroke="#0284C7"
-            strokeOpacity="0.28"
+            stroke="#A0522D"
+            strokeOpacity="0.35"
             strokeWidth={isSurge ? "16" : "11"}
             fill="none"
           />
           <path
             d={SONE_PATH}
-            stroke="#0EA5E9"
-            strokeOpacity="0.9"
+            stroke="#E35336"
+            strokeOpacity="0.92"
             strokeWidth={isSurge ? "5.5" : "4"}
             fill="none"
             filter="url(#riverGlow3D)"
           />
           <path
             d={SONE_PATH}
-            stroke="#BAE6FD"
-            strokeOpacity="0.85"
+            stroke="#F5F5DC"
+            strokeOpacity="0.88"
             strokeWidth="1.5"
             fill="none"
             strokeDasharray="6 12"
             className="animate-[flowStreamFast_6s_linear_infinite]"
           />
 
-          {/* Primary 3D Ganga River Channel Body (Vibrant Hydro-Blue/Cyan with 3D Glow) */}
+          {/* Primary 3D Ganga River Channel Body (Burnt Sienna #E35336 & Sandy Brown #F4A460) */}
           <path
             d={GANGA_PATH}
             stroke="url(#gangaRiver3DGrad)"
@@ -402,21 +398,21 @@ export const TacticalMapSvg: React.FC = () => {
             className="transition-all duration-500"
           />
 
-          {/* Inner Specular Water Core (Gives 3D Cylindrical Water Volume) */}
+          {/* Inner Specular Water Core (#F5F5DC -> #F4A460) */}
           <path
             d={GANGA_PATH}
             stroke="url(#gangaCoreHighlight)"
             strokeWidth={isSurge ? "6" : "4"}
             strokeLinecap="round"
             fill="none"
-            opacity="0.8"
+            opacity="0.85"
           />
 
           {/* Animated Hydrodynamic Flow Streamlines */}
           <path
             d={GANGA_PATH}
-            stroke="#FFFFFF"
-            strokeOpacity="0.92"
+            stroke="#F5F5DC"
+            strokeOpacity="0.94"
             strokeWidth={isSurge ? "2.6" : "2"}
             fill="none"
             strokeDasharray="12 18"
@@ -430,8 +426,8 @@ export const TacticalMapSvg: React.FC = () => {
           {/* Secondary Counter-Phase Ripple Streamline */}
           <path
             d={GANGA_PATH}
-            stroke="#7DD3FC"
-            strokeOpacity="0.7"
+            stroke="#F4A460"
+            strokeOpacity="0.78"
             strokeWidth="1.4"
             fill="none"
             strokeDasharray="4 22"
@@ -445,7 +441,7 @@ export const TacticalMapSvg: React.FC = () => {
             <circle
               key={`ganga-pt-${idx}`}
               r={isSurge ? "3.5" : "2.5"}
-              fill="#E0F2FE"
+              fill="#F5F5DC"
               filter="url(#riverGlow3D)"
             >
               <animateMotion
@@ -459,7 +455,7 @@ export const TacticalMapSvg: React.FC = () => {
           ))}
 
           {[0, 2.2].map((delay, idx) => (
-            <circle key={`gandak-pt-${idx}`} r="2" fill="#BAE6FD">
+            <circle key={`gandak-pt-${idx}`} r="2" fill="#F5F5DC">
               <animateMotion dur="4.4s" begin={`${delay}s`} repeatCount="indefinite">
                 <mpath href="#gandakMotionPath" />
               </animateMotion>
@@ -467,7 +463,7 @@ export const TacticalMapSvg: React.FC = () => {
           ))}
 
           {[0.6, 2.8].map((delay, idx) => (
-            <circle key={`sone-pt-${idx}`} r="2" fill="#7DD3FC">
+            <circle key={`sone-pt-${idx}`} r="2" fill="#F4A460">
               <animateMotion dur="4.8s" begin={`${delay}s`} repeatCount="indefinite">
                 <mpath href="#soneMotionPath" />
               </animateMotion>
@@ -483,13 +479,12 @@ export const TacticalMapSvg: React.FC = () => {
             className="cursor-pointer"
             onClick={() => setActiveStation("STN-PAT-01")}
           >
-            {/* 3D Vertical Pillar Shadow */}
             <line
               x1="360"
               y1="128"
               x2="360"
               y2="92"
-              stroke="#38BDF8"
+              stroke="#F4A460"
               strokeWidth="1.4"
               strokeDasharray="2 2"
             />
@@ -497,38 +492,37 @@ export const TacticalMapSvg: React.FC = () => {
               cx="360"
               cy="128"
               r="16"
-              fill="#0EA5E9"
-              fillOpacity="0.24"
+              fill="#E35336"
+              fillOpacity="0.28"
               className="animate-pulse"
             />
             <circle
               cx="360"
               cy="128"
               r="5.5"
-              fill="#38BDF8"
-              stroke="#FFFFFF"
+              fill="#E35336"
+              stroke="#F5F5DC"
               strokeWidth="2"
             />
-            {/* Elevated Card Placed Above-Right of Bend (No Overlap with STN-MOK-04) */}
             <rect
               x="315"
               y="52"
               width="156"
               height="36"
               rx="8"
-              fill="#06101A"
-              fillOpacity="0.94"
+              fill="#1A0D09"
+              fillOpacity="0.95"
               stroke={
                 activeStation === "STN-PAT-01"
-                  ? "#38BDF8"
-                  : "rgba(56,189,248,0.4)"
+                  ? "#E35336"
+                  : "rgba(244,164,96,0.5)"
               }
-              strokeWidth={activeStation === "STN-PAT-01" ? "1.5" : "1"}
+              strokeWidth={activeStation === "STN-PAT-01" ? "1.6" : "1"}
             />
             <text
               x="325"
               y="66"
-              fill="#FFFFFF"
+              fill="#F5F5DC"
               fontSize="9.5"
               fontWeight="700"
               fontFamily="Inter, sans-serif"
@@ -538,7 +532,7 @@ export const TacticalMapSvg: React.FC = () => {
             <text
               x="325"
               y="79"
-              fill="#38BDF8"
+              fill="#F4A460"
               fontSize="8.5"
               fontWeight="600"
               fontFamily="JetBrains Mono, monospace"
@@ -547,7 +541,7 @@ export const TacticalMapSvg: React.FC = () => {
             </text>
           </g>
 
-          {/* Station 2: STN-GAN-01 (Lalganj Warning Node - Amber Semantic State) */}
+          {/* Station 2: STN-GAN-01 (Lalganj Warning Node - Sandy Brown #F4A460) */}
           <g
             className="cursor-pointer"
             onClick={() => setActiveStation("STN-GAN-01")}
@@ -556,7 +550,7 @@ export const TacticalMapSvg: React.FC = () => {
               cx="236"
               cy="108"
               r="12"
-              fill="#F59E0B"
+              fill="#F4A460"
               fillOpacity="0.28"
               className="animate-pulse"
             />
@@ -564,8 +558,8 @@ export const TacticalMapSvg: React.FC = () => {
               cx="236"
               cy="108"
               r="4.5"
-              fill="#F59E0B"
-              stroke="#000000"
+              fill="#F4A460"
+              stroke="#110805"
               strokeWidth="1.5"
             />
             <rect
@@ -574,14 +568,14 @@ export const TacticalMapSvg: React.FC = () => {
               width="128"
               height="22"
               rx="6"
-              fill="#0A0E14"
-              fillOpacity="0.94"
-              stroke="rgba(245,158,11,0.45)"
+              fill="#1A0D09"
+              fillOpacity="0.95"
+              stroke="rgba(244,164,96,0.55)"
             />
             <text
               x="106"
               y="102"
-              fill="#FBBF24"
+              fill="#F4A460"
               fontSize="8"
               fontWeight="600"
               fontFamily="JetBrains Mono, monospace"
@@ -599,15 +593,15 @@ export const TacticalMapSvg: React.FC = () => {
               cx="176"
               cy="192"
               r="10"
-              fill="#38BDF8"
-              fillOpacity="0.2"
+              fill="#E35336"
+              fillOpacity="0.25"
             />
             <circle
               cx="176"
               cy="192"
               r="4.5"
-              fill="#38BDF8"
-              stroke="#FFFFFF"
+              fill="#E35336"
+              stroke="#F5F5DC"
               strokeWidth="1.5"
             />
             <rect
@@ -616,14 +610,14 @@ export const TacticalMapSvg: React.FC = () => {
               width="116"
               height="20"
               rx="6"
-              fill="#06101A"
-              fillOpacity="0.94"
-              stroke="rgba(56,189,248,0.35)"
+              fill="#1A0D09"
+              fillOpacity="0.95"
+              stroke="rgba(160,82,45,0.6)"
             />
             <text
               x="62"
               y="215"
-              fill="#E0F2FE"
+              fill="#F5F5DC"
               fontSize="8"
               fontWeight="600"
               fontFamily="JetBrains Mono, monospace"
@@ -632,7 +626,7 @@ export const TacticalMapSvg: React.FC = () => {
             </text>
           </g>
 
-          {/* Station 4: Downstream Reach (STN-MOK-04) - Positioned cleanly below-right of the river curve */}
+          {/* Station 4: Downstream Reach (STN-MOK-04) */}
           <g
             className="cursor-pointer"
             onClick={() => setActiveStation("STN-MOK-04")}
@@ -641,15 +635,15 @@ export const TacticalMapSvg: React.FC = () => {
               cx="500"
               cy="184"
               r="10"
-              fill="#38BDF8"
-              fillOpacity="0.2"
+              fill="#F4A460"
+              fillOpacity="0.22"
             />
             <circle
               cx="500"
               cy="184"
               r="4.5"
-              fill="#38BDF8"
-              stroke="#FFFFFF"
+              fill="#F4A460"
+              stroke="#F5F5DC"
               strokeWidth="1.5"
             />
             <line
@@ -657,10 +651,10 @@ export const TacticalMapSvg: React.FC = () => {
               y1="189"
               x2="500"
               y2="212"
-              stroke="#38BDF8"
+              stroke="#F4A460"
               strokeWidth="1.2"
               strokeDasharray="2 2"
-              opacity="0.7"
+              opacity="0.75"
             />
             <rect
               x="440"
@@ -668,14 +662,14 @@ export const TacticalMapSvg: React.FC = () => {
               width="122"
               height="22"
               rx="8"
-              fill="#06101A"
-              fillOpacity="0.94"
-              stroke="rgba(56,189,248,0.38)"
+              fill="#1A0D09"
+              fillOpacity="0.95"
+              stroke="rgba(160,82,45,0.6)"
             />
             <text
               x="501"
               y="226"
-              fill="#E0F2FE"
+              fill="#F5F5DC"
               fontSize="8"
               fontWeight="600"
               fontFamily="JetBrains Mono, monospace"
@@ -688,12 +682,12 @@ export const TacticalMapSvg: React.FC = () => {
       </div>
 
       {/* Bottom Interactive Status Strip */}
-      <div className="pointer-events-none absolute bottom-2.5 left-4 right-4 z-20 flex items-center justify-between text-[10px] font-mono text-sky-200/75">
+      <div className="pointer-events-none absolute bottom-2.5 left-4 right-4 z-20 flex items-center justify-between text-[10px] font-mono text-[#F5F5DC]/75">
         <span>
-          ACTIVE NODE: <strong className="text-sky-300">{activeStation}</strong> ·{" "}
+          ACTIVE NODE: <strong className="text-[#F4A460]">{activeStation}</strong> ·{" "}
           {is3D ? `3D TILT (${Math.round(rotation.x)}°, ${Math.round(rotation.y)}°)` : "2D PLANAR"}
         </span>
-        <span className="hidden sm:inline text-sky-300/80">
+        <span className="hidden sm:inline text-[#F4A460]/85">
           Drag to pan & tilt 3D river · Shift+Drag to orbit
         </span>
       </div>

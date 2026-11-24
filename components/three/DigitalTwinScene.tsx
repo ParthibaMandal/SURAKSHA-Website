@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { DigitalTwinEngine } from "@/lib/three/digital-twin-engine";
 import { TacticalMapSvg } from "./TacticalMapSvg";
 import { FallbackCanvas2D } from "./FallbackCanvas2D";
-import { PATNA_GANDHI_GHAT } from "@/lib/mock-data";
 import { RotateCcw, AlertTriangle, Layers, Hand } from "lucide-react";
 
 interface DigitalTwinSceneProps {
@@ -17,7 +16,7 @@ export const DigitalTwinScene: React.FC<DigitalTwinSceneProps> = ({ onSurgeState
 
   const [viewMode, setViewMode] = useState<"3d" | "2d">("3d");
   const [isSurge, setIsSurge] = useState(false);
-  const [stageReading, setStageReading] = useState<number>(PATNA_GANDHI_GHAT.currentStage);
+  const [stageReading, setStageReading] = useState(46.85);
   const [webGlSupported, setWebGlSupported] = useState(true);
   const [mobileInteracting, setMobileInteracting] = useState(false);
 
@@ -29,7 +28,7 @@ export const DigitalTwinScene: React.FC<DigitalTwinSceneProps> = ({ onSurgeState
       const engine = new DigitalTwinEngine(containerRef.current, {
         onSurgeToggle: (active) => {
           setIsSurge(active);
-          setStageReading(active ? PATNA_GANDHI_GHAT.surgeStage : PATNA_GANDHI_GHAT.currentStage);
+          setStageReading(active ? 48.85 : 46.85);
           if (onSurgeStateChange) onSurgeStateChange(active);
         },
       });
@@ -50,12 +49,12 @@ export const DigitalTwinScene: React.FC<DigitalTwinSceneProps> = ({ onSurgeState
     if (engineRef.current) {
       const active = engineRef.current.toggleSurge();
       setIsSurge(active);
-      setStageReading(active ? PATNA_GANDHI_GHAT.surgeStage : PATNA_GANDHI_GHAT.currentStage);
+      setStageReading(active ? 48.85 : 46.85);
       if (onSurgeStateChange) onSurgeStateChange(active);
     } else {
       const next = !isSurge;
       setIsSurge(next);
-      setStageReading(next ? PATNA_GANDHI_GHAT.surgeStage : PATNA_GANDHI_GHAT.currentStage);
+      setStageReading(next ? 48.85 : 46.85);
       if (onSurgeStateChange) onSurgeStateChange(next);
     }
   };
@@ -71,33 +70,33 @@ export const DigitalTwinScene: React.FC<DigitalTwinSceneProps> = ({ onSurgeState
   };
 
   return (
-    <div className="relative w-full h-full rounded-2xl border border-white/10 bg-[#0A0A0A] backdrop-blur-xl overflow-hidden shadow-xl transition-colors flex flex-col justify-between text-white">
+    <div className="relative w-full h-full rounded-2xl border border-[#A0522D]/45 bg-[#1A0D09] backdrop-blur-xl overflow-hidden shadow-xl transition-colors flex flex-col justify-between text-[#F5F5DC]">
       {/* Visual Header */}
-      <div className="px-5 py-3.5 border-b border-white/10 flex items-center justify-between bg-black">
+      <div className="px-5 py-3.5 border-b border-[#A0522D]/35 flex items-center justify-between bg-[#110805]">
         <div>
-          <div className="text-xs font-semibold text-white tracking-wide">
+          <div className="text-xs font-semibold text-[#F5F5DC] tracking-wide">
             Ganga Basin Hydrological Intelligence Workspace
           </div>
-          <div className="text-[11px] text-zinc-400">
+          <div className="text-[11px] text-[#F5F5DC]/70">
             3D Digital Twin (drag to orbit basin topography)
           </div>
         </div>
-        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs text-white bg-white/5 border border-white/15 whitespace-nowrap">
-          <span className="w-2 h-2 rounded-full bg-white" />
+        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs text-[#F4A460] bg-[#24120C] border border-[#A0522D]/50 whitespace-nowrap">
+          <span className="w-2 h-2 rounded-full bg-[#E35336]" />
           <span className="whitespace-nowrap">{viewMode === "3d" ? "3D Basin View" : "2D Map View"}</span>
         </div>
       </div>
 
       {/* Viewport Box */}
-      <div className="relative w-full flex-1 min-h-[340px] md:min-h-[400px] bg-black overflow-hidden">
+      <div className="relative w-full flex-1 min-h-[340px] md:min-h-[400px] bg-[#110805] overflow-hidden">
         {/* Controls Bar inside Viewport */}
         <div className="absolute top-3 right-3 z-30 flex items-center gap-2 pointer-events-auto">
           <button
             onClick={toggleViewMode}
             className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all flex items-center gap-1.5 shadow-sm cursor-pointer whitespace-nowrap ${
               viewMode === "3d"
-                ? "bg-white text-black border-white"
-                : "bg-white/5 text-white border-white/20 hover:bg-white/10"
+                ? "bg-[#E35336] text-[#F5F5DC] border-[#F4A460]"
+                : "bg-[#1A0D09]/80 text-[#F5F5DC] border-[#A0522D]/60 hover:bg-[#24120C]"
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
@@ -108,8 +107,8 @@ export const DigitalTwinScene: React.FC<DigitalTwinSceneProps> = ({ onSurgeState
             onClick={toggleSurge}
             className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all flex items-center gap-1.5 shadow-sm cursor-pointer whitespace-nowrap ${
               isSurge
-                ? "bg-rose-500 text-white border-rose-500 shadow-[0_0_12px_rgba(239,68,68,0.4)]"
-                : "bg-white/5 text-zinc-200 border-white/15 hover:border-amber-400/60 hover:text-amber-300"
+                ? "bg-[#E35336] text-[#F5F5DC] border-[#F5F5DC] shadow-[0_0_14px_rgba(227,83,54,0.5)]"
+                : "bg-[#1A0D09]/80 text-[#F4A460] border-[#A0522D]/60 hover:border-[#F4A460]"
             }`}
           >
             <AlertTriangle className="w-3.5 h-3.5" />
@@ -119,7 +118,7 @@ export const DigitalTwinScene: React.FC<DigitalTwinSceneProps> = ({ onSurgeState
           {viewMode === "3d" && (
             <button
               onClick={resetCamera}
-              className="p-2 rounded-full text-xs font-medium bg-white/5 text-white border border-white/15 hover:bg-white/10 transition-colors cursor-pointer"
+              className="p-2 rounded-full text-xs font-medium bg-[#1A0D09]/80 text-[#F5F5DC] border border-[#A0522D]/60 hover:border-[#F4A460] transition-colors cursor-pointer"
               title="Reset 3D camera orientation"
               aria-label="Reset 3D camera orientation"
             >
@@ -128,14 +127,14 @@ export const DigitalTwinScene: React.FC<DigitalTwinSceneProps> = ({ onSurgeState
           )}
         </div>
 
-        {/* Mobile Tap-to-Activate Guard to Prevent Page Scroll Trapping */}
+        {/* Mobile Tap-to-Activate Guard */}
         {viewMode === "3d" && webGlSupported && !mobileInteracting && (
           <div
             onClick={() => setMobileInteracting(true)}
-            className="md:hidden absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/60 backdrop-blur-[2px] cursor-pointer p-4 text-center"
+            className="md:hidden absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#110805]/65 backdrop-blur-[2px] cursor-pointer p-4 text-center"
           >
-            <div className="px-4 py-2.5 rounded-full bg-[#0A0A0A] border border-white/20 text-xs font-medium text-white shadow-xl flex items-center gap-2">
-              <Hand className="w-4 h-4 text-white" />
+            <div className="px-4 py-2.5 rounded-full bg-[#1A0D09] border border-[#A0522D]/60 text-xs font-medium text-[#F5F5DC] shadow-xl flex items-center gap-2">
+              <Hand className="w-4 h-4 text-[#F4A460]" />
               <span>Tap to rotate 3D digital twin</span>
             </div>
           </div>
@@ -158,21 +157,22 @@ export const DigitalTwinScene: React.FC<DigitalTwinSceneProps> = ({ onSurgeState
         )}
 
         {/* Floating HUD */}
-        <div className="absolute bottom-3 left-4 right-4 z-30 flex flex-wrap items-center justify-between gap-3 px-3.5 py-2 rounded-2xl bg-[#0A0A0A]/90 backdrop-blur-md border border-white/15 text-xs">
+        <div className="absolute bottom-3 left-4 right-4 z-30 flex flex-wrap items-center justify-between gap-3 px-3.5 py-2 rounded-2xl bg-[#1A0D09]/92 backdrop-blur-md border border-[#A0522D]/50 text-xs">
           <div className="flex flex-wrap items-center gap-2.5">
-            <span className="text-zinc-400">Reference baseline: {PATNA_GANDHI_GHAT.baseline.toFixed(2)}m</span>
-            <span className="text-zinc-600">|</span>
+            <span className="text-[#F5F5DC]/70">Gandhi Ghat Datum: 46.20m</span>
+            <span className="text-[#A0522D]">|</span>
             <span
               className={`font-semibold tracking-wide ${
-                isSurge ? "text-rose-400" : "text-white"
+                isSurge ? "text-[#E35336]" : "text-[#F4A460]"
               }`}
             >
-              Stage: <span className="font-mono">{stageReading.toFixed(2)} m</span> {isSurge ? `(Above danger ${PATNA_GANDHI_GHAT.dangerLevel.toFixed(2)}m)` : "(Nominal sample)"}
+              Stage: <span className="font-mono">{stageReading.toFixed(2)} m</span>{" "}
+              {isSurge ? "(Danger breach 48.60m)" : "(Nominal)"}
             </span>
-            <span className="text-zinc-600">|</span>
-            <span className="text-zinc-300">3 stations active</span>
+            <span className="text-[#A0522D]">|</span>
+            <span className="text-[#F5F5DC]/85">3 stations active</span>
           </div>
-          <span className="text-[10px] text-zinc-500 hidden sm:inline font-mono">
+          <span className="text-[10px] text-[#F4A460] hidden sm:inline font-mono">
             CWC Middle Ganga Reach Model
           </span>
         </div>
